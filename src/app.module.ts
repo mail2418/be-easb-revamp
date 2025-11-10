@@ -7,6 +7,10 @@ import configuration from './config/configuration';
 import { AuthModule } from './presentation/auth/auth.module';
 import { AsbModule } from './presentation/asb/asb.module';
 import { UserModule } from './presentation/users/user.module';
+
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
+
 // import module lain sesuai kebutuhan
 
 @Module({
@@ -24,7 +28,7 @@ import { UserModule } from './presentation/users/user.module';
                 username: config.get('db.username'),
                 password: config.get('db.password'),
                 database: config.get('db.name'),
-                entities: [__dirname + '/infrastructure/**/orm/*.orm-entity{.ts,.js}'],
+                entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.ts,.js}'],
                 synchronize: false, // always false in production
                 migrationsRun: true,
                 migrations: [__dirname + '/migrations/*{.ts,.js}'],
@@ -35,6 +39,9 @@ import { UserModule } from './presentation/users/user.module';
         AsbModule,
         UserModule,
         // other modules...
+    ],
+    providers: [
+        { provide: APP_INTERCEPTOR, useClass: ResponseCaptureInterceptor },
     ],
 })
 export class AppModule {}

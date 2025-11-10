@@ -1,32 +1,70 @@
-// auth/auth.service.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/domain/user/user.service';
-import * as bcrypt from 'bcryptjs';
+import { LoginDto } from 'src/presentation/auth/dto/login.dto';
+import { User } from 'src/domain/user/user.entity';
+import { AuthRepository } from './auth.repository';
+import { RevokeAllDto } from 'src/presentation/auth/dto/revoke_all.dto';
+
+type Tokens = { accessToken: string; refreshToken: string, maxAgeAccess: number, maxAgeRefresh: number };
 
 @Injectable()
 export class AuthService {
     constructor(
-        private usersService: UserService,
-        private jwtService: JwtService,
+        private readonly userService: UserService,
+        private readonly jwt: JwtService,
+        private readonly config: ConfigService,
+        private readonly authRepo: AuthRepository,
     ) {}
-    async validateUser(username: string, pass: string) {
-        const user = await this.usersService.findByUsername(username);
-        if (user && bcrypt.compareSync(pass, user.passwordHash)) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { passwordHash, ...result } = user;
-            return result;
-        }
-        return null;
+
+    async validateUser(dto: LoginDto): Promise<User> {
+        const user = await this.userService.validateUser(dto); // lakukan bcrypt.compare di use case
+        if (!user) throw new UnauthorizedException('Invalid credentials');
+        return user;
     }
-    async login(user: any) {
-        const payload = {
-            username: user.username,
-            sub: user.id,
+
+    private signAccess(user: User): string {
+        const payload = { sub: String(user.id), username: user.username, roles: user.roles };
+        return this.jwt.sign(payload, {
+            secret: this.config.getOrThrow<string>('jwt.accessSecret'),
+            expiresIn: this.config.getOrThrow<number>('jwt.accessTtl'),
+        });
+    }
+
+    private signRefresh(user: User): string {
+        const payload = { 
+            sub: String(user.id), 
+            username: user.username, 
             roles: user.roles,
-        };
+            tokenVersion: user.refreshTokenVersion ?? 0,
+         };
+
+        return this.jwt.sign(payload, {
+        secret: this.config.getOrThrow<string>('jwt.refreshSecret'),
+        expiresIn: this.config.getOrThrow<number>('jwt.refreshTtl'), // e.g. "7d"
+        });
+    }
+
+    async login(user: User): Promise<Tokens> {
         return {
-            accessToken: this.jwtService.sign(payload),
+            accessToken: this.signAccess(user),
+            refreshToken: this.signRefresh(user),
+            maxAgeAccess: this.config.getOrThrow<number>('jwt.accessTtl') * 1000,
+            maxAgeRefresh: this.config.getOrThrow<number>('jwt.refreshTtl') * 1000,
         };
+    }
+
+    async rotateTokens(user: User): Promise<Tokens> {
+        return this.login(user);
+    }
+
+    async revokeAllRefreshTokens(revokeDto: RevokeAllDto): Promise<void> {
+        const userId = revokeDto.userId;
+        const user = await this.userService.findById(userId);
+        console.log("User: " , user);
+        if (!user) throw new UnauthorizedException('User not found');
+
+        await this.authRepo.incrementRefreshTokenVersion(userId);
     }
 }
