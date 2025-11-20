@@ -18,8 +18,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserOrmEntity } from 'src/infrastructure/user/orm/user.orm_entity';
 import { AuthRepository } from 'src/application/auth/auth.repository';
 
-
-
 @Module({
   imports: [
     ConfigModule,
@@ -27,10 +25,13 @@ import { AuthRepository } from 'src/application/auth/auth.repository';
     PassportModule.register({ session: false }),
     JwtModule.registerAsync({
         inject: [ConfigService],
-        useFactory: (cfg: ConfigService): JwtModuleOptions => ({
-            secret: cfg.getOrThrow<string>('jwt.accessSecret'),
-            signOptions: { expiresIn: cfg.getOrThrow<number>('jwt.accessTtl') },
-        }),
+        useFactory: (cfg: ConfigService): JwtModuleOptions => {
+            const expiresIn = cfg.getOrThrow<string>('jwt.accessTtl');
+            return {
+                secret: cfg.getOrThrow<string>('jwt.accessSecret'),
+                signOptions: { expiresIn: expiresIn as any },
+            };
+        },
     }),
     TypeOrmModule.forFeature([UserOrmEntity])
   ],

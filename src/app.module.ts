@@ -5,7 +5,6 @@ import { validationSchema } from './config/validation';
 import configuration from './config/configuration';
 
 import { AuthModule } from './presentation/auth/auth.module';
-import { AsbModule } from './presentation/asb/asb.module';
 import { UserModule } from './presentation/users/user.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -36,7 +35,6 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
             inject: [ConfigService],
         }),
         AuthModule,
-        AsbModule,
         UserModule,
         // other modules...
     ],

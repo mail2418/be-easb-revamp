@@ -10,7 +10,7 @@ export default () => ({
     jwt: {
         accessSecret: process.env.JWT_ACCESS_SECRET,
         refreshSecret: process.env.JWT_REFRESH_SECRET,
-        accessTtl: process.env.JWT_ACCESS_TTL || '28800',
-        refreshTtl: process.env.JWT_REFRESH_TTL || '86400',
+        accessTtl: process.env.JWT_ACCESS_TTL || '8h',
+        refreshTtl: process.env.JWT_REFRESH_TTL || '24h',
     },
 });

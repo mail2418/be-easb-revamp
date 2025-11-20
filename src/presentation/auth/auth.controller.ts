@@ -24,8 +24,8 @@ export class AuthController {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            path: '/api/dev/v1/auth',
-            maxAge: token.maxAgeRefresh, // <- gunakan ms dari service
+            path: '/',
+            maxAge: token.maxAgeRefresh,
         });
 
         return {
@@ -49,7 +49,7 @@ export class AuthController {
             httpOnly: true, 
             secure: process.env.NODE_ENV === 'production', 
             sameSite: 'strict', 
-            path: '/api/dev/v1/auth',
+            path: '/',
             maxAge: tokens.maxAgeRefresh,
         });
 
@@ -58,7 +58,7 @@ export class AuthController {
 
     @Post('logout')
     async logout(@Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
-        res.clearCookie('refreshToken', { path: '/api/dev/v1/auth' });
+        res.clearCookie('refreshToken', { path: '/' });
         return { status: 'success', responseCode: 200, message: 'Logged out', data: null };
     }
 
@@ -67,7 +67,7 @@ export class AuthController {
     async revokeAll(@Body() revokeDto: RevokeAllDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
         await this.authService.revokeAllRefreshTokens(revokeDto);
 
-        res.clearCookie('refreshToken', { path: '/api/dev/v1/auth' });
+        res.clearCookie('refreshToken', { path: '/' });
         return { status: 'success', responseCode: 200, message: 'All refresh tokens revoked', data: null };
     }
 }
