@@ -22,45 +22,53 @@ export class AddKecamatanKelurahanToAsb1765715279457 implements MigrationInterfa
             })
         );
 
-        // Add foreign key constraint for id_kecamatan
-        await queryRunner.createForeignKey(
-            'asb',
-            new TableForeignKey({
-                columnNames: ['id_kecamatan'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'kecamatan',
-                onDelete: 'SET NULL',
-            })
-        );
+        // Check if kecamatans table exists before adding foreign key
+        const hasKecamatanTable = await queryRunner.hasTable('kecamatans');
+        if (hasKecamatanTable) {
+            await queryRunner.createForeignKey(
+                'asb',
+                new TableForeignKey({
+                    columnNames: ['id_kecamatan'],
+                    referencedColumnNames: ['id'],
+                    referencedTableName: 'kecamatans',
+                    onDelete: 'SET NULL',
+                })
+            );
+        }
 
-        // Add foreign key constraint for id_kelurahan
-        await queryRunner.createForeignKey(
-            'asb',
-            new TableForeignKey({
-                columnNames: ['id_kelurahan'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'kelurahan',
-                onDelete: 'SET NULL',
-            })
-        );
+        // Check if kelurahans table exists before adding foreign key
+        const hasKelurahanTable = await queryRunner.hasTable('kelurahans');
+        if (hasKelurahanTable) {
+            await queryRunner.createForeignKey(
+                'asb',
+                new TableForeignKey({
+                    columnNames: ['id_kelurahan'],
+                    referencedColumnNames: ['id'],
+                    referencedTableName: 'kelurahans',
+                    onDelete: 'SET NULL',
+                })
+            );
+        }
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        // Drop foreign keys first
+        // Drop foreign keys first (if they exist)
         const table = await queryRunner.getTable('asb');
         
-        const kecamatanForeignKey = table?.foreignKeys.find(
-            (fk) => fk.columnNames.indexOf('id_kecamatan') !== -1
-        );
-        if (kecamatanForeignKey) {
-            await queryRunner.dropForeignKey('asb', kecamatanForeignKey);
-        }
+        if (table) {
+            const kecamatanForeignKey = table.foreignKeys.find(
+                (fk) => fk.columnNames.indexOf('id_kecamatan') !== -1
+            );
+            if (kecamatanForeignKey) {
+                await queryRunner.dropForeignKey('asb', kecamatanForeignKey);
+            }
 
-        const kelurahanForeignKey = table?.foreignKeys.find(
-            (fk) => fk.columnNames.indexOf('id_kelurahan') !== -1
-        );
-        if (kelurahanForeignKey) {
-            await queryRunner.dropForeignKey('asb', kelurahanForeignKey);
+            const kelurahanForeignKey = table.foreignKeys.find(
+                (fk) => fk.columnNames.indexOf('id_kelurahan') !== -1
+            );
+            if (kelurahanForeignKey) {
+                await queryRunner.dropForeignKey('asb', kelurahanForeignKey);
+            }
         }
 
         // Drop columns
