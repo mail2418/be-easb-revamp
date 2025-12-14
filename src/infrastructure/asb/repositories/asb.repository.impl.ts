@@ -40,6 +40,7 @@ export class AsbRepositoryImpl implements AsbRepository {
                     'verifikatorAdpem',
                     'verifikatorBPKAD',
                     'verifikatorBappeda',
+                    'rejectVerifikator',
                     'asbDetails',
                     'asbDetails.asbLantai',
                     'asbDetailReviews',
@@ -117,6 +118,7 @@ export class AsbRepositoryImpl implements AsbRepository {
                 'verifikatorAdpem',
                 'verifikatorBPKAD',
                 'verifikatorBappeda',
+                'rejectVerifikator',
                 'asbDetails',
                 'asbDetails.asbLantai',
                 'asbDetailReviews',
@@ -318,6 +320,30 @@ export class AsbRepositoryImpl implements AsbRepository {
             const persentasePembangunan = totalUsulan > 0 ? (totalPembangunan / totalUsulan) * 100 : 0;
             const persentasePemeliharaan = totalUsulan > 0 ? (totalPemeliharaan / totalUsulan) * 100 : 0;
 
+            // Query daily data if month and year are provided
+            let dailyData: Array<{ date: string; count: number }> = [];
+            if (filter?.bulan !== undefined && filter?.tahun !== undefined) {
+                const dailyQb = this.repo
+                    .createQueryBuilder('e')
+                    .select("DATE(e.created_at)", "date")
+                    .addSelect("COUNT(e.id)", "count")
+                    .where("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan })
+                    .andWhere("EXTRACT(YEAR FROM e.created_at) = :tahun", { tahun: filter.tahun });
+
+                if (idOpd) {
+                    dailyQb.andWhere("e.id_opd = :idOpd", { idOpd });
+                }
+
+                dailyQb.groupBy("DATE(e.created_at)")
+                    .orderBy("DATE(e.created_at)", "ASC");
+
+                const dailyRows = await dailyQb.getRawMany<{ date: string; count: string }>();
+                dailyData = dailyRows.map(r => ({
+                    date: r.date,
+                    count: Number(r.count),
+                }));
+            }
+
             return {
                 totalSuksesBangunan,
                 totalTolakBangunan,
@@ -330,6 +356,7 @@ export class AsbRepositoryImpl implements AsbRepository {
                 totalPemeliharaan,
                 persentasePembangunan: Number(persentasePembangunan.toFixed(2)),
                 persentasePemeliharaan: Number(persentasePemeliharaan.toFixed(2)),
+                dailyData,
             };
         } catch (error) {
             console.log("Error getting ASB analytics:", error);
@@ -367,6 +394,7 @@ export class AsbRepositoryImpl implements AsbRepository {
                     'verifikatorAdpem',
                     'verifikatorBPKAD',
                     'verifikatorBappeda',
+                    'rejectVerifikator',
                     'asbDetails',
                     'asbDetails.asbLantai',
                     'asbDetailReviews',

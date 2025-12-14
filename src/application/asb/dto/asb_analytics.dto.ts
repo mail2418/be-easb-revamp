@@ -10,5 +10,6 @@ export class AsbAnalyticsDto {
     totalPemeliharaan: number;
     persentasePembangunan: number;
     persentasePemeliharaan: number;
+    dailyData: Array<{ date: string; count: number }>;
 }
 

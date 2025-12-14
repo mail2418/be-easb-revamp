@@ -11,6 +11,7 @@ export class AsbWithRelationsDto {
     idVerifikatorAdpem: number | null;
     idVerifikatorBPKAD: number | null;
     idVerifikatorBappeda: number | null;
+    rejectVerifId: number | null;
     tahunAnggaran: number | null;
     namaAsb: string;
     alamat: string | null;
@@ -20,6 +21,7 @@ export class AsbWithRelationsDto {
     verifiedAdpemAt: Date | null;
     verifiedBpkadAt: Date | null;
     verifiedBappedaAt: Date | null;
+    rejectedAt: Date | null;
     rejectReason: string | null;
     shst: number | null;
     perencanaanKonstruksi: number | null;
@@ -81,6 +83,11 @@ export class AsbWithRelationsDto {
     } | null;
 
     verifikatorBappeda?: {
+        id: number;
+        username: string;
+    } | null;
+
+    rejectVerifikator?: {
         id: number;
         username: string;
     } | null;

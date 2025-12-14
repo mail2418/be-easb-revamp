@@ -895,7 +895,7 @@ export class AsbController {
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.reject(dto.id_asb, dto.reject_reason, user.idOpd, user.roles);
+            const result = await this.asbService.reject(dto.id_asb, dto.reject_reason, user.userId, user.idOpd, user.roles);
 
             return {
                 status: 'success',

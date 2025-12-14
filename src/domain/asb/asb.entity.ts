@@ -27,6 +27,7 @@ export class Asb {
     idVerifikatorAdpem: number | null;
     idVerifikatorBPKAD: number | null;
     idVerifikatorBappeda: number | null;
+    rejectVerifId: number | null;
 
     // Core fields
     tahunAnggaran: number | null;
@@ -38,6 +39,7 @@ export class Asb {
     verifiedAdpemAt: Date | null;
     verifiedBpkadAt: Date | null;
     verifiedBappedaAt: Date | null;
+    rejectedAt: Date | null;
     rejectReason: string | null;
 
     // Double/numeric fields
@@ -65,6 +67,7 @@ export class Asb {
     verifikatorAdpem?: User | null;
     verifikatorBPKAD?: User | null;
     verifikatorBappeda?: User | null;
+    rejectVerifikator?: User | null;
 
     // OneToMany Relations
     asbDetails?: AsbDetail[];

@@ -64,6 +64,9 @@ export class AsbOrmEntity {
     @Column({ name: 'id_verifikator_bappeda', type: 'int', nullable: true })
     idVerifikatorBappeda: number | null;
 
+    @Column({ name: 'reject_verif_id', type: 'int', nullable: true })
+    rejectVerifId: number | null;
+
     // Core fields
     @Column({ name: 'tahun_anggaran', type: 'int', nullable: true })
     tahunAnggaran: number | null;
@@ -91,6 +94,9 @@ export class AsbOrmEntity {
 
     @Column({ name: 'verified_bappeda_at', type: 'timestamptz', nullable: true })
     verifiedBappedaAt: Date | null;
+
+    @Column({ name: 'rejected_at', type: 'timestamptz', nullable: true })
+    rejectedAt: Date | null;
 
     @Column({ name: 'reject_reason', type: 'text', nullable: true })
     rejectReason: string | null;
@@ -266,6 +272,10 @@ export class AsbOrmEntity {
     @ManyToOne(() => UserOrmEntity, { nullable: true, onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_verifikator_bappeda' })
     verifikatorBappeda: UserOrmEntity | null;
+
+    @ManyToOne(() => UserOrmEntity, { nullable: true, onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'reject_verif_id' })
+    rejectVerifikator: UserOrmEntity | null;
 
     // OneToMany Relations
     @OneToMany(() => AsbDetailOrmEntity, (entity) => entity.asb)

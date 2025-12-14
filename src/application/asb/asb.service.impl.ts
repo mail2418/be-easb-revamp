@@ -1304,7 +1304,7 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async reject(id_asb: number, rejectReason: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async reject(id_asb: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // 1. Check permissions and existence
             const asb = await this.findById(id_asb, userIdOpd, userRoles);
@@ -1315,7 +1315,9 @@ export class AsbServiceImpl implements AsbService {
             // 2. Update ASB idAsbStatus to 7
             const updatedAsb = await this.repository.update(id_asb, {
                 idAsbStatus: 7,
-                rejectReason: rejectReason
+                rejectReason: rejectReason,
+                rejectVerifId: Number(userId),
+                rejectedAt: new Date()
             });
 
             return {
