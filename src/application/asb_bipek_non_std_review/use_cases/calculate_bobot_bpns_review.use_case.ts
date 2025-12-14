@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AsbKomponenBangunanProsNonstdRepository } from '../../../domain/asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.repository';
 import { AsbDetailService } from '../../../domain/asb_detail/asb_detail.service';
 import { AsbBipekNonStdReviewService } from '../../../domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
@@ -47,6 +47,10 @@ export class CalculateBobotBPNSReviewUseCase {
                 const asbKompBangPros = await this.asbKomponenBangunanProsNonstdRepository
                     .findByKomponenBangunanNonstdId(komponenIds[i]);
 
+                if (asbKompBangPros === null) {
+                    throw new NotFoundException("ASB is missing required asbKompBangPros data for Jakon lookup");
+                }
+
                 if (asbKompBangPros) {
                     kompBangProsList[i] = asbKompBangPros;
                     let bobotAcuan = 0;
@@ -62,6 +66,7 @@ export class CalculateBobotBPNSReviewUseCase {
                     }
 
                     jumlahBobot += (bobotInputs[i] / 100) * bobotAcuan;
+                    console.log("jumlahBobot:", jumlahBobot);
                 }
             }
         }

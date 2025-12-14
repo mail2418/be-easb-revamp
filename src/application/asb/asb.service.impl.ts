@@ -550,8 +550,13 @@ export class AsbServiceImpl implements AsbService {
 
             // Save jakon price variables
             if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !totalBiayaPembangunan) {
-                throw new Error("ASB is missing required classification or location data for Jakon lookup");
+                throw new BadRequestException("ASB is missing required classification or location data for Jakon lookup");
             }
+
+            console.log("asb.idAsbKlasifikasi:", asb.idAsbKlasifikasi);
+            console.log("asb.idAsbTipeBangunan:", asb.idAsbTipeBangunan);
+            console.log("asb.idAsbJenis:", asb.idAsbJenis);
+            console.log("totalBiayaPembangunan:", totalBiayaPembangunan);
 
             const perencanaanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
                 id_asb_klasifikasi: asb.idAsbKlasifikasi,
@@ -561,8 +566,10 @@ export class AsbServiceImpl implements AsbService {
                 total_biaya_pembangunan: totalBiayaPembangunan
             });
 
+            console.log("perencanaanKonstruksi:", perencanaanKonstruksi);
+
             if (!perencanaanKonstruksi) {
-                throw new Error("ASB is missing required perencanaanKonstruksi data for Jakon lookup");
+                throw new NotFoundException("ASB is missing required perencanaanKonstruksi data for Jakon lookup");
             }
 
             const nominalPerencanaanKonstruksi = perencanaanKonstruksi.standard;
@@ -576,13 +583,13 @@ export class AsbServiceImpl implements AsbService {
             });
 
             if (!pengawasanKonstruksi) {
-                throw new Error("ASB is missing required pengawasanKonstruksi data for Jakon lookup");
+                throw new NotFoundException("ASB is missing required pengawasanKonstruksi data for Jakon lookup");
             }
 
             const nominalPengawasanKonstruksi = pengawasanKonstruksi.standard;
 
             if (!asb.totalLantai || !asb.jumlahKontraktor) {
-                throw new Error("ASB is missing required totalLantai or jumlahKontraktor data for Jakon lookup");
+                throw new NotFoundException("ASB is missing required totalLantai or jumlahKontraktor data for Jakon lookup");
             }
 
             const managementKonstruksi = (asb.totalLantai <= 4 && asb.jumlahKontraktor <= 2) ? 0 : await this.asbJakonService.getJakonByPriceRange({
@@ -614,7 +621,7 @@ export class AsbServiceImpl implements AsbService {
 
 
             if (!pengelolaanKegiatan) {
-                throw new Error("ASB is missing required pengelolaanKegiatan data for Jakon lookup");
+                throw new NotFoundException("ASB is missing required pengelolaanKegiatan data for Jakon lookup");
             }
 
             const nominalPengelolaanKegiatan = pengelolaanKegiatan.standard;
