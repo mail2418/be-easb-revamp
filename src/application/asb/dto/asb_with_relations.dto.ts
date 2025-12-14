@@ -7,6 +7,8 @@ export class AsbWithRelationsDto {
     idRekening: number | null;
     idRekeningReview: number | null;
     idKabkota: number | null;
+    idKecamatan: number | null;
+    idKelurahan: number | null;
     idAsbKlasifikasi: number | null;
     idVerifikatorAdpem: number | null;
     idVerifikatorBPKAD: number | null;
@@ -44,6 +46,18 @@ export class AsbWithRelationsDto {
         id: number;
         nama: string;
         idProvinsi: number;
+    } | null;
+
+    kecamatan?: {
+        id: number;
+        namaKecamatan: string;
+        idKabkota: number;
+    } | null;
+
+    kelurahan?: {
+        id: number;
+        namaKelurahan: string;
+        idKecamatan: number;
     } | null;
 
     asbStatus?: {

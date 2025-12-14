@@ -42,6 +42,16 @@ export class UpdateAsbStoreIndexDto {
     @Type(() => Number)
     idKabkota: number;
 
+    @IsOptional()
+    @IsInt()
+    @Type(() => Number)
+    idKecamatan?: number;
+
+    @IsOptional()
+    @IsInt()
+    @Type(() => Number)
+    idKelurahan?: number;
+
     @IsInt()
     @IsNotEmpty()
     @Type(() => Number)

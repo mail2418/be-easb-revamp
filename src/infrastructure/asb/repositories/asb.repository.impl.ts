@@ -30,6 +30,8 @@ export class AsbRepositoryImpl implements AsbRepository {
                 where: whereClause,
                 relations: [
                     'kabkota',
+                    'kecamatan',
+                    'kelurahan',
                     'asbStatus',
                     'asbJenis',
                     'opd',
@@ -108,6 +110,8 @@ export class AsbRepositoryImpl implements AsbRepository {
             where: whereClause,
             relations: [
                 'kabkota',
+                'kecamatan',
+                'kelurahan',
                 'asbStatus',
                 'asbJenis',
                 'opd',
@@ -384,6 +388,8 @@ export class AsbRepositoryImpl implements AsbRepository {
                 where: { id },
                 relations: [
                     'kabkota',
+                    'kecamatan',
+                    'kelurahan',
                     'asbStatus',
                     'asbJenis',
                     'opd',

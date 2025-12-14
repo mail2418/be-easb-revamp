@@ -15,6 +15,8 @@ import { OpdOrmEntity } from '../../opd/orm/opd.orm_entity';
 import { AsbTipeBangunanOrmEntity } from '../../asb_tipe_bangunan/orm/asb_tipe_bangunan.orm_entity';
 import { RekeningOrmEntity } from '../../rekening/orm/rekening.orm_entity';
 import { KabKotaOrmEntity } from '../../kabkota/orm/kabkota.orm_entity';
+import { KecamatanOrmEntity } from '../../kecamatan/orm/kecamatan.orm_entity';
+import { KelurahanOrmEntity } from '../../kelurahan/orm/kelurahan.orm_entity';
 import { AsbKlasifikasiOrmEntity } from '../../asb_klasifikasi/orm/asb_klasifikasi.orm_entity';
 import { UserOrmEntity } from '../../user/orm/user.orm_entity';
 import { AsbDetailOrmEntity } from '../../asb_detail/orm/asb_detail.orm_entity';
@@ -51,6 +53,12 @@ export class AsbOrmEntity {
 
     @Column({ name: 'id_kabkota', type: 'int', nullable: true })
     idKabkota: number | null;
+
+    @Column({ name: 'id_kecamatan', type: 'int', nullable: true })
+    idKecamatan: number | null;
+
+    @Column({ name: 'id_kelurahan', type: 'int', nullable: true })
+    idKelurahan: number | null;
 
     @Column({ name: 'id_asb_klasifikasi', type: 'int', nullable: true })
     idAsbKlasifikasi: number | null;
@@ -256,6 +264,14 @@ export class AsbOrmEntity {
     @ManyToOne(() => KabKotaOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_kabkota' })
     kabkota: KabKotaOrmEntity;
+
+    @ManyToOne(() => KecamatanOrmEntity, { nullable: true, onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_kecamatan' })
+    kecamatan: KecamatanOrmEntity | null;
+
+    @ManyToOne(() => KelurahanOrmEntity, { nullable: true, onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_kelurahan' })
+    kelurahan: KelurahanOrmEntity | null;
 
     @ManyToOne(() => AsbKlasifikasiOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_asb_klasifikasi' })

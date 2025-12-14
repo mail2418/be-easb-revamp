@@ -550,13 +550,8 @@ export class AsbServiceImpl implements AsbService {
 
             // Save jakon price variables
             if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !totalBiayaPembangunan) {
-                throw new BadRequestException("ASB is missing required classification or location data for Jakon lookup");
+                throw new NotFoundException("ASB is missing required classification or location data for Jakon lookup");
             }
-
-            console.log("asb.idAsbKlasifikasi:", asb.idAsbKlasifikasi);
-            console.log("asb.idAsbTipeBangunan:", asb.idAsbTipeBangunan);
-            console.log("asb.idAsbJenis:", asb.idAsbJenis);
-            console.log("totalBiayaPembangunan:", totalBiayaPembangunan);
 
             const perencanaanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
                 id_asb_klasifikasi: asb.idAsbKlasifikasi,
@@ -565,8 +560,6 @@ export class AsbServiceImpl implements AsbService {
                 type: AsbJakonType.PERENCANAAN,
                 total_biaya_pembangunan: totalBiayaPembangunan
             });
-
-            console.log("perencanaanKonstruksi:", perencanaanKonstruksi);
 
             if (!perencanaanKonstruksi) {
                 throw new NotFoundException("ASB is missing required perencanaanKonstruksi data for Jakon lookup");
@@ -611,21 +604,6 @@ export class AsbServiceImpl implements AsbService {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
             }
 
-            const pengelolaanKegiatan = await this.asbJakonService.getJakonByPriceRange({
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.PENGELOLAAN,
-                total_biaya_pembangunan: totalBiayaPembangunan
-            });
-
-
-            if (!pengelolaanKegiatan) {
-                throw new NotFoundException("ASB is missing required pengelolaanKegiatan data for Jakon lookup");
-            }
-
-            const nominalPengelolaanKegiatan = pengelolaanKegiatan.standard;
-
             const rekapitulasiBiayaKonstruksi = Number(asb.totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi);
 
             const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
@@ -639,7 +617,7 @@ export class AsbServiceImpl implements AsbService {
                 perencanaanKonstruksi: nominalPerencanaanKonstruksi,
                 pengawasanKonstruksi: nominalPengawasanKonstruksi,
                 managementKonstruksi: nominalManagementKonstruksi,
-                pengelolaanKegiatan: nominalPengelolaanKegiatan,
+                pengelolaanKegiatan: 0,
                 rekapitulasiBiayaKonstruksi: rekapitulasiBiayaKonstruksi,
                 rekapitulasiBiayaKonstruksiRounded: rekapitulasiBiayaKonstruksiRounded,
             });
@@ -970,21 +948,6 @@ export class AsbServiceImpl implements AsbService {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
             }
 
-            const pengelolaanKegiatan = await this.asbJakonService.getJakonByPriceRange({
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.PENGELOLAAN,
-                total_biaya_pembangunan: totalBiayaPembangunan
-            });
-
-
-            if (!pengelolaanKegiatan) {
-                throw new Error("ASB is missing required pengelolaanKegiatan data for Jakon lookup");
-            }
-
-            const nominalPengelolaanKegiatan = pengelolaanKegiatan.standard;
-
             const rekapitulasiBiayaKonstruksi = nominalPerencanaanKonstruksi + nominalPengawasanKonstruksi + nominalManagementKonstruksi;
 
             const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
@@ -1000,7 +963,7 @@ export class AsbServiceImpl implements AsbService {
                 perencanaanKonstruksi: nominalPerencanaanKonstruksi,
                 pengawasanKonstruksi: nominalPengawasanKonstruksi,
                 managementKonstruksi: nominalManagementKonstruksi,
-                pengelolaanKegiatan: nominalPengelolaanKegiatan,
+                pengelolaanKegiatan: 0,
             });
 
             return {

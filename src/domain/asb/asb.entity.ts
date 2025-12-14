@@ -3,6 +3,8 @@ import { Opd } from '../opd/opd.entity';
 import { AsbStatus } from '../asb_status/asb_status.entity';
 import { AsbJenis } from '../asb_jenis/asb_jenis.entity';
 import { User } from '../user/user.entity';
+import { Kecamatan } from '../kecamatan/kecamatan.entity';
+import { Kelurahan } from '../kelurahan/kelurahan.entity';
 import { AsbDetail } from '../asb_detail/asb_detail.entity';
 import { AsbDetailReview } from '../asb_detail_review/asb_detail_review.entity';
 import { AsbBipekStandard } from '../asb_bipek_standard/asb_bipek_standard.entity';
@@ -23,6 +25,8 @@ export class Asb {
     idRekening: number | null;
     idRekeningReview: number | null;
     idKabkota: number | null;
+    idKecamatan: number | null;
+    idKelurahan: number | null;
     idAsbKlasifikasi: number | null;
     idVerifikatorAdpem: number | null;
     idVerifikatorBPKAD: number | null;
@@ -61,6 +65,8 @@ export class Asb {
 
     // Relations
     kabkota?: KabKota | null;
+    kecamatan?: Kecamatan | null;
+    kelurahan?: Kelurahan | null;
     opd?: Opd;
     asbStatus?: AsbStatus;
     asbJenis?: AsbJenis;
