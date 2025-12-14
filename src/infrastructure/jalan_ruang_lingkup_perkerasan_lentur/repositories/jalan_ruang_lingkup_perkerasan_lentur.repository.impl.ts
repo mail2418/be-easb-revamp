@@ -7,7 +7,7 @@ import { JalanRuangLingkupPerkerasanLentur } from "../../../domain/jalan_ruang_l
 import { CreateJalanRuangLingkupPerkerasanLenturDto } from "../../../presentation/jalan_ruang_lingkup_perkerasan_lentur/dto/create_jalan_ruang_lingkup_perkerasan_lentur.dto";
 import { plainToInstance } from "class-transformer";
 import { UpdateJalanRuangLingkupPerkerasanLenturDto } from "../../../presentation/jalan_ruang_lingkup_perkerasan_lentur/dto/update_jalan_ruang_lingkup_perkerasan_lentur.dto";
-import { GetJJalanRuangLingkupPerkerasanLenturDto } from "../../../presentation/jalan_ruang_lingkup_perkerasan_lentur/dto/get_jalan_ruang_lingkup_perkerasan_lentur.dto";
+import { GetJalanRuangLingkupPerkerasanLenturDto } from "../../../presentation/jalan_ruang_lingkup_perkerasan_lentur/dto/get_jalan_ruang_lingkup_perkerasan_lentur.dto";
 
 @Injectable()
 export class JalanRuangLingkupPerkerasanLenturRepositoryImpl implements JalanRuangLingkupPerkerasanLenturRepository {
@@ -51,13 +51,18 @@ export class JalanRuangLingkupPerkerasanLenturRepositoryImpl implements JalanRua
         }
     }
 
-    async findAll(dto: GetJJalanRuangLingkupPerkerasanLenturDto): Promise<{ data: JalanRuangLingkupPerkerasanLentur[]; total: number; }> {
+    async findAll(dto: GetJalanRuangLingkupPerkerasanLenturDto): Promise<{ data: JalanRuangLingkupPerkerasanLentur[]; total: number; }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (dto.page - 1) * dto.amount,
-                take: dto.amount,
-                order: { id: "DESC" }
-            });
+            const queryBuilder = this.repo.createQueryBuilder('jalan_ruang_lingkup_perkerasan_lentur');
+
+            if (dto.page !== undefined && dto.amount !== undefined) {
+                queryBuilder.skip((dto.page - 1) * dto.amount).take(dto.amount);
+            }
+
+            const [data, total] = await queryBuilder
+                .orderBy('jalan_ruang_lingkup_perkerasan_lentur.id', 'DESC')
+                .getManyAndCount();
+
             return { data, total };
         } catch (error) {
             throw error;

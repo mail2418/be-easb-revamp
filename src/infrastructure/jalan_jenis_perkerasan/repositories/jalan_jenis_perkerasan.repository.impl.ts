@@ -53,11 +53,16 @@ export class JalanJenisPerkerasanRepositoryImpl implements JalanJenisPerkerasanR
 
     async findAll(dto: GetJalanJenisPerkerasanDto): Promise<{ data: JalanJenisPerkerasan[]; total: number; }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (dto.page - 1) * dto.amount,
-                take: dto.amount,
-                order: { id: "DESC" }
-            });
+            const queryBuilder = this.repo.createQueryBuilder('jalan_jenis_perkerasan');
+
+            if (dto.page !== undefined && dto.amount !== undefined) {
+                queryBuilder.skip((dto.page - 1) * dto.amount).take(dto.amount);
+            }
+
+            const [data, total] = await queryBuilder
+                .orderBy('jalan_jenis_perkerasan.id', 'DESC')
+                .getManyAndCount();
+
             return { data, total };
         } catch (error) {
             throw error;

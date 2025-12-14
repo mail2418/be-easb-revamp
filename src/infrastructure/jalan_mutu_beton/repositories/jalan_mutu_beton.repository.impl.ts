@@ -53,11 +53,16 @@ export class JalanMutuBetonRepositoryImpl implements JalanMutuBetonRepository {
 
     async findAll(dto: GetJalanMutuBetonDto): Promise<{ data: JalanMutuBeton[]; total: number; }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (dto.page - 1) * dto.amount,
-                take: dto.amount,
-                order: { id: "DESC" }
-            });
+            const queryBuilder = this.repo.createQueryBuilder('jalan_mutu_beton');
+
+            if (dto.page !== undefined && dto.amount !== undefined) {
+                queryBuilder.skip((dto.page - 1) * dto.amount).take(dto.amount);
+            }
+
+            const [data, total] = await queryBuilder
+                .orderBy('jalan_mutu_beton.id', 'DESC')
+                .getManyAndCount();
+
             return { data, total };
         } catch (error) {
             throw error;

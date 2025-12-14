@@ -9,32 +9,32 @@ import {
     HttpException,
     Query,
 } from "@nestjs/common";
-import { JalanRuangLingkupPerkerasanKakuService } from "../../domain/jalan_ruang_lingkup_perkerasan_kaku/jalan_ruang_lingkup_perkerasan_kaku.service";
+import { UsulanJalanStatusService } from "../../domain/usulan_jalan_status/usulan_jalan_status.service";
 import { Roles } from "../../common/decorators/roles.decorator";
-import { CreateJalanRuangLingkupPerkerasanKakuDto } from "./dto/create_jalan_ruang_lingkup_perkerasan_kaku.dto";
-import { UpdateJalanRuangLingkupPerkerasanKakuDto } from "./dto/update_jalan_ruang_lingkup_perkerasan_kaku.dto";
-import { DeleteJalanRuangLingkupPerkerasanKakuDto } from "./dto/delete_jalan_ruang_lingkup_perkerasan_kaku.dto";
-import { GetJalanRuangLingkupPerkerasanKakuDto } from "./dto/get_jalan_ruang_lingkup_perkerasan_kaku.dto";
-import { GetJalanRuangLingkupPerkerasanKakuDetailDto } from "./dto/get_jalan_ruang_lingkup_perkerasan_kaku_detail.dto";
+import { CreateUsulanJalanStatusDto } from "./dto/create_usulan_jalan_status.dto";
+import { UpdateUsulanJalanStatusDto } from "./dto/update_usulan_jalan_status.dto";
+import { DeleteUsulanJalanStatusDto } from "./dto/delete_usulan_jalan_status.dto";
+import { GetUsulanJalanStatusDto } from "./dto/get_usulan_jalan_status.dto";
+import { GetUsulanJalanStatusDetailDto } from "./dto/get_usulan_jalan_status_detail.dto";
 import { ResponseDto } from "../../common/dto/response.dto";
 import { Role } from "../../domain/user/user_role.enum";
 
-@Controller("jalan-ruang-lingkup-perkerasan-kaku")
+@Controller("usulan-jalan-status")
 @Roles(Role.SUPERADMIN)
-export class JalanRuangLingkupPerkerasanKakuController {
-    constructor(private readonly jalanRuangLingkupPerkerasanKakuService: JalanRuangLingkupPerkerasanKakuService) { }
+export class UsulanJalanStatusController {
+    constructor(private readonly usulanJalanStatusService: UsulanJalanStatusService) { }
 
     @Post()
     @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateJalanRuangLingkupPerkerasanKakuDto): Promise<ResponseDto> {
+    async create(@Body() dto: CreateUsulanJalanStatusDto): Promise<ResponseDto> {
         try {
-            const jalanRuangLingkupPerkerasanKaku = await this.jalanRuangLingkupPerkerasanKakuService.create(dto);
+            const usulanJalanStatus = await this.usulanJalanStatusService.create(dto);
 
             return {
                 status: "success",
                 responseCode: HttpStatus.CREATED,
-                message: "Jalan Ruang Lingkup Perkerasan Kaku created",
-                data: jalanRuangLingkupPerkerasanKaku,
+                message: "Usulan Jalan Status created",
+                data: usulanJalanStatus,
             };
         } catch (error) {
             if (error instanceof HttpException) {
@@ -73,15 +73,15 @@ export class JalanRuangLingkupPerkerasanKakuController {
 
     @Put()
     @Roles(Role.SUPERADMIN)
-    async updateJalanRuangLingkupPerkerasanKaku(@Body() dto: UpdateJalanRuangLingkupPerkerasanKakuDto): Promise<ResponseDto> {
+    async updateUsulanJalanStatus(@Body() dto: UpdateUsulanJalanStatusDto): Promise<ResponseDto> {
         try {
-            const jalanRuangLingkupPerkerasanKaku = await this.jalanRuangLingkupPerkerasanKakuService.update(dto);
+            const usulanJalanStatus = await this.usulanJalanStatusService.update(dto);
 
             return {
                 status: "success",
                 responseCode: HttpStatus.OK,
-                message: "Jalan Ruang Lingkup Perkerasan Kaku updated",
-                data: jalanRuangLingkupPerkerasanKaku,
+                message: "Usulan Jalan Status updated",
+                data: usulanJalanStatus,
             };
         } catch (error) {
             if (error instanceof HttpException) {
@@ -120,14 +120,14 @@ export class JalanRuangLingkupPerkerasanKakuController {
 
     @Delete()
     @Roles(Role.SUPERADMIN)
-    async deleteJalanRuangLingkupPerkerasanKaku(@Body() dto: DeleteJalanRuangLingkupPerkerasanKakuDto): Promise<ResponseDto> {
+    async deleteUsulanJalanStatus(@Body() dto: DeleteUsulanJalanStatusDto): Promise<ResponseDto> {
         try {
-            const deleted = await this.jalanRuangLingkupPerkerasanKakuService.delete(dto.id);
+            const deleted = await this.usulanJalanStatusService.delete(dto.id);
 
             return {
                 status: "success",
                 responseCode: HttpStatus.OK,
-                message: "Jalan Ruang Lingkup Perkerasan Kaku deleted",
+                message: "Usulan Jalan Status deleted",
                 data: deleted,
             };
         } catch (error) {
@@ -167,14 +167,14 @@ export class JalanRuangLingkupPerkerasanKakuController {
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getJalanRuangLingkupPerkerasanKakus(@Query() dto: GetJalanRuangLingkupPerkerasanKakuDto): Promise<ResponseDto> {
+    async getUsulanJalanStatuses(@Query() dto: GetUsulanJalanStatusDto): Promise<ResponseDto> {
         try {
-            const result = await this.jalanRuangLingkupPerkerasanKakuService.findAll(dto);
+            const result = await this.usulanJalanStatusService.findAll(dto);
 
             return {
                 status: "success",
                 responseCode: HttpStatus.OK,
-                message: "Jalan Ruang Lingkup Perkerasan Kaku list retrieved",
+                message: "Usulan Jalan Status list retrieved",
                 data: result,
             };
         } catch (error) {
@@ -214,15 +214,15 @@ export class JalanRuangLingkupPerkerasanKakuController {
 
     @Get("detail")
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getJalanRuangLingkupPerkerasanKakuDetail(@Query() dto: GetJalanRuangLingkupPerkerasanKakuDetailDto): Promise<ResponseDto> {
+    async getUsulanJalanStatusDetail(@Query() dto: GetUsulanJalanStatusDetailDto): Promise<ResponseDto> {
         try {
-            const jalanRuangLingkupPerkerasanKaku = await this.jalanRuangLingkupPerkerasanKakuService.findById(dto.id);
+            const usulanJalanStatus = await this.usulanJalanStatusService.findById(dto.id);
 
             return {
                 status: "success",
                 responseCode: HttpStatus.OK,
-                message: "Jalan Ruang Lingkup Perkerasan Kaku detail retrieved",
-                data: jalanRuangLingkupPerkerasanKaku,
+                message: "Usulan Jalan Status detail retrieved",
+                data: usulanJalanStatus,
             };
         } catch (error) {
             if (error instanceof HttpException) {

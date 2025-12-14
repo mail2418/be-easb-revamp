@@ -53,11 +53,16 @@ export class JalanSpesifikasiDesainLenturRepositoryImpl implements JalanSpesifik
 
     async findAll(dto: GetJalanSpesifikasiDesainLenturDto): Promise<{ data: JalanSpesifikasiDesainLentur[]; total: number; }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (dto.page - 1) * dto.amount,
-                take: dto.amount,
-                order: { id: "DESC" }
-            });
+            const queryBuilder = this.repo.createQueryBuilder('jalan_spesifikasi_desain_lentur');
+
+            if (dto.page !== undefined && dto.amount !== undefined) {
+                queryBuilder.skip((dto.page - 1) * dto.amount).take(dto.amount);
+            }
+
+            const [data, total] = await queryBuilder
+                .orderBy('jalan_spesifikasi_desain_lentur.id', 'DESC')
+                .getManyAndCount();
+
             return { data, total };
         } catch (error) {
             throw error;
