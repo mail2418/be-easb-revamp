@@ -16,8 +16,4 @@ export class VerifyPekerjaanDto {
     @IsNumber()
     @IsNotEmpty()
     management_konstruksi: number;
-
-    @IsNumber()
-    @IsNotEmpty()
-    pengelolaan_kegiatan: number;
 }

@@ -1032,7 +1032,6 @@ export class AsbServiceImpl implements AsbService {
                 perencanaanKonstruksi: dto.perencanaan_konstruksi,
                 pengawasanKonstruksi: dto.pengawasan_konstruksi,
                 managementKonstruksi: dto.management_konstruksi,
-                pengelolaanKegiatan: dto.pengelolaan_kegiatan,
                 idVerifikatorAdpem: Number(userId),
                 verifiedAdpemAt: new Date(),
                 idAsbStatus: 13
@@ -1153,20 +1152,6 @@ export class AsbServiceImpl implements AsbService {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
             }
 
-            const pengelolaanKegiatan = await this.asbJakonService.getJakonByPriceRange({
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.PENGELOLAAN,
-                total_biaya_pembangunan: asb.totalBiayaPembangunan
-            });
-
-            if (!pengelolaanKegiatan) {
-                throw new Error("ASB is missing required pengelolaanKegiatan data for Jakon lookup");
-            }
-
-            const nominalPengelolaanKegiatan = pengelolaanKegiatan.standard;
-
             asb.rekapitulasiBiayaKonstruksi = Number(asb.totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi); // perencanaan kegiatan belum ditambah
 
             console.log('rekapitulasiBiayaKonstruksi: ', asb.rekapitulasiBiayaKonstruksi);
@@ -1181,7 +1166,6 @@ export class AsbServiceImpl implements AsbService {
                 perencanaanKonstruksi: nominalPerencanaanKonstruksi,
                 pengawasanKonstruksi: nominalPengawasanKonstruksi,
                 managementKonstruksi: nominalManagementKonstruksi,
-                pengelolaanKegiatan: nominalPengelolaanKegiatan,
                 rekapitulasiBiayaKonstruksi: asb.rekapitulasiBiayaKonstruksi,
                 rekapitulasiBiayaKonstruksiRounded: asb.rekapitulasiBiayaKonstruksiRounded
             });
