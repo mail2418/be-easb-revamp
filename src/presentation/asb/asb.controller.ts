@@ -238,7 +238,7 @@ export class AsbController {
     }
 
     @Put('store-index')
-    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async updateIndex(
         @Body() dto: UpdateAsbStoreIndexDto,
         @Req() req: Request,

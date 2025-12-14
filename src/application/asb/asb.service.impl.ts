@@ -305,12 +305,14 @@ export class AsbServiceImpl implements AsbService {
         // Check permissions
         const isAdmin = userRoles.includes(Role.ADMIN);
         const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
         const isOpd = userRoles.includes(Role.OPD);
 
         // Verify existence and ownership
         let existingAsb: AsbWithRelationsDto | null = null;
 
-        if (isAdmin || isSuperAdmin) {
+        if (isAdmin || isSuperAdmin || isVerifikator) {
+            console.log("isAdmin || isSuperAdmin || isVerifikator");
             existingAsb = await this.repository.findById(dto.id);
         } else if (isOpd) {
             if (!userIdOpd) {
@@ -325,13 +327,9 @@ export class AsbServiceImpl implements AsbService {
             throw new NotFoundException(`ASB with id ${dto.id} not found or access denied`);
         }
 
-        // Force status to 1
-        dto.idAsbStatus = 1;
+        console.log("existingAsb", existingAsb);
 
-        // Update ASB
-        const updatedAsb = await this.repository.update(dto.id, dto);
-
-        return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
+        return { id: existingAsb.id, status: existingAsb.idAsbStatus };
     }
 
     async deleteAsb(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }> {

@@ -382,8 +382,8 @@ export class AsbRepositoryImpl implements AsbRepository {
 
     async update(id: number, data: DeepPartial<AsbOrmEntity>): Promise<AsbWithRelationsDto> {
         try {
+            console.log("Data to update:", data);
             await this.repo.update(id, data);
-            console.log("Entity updated:", data);
             const updatedEntity = await this.repo.findOne({
                 where: { id },
                 relations: [
