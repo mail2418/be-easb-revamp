@@ -88,14 +88,20 @@ export class AsbBipekNonStdRepositoryImpl extends AsbBipekNonStdRepository {
         }
     }
 
-    async findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBipekNonStd[], number]> {
+    async findByAsb(idAsb: number, page?: number, amount?: number): Promise<[AsbBipekNonStd[], number]> {
         try {
-            const [entities, total] = await this.repository.findAndCount({
+            const queryOptions: any = {
                 where: { idAsb },
-                skip: (page - 1) * amount,
-                take: amount,
                 order: { id: 'DESC' }
-            });
+            };
+
+            // Only apply pagination if both page and amount are provided
+            if (page !== undefined && amount !== undefined) {
+                queryOptions.skip = (page - 1) * amount;
+                queryOptions.take = amount;
+            }
+
+            const [entities, total] = await this.repository.findAndCount(queryOptions);
             const domainEntities = entities.map((e) => plainToInstance(AsbBipekNonStd, e));
             return [domainEntities, total];
         } catch (error) {

@@ -99,12 +99,17 @@ export class AsbDetailServiceImpl extends AsbDetailService {
     async getByAsb(dto: GetAsbDetailByAsbDto): Promise<{ data: AsbDetail[], total: number, page: number, amount: number, totalPages: number }> {
         try {
             const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            
+            // If pagination is not provided, return all data with page=1, amount=total
+            const page = dto.page ?? 1;
+            const amount = dto.amount ?? total;
+            
             return {
                 data,
                 total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(total / dto.amount)
+                page,
+                amount,
+                totalPages: amount > 0 ? Math.ceil(total / amount) : 1
             };
         } catch (error) {
             throw error;
@@ -139,9 +144,10 @@ export class AsbDetailServiceImpl extends AsbDetailService {
 
     async calculateKoefLantaiTotal(idAsb: number, luasTotal: number): Promise<number> {
         try {
-            const details = await this.repository.findByAsb(idAsb, 1, 100);
+            // Get all details without pagination
+            const [details] = await this.repository.findByAsb(idAsb);
 
-            const totalKoefLantai = details[0].reduce((total, detail) => total + (detail.lantaiKoef || 0), 0);
+            const totalKoefLantai = details.reduce((total, detail) => total + (detail.lantaiKoef || 0), 0);
 
             return Number((totalKoefLantai / luasTotal).toPrecision(3));
         } catch (error) {
@@ -151,8 +157,9 @@ export class AsbDetailServiceImpl extends AsbDetailService {
 
     async calculateKoefFungsiRuangTotal(idAsb: number, luasTotal: number): Promise<number> {
         try {
-            const details = await this.repository.findByAsb(idAsb, 1, 100);
-            const totalKoefFungsiRuang = details[0].reduce((total, detail) => total + (detail.asbFungsiRuangKoef || 0), 0);
+            // Get all details without pagination
+            const [details] = await this.repository.findByAsb(idAsb);
+            const totalKoefFungsiRuang = details.reduce((total, detail) => total + (detail.asbFungsiRuangKoef || 0), 0);
 
             return Number((totalKoefFungsiRuang / luasTotal).toPrecision(3));
         } catch (error) {

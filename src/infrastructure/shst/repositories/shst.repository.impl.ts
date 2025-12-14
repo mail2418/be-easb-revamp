@@ -51,6 +51,12 @@ export class ShstRepositoryImpl extends ShstRepository {
         try {
             const queryBuilder = this.repo.createQueryBuilder("shst");
 
+            // Add relations
+            queryBuilder
+                .leftJoinAndSelect("shst.asbTipeBangunan", "asbTipeBangunan")
+                .leftJoinAndSelect("shst.asbKlasifikasi", "asbKlasifikasi")
+                .leftJoinAndSelect("shst.kabkota", "kabkota");
+
             // Apply filters
             if (dto.tahun) {
                 queryBuilder.andWhere("shst.tahun = :tahun", { tahun: dto.tahun });
@@ -88,7 +94,10 @@ export class ShstRepositoryImpl extends ShstRepository {
 
     async findById(id: number): Promise<Shst | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id } });
+            const entity = await this.repo.findOne({ 
+                where: { id },
+                relations: ['asbTipeBangunan', 'asbKlasifikasi', 'kabkota']
+            });
             return entity || null;
         } catch (error) {
             throw error;

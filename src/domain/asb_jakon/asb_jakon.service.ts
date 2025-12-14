@@ -7,13 +7,14 @@ import { GetAsbJakonListDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon
 import { GetAsbJakonDetailDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon_detail.dto';
 import { GetAsbJakonListFilterDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon_list_filter.dto';
 import { GetJakonByPriceRangeDto } from 'src/application/asb_jakon/dto/get_jakon_by_price_range.dto';
+import { AsbJakonWithRelationsDto } from 'src/application/asb_jakon/dto/asb_jakon_with_relations.dto';
 
 export abstract class AsbJakonService {
     abstract create(dto: CreateAsbJakonDto): Promise<AsbJakon>;
     abstract update(dto: UpdateAsbJakonDto): Promise<AsbJakon>;
     abstract delete(dto: DeleteAsbJakonDto): Promise<boolean>;
     abstract getAll(pagination: GetAsbJakonListDto): Promise<{ data: AsbJakon[]; total: number }>;
-    abstract getDetail(dto: GetAsbJakonDetailDto): Promise<AsbJakon>;
+    abstract getDetail(dto: GetAsbJakonDetailDto): Promise<AsbJakonWithRelationsDto>;
     abstract findByAsbJenisId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
     abstract findByAsbTipeBangunanId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
     abstract findByAsbKlasifikasiId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;

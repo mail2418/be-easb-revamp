@@ -12,6 +12,7 @@ import { ShstsPaginationResultDto } from "../../presentation/shst/dto/shsts_pagi
 import { ValidateShstForeignKeysUseCase } from "./use_cases/validate_shst_foreign_keys.use_case";
 import { HandleShstFileUseCase } from "./use_cases/handle_shst_file.use_case";
 import { GetShstNominalDto } from './dto/get_shst_nominal.dto';
+import { ShstWithRelationsDto } from './dto/shst_with_relations.dto';
 
 @Injectable()
 export class ShstServiceImpl extends ShstService {
@@ -124,13 +125,13 @@ export class ShstServiceImpl extends ShstService {
         }
     }
 
-    async findById(dto: GetShstDetailDto): Promise<Shst> {
+    async findById(dto: GetShstDetailDto): Promise<ShstWithRelationsDto> {
         try {
             const shst = await this.shstRepository.findById(dto.id);
             if (!shst) {
                 throw new NotFoundException(`Shst with id ${dto.id} not found`);
             }
-            return shst;
+            return shst as ShstWithRelationsDto;
         } catch (error) {
             throw error;
         }

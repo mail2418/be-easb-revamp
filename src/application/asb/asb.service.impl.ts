@@ -703,11 +703,9 @@ export class AsbServiceImpl implements AsbService {
             // 2. Always delete all AsbDetailReview records for this ASB (by id_asb) to ensure clean state
             await this.asbDetailReviewService.deleteByAsbId(dto.id_asb);
 
-            // 3. Get all AsbDetail records
+            // 3. Get all AsbDetail records (without pagination)
             const asbDetails = await this.asbDetailService.getByAsb({
-                idAsb: dto.id_asb,
-                page: 1,
-                amount: 1000
+                idAsb: dto.id_asb
             });
 
             // 4. Create AsbDetailReview records for each lantai
@@ -790,11 +788,9 @@ export class AsbServiceImpl implements AsbService {
             // 3. Always delete all AsbBipekStandardReview records for this ASB (by id_asb) to ensure clean state
             await this.asbBipekStandardReviewService.deleteByAsbId(dto.id_asb);
 
-            // 4. Calculate AsbBipekStandard
+            // 4. Calculate AsbBipekStandard (get all without pagination)
             const getAsbBipekStandardByAsbDto = {
-                idAsb: dto.id_asb,
-                page: 1,
-                amount: 10000
+                idAsb: dto.id_asb
             };
             const asbBipekStandard = await this.asbBipekStandardService.getByAsb(getAsbBipekStandardByAsbDto);
             if (!asbBipekStandard) {
@@ -859,11 +855,9 @@ export class AsbServiceImpl implements AsbService {
             // 3. Always delete all AsbBipekNonStdReview records for this ASB (by id_asb) to ensure clean state
             await this.asbBipekNonStdReviewService.deleteByAsbId(dto.id_asb);
 
-            // 4. Get AsbBipekNonstd
+            // 4. Get AsbBipekNonstd (get all without pagination)
             const getAsbBipekNonstdByAsbDto = {
-                idAsb: dto.id_asb,
-                page: 1,
-                amount: 10000
+                idAsb: dto.id_asb
             };
 
             const asbBipekNonstd = await this.asbBipekNonStdService.getByAsb(getAsbBipekNonstdByAsbDto)
@@ -1199,15 +1193,11 @@ export class AsbServiceImpl implements AsbService {
             }
 
             const dataBpsReview = await this.asbBipekStandardReviewService.getBpsWithRelationByAsb({
-                idAsb: id_asb,
-                page: 1,
-                amount: 10000
+                idAsb: id_asb
             })
 
             const dataBpnsReview = await this.asbBipekNonStdReviewService.getBpnsWithRelationByAsb({
-                idAsb: id_asb,
-                page: 1,
-                amount: 10000
+                idAsb: id_asb
             })
 
             console.log("databpsreview: ", dataBpsReview);

@@ -52,7 +52,10 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
 
     async findById(id: number): Promise<AsbJakon | null> {
         try {
-            const entity = await this.repo.findOneBy({ id });
+            const entity = await this.repo.findOne({
+                where: { id },
+                relations: ['asbTipeBangunan', 'asbJenis', 'asbKlasifikasi']
+            });
             return entity || null;
         } catch (error) {
             throw error;
@@ -64,6 +67,8 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
             const [data, total] = await this.repo.findAndCount({
                 skip: (pagination.page - 1) * pagination.amount,
                 take: pagination.amount,
+                relations: ['asbTipeBangunan', 'asbJenis', 'asbKlasifikasi'],
+                order: { id: 'DESC' }
             });
             return { data, total };
         } catch (error) {

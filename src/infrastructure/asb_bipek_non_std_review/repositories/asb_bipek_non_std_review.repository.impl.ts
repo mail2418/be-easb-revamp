@@ -104,14 +104,20 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
         }
     }
 
-    async findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBipekNonStdReview[], number]> {
+    async findByAsb(idAsb: number, page?: number, amount?: number): Promise<[AsbBipekNonStdReview[], number]> {
         try {
-            const [entities, total] = await this.repository.findAndCount({
+            const queryOptions: any = {
                 where: { idAsb },
-                skip: (page - 1) * amount,
-                take: amount,
                 order: { id: 'DESC' }
-            });
+            };
+
+            // Only apply pagination if both page and amount are provided
+            if (page !== undefined && amount !== undefined) {
+                queryOptions.skip = (page - 1) * amount;
+                queryOptions.take = amount;
+            }
+
+            const [entities, total] = await this.repository.findAndCount(queryOptions);
             const domainEntities = entities.map((e) => plainToInstance(AsbBipekNonStdReview, e));
             return [domainEntities, total];
         } catch (error) {
@@ -121,13 +127,19 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
 
     async getBpnsWithRelationByAsb(dto: GetAsbBipekNonStdReviewByAsbDto): Promise<[BpnsReviewWithRelationsDto[], number]> {
         try {
-            const [entities, total] = await this.repository.findAndCount({
+            const queryOptions: any = {
                 where: { idAsb: dto.idAsb },
-                skip: (dto.page - 1) * dto.amount,
-                take: dto.amount,
                 order: { id: 'DESC' },
                 relations: ['asbKomponenBangunanNonstd']
-            });
+            };
+
+            // Only apply pagination if both page and amount are provided
+            if (dto.page !== undefined && dto.amount !== undefined) {
+                queryOptions.skip = (dto.page - 1) * dto.amount;
+                queryOptions.take = dto.amount;
+            }
+
+            const [entities, total] = await this.repository.findAndCount(queryOptions);
             const domainEntities = entities.map((e) => plainToInstance(BpnsReviewWithRelationsDto, e));
             return [domainEntities, total];
         } catch (error) {

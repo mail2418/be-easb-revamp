@@ -71,12 +71,17 @@ export class AsbBipekStandardServiceImpl extends AsbBipekStandardService {
     async getByAsb(dto: GetAsbBipekStandardByAsbDto): Promise<{ data: AsbBipekStandard[], total: number, page: number, amount: number, totalPages: number }> {
         try {
             const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            
+            // If pagination is not provided, return all data with page=1, amount=total
+            const page = dto.page ?? 1;
+            const amount = dto.amount ?? total;
+            
             return {
                 data,
                 total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(total / dto.amount)
+                page,
+                amount,
+                totalPages: amount > 0 ? Math.ceil(total / amount) : 1
             };
         } catch (error) {
             throw error;

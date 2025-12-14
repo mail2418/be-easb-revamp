@@ -10,6 +10,7 @@ import { GetAsbJakonDetailDto } from '../../presentation/asb_jakon/dto/get_asb_j
 import { ValidatePriceRangeUseCase } from './use_cases/validate_price_range.use_case';
 import { GetAsbJakonListFilterDto } from '../../presentation/asb_jakon/dto/get_asb_jakon_list_filter.dto';
 import { GetJakonByPriceRangeDto } from './dto/get_jakon_by_price_range.dto';
+import { AsbJakonWithRelationsDto } from './dto/asb_jakon_with_relations.dto';
 @Injectable()
 export class AsbJakonServiceImpl implements AsbJakonService {
     constructor(
@@ -87,13 +88,13 @@ export class AsbJakonServiceImpl implements AsbJakonService {
         }
     }
 
-    async getDetail(dto: GetAsbJakonDetailDto): Promise<AsbJakon> {
+    async getDetail(dto: GetAsbJakonDetailDto): Promise<AsbJakonWithRelationsDto> {
         try {
             const entity = await this.repository.findById(dto.id);
             if (!entity) {
                 throw new NotFoundException(`AsbJakon with id ${dto.id} not found`);
             }
-            return entity;
+            return entity as AsbJakonWithRelationsDto;
         } catch (error) {
             throw error;
         }
