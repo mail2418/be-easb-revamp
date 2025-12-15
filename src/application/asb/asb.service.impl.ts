@@ -1139,7 +1139,7 @@ export class AsbServiceImpl implements AsbService {
                 total_biaya_pembangunan: asb.totalBiayaPembangunan
             });
 
-            if (managementKonstruksi === null) {
+            if (managementKonstruksi === null && managementKonstruksi !== 0) {
                 throw new NotFoundException("ASB is missing required managementKonstruksi data for Jakon lookup");
             }
             
