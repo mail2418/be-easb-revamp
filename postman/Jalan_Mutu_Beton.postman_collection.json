@@ -1,0 +1,259 @@
+{
+	"info": {
+		"_postman_id": "jalan-mutu-beton-collection-001",
+		"name": "Jalan Mutu Beton Module",
+		"description": "API collection for Jalan Mutu Beton (Road Concrete Quality) module - Master data for concrete quality/grade used in road construction",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Jalan Mutu Beton (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-mutu-beton?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-mutu-beton"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all jalan mutu beton with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"jenis\": \"K-300\",\n      \"createdAt\": \"...\",\n      \"updatedAt\": \"...\"\n    }\n  ],\n  \"page\": 1,\n  \"amount\": 10,\n  \"total\": 5,\n  \"totalPages\": 1\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Jalan Mutu Beton (without pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-mutu-beton",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-mutu-beton"]
+						},
+						"description": "Get all jalan mutu beton without pagination (returns all records).\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Jalan Mutu Beton Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-mutu-beton/detail?id=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-mutu-beton", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Jalan Mutu Beton ID"
+								}
+							]
+						},
+						"description": "Get single jalan mutu beton detail by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"id\": 1,\n  \"jenis\": \"K-300\",\n  \"createdAt\": \"...\",\n  \"updatedAt\": \"...\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read-only endpoints accessible by all roles"
+		},
+		{
+			"name": "CRUD Endpoints (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create Jalan Mutu Beton - K300",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"K-300\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-mutu-beton",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-mutu-beton"]
+						},
+						"description": "Create new jalan mutu beton.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"jenis\": \"string\" // Required - Mutu/grade beton\n}\n```\n\n**Common Values** (Concrete Grades):\n- \"K-225\" - Compressive strength ~18.75 MPa\n- \"K-250\" - Compressive strength ~20.83 MPa\n- \"K-275\" - Compressive strength ~22.92 MPa\n- \"K-300\" - Compressive strength ~25.00 MPa\n- \"K-350\" - Compressive strength ~29.17 MPa\n- \"K-400\" - Compressive strength ~33.33 MPa\n- \"K-450\" - Compressive strength ~37.50 MPa\n- \"K-500\" - Compressive strength ~41.67 MPa\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"Jalan Mutu Beton created\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis\": \"K-300\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Jalan Mutu Beton - K350",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"K-350\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-mutu-beton",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-mutu-beton"]
+						},
+						"description": "Create K-350 concrete grade (high strength for heavy traffic).\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Jalan Mutu Beton - K400",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"K-400\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-mutu-beton",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-mutu-beton"]
+						},
+						"description": "Create K-400 concrete grade (very high strength for industrial roads).\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Jalan Mutu Beton",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"jenis\": \"K-300 (Updated)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-mutu-beton",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-mutu-beton"]
+						},
+						"description": "Update existing jalan mutu beton.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number,      // Required - ID to update\n  \"jenis\": string    // Optional - New mutu beton name\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Mutu Beton updated\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis\": \"K-300 (Updated)\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Jalan Mutu Beton",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-mutu-beton",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-mutu-beton"]
+						},
+						"description": "Soft delete jalan mutu beton.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number  // Required - ID to delete\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Mutu Beton deleted\",\n  \"data\": true\n}\n```\n\n**Note**: This is a soft delete. The record will be marked as deleted but not removed from database."
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update, Delete operations - Only accessible by SUPERADMIN"
+		}
+	]
+}
+

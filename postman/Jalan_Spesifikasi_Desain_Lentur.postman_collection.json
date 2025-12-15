@@ -1,0 +1,346 @@
+{
+	"info": {
+		"_postman_id": "jalan-spesifikasi-desain-lentur-collection-001",
+		"name": "Jalan Spesifikasi Desain Lentur",
+		"description": "API collection for Jalan Spesifikasi Desain Lentur (Flexible Pavement Design Specification) module - Master data for flexible/asphalt pavement design specifications",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Spesifikasi Desain Lentur (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all jalan spesifikasi desain lentur with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"spec\": \"Bagan Desain 3\",\n      \"desc\": \"Bagan Desain 3 : Opsi Biaya Minimum dengan CTB\",\n      \"createdAt\": \"...\",\n      \"updatedAt\": \"...\"\n    }\n  ],\n  \"page\": 1,\n  \"amount\": 10,\n  \"total\": 4,\n  \"totalPages\": 1\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Spesifikasi Desain Lentur (without pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur"]
+						},
+						"description": "Get all jalan spesifikasi desain lentur without pagination (returns all records).\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Spesifikasi Desain Lentur Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur/detail?id=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Spesifikasi Desain Lentur ID"
+								}
+							]
+						},
+						"description": "Get single jalan spesifikasi desain lentur detail by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"id\": 1,\n  \"spec\": \"Bagan Desain 3\",\n  \"desc\": \"Bagan Desain 3 : Opsi Biaya Minimum dengan CTB\",\n  \"createdAt\": \"...\",\n  \"updatedAt\": \"...\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read-only endpoints accessible by all roles"
+		},
+		{
+			"name": "CRUD Endpoints (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create - Bagan Desain 3",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"spec\": \"Bagan Desain 3\",\n  \"desc\": \"Bagan Desain 3 : Opsi Biaya Minimum dengan CTB\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur"]
+						},
+						"description": "Create new jalan spesifikasi desain lentur.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"spec\": \"string\",  // Required - Specification code/name\n  \"desc\": \"string\"   // Required - Description\n}\n```\n\n**Seeded Flexible Pavement Design Specifications**:\n\n| Spec | Description | Base Layer | Surface Layer |\n|------|-------------|------------|---------------|\n| Bagan Desain 3 | Opsi Biaya Minimum dengan CTB | Cement Treated Base (CTB) | Asphalt |\n| Bagan Desain 3A | Opsi Biaya Minimum dengan HRS | Granular base | Hot Rolled Sheet (HRS) |\n| Bagan Desain 3B | Aspal dengan Lapis Fondasi Berbutir | Granular base | Asphalt Concrete |\n| Bagan Desain 3C | Penyesuaian LPA pada BD 3B untuk Tanah Dasar CBR ≥ 7% | Lean Asphalt (LPA) adjustment | Asphalt Concrete |\n\n**Technical Details**:\n\n**Bagan Desain 3** (CTB Option):\n- Base: Cement Treated Base (CTB) - 15-20cm\n- Surface: AC-WC (Wearing Course) - 4-5cm\n- Binder: AC-BC (Binder Course) - 6-7cm\n- Cost: Minimum cost option with CTB\n- Traffic: Medium to High\n- CBR: ≥ 6%\n\n**Bagan Desain 3A** (HRS Option):\n- Base: Granular aggregate base - 20-25cm\n- Surface: HRS-WC (Hot Rolled Sheet) - 3-4cm\n- Binder: HRS-Base - 5-6cm\n- Cost: Minimum cost option with HRS\n- Traffic: Low to Medium\n- CBR: ≥ 5%\n\n**Bagan Desain 3B** (Standard Flexible):\n- Base: Granular aggregate base - 20-30cm\n- Sub-base: Granular sub-base - 15-20cm\n- Surface: AC-WC - 4-5cm\n- Binder: AC-BC - 6-7cm\n- Traffic: Medium\n- CBR: ≥ 3%\n\n**Bagan Desain 3C** (LPA Adjustment):\n- Base: Granular with LPA adjustment\n- Sub-base: Reduced thickness (CBR ≥ 7%)\n- Surface: AC-WC - 4-5cm\n- Binder: AC-BC - 6-7cm\n- Special: For good subgrade (CBR ≥ 7%)\n- Traffic: Medium\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"Jalan Spesifikasi Desain Lentur created\",\n  \"data\": {\n    \"id\": 1,\n    \"spec\": \"Bagan Desain 3\",\n    \"desc\": \"Bagan Desain 3 : Opsi Biaya Minimum dengan CTB\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Bagan Desain 3A",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"spec\": \"Bagan Desain 3A\",\n  \"desc\": \"Bagan Desain 3A : Opsi Biaya Minimum dengan HRS\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur"]
+						},
+						"description": "Create HRS (Hot Rolled Sheet) minimum cost option.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Bagan Desain 3B",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"spec\": \"Bagan Desain 3B\",\n  \"desc\": \"Bagan Desain 3B : Aspal dengan Lapis Fondasi Berbutir\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur"]
+						},
+						"description": "Create standard asphalt with granular base layer specification.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Bagan Desain 3C",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"spec\": \"Bagan Desain 3C\",\n  \"desc\": \"Bagan Desain 3C : Penyesuaian LPA pada Bagan Desain 3B untuk Tanah Dasar CBR ≥ 7%\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur"]
+						},
+						"description": "Create LPA (Lean Asphalt) adjustment for good subgrade (CBR ≥ 7%).\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Bagan Desain 1",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"spec\": \"Bagan Desain 1\",\n  \"desc\": \"Perkerasan Lentur dengan Lalu Lintas Rendah\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur"]
+						},
+						"description": "Create light traffic flexible pavement specification.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Bagan Desain 2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"spec\": \"Bagan Desain 2\",\n  \"desc\": \"Perkerasan Lentur dengan Lalu Lintas Sedang\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur"]
+						},
+						"description": "Create medium traffic flexible pavement specification.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Spesifikasi Desain Lentur",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"spec\": \"Bagan Desain 3 (Updated)\",\n  \"desc\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur"]
+						},
+						"description": "Update existing jalan spesifikasi desain lentur.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number,      // Required - ID to update\n  \"spec\": string,    // Optional - New spec name\n  \"desc\": string     // Optional - New description\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Spesifikasi Desain Lentur updated\",\n  \"data\": {\n    \"id\": 1,\n    \"spec\": \"Bagan Desain 3 (Updated)\",\n    \"desc\": \"Updated description\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Spesifikasi Desain Lentur",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain-lentur"]
+						},
+						"description": "Soft delete jalan spesifikasi desain lentur.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number  // Required - ID to delete\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Spesifikasi Desain Lentur deleted\",\n  \"data\": true\n}\n```\n\n**Note**: This is a soft delete. The record will be marked as deleted but not removed from database."
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update, Delete operations - Only accessible by SUPERADMIN"
+		}
+	]
+}
+

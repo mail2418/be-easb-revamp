@@ -1,0 +1,288 @@
+{
+	"info": {
+		"_postman_id": "jalan-ruang-lingkup-perkerasan-kaku-collection-001",
+		"name": "Jalan Ruang Lingkup Perkerasan Kaku",
+		"description": "API collection for Jalan Ruang Lingkup Perkerasan Kaku (Rigid Pavement Scope) module - Master data for scope of work in rigid/concrete pavement construction",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Ruang Lingkup Kaku (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-kaku?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-kaku"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all jalan ruang lingkup perkerasan kaku with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"jenis\": \"Perkerasan Beton Semen\",\n      \"createdAt\": \"...\",\n      \"updatedAt\": \"...\"\n    }\n  ],\n  \"page\": 1,\n  \"amount\": 10,\n  \"total\": 5,\n  \"totalPages\": 1\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Ruang Lingkup Kaku (without pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-kaku",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-kaku"]
+						},
+						"description": "Get all jalan ruang lingkup perkerasan kaku without pagination (returns all records).\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Ruang Lingkup Kaku Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-kaku/detail?id=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-kaku", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Ruang Lingkup Perkerasan Kaku ID"
+								}
+							]
+						},
+						"description": "Get single jalan ruang lingkup perkerasan kaku detail by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"id\": 1,\n  \"jenis\": \"Perkerasan Beton Semen\",\n  \"createdAt\": \"...\",\n  \"updatedAt\": \"...\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read-only endpoints accessible by all roles"
+		},
+		{
+			"name": "CRUD Endpoints (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create - Perkerasan Beton Semen",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Perkerasan Beton Semen\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-kaku",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-kaku"]
+						},
+						"description": "Create new jalan ruang lingkup perkerasan kaku.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"jenis\": \"string\" // Required - Jenis ruang lingkup\n}\n```\n\n**Common Values** (Rigid Pavement Scope):\n- \"Perkerasan Beton Semen\" - Cement concrete pavement\n- \"Lapis Pondasi Agregat Kelas A\" - Class A aggregate base course\n- \"Lapis Pondasi Agregat Kelas B\" - Class B aggregate base course\n- \"Lapis Pondasi Agregat Kelas S\" - Class S aggregate base course\n- \"Pelebaran Perkerasan dan Bahu\" - Pavement and shoulder widening\n- \"Bahu Jalan\" - Road shoulder\n- \"Saluran Samping\" - Side drainage\n- \"Gorong-gorong\" - Culvert\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"Jalan Ruang Lingkup Perkerasan Kaku created\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis\": \"Perkerasan Beton Semen\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Lapis Pondasi Agregat A",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Lapis Pondasi Agregat Kelas A\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-kaku",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-kaku"]
+						},
+						"description": "Create Class A aggregate base course scope.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Bahu Jalan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Bahu Jalan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-kaku",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-kaku"]
+						},
+						"description": "Create road shoulder scope.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Saluran Samping",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Saluran Samping\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-kaku",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-kaku"]
+						},
+						"description": "Create side drainage scope.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Ruang Lingkup Kaku",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"jenis\": \"Perkerasan Beton Semen (Updated)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-kaku",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-kaku"]
+						},
+						"description": "Update existing jalan ruang lingkup perkerasan kaku.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number,      // Required - ID to update\n  \"jenis\": string    // Optional - New jenis name\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Ruang Lingkup Perkerasan Kaku updated\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis\": \"Perkerasan Beton Semen (Updated)\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Ruang Lingkup Kaku",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-kaku",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-kaku"]
+						},
+						"description": "Soft delete jalan ruang lingkup perkerasan kaku.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number  // Required - ID to delete\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Ruang Lingkup Perkerasan Kaku deleted\",\n  \"data\": true\n}\n```\n\n**Note**: This is a soft delete. The record will be marked as deleted but not removed from database."
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update, Delete operations - Only accessible by SUPERADMIN"
+		}
+	]
+}
+

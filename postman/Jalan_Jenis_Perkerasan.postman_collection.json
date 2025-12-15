@@ -1,0 +1,230 @@
+{
+	"info": {
+		"_postman_id": "jalan-jenis-perkerasan-collection-001",
+		"name": "Jalan Jenis Perkerasan Module",
+		"description": "API collection for Jalan Jenis Perkerasan (Road Pavement Type) module - Master data for pavement types (Lentur/Kaku)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Jalan Jenis Perkerasan (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-perkerasan?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-perkerasan"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all jalan jenis perkerasan with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"jenis\": \"Lentur\",\n      \"createdAt\": \"...\",\n      \"updatedAt\": \"...\"\n    }\n  ],\n  \"page\": 1,\n  \"amount\": 10,\n  \"total\": 2,\n  \"totalPages\": 1\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Jalan Jenis Perkerasan (without pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-perkerasan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-perkerasan"]
+						},
+						"description": "Get all jalan jenis perkerasan without pagination (returns all records).\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Jalan Jenis Perkerasan Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-perkerasan/detail?id=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-perkerasan", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Jalan Jenis Perkerasan ID"
+								}
+							]
+						},
+						"description": "Get single jalan jenis perkerasan detail by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"id\": 1,\n  \"jenis\": \"Lentur\",\n  \"createdAt\": \"...\",\n  \"updatedAt\": \"...\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read-only endpoints accessible by all roles"
+		},
+		{
+			"name": "CRUD Endpoints (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create Jalan Jenis Perkerasan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Lentur\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-perkerasan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-perkerasan"]
+						},
+						"description": "Create new jalan jenis perkerasan.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"jenis\": \"string\" // Required - Nama jenis perkerasan\n}\n```\n\n**Common Values**:\n- \"Lentur\" (Flexible/Aspal)\n- \"Kaku\" (Rigid/Beton)\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"Jalan Jenis Perkerasan created\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis\": \"Lentur\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Jalan Jenis Perkerasan - Kaku",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Kaku\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-perkerasan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-perkerasan"]
+						},
+						"description": "Create jenis perkerasan Kaku (Rigid/Concrete pavement).\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Jalan Jenis Perkerasan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"jenis\": \"Lentur (Updated)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-perkerasan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-perkerasan"]
+						},
+						"description": "Update existing jalan jenis perkerasan.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number,      // Required - ID to update\n  \"jenis\": string    // Optional - New jenis name\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Jenis Perkerasan updated\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis\": \"Lentur (Updated)\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Jalan Jenis Perkerasan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-perkerasan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-perkerasan"]
+						},
+						"description": "Soft delete jalan jenis perkerasan.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number  // Required - ID to delete\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Jenis Perkerasan deleted\",\n  \"data\": true\n}\n```\n\n**Note**: This is a soft delete. The record will be marked as deleted but not removed from database."
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update, Delete operations - Only accessible by SUPERADMIN"
+		}
+	]
+}
+
