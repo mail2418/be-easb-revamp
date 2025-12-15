@@ -592,12 +592,8 @@ export class AsbServiceImpl implements AsbService {
                 total_biaya_pembangunan: totalBiayaPembangunan
             });
 
-            if (managementKonstruksi === null) {
-                throw new NotFoundException("ASB is missing required managementKonstruksi data for Jakon lookup");
-            }
-
             let nominalManagementKonstruksi = 0;
-            if (managementKonstruksi === 0) {
+            if (managementKonstruksi === null || managementKonstruksi === 0) {
                 nominalManagementKonstruksi = 0;
             } else {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
@@ -930,12 +926,8 @@ export class AsbServiceImpl implements AsbService {
                 total_biaya_pembangunan: totalBiayaPembangunan
             });
 
-            if (managementKonstruksi === null) {
-                throw new NotFoundException("ASB is missing required managementKonstruksi data for Jakon lookup");
-            }
-
             let nominalManagementKonstruksi = 0;
-            if (managementKonstruksi === 0) {
+            if (managementKonstruksi === null || managementKonstruksi === 0) {
                 nominalManagementKonstruksi = 0;
             } else {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
