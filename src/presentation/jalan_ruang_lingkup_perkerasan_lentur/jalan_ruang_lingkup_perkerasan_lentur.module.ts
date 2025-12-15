@@ -5,7 +5,7 @@ import { JalanRuangLingkupPerkerasanLenturRepository } from "../../domain/jalan_
 import { JalanRuangLingkupPerkerasanLenturRepositoryImpl } from "../../infrastructure/jalan_ruang_lingkup_perkerasan_lentur/repositories/jalan_ruang_lingkup_perkerasan_lentur.repository.impl";
 import { JalanRuangLingkupPerkerasanLenturServiceImpl } from "../../application/jalan_ruang_lingkup_perkerasan_lentur/jalan_ruang_lingkup_perkerasan_lentur.service.impl";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { JalanRuangLingkupPerkerasanLenturOrmEntity } from "../../infrastructure/jalan_ruang_lingkup_perkerasan_lentur/orm/jalan_ruang_lingkup_perkerasan_lentur";
+import { JalanRuangLingkupPerkerasanLenturOrmEntity } from "../../infrastructure/jalan_ruang_lingkup_perkerasan_lentur/orm/jalan_ruang_lingkup_perkerasan_lentur.orm_entity";
 
 @Module({
     imports: [TypeOrmModule.forFeature([JalanRuangLingkupPerkerasanLenturOrmEntity])],
