@@ -34,6 +34,7 @@ import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dt
 import { GetAsbByMonthYearDto } from './dto/get_asb_by_moth_year.dto';
 import { AsbAnalyticsDto } from './dto/asb_analytics.dto';
 import { GetAsbAnalyticsFilterDto } from './dto/get_asb_analytics_filter.dto';
+import { RejectInfoDto } from './dto/reject_info.dto';
 import { AsbBipekStandardReviewService } from 'src/domain/asb_bipek_standard_review/asb_bipek_standard_review.service';
 import { AsbBipekNonStdReviewService } from 'src/domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
 import { CalculateBobotBPSReviewUseCase } from '../asb_bipek_standard_review/use_cases/calculate_bobot_bps_review.use_case';
@@ -1259,6 +1260,66 @@ export class AsbServiceImpl implements AsbService {
                 id: updatedAsb.id,
                 status: updatedAsb.asbStatus
             };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<RejectInfoDto | null> {
+        try {
+            // Check if user is ADMIN or SUPERADMIN
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+
+            let rejectInfo: RejectInfoDto | null;
+
+            if (isAdmin || isSuperAdmin) {
+                // ADMIN/SUPERADMIN can access ALL ASB without OPD filter
+                rejectInfo = await this.repository.getRejectInfo(id);
+            } else {
+                // For OPD users
+                const isOpd = userRoles.includes(Role.OPD);
+
+                if (isOpd) {
+                    // OPD users must have an idOpd
+                    if (!userIdOpd) {
+                        throw new ForbiddenException('OPD user has no associated OPD');
+                    }
+
+                    // Fetch with OPD filter
+                    rejectInfo = await this.repository.getRejectInfo(id, userIdOpd);
+                } else {
+                    throw new ForbiddenException('User is not authorized to access reject info');
+                }
+            }
+
+            if (!rejectInfo) {
+                throw new NotFoundException(`ASB with id ${id} not found`);
+            }
+
+            // Check if ASB has been rejected
+            if (!rejectInfo.rejectVerifId || !rejectInfo.rejectedAt) {
+                throw new BadRequestException('ASB is not in rejected status');
+            }
+
+            // Get verifikator info if rejectVerifikator exists
+            if (rejectInfo.rejectVerifikator) {
+                const verifikator = await this.verifikatorService.findByUserId(rejectInfo.rejectVerifikator.id);
+                if (verifikator && verifikator.user) {
+                    rejectInfo.verifikator = {
+                        id: verifikator.id,
+                        idUser: verifikator.idUser,
+                        jenisVerifikator: verifikator.jenisVerifikator,
+                        verifikator: verifikator.verifikator,
+                        user: {
+                            id: verifikator.user.id,
+                            username: verifikator.user.username,
+                        },
+                    };
+                }
+            }
+
+            return rejectInfo;
         } catch (error) {
             throw error;
         }

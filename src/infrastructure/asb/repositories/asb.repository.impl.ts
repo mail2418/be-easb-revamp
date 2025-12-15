@@ -8,6 +8,7 @@ import { AsbWithRelationsDto } from 'src/application/asb/dto/asb_with_relations.
 import { FindAllAsbDto } from 'src/application/asb/dto/find_all_asb.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
 import { AsbAnalyticsDto } from 'src/application/asb/dto/asb_analytics.dto';
+import { RejectInfoDto } from 'src/application/asb/dto/reject_info.dto';
 import { GetAsbAnalyticsFilterDto } from 'src/application/asb/dto/get_asb_analytics_filter.dto';
 
 @Injectable()
@@ -433,6 +434,42 @@ export class AsbRepositoryImpl implements AsbRepository {
             await this.repo.softDelete(id);
         } catch (error) {
             console.log("Error deleting ASB:", error);
+            throw error;
+        }
+    }
+
+    async getRejectInfo(id: number, idOpd?: number): Promise<RejectInfoDto | null> {
+        try {
+            const whereClause: any = { id };
+
+            // Add OPD filter if provided
+            if (idOpd) {
+                whereClause.idOpd = idOpd;
+            }
+
+            const entity = await this.repo.findOne({
+                where: whereClause,
+                relations: ['rejectVerifikator'],
+            });
+
+            if (!entity) {
+                return null;
+            }
+
+            return {
+                rejectVerifId: entity.rejectVerifId,
+                rejectReason: entity.rejectReason,
+                rejectedAt: entity.rejectedAt,
+                rejectVerifikator: entity.rejectVerifikator
+                    ? {
+                        id: entity.rejectVerifikator.id,
+                        username: entity.rejectVerifikator.username,
+                    }
+                    : null,
+                verifikator: null, // Will be populated in service layer
+            };
+        } catch (error) {
+            console.log("Error getting reject info:", error);
             throw error;
         }
     }
