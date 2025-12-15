@@ -125,6 +125,12 @@ export class AsbWithRelationsDto {
             koef: number;
             idSatuan: number;
         } | null;
+        asbFungsiRuang?: {
+            id: number;
+            nama_fungsi_ruang: string;
+            koef: number;
+            isActive: boolean;
+        } | null;
     }>;
 
     asbDetailReviews?: Array<{
@@ -146,6 +152,12 @@ export class AsbWithRelationsDto {
             type: string;
             koef: number;
             idSatuan: number;
+        } | null;
+        asbFungsiRuang?: {
+            id: number;
+            nama_fungsi_ruang: string;
+            koef: number;
+            isActive: boolean;
         } | null;
     }>;
 
