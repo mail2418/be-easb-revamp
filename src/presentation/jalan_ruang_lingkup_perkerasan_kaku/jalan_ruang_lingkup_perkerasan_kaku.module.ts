@@ -5,7 +5,7 @@ import { JalanRuangLingkupPerkerasanKakuRepository } from "../../domain/jalan_ru
 import { JalanRuangLingkupPerkerasanKakuRepositoryImpl } from "../../infrastructure/jalan_ruang_lingkup_perkerasan_kaku/repositories/jalan_ruang_lingkup_perkerasan_kaku.repository.impl";
 import { JalanRuangLingkupPerkerasanKakuServiceImpl } from "../../application/jalan_ruang_lingkup_perkerasan_kaku/jalan_ruang_lingkup_perkerasan_kaku.service.impl";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { JalanRuangLingkupPerkerasanKakuOrmEntity } from "../../infrastructure/jalan_ruang_lingkup_perkerasan_kaku/orm/jalan_ruang_lingkup_perkerasan_kaku";
+import { JalanRuangLingkupPerkerasanKakuOrmEntity } from "../../infrastructure/jalan_ruang_lingkup_perkerasan_kaku/orm/jalan_ruang_lingkup_perkerasan_kaku.orm_entity";
 
 @Module({
     imports: [TypeOrmModule.forFeature([JalanRuangLingkupPerkerasanKakuOrmEntity])],

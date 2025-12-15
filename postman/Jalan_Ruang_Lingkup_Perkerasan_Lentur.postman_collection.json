@@ -1,0 +1,317 @@
+{
+	"info": {
+		"_postman_id": "jalan-ruang-lingkup-perkerasan-lentur-collection-001",
+		"name": "Jalan Ruang Lingkup Perkerasan Lentur",
+		"description": "API collection for Jalan Ruang Lingkup Perkerasan Lentur (Flexible Pavement Scope) module - Master data for scope of work in flexible/asphalt pavement construction",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Ruang Lingkup Lentur (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-lentur?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-lentur"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all jalan ruang lingkup perkerasan lentur with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"jenis\": \"Lapis Permukaan (AC-WC)\",\n      \"createdAt\": \"...\",\n      \"updatedAt\": \"...\"\n    }\n  ],\n  \"page\": 1,\n  \"amount\": 10,\n  \"total\": 8,\n  \"totalPages\": 1\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Ruang Lingkup Lentur (without pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-lentur"]
+						},
+						"description": "Get all jalan ruang lingkup perkerasan lentur without pagination (returns all records).\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Ruang Lingkup Lentur Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-lentur/detail?id=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-lentur", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Ruang Lingkup Perkerasan Lentur ID"
+								}
+							]
+						},
+						"description": "Get single jalan ruang lingkup perkerasan lentur detail by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"id\": 1,\n  \"jenis\": \"Lapis Permukaan (AC-WC)\",\n  \"createdAt\": \"...\",\n  \"updatedAt\": \"...\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read-only endpoints accessible by all roles"
+		},
+		{
+			"name": "CRUD Endpoints (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create - Lapis Permukaan (AC-WC)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Lapis Permukaan (AC-WC)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-lentur"]
+						},
+						"description": "Create new jalan ruang lingkup perkerasan lentur.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"jenis\": \"string\" // Required - Jenis ruang lingkup\n}\n```\n\n**Common Values** (Flexible Pavement Layers):\n\n**Surface Layers (Lapis Permukaan)**:\n- \"Lapis Permukaan (AC-WC)\" - Asphalt Concrete Wearing Course\n- \"Lapis Permukaan (AC-BC)\" - Asphalt Concrete Binder Course\n- \"Lapis Permukaan (HRS-WC)\" - Hot Rolled Sheet Wearing Course\n- \"Lapis Permukaan (HRS-Base)\" - Hot Rolled Sheet Base\n\n**Base Layers (Lapis Pondasi)**:\n- \"Lapis Pondasi Atas (AC-Base)\" - AC Base Course\n- \"Lapis Pondasi Atas (Agregat Kelas A)\" - Class A Aggregate\n- \"Lapis Pondasi Bawah (Agregat Kelas B)\" - Class B Aggregate\n- \"Lapis Pondasi Bawah (Agregat Kelas C)\" - Class C Aggregate\n\n**Others**:\n- \"Lapis Resap Pengikat (Prime Coat)\"\n- \"Lapis Perekat (Tack Coat)\"\n- \"Bahu Jalan\" - Road Shoulder\n- \"Saluran Drainase\" - Drainage Channel\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"Jalan Ruang Lingkup Perkerasan Lentur created\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis\": \"Lapis Permukaan (AC-WC)\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Lapis Permukaan (AC-BC)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Lapis Permukaan (AC-BC)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-lentur"]
+						},
+						"description": "Create AC Binder Course layer.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Lapis Pondasi Atas (AC-Base)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Lapis Pondasi Atas (AC-Base)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-lentur"]
+						},
+						"description": "Create AC Base Course layer.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Lapis Pondasi Agregat A",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Lapis Pondasi Atas (Agregat Kelas A)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-lentur"]
+						},
+						"description": "Create Class A Aggregate base layer.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Lapis Resap Pengikat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis\": \"Lapis Resap Pengikat (Prime Coat)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-lentur"]
+						},
+						"description": "Create Prime Coat layer.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Ruang Lingkup Lentur",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"jenis\": \"Lapis Permukaan (AC-WC) Updated\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-lentur"]
+						},
+						"description": "Update existing jalan ruang lingkup perkerasan lentur.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number,      // Required - ID to update\n  \"jenis\": string    // Optional - New jenis name\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Ruang Lingkup Perkerasan Lentur updated\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis\": \"Lapis Permukaan (AC-WC) Updated\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Ruang Lingkup Lentur",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-ruang-lingkup-perkerasan-lentur",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-ruang-lingkup-perkerasan-lentur"]
+						},
+						"description": "Soft delete jalan ruang lingkup perkerasan lentur.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number  // Required - ID to delete\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Ruang Lingkup Perkerasan Lentur deleted\",\n  \"data\": true\n}\n```\n\n**Note**: This is a soft delete. The record will be marked as deleted but not removed from database."
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update, Delete operations - Only accessible by SUPERADMIN"
+		}
+	]
+}
+

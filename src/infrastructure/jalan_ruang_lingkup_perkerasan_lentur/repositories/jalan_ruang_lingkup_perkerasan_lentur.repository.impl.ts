@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { JalanRuangLingkupPerkerasanLenturRepository } from "../../../domain/jalan_ruang_lingkup_perkerasan_lentur/jalan_ruang_lingkup_perkerasan_lentur.repository";
-import { JalanRuangLingkupPerkerasanLenturOrmEntity } from "../orm/jalan_ruang_lingkup_perkerasan_lentur";
+import { JalanRuangLingkupPerkerasanLenturOrmEntity } from "../orm/jalan_ruang_lingkup_perkerasan_lentur.orm_entity";
 import { Repository } from "typeorm";
 import { JalanRuangLingkupPerkerasanLentur } from "../../../domain/jalan_ruang_lingkup_perkerasan_lentur/jalan_ruang_lingkup_perkerasan_lentur.entity";
 import { CreateJalanRuangLingkupPerkerasanLenturDto } from "../../../presentation/jalan_ruang_lingkup_perkerasan_lentur/dto/create_jalan_ruang_lingkup_perkerasan_lentur.dto";

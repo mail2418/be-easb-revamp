@@ -1,0 +1,508 @@
+{
+	"info": {
+		"_postman_id": "usulan-jalan-collection-001",
+		"name": "Usulan Jalan Module",
+		"description": "Complete API collection for Usulan Jalan (Road Proposal) module with all CRUD, verification, and rejection endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Usulan Jalan (with filters)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan?page=1&amount=10&idUsulanJalanStatus=1&tahunAnggaran=2024&namaUsulanJalan=jalan&idKabkota=1&idKecamatan=1&idKelurahan=1&idJalanJenisPerkerasan=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								},
+								{
+									"key": "idUsulanJalanStatus",
+									"value": "1",
+									"description": "Filter by status (optional)"
+								},
+								{
+									"key": "tahunAnggaran",
+									"value": "2024",
+									"description": "Filter by tahun anggaran (optional)"
+								},
+								{
+									"key": "namaUsulanJalan",
+									"value": "jalan",
+									"description": "Search by name (optional)"
+								},
+								{
+									"key": "idKabkota",
+									"value": "1",
+									"description": "Filter by kabkota (optional)"
+								},
+								{
+									"key": "idKecamatan",
+									"value": "1",
+									"description": "Filter by kecamatan (optional)"
+								},
+								{
+									"key": "idKelurahan",
+									"value": "1",
+									"description": "Filter by kelurahan (optional)"
+								},
+								{
+									"key": "idJalanJenisPerkerasan",
+									"value": "1",
+									"description": "Filter by jenis perkerasan (optional)"
+								}
+							]
+						},
+						"description": "Get all usulan jalan with optional filters and pagination. OPD users only see their own data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Usulan Jalan (without pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan"]
+						},
+						"description": "Get all usulan jalan without pagination (returns all records)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Usulan Jalan by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/id?id=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "id"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Usulan Jalan ID"
+								}
+							]
+						},
+						"description": "Get single usulan jalan by ID with all relations"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. CRUD Endpoints (OPD, ADMIN, SUPERADMIN)",
+			"item": [
+				{
+					"name": "Store Informasi Usulan Jalan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idOpd\": 1,\n  \"idKabkota\": 1,\n  \"idKecamatan\": 1,\n  \"idKelurahan\": 1,\n  \"tahunAnggaran\": 2024,\n  \"namaUsulanJalan\": \"Jalan Raya Baru\",\n  \"alamat\": \"Jl. Contoh No. 123, Kecamatan X\",\n  \"lebarJalan\": 6.5,\n  \"lebarJalanReview\": 7.0,\n  \"idJalanJenisPerkerasan\": 1,\n  \"idJalanJenisPerkerasanReview\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/store-informasi",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "store-informasi"]
+						},
+						"description": "Create new usulan jalan with basic information. Status will be set to 1 (Input Informasi Usulan Jalan). OPD users: idOpd auto-filled from token."
+					},
+					"response": []
+				},
+				{
+					"name": "Store Ruang Lingkup Usulan Jalan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsulanJalan\": 1,\n  \"idOpd\": 1,\n  \"idSpesifikasiDesainLentur\": 1,\n  \"idSpesifikasiDesainLenturReview\": 1,\n  \"idRuangLingkupPerkerasanLentur\": 1,\n  \"idRuangLingkupPerkerasanLenturReview\": 1,\n  \"idMutuBeton\": 1,\n  \"idMutuBetonReview\": 1,\n  \"keteranganTambahan\": \"Keterangan tambahan jika ada\",\n  \"keteranganTambahanReview\": \"Review keterangan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/store-ruang-lingkup",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "store-ruang-lingkup"]
+						},
+						"description": "Add ruang lingkup and spesifikasi to existing usulan jalan. Status will be updated to 2 (Input Ruang Lingkup dan Spesifikasi). Note: For Lentur (id=1), lentur fields are required. For Kaku (id=2), kaku fields are required."
+					},
+					"response": []
+				},
+				{
+					"name": "Store Ruang Lingkup (Jenis Kaku)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsulanJalan\": 1,\n  \"idOpd\": 1,\n  \"idSpesifikasiDesainKaku\": 1,\n  \"idSpesifikasiDesainKakuReview\": 1,\n  \"idRuangLingkupPerkerasanKaku\": 1,\n  \"idRuangLingkupPerkerasanKakuReview\": 1,\n  \"idMutuBeton\": 1,\n  \"idMutuBetonReview\": 1,\n  \"keteranganTambahan\": \"Keterangan untuk jenis kaku\",\n  \"keteranganTambahanReview\": \"Review keterangan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/store-ruang-lingkup",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "store-ruang-lingkup"]
+						},
+						"description": "Example for Jenis Perkerasan Kaku (id=2). Requires kaku-specific fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Usulan Jalan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsulanJalan\": 1,\n  \"idOpd\": 1,\n  \"idKabkota\": 1,\n  \"idKecamatan\": 1,\n  \"idKelurahan\": 1,\n  \"tahunAnggaran\": 2024,\n  \"namaUsulanJalan\": \"Jalan Raya Baru (Updated)\",\n  \"alamat\": \"Jl. Contoh No. 123, Kecamatan X (Updated)\",\n  \"lebarJalan\": 7.0,\n  \"lebarJalanReview\": 7.5,\n  \"idJalanJenisPerkerasan\": 1,\n  \"idJalanJenisPerkerasanReview\": 1,\n  \"idSpesifikasiDesainLentur\": 1,\n  \"idSpesifikasiDesainLenturReview\": 1,\n  \"idRuangLingkupPerkerasanLentur\": 1,\n  \"idRuangLingkupPerkerasanLenturReview\": 1,\n  \"idMutuBeton\": 1,\n  \"idMutuBetonReview\": 1,\n  \"keteranganTambahan\": \"Updated keterangan\",\n  \"keteranganTambahanReview\": \"Updated review\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/update",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "update"]
+						},
+						"description": "Update existing usulan jalan. Can update both informasi and ruang lingkup fields. ADMIN/SUPERADMIN can edit anytime, OPD cannot edit after submission."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Usulan Jalan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsulanJalan\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan"]
+						},
+						"description": "Soft delete usulan jalan. OPD cannot delete if already in verification stage."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Verification Endpoints (VERIFIKATOR, ADMIN, SUPERADMIN)",
+			"item": [
+				{
+					"name": "Verify Informasi Usulan Jalan (ADBANG)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsulanJalan\": 1,\n  \"verifLebarJalan\": 7.0,\n  \"verifIdJalanJenisPerkerasan\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/verify-informasi",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "verify-informasi"]
+						},
+						"description": "Verify and review informasi usulan jalan. Only ADBANG verificator can access. Updates review fields and sets status to 5 (Verifikasi Informasi Usulan Jalan)."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Ruang Lingkup Usulan Jalan (ADBANG)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsulanJalan\": 1,\n  \"verifIdSpesifikasiDesainLentur\": 1,\n  \"verifIdRuangLingkupPerkerasanLentur\": 1,\n  \"verifIdMutuBeton\": 1,\n  \"verifKeteranganTambahan\": \"Verified keterangan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/verify-ruang-lingkup",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "verify-ruang-lingkup"]
+						},
+						"description": "Verify and review ruang lingkup usulan jalan. Only ADBANG verificator can access. Updates review fields and sets status to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Approval Endpoints (VERIFIKATOR, ADMIN, SUPERADMIN)",
+			"item": [
+				{
+					"name": "Approve by ADBANG",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsulanJalan\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/verify-adbang",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "verify-adbang"]
+						},
+						"description": "ADBANG approves usulan jalan. Only ADBANG verificator can access. Updates status to 7 (Verifikasi Adbang) and sets verification timestamp."
+					},
+					"response": []
+				},
+				{
+					"name": "Approve by BPKAD",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsulanJalan\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/verify-bpkad",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "verify-bpkad"]
+						},
+						"description": "BPKAD approves usulan jalan. Only BPKAD verificator can access. Requires ADBANG approval first. Updates status to 8 (Verifikasi Bpkad)."
+					},
+					"response": []
+				},
+				{
+					"name": "Approve by BAPPEDA (Final Approval)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsulanJalan\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/verify-bappeda",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "verify-bappeda"]
+						},
+						"description": "BAPPEDA final approval. Only BAPPEDA verificator can access. Requires both ADBANG and BPKAD approval first. Updates status to 3 (Memenuhi Syarat)."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Rejection Endpoints (VERIFIKATOR, ADMIN, SUPERADMIN)",
+			"item": [
+				{
+					"name": "Reject Usulan Jalan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsulanJalan\": 1,\n  \"rejectReason\": \"Dokumen tidak lengkap dan spesifikasi tidak sesuai standar\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/reject",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "reject"]
+						},
+						"description": "Reject usulan jalan by any verificator (ADBANG/BPKAD/BAPPEDA). Sets status to 4 (Tidak Memenuhi Syarat) and records who rejected, when, and why."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reject Info",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/reject-info?id=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "reject-info"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Usulan Jalan ID"
+								}
+							]
+						},
+						"description": "Get detailed information about who rejected the usulan jalan. Returns verificator entity with user details, rejection timestamp, and reason."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
+

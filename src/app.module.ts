@@ -46,6 +46,7 @@ import { JalanSpesifikasiDesainKakuModule } from './presentation/jalan_spesifika
 import { JalanRuangLingkupPerkerasanLenturModule } from './presentation/jalan_ruang_lingkup_perkerasan_lentur/jalan_ruang_lingkup_perkerasan_lentur.module';
 import { JalanRuangLingkupPerkerasanKakuModule } from './presentation/jalan_ruang_lingkup_perkerasan_kaku/jalan_ruang_lingkup_perkerasan_kaku.module';
 import { UsulanJalanStatusModule } from './presentation/usulan_jalan_status/usulan_jalan_status.module';
+import { UsulanJalanModule } from './presentation/usulan_jalan/usulan_jalan.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -130,7 +131,8 @@ import { DataSourceOptions } from 'typeorm';
         JalanSpesifikasiDesainKakuModule,
         JalanRuangLingkupPerkerasanLenturModule,
         JalanRuangLingkupPerkerasanKakuModule,
-        UsulanJalanStatusModule
+        UsulanJalanStatusModule,
+        UsulanJalanModule
         // other modules...
     ],
     providers: [

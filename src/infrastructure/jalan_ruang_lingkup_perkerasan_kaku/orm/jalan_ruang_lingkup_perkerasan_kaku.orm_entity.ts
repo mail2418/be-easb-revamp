@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity('jalan_ruang_lingkup_perkerasan_lentur')
-export class JalanRuangLingkupPerkerasanLenturOrmEntity {
+@Entity('jalan_ruang_lingkup_perkerasan_kaku')
+export class JalanRuangLingkupPerkerasanKakuOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -17,3 +17,4 @@ export class JalanRuangLingkupPerkerasanLenturOrmEntity {
     @DeleteDateColumn({ name: "deleted_at", type: "timestamptz", nullable: true })
     deletedAt?: Date;
 }
+
