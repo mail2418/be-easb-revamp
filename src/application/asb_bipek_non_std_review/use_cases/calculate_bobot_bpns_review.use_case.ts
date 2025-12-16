@@ -71,6 +71,10 @@ export class CalculateBobotBPNSReviewUseCase {
             }
         }
 
+        if (bobotTotalBps === 0) {
+            bobotTotalBps = 1;
+        }
+
         jumlahBobot = jumlahBobot > 1.5 * bobotTotalBps ? 1.5 * bobotTotalBps : jumlahBobot;
 
         // Calculate BPNS

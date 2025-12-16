@@ -545,7 +545,7 @@ export class AsbServiceImpl implements AsbService {
             );
 
             // Update total biaya pembangunan
-            const totalBiayaPembangunan = BPNS + Number(asb.nominalBps || 0);
+            const totalBiayaPembangunan = Number(BPNS) + Number(asb.nominalBps || 0);
 
             // Save jakon price variables
             if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !totalBiayaPembangunan) {
@@ -599,7 +599,7 @@ export class AsbServiceImpl implements AsbService {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
             }
 
-            const rekapitulasiBiayaKonstruksi = Number(asb.totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi) + Number(asb.nominalBps ?? 0) + Number(BPNS ?? 0);
+            const rekapitulasiBiayaKonstruksi = Number(asb.totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi);
 
             const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
 
@@ -879,7 +879,7 @@ export class AsbServiceImpl implements AsbService {
                 asb.bobotTotalBpns || 0
             );
 
-            const totalBiayaPembangunan = BPNSReview + Number(asb.nominalBps || 0);
+            const totalBiayaPembangunan = Number(BPNSReview) + Number(asb.nominalBps || 0);
 
             // Set Jakon prices
             if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !totalBiayaPembangunan) {
@@ -933,7 +933,7 @@ export class AsbServiceImpl implements AsbService {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
             }
 
-            const rekapitulasiBiayaKonstruksi = Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi) + Number(asb.nominalBps ?? 0) + Number(BPNSReview ?? 0);
+            const rekapitulasiBiayaKonstruksi = Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi);
 
             const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
 
