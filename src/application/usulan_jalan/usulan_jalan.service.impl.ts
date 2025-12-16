@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { UsulanJalanService } from '../../domain/usulan_jalan/usulan_jalan.service';
 import { UsulanJalanRepository } from '../../domain/usulan_jalan/usulan_jalan.repository';
 import { VerifikatorService } from '../../domain/verifikator/verifikator.service';
@@ -7,6 +7,7 @@ import { JenisVerifikator } from '../../domain/verifikator/jenis_verifikator.enu
 import { UsulanJalanWithRelationsDto } from './dto/usulan_jalan_with_relations.dto';
 import { FindAllUsulanJalanDto } from './dto/find_all_usulan_jalan.dto';
 import { UsulanJalanListResultDto } from './dto/usulan_jalan_list_result.dto';
+import { RejectInfoDto } from './dto/reject_info.dto';
 import { StoreInformasiUsulanJalanDto } from '../../presentation/usulan_jalan/dto/store_informasi_usulan_jalan.dto';
 import { StoreRuangLingkupUsulanJalanDto } from '../../presentation/usulan_jalan/dto/store_ruang_lingkup_usulan_jalan.dto';
 import { UpdateUsulanJalanDto } from '../../presentation/usulan_jalan/dto/update_usulan_jalan.dto';
@@ -425,31 +426,62 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
     }
 
-    async getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<any> {
+    async getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<RejectInfoDto | null> {
         try {
-            // Check existence
-            const usulanJalan = await this.findById(id, userIdOpd, userRoles);
-            if (!usulanJalan) {
+            // Check if user is ADMIN or SUPERADMIN
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
+
+            let rejectInfo: RejectInfoDto | null;
+
+            if (isAdmin || isSuperAdmin || isVerifikator) {
+                // ADMIN/SUPERADMIN/VERIFIKATOR can access ALL Usulan Jalan without OPD filter
+                rejectInfo = await this.repository.getRejectInfo(id);
+            } else {
+                // For OPD users
+                const isOpd = userRoles.includes(Role.OPD);
+
+                if (isOpd) {
+                    // OPD users must have an idOpd
+                    if (!userIdOpd) {
+                        throw new ForbiddenException('OPD user has no associated OPD');
+                    }
+
+                    // Fetch with OPD filter
+                    rejectInfo = await this.repository.getRejectInfo(id, userIdOpd);
+                } else {
+                    throw new ForbiddenException('User is not authorized to access reject info');
+                }
+            }
+
+            if (!rejectInfo) {
                 throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
             }
 
-            // Return reject verifikator info
-            if (!usulanJalan.rejectVerifId || !usulanJalan.rejectVerifikator) {
-                return null;
+            // Check if Usulan Jalan has been rejected
+            if (!rejectInfo.rejectVerifId || !rejectInfo.rejectedAt) {
+                throw new BadRequestException('Usulan Jalan is not in rejected status');
             }
 
-            // Get verifikator entity with user details
-            const verifikator = await this.verifikatorService.findByUserId(usulanJalan.rejectVerifId);
+            // Get verifikator info if rejectVerifikator exists
+            if (rejectInfo.rejectVerifikator) {
+                const verifikator = await this.verifikatorService.findByUserId(rejectInfo.rejectVerifikator.id);
+                if (verifikator && verifikator.user) {
+                    rejectInfo.verifikator = {
+                        id: verifikator.id,
+                        idUser: verifikator.idUser,
+                        jenisVerifikator: verifikator.jenisVerifikator,
+                        verifikator: verifikator.verifikator,
+                        user: {
+                            id: verifikator.user.id,
+                            username: verifikator.user.username,
+                        },
+                    };
+                }
+            }
 
-            return {
-                id: verifikator?.id,
-                idUser: verifikator?.idUser,
-                jenisVerifikator: verifikator?.jenisVerifikator,
-                verifikator: verifikator?.verifikator,
-                user: verifikator?.user,
-                rejectedAt: usulanJalan.rejectedAt,
-                rejectReason: usulanJalan.rejectReason,
-            };
+            return rejectInfo;
         } catch (error) {
             throw error;
         }

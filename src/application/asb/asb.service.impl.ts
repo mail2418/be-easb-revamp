@@ -1262,10 +1262,11 @@ export class AsbServiceImpl implements AsbService {
             // Check if user is ADMIN or SUPERADMIN
             const isAdmin = userRoles.includes(Role.ADMIN);
             const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
 
             let rejectInfo: RejectInfoDto | null;
 
-            if (isAdmin || isSuperAdmin) {
+            if (isAdmin || isSuperAdmin || isVerifikator) {
                 // ADMIN/SUPERADMIN can access ALL ASB without OPD filter
                 rejectInfo = await this.repository.getRejectInfo(id);
             } else {

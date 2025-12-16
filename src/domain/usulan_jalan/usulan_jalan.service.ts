@@ -2,6 +2,7 @@ import { Role } from '../user/user_role.enum';
 import { UsulanJalanWithRelationsDto } from 'src/application/usulan_jalan/dto/usulan_jalan_with_relations.dto';
 import { FindAllUsulanJalanDto } from 'src/application/usulan_jalan/dto/find_all_usulan_jalan.dto';
 import { UsulanJalanListResultDto } from 'src/application/usulan_jalan/dto/usulan_jalan_list_result.dto';
+import { RejectInfoDto } from 'src/application/usulan_jalan/dto/reject_info.dto';
 import { StoreInformasiUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/store_informasi_usulan_jalan.dto';
 import { StoreRuangLingkupUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/store_ruang_lingkup_usulan_jalan.dto';
 import { UpdateUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/update_usulan_jalan.dto';
@@ -29,7 +30,7 @@ export abstract class UsulanJalanService {
     abstract verifyBappeda(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
 
     abstract reject(id: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<any>;
+    abstract getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<RejectInfoDto | null>;
 }
 
 

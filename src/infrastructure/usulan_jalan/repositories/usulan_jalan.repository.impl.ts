@@ -6,6 +6,7 @@ import { UsulanJalanRepository } from '../../../domain/usulan_jalan/usulan_jalan
 import { UsulanJalanOrmEntity } from '../orm/usulan_jalan.orm_entity';
 import { UsulanJalanWithRelationsDto } from 'src/application/usulan_jalan/dto/usulan_jalan_with_relations.dto';
 import { FindAllUsulanJalanDto } from 'src/application/usulan_jalan/dto/find_all_usulan_jalan.dto';
+import { RejectInfoDto } from 'src/application/usulan_jalan/dto/reject_info.dto';
 
 @Injectable()
 export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
@@ -165,6 +166,42 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
             return this.findById(id) as Promise<UsulanJalanWithRelationsDto>;
         } catch (error) {
             console.log("Error updating Usulan Jalan:", error);
+            throw error;
+        }
+    }
+
+    async getRejectInfo(id: number, idOpd?: number): Promise<RejectInfoDto | null> {
+        try {
+            const whereClause: any = { id };
+
+            // Add OPD filter if provided
+            if (idOpd) {
+                whereClause.idOpd = idOpd;
+            }
+
+            const entity = await this.repo.findOne({
+                where: whereClause,
+                relations: ['rejectVerifikator'],
+            });
+
+            if (!entity) {
+                return null;
+            }
+
+            return {
+                rejectVerifId: entity.rejectVerifId,
+                rejectReason: entity.rejectReason,
+                rejectedAt: entity.rejectedAt,
+                rejectVerifikator: entity.rejectVerifikator
+                    ? {
+                        id: entity.rejectVerifikator.id,
+                        username: entity.rejectVerifikator.username,
+                    }
+                    : null,
+                verifikator: null, // Will be populated in service layer
+            };
+        } catch (error) {
+            console.log("Error getting reject info:", error);
             throw error;
         }
     }
