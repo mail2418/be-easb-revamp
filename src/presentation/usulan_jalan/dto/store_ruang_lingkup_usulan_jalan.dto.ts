@@ -10,11 +10,6 @@ export class StoreRuangLingkupUsulanJalanDto {
     @IsOptional()
     @IsInt()
     @Type(() => Number)
-    idOpd?: number;
-
-    @IsOptional()
-    @IsInt()
-    @Type(() => Number)
     idSpesifikasiDesainLentur?: number;
 
     @IsOptional()

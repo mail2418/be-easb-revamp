@@ -56,12 +56,12 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
     async storeInformasi(dto: StoreInformasiUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
-            // Set idOpd from user if OPD role
-            const idOpd = userRoles.includes(Role.OPD) ? userIdOpd : dto.idOpd;
-
-            if (!idOpd) {
-                throw new ForbiddenException('OPD is required');
+            // Validate that user has idOpd (must be OPD user)
+            if (!userIdOpd) {
+                throw new ForbiddenException('User is not sync to an opd');
             }
+
+            const idOpd = userIdOpd;
 
             // Create with status 1 (Input Informasi Usulan Jalan)
             const usulanJalan = await this.repository.create({
