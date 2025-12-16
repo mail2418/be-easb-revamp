@@ -203,13 +203,16 @@ export class AsbServiceImpl implements AsbService {
 
             data.forEach(item => {
                 if (item.idAsbStatus === 8) {
-                    result[0].amount += item.count;
+                    result[0].amount += item.count; // Sukses
                 } else if (item.idAsbStatus === 7) {
-                    result[1].amount += item.count;
-                } else if (item.idAsbStatus === 6) {
-                    result[2].amount += item.count;
+                    result[1].amount += item.count; // Gagal
+                } else if (item.idAsbStatus === 6 || (item.idAsbStatus >= 9 && item.idAsbStatus <= 13)) {
+                    // Status 6: Submitted for verification
+                    // Status 9-13: In verification process (Verify Lantai -> Verify Pekerjaan)
+                    result[2].amount += item.count; // Menunggu Verifikasi
                 } else {
-                    result[3].amount += item.count;
+                    // Status 1-5: OPD filling process
+                    result[3].amount += item.count; // Sedang dalam Pengisian
                 }
             });
 

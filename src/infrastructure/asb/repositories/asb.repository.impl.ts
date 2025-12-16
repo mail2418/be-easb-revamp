@@ -266,7 +266,9 @@ export class AsbRepositoryImpl implements AsbRepository {
                     totalSuksesBangunan += count;
                 } else if (statusId === 7) {
                     totalTolakBangunan += count;
-                } else if (statusId >= 1 && statusId <= 6) {
+                } else if ((statusId >= 1 && statusId <= 6) || (statusId >= 9 && statusId <= 13)) {
+                    // Status 1-6: Pengisian OPD (Created -> Submitted)
+                    // Status 9-13: Proses Verifikasi (Verify Lantai -> Verify Pekerjaan)
                     totalProsesBangunan += count;
                 }
             });
