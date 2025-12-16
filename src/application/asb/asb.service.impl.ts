@@ -494,11 +494,15 @@ export class AsbServiceImpl implements AsbService {
                 asb.luasTotalBangunan || 0
             );
 
+            // 4. Calculate Total Biaya Pembangunan
+            const totalBiayaPembangunan = Number(BPS) + Number(asb.nominalBps || 0);
+
             // 5. Update ASB status
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 3,
                 nominalBps: BPS,
-                bobotTotalBps: jumlahBobot
+                bobotTotalBps: jumlahBobot,
+                totalBiayaPembangunan: totalBiayaPembangunan
             });
 
             return {
@@ -810,11 +814,15 @@ export class AsbServiceImpl implements AsbService {
                 asb.luasTotalBangunan || 0,
             );
 
+            // 5. Calculate Total Biaya Pembangunan
+            const totalBiayaPembangunan = Number(BPSReview) + Number(asb.nominalBps || 0);
+
             // 6. Update ASB status to 10
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 10,
                 nominalBps: BPSReview,
-                bobotTotalBps: jumlahBobot
+                bobotTotalBps: jumlahBobot,
+                totalBiayaPembangunan: totalBiayaPembangunan
             });
 
             return {
