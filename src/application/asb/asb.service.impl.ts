@@ -599,7 +599,7 @@ export class AsbServiceImpl implements AsbService {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
             }
 
-            const rekapitulasiBiayaKonstruksi = asb.totalBiayaPembangunan ?? 0 + nominalPerencanaanKonstruksi + nominalPengawasanKonstruksi + nominalManagementKonstruksi + (asb.nominalBps ?? 0) + (BPNS ?? 0);
+            const rekapitulasiBiayaKonstruksi = Number(asb.totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi) + Number(asb.nominalBps ?? 0) + Number(BPNS ?? 0);
 
             const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
 
@@ -933,7 +933,7 @@ export class AsbServiceImpl implements AsbService {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
             }
 
-            const rekapitulasiBiayaKonstruksi = nominalPerencanaanKonstruksi + nominalPengawasanKonstruksi + nominalManagementKonstruksi + (asb.nominalBps ?? 0) + (BPNSReview ?? 0);
+            const rekapitulasiBiayaKonstruksi = Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi) + Number(asb.nominalBps ?? 0) + Number(BPNSReview ?? 0);
 
             const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
 
@@ -1079,86 +1079,11 @@ export class AsbServiceImpl implements AsbService {
             const userOpdAsb = await this.userService.findById(opdAsb?.id_user || 0)
             const usernameOpd = userOpdAsb?.username;
 
-            // 3 Get Jakon data
-            if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !asb.totalBiayaPembangunan) {
-                throw new Error("ASB is missing required classification or location data for Jakon lookup");
-            }
-
-            // Simpan field jakon
-            console.log("variables: ", {
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.PERENCANAAN,
-                total_biaya_pembangunan: asb.totalBiayaPembangunan
-            })
-            const perencanaanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.PERENCANAAN,
-                total_biaya_pembangunan: asb.totalBiayaPembangunan
-            });
-
-            if (!perencanaanKonstruksi) {
-                throw new Error("ASB is missing required perencanaanKonstruksi data for Jakon lookup");
-            }
-
-            const nominalPerencanaanKonstruksi = perencanaanKonstruksi.standard;
-
-            const pengawasanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.PENGAWASAN,
-                total_biaya_pembangunan: asb.totalBiayaPembangunan
-            });
-
-            if (!pengawasanKonstruksi) {
-                throw new Error("ASB is missing required pengawasanKonstruksi data for Jakon lookup");
-            }
-
-            const nominalPengawasanKonstruksi = pengawasanKonstruksi.standard;
-
-            if (!asb.totalLantai || !asb.jumlahKontraktor) {
-                throw new Error("ASB is missing required totalLantai or jumlahKontraktor data for Jakon lookup");
-            }
-
-            const managementKonstruksi = (asb.totalLantai <= 4 && asb.jumlahKontraktor <= 2) ? 0 : await this.asbJakonService.getJakonByPriceRange({
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.MANAGEMENT,
-                total_biaya_pembangunan: asb.totalBiayaPembangunan
-            });
-
-            if (managementKonstruksi === null && managementKonstruksi !== 0) {
-                throw new NotFoundException("ASB is missing required managementKonstruksi data for Jakon lookup");
-            }
-            
-            let nominalManagementKonstruksi = 0;
-            if (managementKonstruksi === 0) {
-                nominalManagementKonstruksi = 0;
-            } else {
-                nominalManagementKonstruksi = managementKonstruksi.standard;
-            }
-
-            asb.rekapitulasiBiayaKonstruksi = Number(asb.totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi); // perencanaan kegiatan belum ditambah
-
-            console.log('rekapitulasiBiayaKonstruksi: ', asb.rekapitulasiBiayaKonstruksi);
-
-            asb.rekapitulasiBiayaKonstruksiRounded = Math.round(asb.rekapitulasiBiayaKonstruksi / 100) * 100;
-
             // 4. Update ASB - track which verifikator approved this
             const updatedAsb = await this.repository.update(id_asb, {
                 idAsbStatus: 8,
                 idVerifikatorBappeda: Number(userId),
-                verifiedBappedaAt: new Date(),
-                perencanaanKonstruksi: nominalPerencanaanKonstruksi,
-                pengawasanKonstruksi: nominalPengawasanKonstruksi,
-                managementKonstruksi: nominalManagementKonstruksi,
-                rekapitulasiBiayaKonstruksi: asb.rekapitulasiBiayaKonstruksi,
-                rekapitulasiBiayaKonstruksiRounded: asb.rekapitulasiBiayaKonstruksiRounded
+                verifiedBappedaAt: new Date()
             });
 
             // 3. Get data for kertas kerja
