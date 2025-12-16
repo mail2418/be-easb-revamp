@@ -53,15 +53,16 @@ export class JalanSpesifikasiDesainKakuRepositoryImpl implements JalanSpesifikas
 
     async findAll(dto: GetJalanSpesifikasiDesainKakuDto): Promise<{ data: JalanSpesifikasiDesainKaku[]; total: number; }> {
         try {
-            const queryBuilder = this.repo.createQueryBuilder('jalan_spesifikasi_desain_kaku');
+            const findOptions: any = {
+                order: { id: "DESC" }
+            };
 
             if (dto.page !== undefined && dto.amount !== undefined) {
-                queryBuilder.skip((dto.page - 1) * dto.amount).take(dto.amount);
+                findOptions.skip = (dto.page - 1) * dto.amount;
+                findOptions.take = dto.amount;
             }
 
-            const [data, total] = await queryBuilder
-                .orderBy('jalan_spesifikasi_desain_kaku.id', 'DESC')
-                .getManyAndCount();
+            const [data, total] = await this.repo.findAndCount(findOptions);
 
             return { data, total };
         } catch (error) {

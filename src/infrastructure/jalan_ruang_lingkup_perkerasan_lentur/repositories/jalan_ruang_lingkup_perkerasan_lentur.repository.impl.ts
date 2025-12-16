@@ -53,15 +53,16 @@ export class JalanRuangLingkupPerkerasanLenturRepositoryImpl implements JalanRua
 
     async findAll(dto: GetJalanRuangLingkupPerkerasanLenturDto): Promise<{ data: JalanRuangLingkupPerkerasanLentur[]; total: number; }> {
         try {
-            const queryBuilder = this.repo.createQueryBuilder('jalan_ruang_lingkup_perkerasan_lentur');
+            const findOptions: any = {
+                order: { id: "DESC" }
+            };
 
             if (dto.page !== undefined && dto.amount !== undefined) {
-                queryBuilder.skip((dto.page - 1) * dto.amount).take(dto.amount);
+                findOptions.skip = (dto.page - 1) * dto.amount;
+                findOptions.take = dto.amount;
             }
 
-            const [data, total] = await queryBuilder
-                .orderBy('jalan_ruang_lingkup_perkerasan_lentur.id', 'DESC')
-                .getManyAndCount();
+            const [data, total] = await this.repo.findAndCount(findOptions);
 
             return { data, total };
         } catch (error) {

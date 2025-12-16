@@ -205,7 +205,7 @@ export class CreateUsulanJalanTable1765732341504 implements MigrationInterface {
             new TableForeignKey({
                 columnNames: ['id_opd'],
                 referencedColumnNames: ['id'],
-                referencedTableName: 'opd',
+                referencedTableName: 'opds',
                 onDelete: 'CASCADE',
             }),
             new TableForeignKey({
@@ -289,19 +289,19 @@ export class CreateUsulanJalanTable1765732341504 implements MigrationInterface {
             new TableForeignKey({
                 columnNames: ['id_kabkota'],
                 referencedColumnNames: ['id'],
-                referencedTableName: 'kab_kota',
+                referencedTableName: 'kabkotas',
                 onDelete: 'SET NULL',
             }),
             new TableForeignKey({
                 columnNames: ['id_kecamatan'],
                 referencedColumnNames: ['id'],
-                referencedTableName: 'kecamatan',
+                referencedTableName: 'kecamatans',
                 onDelete: 'SET NULL',
             }),
             new TableForeignKey({
                 columnNames: ['id_kelurahan'],
                 referencedColumnNames: ['id'],
-                referencedTableName: 'kelurahan',
+                referencedTableName: 'kelurahans',
                 onDelete: 'SET NULL',
             }),
             new TableForeignKey({
