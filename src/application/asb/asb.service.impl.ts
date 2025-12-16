@@ -495,7 +495,7 @@ export class AsbServiceImpl implements AsbService {
             );
 
             // 4. Calculate Total Biaya Pembangunan
-            const totalBiayaPembangunan = Number(BPS) + Number(asb.nominalBps || 0);
+            const totalBiayaPembangunan = Number(BPS)
 
             // 5. Update ASB status
             const updatedAsb = await this.repository.update(dto.id_asb, {
@@ -815,7 +815,7 @@ export class AsbServiceImpl implements AsbService {
             );
 
             // 5. Calculate Total Biaya Pembangunan
-            const totalBiayaPembangunan = Number(BPSReview) + Number(asb.nominalBps || 0);
+            const totalBiayaPembangunan = Number(BPSReview)
 
             // 6. Update ASB status to 10
             const updatedAsb = await this.repository.update(dto.id_asb, {
