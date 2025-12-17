@@ -13,6 +13,8 @@ import { StoreRuangLingkupUsulanJalanDto } from '../../presentation/usulan_jalan
 import { UpdateUsulanJalanDto } from '../../presentation/usulan_jalan/dto/update_usulan_jalan.dto';
 import { VerifyInformasiUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_informasi_usulan_jalan.dto';
 import { VerifyRuangLingkupUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_ruang_lingkup_usulan_jalan.dto';
+import { GetUsulanJalanAnalyticsFilterDto } from './dto/get_usulan_jalan_analytics_filter.dto';
+import { UsulanJalanAnalyticsDto } from './dto/usulan_jalan_analytics.dto';
 
 @Injectable()
 export class UsulanJalanServiceImpl implements UsulanJalanService {
@@ -482,6 +484,37 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             }
 
             return rejectInfo;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAnalytics(userIdOpd: number | null, userRoles: Role[], filter?: GetUsulanJalanAnalyticsFilterDto): Promise<UsulanJalanAnalyticsDto> {
+        try {
+            // Check permissions
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
+
+            if (isAdmin || isSuperAdmin || isVerifikator) {
+                // ADMIN/SUPERADMIN/VERIFIKATOR can access ALL without OPD filter
+                return await this.repository.getAnalytics(undefined, filter);
+            } else {
+                // For OPD users
+                const isOpd = userRoles.includes(Role.OPD);
+
+                if (isOpd) {
+                    // OPD users must have an idOpd
+                    if (!userIdOpd) {
+                        throw new ForbiddenException('OPD user has no associated OPD');
+                    }
+
+                    // Fetch with OPD filter
+                    return await this.repository.getAnalytics(userIdOpd, filter);
+                } else {
+                    throw new ForbiddenException('User is not authorized to access Usulan Jalan analytics');
+                }
+            }
         } catch (error) {
             throw error;
         }

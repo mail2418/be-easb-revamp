@@ -24,6 +24,7 @@ import { VerifyRuangLingkupUsulanJalanDto } from './dto/verify_ruang_lingkup_usu
 import { VerifyUsulanJalanDto } from './dto/verify_usulan_jalan.dto';
 import { RejectUsulanJalanDto } from './dto/reject_usulan_jalan.dto';
 import { ForbiddenException } from '@nestjs/common';
+import { GetUsulanJalanAnalyticsFilterDto } from '../../application/usulan_jalan/dto/get_usulan_jalan_analytics_filter.dto';
 
 interface ResponseDto {
     status: string;
@@ -35,6 +36,56 @@ interface ResponseDto {
 @Controller('usulan-jalan')
 export class UsulanJalanController {
     constructor(private readonly usulanJalanService: UsulanJalanService) { }
+
+    @Get('analytics')
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getAnalytics(
+        @Query() filter: GetUsulanJalanAnalyticsFilterDto,
+        @Request() req,
+    ): Promise<ResponseDto> {
+        try {
+            const userRoles = req.user?.roles || [];
+            const userIdOpd = req.user?.idOpd || null;
+
+            const result = await this.usulanJalanService.getAnalytics(userIdOpd, userRoles, filter);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Jalan analytics retrieved successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    message = Array.isArray(resObj.message)
+                        ? resObj.message.join(', ')
+                        : resObj.message ?? 'Error';
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)

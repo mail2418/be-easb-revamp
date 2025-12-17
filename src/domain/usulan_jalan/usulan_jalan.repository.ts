@@ -3,6 +3,8 @@ import { FindAllUsulanJalanDto } from 'src/application/usulan_jalan/dto/find_all
 import { RejectInfoDto } from 'src/application/usulan_jalan/dto/reject_info.dto';
 import { DeepPartial } from 'typeorm';
 import { UsulanJalan } from './usulan_jalan.entity';
+import { GetUsulanJalanAnalyticsFilterDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_analytics_filter.dto';
+import { UsulanJalanAnalyticsDto } from 'src/application/usulan_jalan/dto/usulan_jalan_analytics.dto';
 
 export abstract class UsulanJalanRepository {
     abstract findById(id: number, idOpd?: number): Promise<UsulanJalanWithRelationsDto | null>;
@@ -11,6 +13,5 @@ export abstract class UsulanJalanRepository {
     abstract create(data: DeepPartial<UsulanJalan>): Promise<UsulanJalanWithRelationsDto>;
     abstract update(id: number, data: DeepPartial<UsulanJalan>): Promise<UsulanJalanWithRelationsDto>;
     abstract delete(id: number): Promise<void>;
+    abstract getAnalytics(idOpd?: number, filter?: GetUsulanJalanAnalyticsFilterDto): Promise<UsulanJalanAnalyticsDto>;
 }
-
-
