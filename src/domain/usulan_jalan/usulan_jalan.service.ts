@@ -8,6 +8,8 @@ import { StoreRuangLingkupUsulanJalanDto } from 'src/presentation/usulan_jalan/d
 import { UpdateUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/update_usulan_jalan.dto';
 import { VerifyInformasiUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/verify_informasi_usulan_jalan.dto';
 import { VerifyRuangLingkupUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/verify_ruang_lingkup_usulan_jalan.dto';
+import { GetUsulanJalanAnalyticsFilterDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_analytics_filter.dto';
+import { UsulanJalanAnalyticsDto } from 'src/application/usulan_jalan/dto/usulan_jalan_analytics.dto';
 
 export abstract class UsulanJalanService {
     // Query methods
@@ -31,6 +33,5 @@ export abstract class UsulanJalanService {
 
     abstract reject(id: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<RejectInfoDto | null>;
+    abstract getAnalytics(userIdOpd: number | null, userRoles: Role[], filter?: GetUsulanJalanAnalyticsFilterDto): Promise<UsulanJalanAnalyticsDto>;
 }
-
-

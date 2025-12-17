@@ -7,11 +7,6 @@ export class UpdateUsulanJalanDto {
     @Type(() => Number)
     idUsulanJalan: number;
 
-    @IsOptional()
-    @IsInt()
-    @Type(() => Number)
-    idOpd?: number;
-
     @IsInt()
     @IsNotEmpty()
     @Type(() => Number)

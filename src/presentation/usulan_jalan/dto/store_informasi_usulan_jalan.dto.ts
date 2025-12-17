@@ -2,11 +2,6 @@ import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validat
 import { Type } from 'class-transformer';
 
 export class StoreInformasiUsulanJalanDto {
-    @IsOptional()
-    @IsInt()
-    @Type(() => Number)
-    idOpd?: number;
-
     @IsInt()
     @IsNotEmpty()
     @Type(() => Number)
