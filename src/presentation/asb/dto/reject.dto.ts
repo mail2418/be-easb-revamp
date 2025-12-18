@@ -1,11 +1,14 @@
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class RejectDto {
     @IsNumber()
     @IsNotEmpty()
-    id_asb: number;
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    id_asb!: number;
 
     @IsString()
     @IsNotEmpty()
-    reject_reason: string;
+    @Transform(({ value }) => value?.trim())
+    reject_reason!: string;
 }

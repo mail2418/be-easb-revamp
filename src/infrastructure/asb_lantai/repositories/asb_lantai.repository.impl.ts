@@ -16,7 +16,12 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
 
     async create(dto: CreateAsbLantaiDto): Promise<AsbLantai> {
         try {
-            const ormEntity = plainToInstance(AsbLantaiOrmEntity, dto);
+            const ormEntity = this.repo.create({
+                lantai: dto.lantai,
+                type: dto.type,
+                koef: dto.koef,
+                idSatuan: dto.id_satuan,
+            });
             const newEntity = await this.repo.save(ormEntity);
             return newEntity;
         } catch (error) {
@@ -26,7 +31,13 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
 
     async update(dto: UpdateAsbLantaiDto): Promise<AsbLantai> {
         try {
-            await this.repo.update(dto.id, dto);
+            const updateData: Partial<AsbLantaiOrmEntity> = {
+                lantai: dto.lantai,
+                type: dto.type,
+                koef: dto.koef,
+                idSatuan: dto.id_satuan,
+            };
+            await this.repo.update(dto.id, updateData);
             const updatedEntity = await this.repo.findOne({ where: { id: dto.id } });
             return updatedEntity!;
         } catch (error) {

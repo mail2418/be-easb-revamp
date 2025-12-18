@@ -1,6 +1,9 @@
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class DeleteAsbBpsGalleryNonstdDto {
     @IsNumber()
-    id: number;
+    @IsNotEmpty()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    id!: number;
 }

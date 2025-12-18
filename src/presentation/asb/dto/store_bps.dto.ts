@@ -1,14 +1,21 @@
-import { IsArray, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsNumber, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class StoreBpsDto {
     @IsNumber()
-    id_asb: number;
+    @IsNotEmpty()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    id_asb!: number;
 
     @IsArray()
+    @IsNotEmpty()
     @IsNumber({}, { each: true })
-    komponen_std: number[];
+    @Transform(({ value }) => Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    komponen_std!: number[];
 
     @IsArray()
+    @IsNotEmpty()
     @IsNumber({}, { each: true })
-    bobot_std: number[];
+    @Transform(({ value }) => Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    bobot_std!: number[];
 }

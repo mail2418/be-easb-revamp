@@ -1,10 +1,11 @@
 import { IsInt, IsNotEmpty, IsString, IsOptional } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { Min } from 'class-validator';
 
 export class UpdateAsbStoreIndexDto {
     @IsInt()
     @IsNotEmpty()
+    @Type(() => Number)
     id: number;
 
     @IsInt()
@@ -14,10 +15,12 @@ export class UpdateAsbStoreIndexDto {
 
     @IsString()
     @IsNotEmpty()
+    @Transform(({ value }) => value?.trim())
     namaAsb: string;
 
     @IsString()
     @IsNotEmpty()
+    @Transform(({ value }) => value?.trim())
     alamat: string;
 
     @IsInt()
