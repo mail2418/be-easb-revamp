@@ -1,13 +1,18 @@
 import { IsNumber, IsNotEmpty, Min, IsOptional } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class GetShstDto {
+  @IsOptional()
   @IsNumber()
   @Min(1)
-  page!: number;
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  page?: number;
 
+  @IsOptional()
   @IsNumber()
   @Min(1)
-  amount!: number;
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  amount?: number;
 
   @IsOptional()
   @IsNumber()

@@ -1,11 +1,16 @@
-import { IsNumber, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsOptional, Min } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class GetAsbKomponenBangunanProsNonstdListDto {
+    @IsOptional()
     @IsNumber()
-    @IsNotEmpty()
-    page!: number;
+    @Min(1)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    page?: number;
 
+    @IsOptional()
     @IsNumber()
-    @IsNotEmpty()
-    amount!: number;
+    @Min(1)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    amount?: number;
 }

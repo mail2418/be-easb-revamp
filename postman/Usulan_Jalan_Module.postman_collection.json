@@ -134,6 +134,38 @@
 						"description": "Get single usulan jalan by ID with all relations"
 					},
 					"response": []
+				},
+				{
+					"name": "Get Usulan Jalan Analytics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan/analytics?bulan=1&tahun=2024",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan", "analytics"],
+							"query": [
+								{
+									"key": "bulan",
+									"value": "1",
+									"description": "Filter by month (1-12, optional)"
+								},
+								{
+									"key": "tahun",
+									"value": "2024",
+									"description": "Filter by year (>=2000, optional)"
+								}
+							]
+						},
+						"description": "Get usulan jalan analytics data including total sukses, tolak, proses, total usulan, percentages, total lentur/kaku, and daily data.\n\n**Roles:** OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Behavior:**\n- SUPERADMIN, ADMIN, VERIFIKATOR: Get all analytics data without filter\n- OPD: Get analytics data filtered by user's idOpd\n\n**Response includes:**\n- totalSukses (Status 3 - Memenuhi Syarat)\n- totalTolak (Status 4 - Tidak Memenuhi Syarat)\n- totalProses (Status 1-2, 5-8 - In Process)\n- totalUsulan (Total all usulan)\n- persentaseSukses (Percentage of sukses)\n- persentaseTolak (Percentage of tolak)\n- persentaseProses (Percentage of proses)\n- totalLentur (Total usulan with jenis perkerasan Lentur)\n- totalKaku (Total usulan with jenis perkerasan Kaku)\n- persentaseLentur (Percentage of lentur)\n- persentaseKaku (Percentage of kaku)\n- dailyData (Array of daily counts)"
+					},
+					"response": []
 				}
 			]
 		},
