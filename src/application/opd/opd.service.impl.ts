@@ -73,13 +73,15 @@ export class OpdServiceImpl implements OpdService {
     async getOpds(dto: GetOpdsDto): Promise<OpdsPaginationResultDto> {
         try {
             const opds = await this.opdRepository.findAll(dto);
+            const page = dto.page ?? 1;
+            const amount = dto.amount ?? opds.total;
 
             return {
                 data: opds.data,
                 total: opds.total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(opds.total / dto.amount)
+                page,
+                amount,
+                totalPages: amount > 0 ? Math.ceil(opds.total / amount) : 0
             };
         } catch (error) {
             throw error;

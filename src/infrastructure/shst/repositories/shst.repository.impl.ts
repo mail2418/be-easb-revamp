@@ -76,8 +76,10 @@ export class ShstRepositoryImpl extends ShstRepository {
             }
 
             // Pagination
-            const skip = (dto.page - 1) * dto.amount;
-            queryBuilder.skip(skip).take(dto.amount);
+            if (dto.page !== undefined && dto.amount !== undefined) {
+                const skip = (dto.page - 1) * dto.amount;
+                queryBuilder.skip(skip).take(dto.amount);
+            }
 
             // Order
             queryBuilder.orderBy("shst.id", "DESC");

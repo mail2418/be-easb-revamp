@@ -113,12 +113,14 @@ export class ShstServiceImpl extends ShstService {
     async findAll(dto: GetShstDto): Promise<ShstsPaginationResultDto> {
         try {
             const result = await this.shstRepository.findAll(dto);
+            const page = dto.page ?? 1;
+            const amount = dto.amount ?? result.total;
             return {
                 data: result.data,
                 total: result.total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(result.total / dto.amount)
+                page,
+                amount,
+                totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
             };
         } catch (error) {
             throw error;

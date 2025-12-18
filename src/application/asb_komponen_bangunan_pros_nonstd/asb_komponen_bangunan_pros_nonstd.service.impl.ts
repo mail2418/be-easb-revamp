@@ -81,12 +81,14 @@ export class AsbKomponenBangunanProsNonstdServiceImpl implements AsbKomponenBang
     async getAll(pagination: GetAsbKomponenBangunanProsNonstdListDto): Promise<AsbKomponenBangunanProsNonstdPaginationResult> {
         try {
             const result = await this.repository.findAll(pagination);
+            const page = pagination.page ?? 1;
+            const amount = pagination.amount ?? result.total;
             return {
                 komponenBangunanProsList: result.data,
                 total: result.total,
-                page: pagination.page,
-                amount: pagination.amount,
-                totalPages: Math.ceil(result.total / pagination.amount)
+                page,
+                amount,
+                totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
             };
         } catch (error) {
             throw error;

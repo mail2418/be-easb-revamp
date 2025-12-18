@@ -78,12 +78,14 @@ export class JenisStandarServiceImpl implements JenisStandarService {
   async findAll(pagination: GetJenisStandarDto): Promise<JenisStandarPaginationResult> {
     try {
       const result = await this.jenisStandarRepository.findAll(pagination);
+      const page = pagination.page ?? 1;
+      const amount = pagination.amount ?? result.total;
       return {
         jenis_standars: result.data,
         total: result.total,
-        page: pagination.page,
-        amount: pagination.amount,
-        totalPages: Math.ceil(result.total / pagination.amount)
+        page,
+        amount,
+        totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
       };
     } catch (error) {
       throw error;
