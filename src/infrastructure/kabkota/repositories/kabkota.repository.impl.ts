@@ -63,6 +63,16 @@ export class KabKotaRepositoryImpl implements KabKotaRepository {
         }
     }
 
+    async findByNama(nama: string): Promise<KabKota | null> {
+        try {
+            const kabkota = await this.repo.findOne({ where: { nama } });
+            return kabkota || null;
+        } catch (error) {
+            console.error('Error finding kabkota by nama:', error);
+            throw error;
+        }
+    }
+
     async findByProvinceId(provinceId: number): Promise<KabKota[]> {
         try {
             const kabkotas = await this.repo.find({
