@@ -10,11 +10,8 @@ import {
 } from 'typeorm';
 import { OpdOrmEntity } from '../../opd/orm/opd.orm_entity';
 import { JalanJenisPerkerasanOrmEntity } from '../../jalan_jenis_perkerasan/orm/jalan_jenis_perkerasan.orm_entity';
-import { JalanMutuBetonOrmEntity } from '../../jalan_mutu_beton/orm/jalan_mutu_beton.orm_entity';
-import { JalanSpesifikasiDesainLenturOrmEntity } from '../../jalan_spesifikasi_desain_lentur/orm/jalan_spesifikasi_desain_lentur.orm_entity';
-import { JalanSpesifikasiDesainKakuOrmEntity } from '../../jalan_spesifikasi_desain_kaku/orm/jalan_spesifikasi_desain_kaku.orm_entity';
-import { JalanRuangLingkupPerkerasanLenturOrmEntity } from '../../jalan_ruang_lingkup_perkerasan_lentur/orm/jalan_ruang_lingkup_perkerasan_lentur.orm_entity';
-import { JalanRuangLingkupPerkerasanKakuOrmEntity } from '../../jalan_ruang_lingkup_perkerasan_kaku/orm/jalan_ruang_lingkup_perkerasan_kaku.orm_entity';
+import { JalanSpesifikasiDesainOrmEntity } from '../../jalan_spesifikasi_desain/orm/jalan_spesifikasi_desain.orm_entity';
+import { JalanRuangLingkupOrmEntity } from '../../jalan_ruang_lingkup/orm/jalan_ruang_lingkup.orm_entity';
 import { UsulanJalanStatusOrmEntity } from '../../usulan_jalan_status/orm/usulan_jalan_status.orm_entity';
 import { KabKotaOrmEntity } from '../../kabkota/orm/kabkota.orm_entity';
 import { KecamatanOrmEntity } from '../../kecamatan/orm/kecamatan.orm_entity';
@@ -40,40 +37,20 @@ export class UsulanJalanOrmEntity {
     @Column({ name: 'id_jalan_jenis_perkerasan_review', type: 'int', nullable: true })
     idJalanJenisPerkerasanReview!: number | null;
 
-    // Optional Foreign Keys - Mutu Beton
-    @Column({ name: 'id_mutu_beton', type: 'int', nullable: true })
-    idMutuBeton!: number | null;
+    // Optional Foreign Keys - Spesifikasi Desain
+    @Column({ name: 'id_spesifikasi_desain', type: 'int', nullable: true })
+    idSpesifikasiDesain!: number | null;
 
-    @Column({ name: 'id_mutu_beton_review', type: 'int', nullable: true })
-    idMutuBetonReview!: number | null;
+    @Column({ name: 'id_spesifikasi_desain_review', type: 'int', nullable: true })
+    idSpesifikasiDesainReview!: number | null;
 
-    // Optional Foreign Keys - Spesifikasi Desain Lentur
-    @Column({ name: 'id_spesifikasi_desain_lentur', type: 'int', nullable: true })
-    idSpesifikasiDesainLentur!: number | null;
+    // Optional Foreign Keys - Ruang Lingkup
+    @Column({ name: 'id_ruang_lingkup', type: 'int', nullable: true })
+    idRuangLingkup!: number | null;
 
-    @Column({ name: 'id_spesifikasi_desain_lentur_review', type: 'int', nullable: true })
-    idSpesifikasiDesainLenturReview!: number | null;
+    @Column({ name: 'id_ruang_lingkup_review', type: 'int', nullable: true })
+    idRuangLingkupReview!: number | null;
 
-    // Optional Foreign Keys - Spesifikasi Desain Kaku
-    @Column({ name: 'id_spesifikasi_desain_kaku', type: 'int', nullable: true })
-    idSpesifikasiDesainKaku!: number | null;
-
-    @Column({ name: 'id_spesifikasi_desain_kaku_review', type: 'int', nullable: true })
-    idSpesifikasiDesainKakuReview!: number | null;
-
-    // Optional Foreign Keys - Ruang Lingkup Lentur
-    @Column({ name: 'id_ruang_lingkup_perkerasan_lentur', type: 'int', nullable: true })
-    idRuangLingkupPerkerasanLentur!: number | null;
-
-    @Column({ name: 'id_ruang_lingkup_perkerasan_lentur_review', type: 'int', nullable: true })
-    idRuangLingkupPerkerasanLenturReview!: number | null;
-
-    // Optional Foreign Keys - Ruang Lingkup Kaku
-    @Column({ name: 'id_ruang_lingkup_perkerasan_kaku', type: 'int', nullable: true })
-    idRuangLingkupPerkerasanKaku!: number | null;
-
-    @Column({ name: 'id_ruang_lingkup_perkerasan_kaku_review', type: 'int', nullable: true })
-    idRuangLingkupPerkerasanKakuReview!: number | null;
 
     // Optional Foreign Keys - Location
     @Column({ name: 'id_kabkota', type: 'int', nullable: true })
@@ -164,45 +141,21 @@ export class UsulanJalanOrmEntity {
     @JoinColumn({ name: 'id_jalan_jenis_perkerasan_review' })
     jalanJenisPerkerasanReview!: JalanJenisPerkerasanOrmEntity;
 
-    @ManyToOne(() => JalanMutuBetonOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_mutu_beton' })
-    mutuBeton!: JalanMutuBetonOrmEntity;
+    @ManyToOne(() => JalanSpesifikasiDesainOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_spesifikasi_desain' })
+    spesifikasiDesain!: JalanSpesifikasiDesainOrmEntity;
 
-    @ManyToOne(() => JalanMutuBetonOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_mutu_beton_review' })
-    mutuBetonReview!: JalanMutuBetonOrmEntity;
+    @ManyToOne(() => JalanSpesifikasiDesainOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_spesifikasi_desain_review' })
+    spesifikasiDesainReview!: JalanSpesifikasiDesainOrmEntity;
 
-    @ManyToOne(() => JalanSpesifikasiDesainLenturOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_spesifikasi_desain_lentur' })
-    spesifikasiDesainLentur!: JalanSpesifikasiDesainLenturOrmEntity;
+    @ManyToOne(() => JalanRuangLingkupOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_ruang_lingkup' })
+    ruangLingkup!: JalanRuangLingkupOrmEntity;
 
-    @ManyToOne(() => JalanSpesifikasiDesainLenturOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_spesifikasi_desain_lentur_review' })
-    spesifikasiDesainLenturReview!: JalanSpesifikasiDesainLenturOrmEntity;
-
-    @ManyToOne(() => JalanSpesifikasiDesainKakuOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_spesifikasi_desain_kaku' })
-    spesifikasiDesainKaku!: JalanSpesifikasiDesainKakuOrmEntity;
-
-    @ManyToOne(() => JalanSpesifikasiDesainKakuOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_spesifikasi_desain_kaku_review' })
-    spesifikasiDesainKakuReview!: JalanSpesifikasiDesainKakuOrmEntity;
-
-    @ManyToOne(() => JalanRuangLingkupPerkerasanLenturOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_ruang_lingkup_perkerasan_lentur' })
-    ruangLingkupPerkerasanLentur!: JalanRuangLingkupPerkerasanLenturOrmEntity;
-
-    @ManyToOne(() => JalanRuangLingkupPerkerasanLenturOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_ruang_lingkup_perkerasan_lentur_review' })
-    ruangLingkupPerkerasanLenturReview!: JalanRuangLingkupPerkerasanLenturOrmEntity;
-
-    @ManyToOne(() => JalanRuangLingkupPerkerasanKakuOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_ruang_lingkup_perkerasan_kaku' })
-    ruangLingkupPerkerasanKaku!: JalanRuangLingkupPerkerasanKakuOrmEntity;
-
-    @ManyToOne(() => JalanRuangLingkupPerkerasanKakuOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_ruang_lingkup_perkerasan_kaku_review' })
-    ruangLingkupPerkerasanKakuReview!: JalanRuangLingkupPerkerasanKakuOrmEntity;
+    @ManyToOne(() => JalanRuangLingkupOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_ruang_lingkup_review' })
+    ruangLingkupReview!: JalanRuangLingkupOrmEntity;
 
     @ManyToOne(() => KabKotaOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_kabkota' })
@@ -232,5 +185,3 @@ export class UsulanJalanOrmEntity {
     @JoinColumn({ name: 'reject_verif_id' })
     rejectVerifikator!: UserOrmEntity | null;
 }
-
-

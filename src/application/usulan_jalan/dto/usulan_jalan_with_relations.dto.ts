@@ -4,16 +4,10 @@ export class UsulanJalanWithRelationsDto {
     idUsulanJalanStatus!: number;
     idJalanJenisPerkerasan!: number;
     idJalanJenisPerkerasanReview!: number | null;
-    idMutuBeton!: number | null;
-    idMutuBetonReview!: number | null;
-    idSpesifikasiDesainLentur!: number | null;
-    idSpesifikasiDesainLenturReview!: number | null;
-    idSpesifikasiDesainKaku!: number | null;
-    idSpesifikasiDesainKakuReview!: number | null;
-    idRuangLingkupPerkerasanLentur!: number | null;
-    idRuangLingkupPerkerasanLenturReview!: number | null;
-    idRuangLingkupPerkerasanKaku!: number | null;
-    idRuangLingkupPerkerasanKakuReview!: number | null;
+    idSpesifikasiDesain!: number | null;
+    idSpesifikasiDesainReview!: number | null;
+    idRuangLingkup!: number | null;
+    idRuangLingkupReview!: number | null;
     idKabkota!: number | null;
     idKecamatan!: number | null;
     idKelurahan!: number | null;
@@ -59,58 +53,26 @@ export class UsulanJalanWithRelationsDto {
         jenis: string;
     } | null;
 
-    mutuBeton?: {
+    spesifikasiDesain?: {
         id: number;
-        jenis: string;
+        kode: string;
+        uraian: string;
     } | null;
 
-    mutuBetonReview?: {
+    spesifikasiDesainReview?: {
         id: number;
-        jenis: string;
+        kode: string;
+        uraian: string;
     } | null;
 
-    spesifikasiDesainLentur?: {
+    ruangLingkup?: {
         id: number;
-        spec: string;
-        desc: string;
+        ruang_lingkup: string;
     } | null;
 
-    spesifikasiDesainLenturReview?: {
+    ruangLingkupReview?: {
         id: number;
-        spec: string;
-        desc: string;
-    } | null;
-
-    spesifikasiDesainKaku?: {
-        id: number;
-        spec: string;
-        desc: string;
-    } | null;
-
-    spesifikasiDesainKakuReview?: {
-        id: number;
-        spec: string;
-        desc: string;
-    } | null;
-
-    ruangLingkupPerkerasanLentur?: {
-        id: number;
-        jenis: string;
-    } | null;
-
-    ruangLingkupPerkerasanLenturReview?: {
-        id: number;
-        jenis: string;
-    } | null;
-
-    ruangLingkupPerkerasanKaku?: {
-        id: number;
-        jenis: string;
-    } | null;
-
-    ruangLingkupPerkerasanKakuReview?: {
-        id: number;
-        jenis: string;
+        ruang_lingkup: string;
     } | null;
 
     kabkota?: {
@@ -155,5 +117,3 @@ export class UsulanJalanWithRelationsDto {
         name: string;
     } | null;
 }
-
-

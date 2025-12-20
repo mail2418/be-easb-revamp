@@ -114,16 +114,10 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // Update with status 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
             const updated = await this.repository.update(dto.idUsulanJalan, {
                 idUsulanJalanStatus: 2,
-                // idSpesifikasiDesainLentur: dto.idSpesifikasiDesainLentur ?? null,
-                // idSpesifikasiDesainLenturReview: dto.idSpesifikasiDesainLenturReview ?? null,
-                // idSpesifikasiDesainKaku: dto.idSpesifikasiDesainKaku ?? null,
-                // idSpesifikasiDesainKakuReview: dto.idSpesifikasiDesainKakuReview ?? null,
-                // idRuangLingkupPerkerasanLentur: dto.idRuangLingkupPerkerasanLentur ?? null,
-                // idRuangLingkupPerkerasanLenturReview: dto.idRuangLingkupPerkerasanLenturReview ?? null,
-                // idRuangLingkupPerkerasanKaku: dto.idRuangLingkupPerkerasanKaku ?? null,
-                // idRuangLingkupPerkerasanKakuReview: dto.idRuangLingkupPerkerasanKakuReview ?? null,
-                // idMutuBeton: dto.idMutuBeton ?? null,
-                // idMutuBetonReview: dto.idMutuBetonReview ?? null,
+                idSpesifikasiDesain: dto.idSpesifikasiDesain ?? null,
+                idSpesifikasiDesainReview: dto.idSpesifikasiDesainReview ?? null,
+                idRuangLingkup: dto.idRuangLingkup ?? null,
+                idRuangLingkupReview: dto.idRuangLingkupReview ?? null,
                 keteranganTambahan: dto.keteranganTambahan ?? null,
                 keteranganTambahanReview: dto.keteranganTambahanReview ?? null,
             });
@@ -145,19 +139,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
             }
 
-            // Validate conditional fields based on jenis perkerasan
-            if (dto.idJalanJenisPerkerasan === 1) {
-                // Lentur - require lentur fields
-                if (!dto.idSpesifikasiDesainLentur || !dto.idRuangLingkupPerkerasanLentur) {
-                    throw new ForbiddenException('Spesifikasi Desain Lentur and Ruang Lingkup Perkerasan Lentur are required for Lentur type');
-                }
-            } else if (dto.idJalanJenisPerkerasan === 2) {
-                // Kaku - require kaku fields
-                if (!dto.idSpesifikasiDesainKaku || !dto.idRuangLingkupPerkerasanKaku) {
-                    throw new ForbiddenException('Spesifikasi Desain Kaku and Ruang Lingkup Perkerasan Kaku are required for Kaku type');
-                }
-            }
-
             // Update all fields
             const updated = await this.repository.update(dto.idUsulanJalan, {
                 idKabkota: dto.idKabkota,
@@ -170,16 +151,10 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 lebarJalanReview: dto.lebarJalanReview ?? null,
                 idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan,
                 idJalanJenisPerkerasanReview: dto.idJalanJenisPerkerasanReview ?? null,
-                // idSpesifikasiDesainLentur: dto.idSpesifikasiDesainLentur ?? null,
-                // idSpesifikasiDesainLenturReview: dto.idSpesifikasiDesainLenturReview ?? null,
-                // idSpesifikasiDesainKaku: dto.idSpesifikasiDesainKaku ?? null,
-                // idSpesifikasiDesainKakuReview: dto.idSpesifikasiDesainKakuReview ?? null,
-                // idRuangLingkupPerkerasanLentur: dto.idRuangLingkupPerkerasanLentur ?? null,
-                // idRuangLingkupPerkerasanLenturReview: dto.idRuangLingkupPerkerasanLenturReview ?? null,
-                // idRuangLingkupPerkerasanKaku: dto.idRuangLingkupPerkerasanKaku ?? null,
-                // idRuangLingkupPerkerasanKakuReview: dto.idRuangLingkupPerkerasanKakuReview ?? null,
-                // idMutuBeton: dto.idMutuBeton ?? null,
-                // idMutuBetonReview: dto.idMutuBetonReview ?? null,
+                idSpesifikasiDesain: dto.idSpesifikasiDesain ?? null,
+                idSpesifikasiDesainReview: dto.idSpesifikasiDesainReview ?? null,
+                idRuangLingkup: dto.idRuangLingkup ?? null,
+                idRuangLingkupReview: dto.idRuangLingkupReview ?? null,
                 keteranganTambahan: dto.keteranganTambahan ?? null,
                 keteranganTambahanReview: dto.keteranganTambahanReview ?? null,
             });
@@ -268,11 +243,8 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // Update review fields and status to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)
             const updated = await this.repository.update(dto.idUsulanJalan, {
                 idUsulanJalanStatus: 6,
-                // idSpesifikasiDesainLenturReview: dto.verifIdSpesifikasiDesainLentur ?? usulanJalan.idSpesifikasiDesainLentur,
-                // idSpesifikasiDesainKakuReview: dto.verifIdSpesifikasiDesainKaku ?? usulanJalan.idSpesifikasiDesainKaku,
-                // idRuangLingkupPerkerasanLenturReview: dto.verifIdRuangLingkupPerkerasanLentur ?? usulanJalan.idRuangLingkupPerkerasanLentur,
-                // idRuangLingkupPerkerasanKakuReview: dto.verifIdRuangLingkupPerkerasanKaku ?? usulanJalan.idRuangLingkupPerkerasanKaku,
-                // idMutuBetonReview: dto.verifIdMutuBeton ?? usulanJalan.idMutuBeton,
+                idSpesifikasiDesainReview: dto.verifIdSpesifikasiDesain ?? usulanJalan.idSpesifikasiDesain,
+                idRuangLingkupReview: dto.verifIdRuangLingkup ?? usulanJalan.idRuangLingkup,
                 keteranganTambahanReview: dto.verifKeteranganTambahan ?? usulanJalan.keteranganTambahan,
             });
 
