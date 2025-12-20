@@ -51,6 +51,11 @@ import { JalanJenisUsulanModule } from './presentation/jalan_jenis_usulan/jalan_
 import { JalanJenisPemeliharaanModule } from './presentation/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.module';
 import { JalanTipePerkerasanLenturModule } from './presentation/jalan_tipe_perkerasan_lentur/jalan_tipe_perkerasan_lentur.module';
 import { JalanTipePerkerasanKakuModule } from './presentation/jalan_tipe_perkerasan_kaku/jalan_tipe_perkerasan_kaku.module';
+import { PpnGlobalModule } from './presentation/ppn_global/ppn_global.module';
+import { JalanSmkkModule } from './presentation/jalan_smkk/jalan_smkk.module';
+import { JalanKebijakanModule } from './presentation/jalan_kebijakan/jalan_kebijakan.module';
+import { JenisUsulanModule } from './presentation/jenis_usulan/jenis_usulan.module';
+import { JalanSaluranRuangLingkupModule } from './presentation/jalan_saluran_ruang_lingkup/jalan_saluran_ruang_lingkup.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -140,7 +145,12 @@ import { DataSourceOptions } from 'typeorm';
         JalanJenisUsulanModule,
         JalanJenisPemeliharaanModule,
         JalanTipePerkerasanLenturModule,
-        JalanTipePerkerasanKakuModule
+        JalanTipePerkerasanKakuModule,
+        PpnGlobalModule,
+        JalanSmkkModule,
+        JalanKebijakanModule,
+        JenisUsulanModule,
+        JalanSaluranRuangLingkupModule,
         // other modules...
     ],
     providers: [

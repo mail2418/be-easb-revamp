@@ -1,40 +1,23 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class VerifyRuangLingkupUsulanJalanDto {
-    @IsInt()
     @IsNotEmpty()
-    @Type(() => Number)
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idUsulanJalan: number;
 
     @IsOptional()
-    @IsInt()
-    @Type(() => Number)
-    verifIdSpesifikasiDesainLentur?: number;
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    verifIdSpesifikasiDesain?: number;
 
     @IsOptional()
-    @IsInt()
-    @Type(() => Number)
-    verifIdSpesifikasiDesainKaku?: number;
-
-    @IsOptional()
-    @IsInt()
-    @Type(() => Number)
-    verifIdRuangLingkupPerkerasanLentur?: number;
-
-    @IsOptional()
-    @IsInt()
-    @Type(() => Number)
-    verifIdRuangLingkupPerkerasanKaku?: number;
-
-    @IsOptional()
-    @IsInt()
-    @Type(() => Number)
-    verifIdMutuBeton?: number;
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    verifIdRuangLingkup?: number;
 
     @IsOptional()
     @IsString()
     verifKeteranganTambahan?: string;
 }
-
-

@@ -1,61 +1,31 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class StoreRuangLingkupUsulanJalanDto {
-    @IsInt()
     @IsNotEmpty()
-    @Type(() => Number)
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idUsulanJalan: number;
 
-    // @IsOptional()
-    // @IsInt()
-    // @Type(() => Number)
-    // idSpesifikasiDesainLentur?: number;
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    idSpesifikasiDesain?: number;
 
-    // @IsOptional()
-    // @IsInt()
-    // @Type(() => Number)
-    // idSpesifikasiDesainLenturReview?: number;
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    idSpesifikasiDesainReview?: number;
 
-    // @IsOptional()
-    // @IsInt()
-    // @Type(() => Number)
-    // idSpesifikasiDesainKaku?: number;
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    idRuangLingkup?: number;
 
-    // @IsOptional()
-    // @IsInt()
-    // @Type(() => Number)
-    // idSpesifikasiDesainKakuReview?: number;
-
-    // @IsOptional()
-    // @IsInt()
-    // @Type(() => Number)
-    // idRuangLingkupPerkerasanLentur?: number;
-
-    // @IsOptional()
-    // @IsInt()
-    // @Type(() => Number)
-    // idRuangLingkupPerkerasanLenturReview?: number;
-
-    // @IsOptional()
-    // @IsInt()
-    // @Type(() => Number)
-    // idRuangLingkupPerkerasanKaku?: number;
-
-    // @IsOptional()
-    // @IsInt()
-    // @Type(() => Number)
-    // idRuangLingkupPerkerasanKakuReview?: number;
-
-    // @IsOptional()
-    // @IsInt()
-    // @Type(() => Number)
-    // idMutuBeton?: number;
-
-    // @IsOptional()
-    // @IsInt()
-    // @Type(() => Number)
-    // idMutuBetonReview?: number;
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    idRuangLingkupReview?: number;
 
     @IsOptional()
     @IsString()
@@ -65,5 +35,3 @@ export class StoreRuangLingkupUsulanJalanDto {
     @IsString()
     keteranganTambahanReview?: string;
 }
-
-

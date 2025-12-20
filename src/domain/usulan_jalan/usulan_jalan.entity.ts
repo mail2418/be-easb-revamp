@@ -1,10 +1,7 @@
 import { Opd } from '../opd/opd.entity';
 import { JalanJenisPerkerasan } from '../jalan_jenis_perkerasan/jalan_jenis_perkerasan.entity';
-import { JalanMutuBeton } from '../jalan_mutu_beton/jalan_mutu_beton.entity';
-import { JalanSpesifikasiDesainLentur } from '../jalan_spesifikasi_desain_lentur/jalan_spesifikasi_desain_lentur.entity';
-import { JalanSpesifikasiDesainKaku } from '../jalan_spesifikasi_desain_kaku/jalan_spesifikasi_desain_kaku.entity';
-import { JalanRuangLingkupPerkerasanLentur } from '../jalan_ruang_lingkup_perkerasan_lentur/jalan_ruang_lingkup_perkerasan_lentur.entity';
-import { JalanRuangLingkupPerkerasanKaku } from '../jalan_ruang_lingkup_perkerasan_kaku/jalan_ruang_lingkup_perkerasan_kaku.entity';
+import { JalanSpesifikasiDesain } from '../jalan_spesifikasi_desain/jalan_spesifikasi_desain.entity';
+import { JalanRuangLingkup } from '../jalan_ruang_lingkup/jalan_ruang_lingkup.entity';
 import { UsulanJalanStatus } from '../usulan_jalan_status/usulan_jalan_status.entity';
 import { KabKota } from '../kabkota/kabkota.entity';
 import { Kecamatan } from '../kecamatan/kecamatan.entity';
@@ -22,25 +19,13 @@ export class UsulanJalan {
     // Optional Foreign Keys - Jenis Perkerasan Review
     idJalanJenisPerkerasanReview: number | null;
 
-    // Optional Foreign Keys - Mutu Beton
-    idMutuBeton: number | null;
-    idMutuBetonReview: number | null;
+    // Optional Foreign Keys - Spesifikasi Desain
+    idSpesifikasiDesain: number | null;
+    idSpesifikasiDesainReview: number | null;
 
-    // Optional Foreign Keys - Spesifikasi Desain Lentur (required if id_jalan_jenis_perkerasan == 1)
-    idSpesifikasiDesainLentur: number | null;
-    idSpesifikasiDesainLenturReview: number | null;
-
-    // Optional Foreign Keys - Spesifikasi Desain Kaku (required if id_jalan_jenis_perkerasan == 2)
-    idSpesifikasiDesainKaku: number | null;
-    idSpesifikasiDesainKakuReview: number | null;
-
-    // Optional Foreign Keys - Ruang Lingkup Lentur (required if id_jalan_jenis_perkerasan == 1)
-    idRuangLingkupPerkerasanLentur: number | null;
-    idRuangLingkupPerkerasanLenturReview: number | null;
-
-    // Optional Foreign Keys - Ruang Lingkup Kaku (required if id_jalan_jenis_perkerasan == 2)
-    idRuangLingkupPerkerasanKaku: number | null;
-    idRuangLingkupPerkerasanKakuReview: number | null;
+    // Optional Foreign Keys - Ruang Lingkup
+    idRuangLingkup: number | null;
+    idRuangLingkupReview: number | null;
 
     // Optional Foreign Keys - Location
     idKabkota: number | null;
@@ -77,25 +62,13 @@ export class UsulanJalan {
     // Relations - Optional (Jenis Perkerasan Review)
     jalanJenisPerkerasanReview?: JalanJenisPerkerasan | null;
 
-    // Relations - Optional (Mutu Beton)
-    mutuBeton?: JalanMutuBeton | null;
-    mutuBetonReview?: JalanMutuBeton | null;
+    // Relations - Optional (Spesifikasi Desain)
+    spesifikasiDesain?: JalanSpesifikasiDesain | null;
+    spesifikasiDesainReview?: JalanSpesifikasiDesain | null;
 
-    // Relations - Optional (Spesifikasi Desain Lentur)
-    spesifikasiDesainLentur?: JalanSpesifikasiDesainLentur | null;
-    spesifikasiDesainLenturReview?: JalanSpesifikasiDesainLentur | null;
-
-    // Relations - Optional (Spesifikasi Desain Kaku)
-    spesifikasiDesainKaku?: JalanSpesifikasiDesainKaku | null;
-    spesifikasiDesainKakuReview?: JalanSpesifikasiDesainKaku | null;
-
-    // Relations - Optional (Ruang Lingkup Lentur)
-    ruangLingkupPerkerasanLentur?: JalanRuangLingkupPerkerasanLentur | null;
-    ruangLingkupPerkerasanLenturReview?: JalanRuangLingkupPerkerasanLentur | null;
-
-    // Relations - Optional (Ruang Lingkup Kaku)
-    ruangLingkupPerkerasanKaku?: JalanRuangLingkupPerkerasanKaku | null;
-    ruangLingkupPerkerasanKakuReview?: JalanRuangLingkupPerkerasanKaku | null;
+    // Relations - Optional (Ruang Lingkup)
+    ruangLingkup?: JalanRuangLingkup | null;
+    ruangLingkupReview?: JalanRuangLingkup | null;
 
     // Relations - Optional (Location)
     kabkota?: KabKota | null;
