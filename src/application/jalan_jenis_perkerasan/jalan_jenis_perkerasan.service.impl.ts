@@ -13,9 +13,9 @@ export class JalanJenisPerkerasanServiceImpl implements JalanJenisPerkerasanServ
 
     async create(dto: CreateJalanJenisPerkerasanDto): Promise<JalanJenisPerkerasan> {
         try {
-            const existing = await this.repository.findByJenis(dto.jenis);
+            const existing = await this.repository.findByJenisPerkerasan(dto.jenis_perkerasan);
             if (existing) {
-                throw new ConflictException(`JalanJenisPerkerasan with jenis ${dto.jenis} already exists`);
+                throw new ConflictException(`JalanJenisPerkerasan with jenis_perkerasan ${dto.jenis_perkerasan} already exists`);
             }
 
             const newEntity = await this.repository.create(dto);
@@ -32,10 +32,10 @@ export class JalanJenisPerkerasanServiceImpl implements JalanJenisPerkerasanServ
                 throw new NotFoundException(`JalanJenisPerkerasan with id ${dto.id} not found`);
             }
     
-            if (dto.jenis && dto.jenis !== existing.jenis) {
-                const duplicate = await this.repository.findByJenis(dto.jenis);
+            if (dto.jenis_perkerasan && dto.jenis_perkerasan !== existing.jenis_perkerasan) {
+                const duplicate = await this.repository.findByJenisPerkerasan(dto.jenis_perkerasan);
                 if (duplicate) {
-                    throw new ConflictException(`JalanJenisPerkerasan with jenis ${dto.jenis} already exists`);
+                    throw new ConflictException(`JalanJenisPerkerasan with jenis_perkerasan ${dto.jenis_perkerasan} already exists`);
                 }
             }
     
@@ -82,9 +82,9 @@ export class JalanJenisPerkerasanServiceImpl implements JalanJenisPerkerasanServ
         }
     }
 
-    async findByJenis(jenis: string): Promise<JalanJenisPerkerasan | null> {
+    async findByJenisPerkerasan(jenis_perkerasan: string): Promise<JalanJenisPerkerasan | null> {
         try {
-            return await this.repository.findByJenis(jenis);    
+            return await this.repository.findByJenisPerkerasan(jenis_perkerasan);    
         } catch (error) {
             throw error;
         }
