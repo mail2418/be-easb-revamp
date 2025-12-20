@@ -9,6 +9,7 @@ export abstract class JalanJenisPemeliharaanService {
     abstract update(dto: UpdateJalanJenisPemeliharaanDto): Promise<JalanJenisPemeliharaan>;
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<JalanJenisPemeliharaan | null>;
-    abstract findByJenis(jenis: string): Promise<JalanJenisPemeliharaan | null>;
+    abstract findByTingkatPemeliharaan(tingkat_pemeliharaan: string): Promise<JalanJenisPemeliharaan | null>;
+    abstract findByJenisPemeliharaan(jenis_pemeliharaan: string): Promise<JalanJenisPemeliharaan[]>;
     abstract findAll(dto: GetJalanJenisPemeliharaanDto): Promise<JalanJenisPemeliharaanPaginationResultDto>;
 }

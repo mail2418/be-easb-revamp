@@ -15,9 +15,10 @@ export class JalanJenisPemeliharaanServiceImpl implements JalanJenisPemeliharaan
 
     async create(dto: CreateJalanJenisPemeliharaanDto): Promise<JalanJenisPemeliharaan> {
         try {
-            const existing = await this.jalanJenisPemeliharaanRepository.findByJenis(dto.jenis);
-            if (existing) {
-                throw new ConflictException(`JalanJenisPemeliharaan with jenis ${dto.jenis} already exists`);
+            // Check if combination of tingkat_pemeliharaan and jenis_pemeliharaan already exists
+            const existing = await this.jalanJenisPemeliharaanRepository.findByTingkatPemeliharaan(dto.tingkat_pemeliharaan);
+            if (existing && existing.jenis_pemeliharaan === dto.jenis_pemeliharaan) {
+                throw new ConflictException(`JalanJenisPemeliharaan with tingkat_pemeliharaan ${dto.tingkat_pemeliharaan} and jenis_pemeliharaan ${dto.jenis_pemeliharaan} already exists`);
             }
             return await this.jalanJenisPemeliharaanRepository.create(dto);
         } catch (error) {
@@ -32,10 +33,16 @@ export class JalanJenisPemeliharaanServiceImpl implements JalanJenisPemeliharaan
                 throw new NotFoundException(`JalanJenisPemeliharaan with id ${dto.id} not found`);
             }
 
-            if (dto.jenis && dto.jenis !== existing.jenis) {
-                const duplicate = await this.jalanJenisPemeliharaanRepository.findByJenis(dto.jenis);
-                if (duplicate) {
-                    throw new ConflictException(`JalanJenisPemeliharaan with jenis ${dto.jenis} already exists`);
+            // Check if combination of tingkat_pemeliharaan and jenis_pemeliharaan already exists
+            if (dto.tingkat_pemeliharaan || dto.jenis_pemeliharaan) {
+                const checkTingkat = dto.tingkat_pemeliharaan || existing.tingkat_pemeliharaan;
+                const checkJenis = dto.jenis_pemeliharaan || existing.jenis_pemeliharaan;
+                
+                if (checkTingkat !== existing.tingkat_pemeliharaan || checkJenis !== existing.jenis_pemeliharaan) {
+                    const duplicate = await this.jalanJenisPemeliharaanRepository.findByTingkatPemeliharaan(checkTingkat);
+                    if (duplicate && duplicate.id !== dto.id && duplicate.jenis_pemeliharaan === checkJenis) {
+                        throw new ConflictException(`JalanJenisPemeliharaan with tingkat_pemeliharaan ${checkTingkat} and jenis_pemeliharaan ${checkJenis} already exists`);
+                    }
                 }
             }
             return await this.jalanJenisPemeliharaanRepository.update(dto);
@@ -79,9 +86,17 @@ export class JalanJenisPemeliharaanServiceImpl implements JalanJenisPemeliharaan
         }
     }
 
-    async findByJenis(jenis: string): Promise<JalanJenisPemeliharaan | null> {
+    async findByTingkatPemeliharaan(tingkat_pemeliharaan: string): Promise<JalanJenisPemeliharaan | null> {
         try {
-            return await this.jalanJenisPemeliharaanRepository.findByJenis(jenis);
+            return await this.jalanJenisPemeliharaanRepository.findByTingkatPemeliharaan(tingkat_pemeliharaan);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findByJenisPemeliharaan(jenis_pemeliharaan: string): Promise<JalanJenisPemeliharaan[]> {
+        try {
+            return await this.jalanJenisPemeliharaanRepository.findByJenisPemeliharaan(jenis_pemeliharaan);
         } catch (error) {
             throw error;
         }

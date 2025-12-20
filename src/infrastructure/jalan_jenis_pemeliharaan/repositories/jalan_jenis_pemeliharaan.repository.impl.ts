@@ -70,10 +70,19 @@ export class JalanJenisPemeliharaanRepositoryImpl implements JalanJenisPemelihar
         }
     }
 
-    async findByJenis(jenis: string): Promise<JalanJenisPemeliharaan | null> {
+    async findByTingkatPemeliharaan(tingkat_pemeliharaan: string): Promise<JalanJenisPemeliharaan | null> {
         try {
-            const entity = await this.repo.findOne({ where: { jenis } });
+            const entity = await this.repo.findOne({ where: { tingkat_pemeliharaan } });
             return entity || null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findByJenisPemeliharaan(jenis_pemeliharaan: string): Promise<JalanJenisPemeliharaan[]> {
+        try {
+            const entities = await this.repo.find({ where: { jenis_pemeliharaan } });
+            return entities;
         } catch (error) {
             throw error;
         }

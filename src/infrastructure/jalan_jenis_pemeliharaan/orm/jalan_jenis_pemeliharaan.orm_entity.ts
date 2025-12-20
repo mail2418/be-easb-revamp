@@ -5,14 +5,17 @@ export class JalanJenisPemeliharaanOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ type: "varchar", length: 255 })
-    jenis!: string;
+    @Column({ type: "varchar", length: 255, name: "tingkat_pemeliharaan" })
+    tingkat_pemeliharaan!: string;
 
-    @Column({ type: "varchar", length: 255 })
-    desc!: string;
+    @Column({ type: "varchar", length: 255, name: "jenis_pemeliharaan" })
+    jenis_pemeliharaan!: string;
 
-    @Column({ type: "varchar", length: 255 })
-    uraian!: string;
+    @Column({ type: "text", name: "ruang_lingkup" })
+    ruang_lingkup!: string;
+
+    @Column({ type: "text", name: "deskripsi" })
+    deskripsi!: string;
 
     @CreateDateColumn({ name: "created_at", type: "timestamptz" })
     createdAt!: Date;

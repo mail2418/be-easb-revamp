@@ -1,6 +1,7 @@
 export class JalanJenisPemeliharaan {
     id!: number;
-    jenis!: string;
-    desc!: string;
-    uraian!: string;
+    tingkat_pemeliharaan!: string;
+    jenis_pemeliharaan!: string;
+    ruang_lingkup!: string;
+    deskripsi!: string;
 }

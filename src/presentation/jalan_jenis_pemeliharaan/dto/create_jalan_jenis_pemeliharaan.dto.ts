@@ -3,13 +3,17 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class CreateJalanJenisPemeliharaanDto {
     @IsNotEmpty()
     @IsString()
-    jenis!: string;
+    tingkat_pemeliharaan!: string;
 
     @IsNotEmpty()
     @IsString()
-    desc!: string;
+    jenis_pemeliharaan!: string;
 
     @IsNotEmpty()
     @IsString()
-    uraian!: string;
+    ruang_lingkup!: string;
+
+    @IsNotEmpty()
+    @IsString()
+    deskripsi!: string;
 }
