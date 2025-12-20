@@ -4,8 +4,8 @@ import { Express } from 'express';
 import { AsbTipeBangunanRepository } from '../../../domain/asb_tipe_bangunan/asb_tipe_bangunan.repository';
 import { AsbJenisRepository } from '../../../domain/asb_jenis/asb_jenis.repository';
 import { AsbKlasifikasiRepository } from '../../../domain/asb_klasifikasi/asb_klasifikasi.repository';
-import { SatuanRepository } from '../../../domain/satuan/satuan.repository';
 import { AsbJakonType } from '../../../domain/asb_jakon/asb_jakon_type.enum';
+import { JAKON_DATA_SHEET_NAME } from './generate_excel_template.use_case'; // Import locked sheet name
 
 export interface ParsedJakonRow {
     idAsbTipeBangunan: number;
@@ -26,7 +26,6 @@ export class ParseExcelDataUseCase {
         private readonly asbTipeBangunanRepository: AsbTipeBangunanRepository,
         private readonly asbJenisRepository: AsbJenisRepository,
         private readonly asbKlasifikasiRepository: AsbKlasifikasiRepository,
-        private readonly satuanRepository: SatuanRepository,
     ) {}
 
     async execute(file: Express.Multer.File): Promise<ParsedJakonRow[]> {
@@ -34,21 +33,29 @@ export class ParseExcelDataUseCase {
         const workbook = XLSX.read(file.buffer, { type: 'buffer' });
         
         // Only read from the locked sheet name
-        const expectedSheetName = 'Jakon Data';
-        if (!workbook.SheetNames.includes(expectedSheetName)) {
+        if (!workbook.SheetNames.includes(JAKON_DATA_SHEET_NAME)) {
             throw new BadRequestException(
-                `Sheet "${expectedSheetName}" tidak ditemukan. Pastikan nama sheet adalah "${expectedSheetName}" dan tidak diubah.`
+                `Sheet "${JAKON_DATA_SHEET_NAME}" tidak ditemukan. Pastikan nama sheet adalah "${JAKON_DATA_SHEET_NAME}" dan tidak diubah.`
             );
         }
         
-        const worksheet = workbook.Sheets[expectedSheetName];
+        const worksheet = workbook.Sheets[JAKON_DATA_SHEET_NAME];
 
-        // Convert to JSON - XLSX will use first row as headers
-        // We need to handle the header "jenis usulan asb" which has spaces
+        // Convert to JSON with header row (same approach as SHST)
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+            header: ['tipe_bangunan', 'jenis usulan asb', 'klasifikasi', 'type', 'nama', 'spec', 'priceFrom', 'priceTo', 'satuan', 'standard'],
             defval: null,
         }) as Array<{
-            [key: string]: any; // Dynamic keys based on Excel headers
+            tipe_bangunan?: string;
+            'jenis usulan asb'?: string;
+            klasifikasi?: string;
+            type?: string;
+            nama?: string;
+            spec?: string;
+            priceFrom?: number | string;
+            priceTo?: number | string;
+            satuan?: string;
+            standard?: number | string;
         }>;
 
         if (!jsonData || jsonData.length === 0) {
@@ -64,85 +71,126 @@ export class ParseExcelDataUseCase {
             const rowNumber = i + 2; // +2 because row 1 is header, and array is 0-indexed
 
             try {
-                // Get values from row (handle different header formats)
-                const tipeBangunan = row['tipe_bangunan'] || row['Tipe Bangunan'] || row['tipe bangunan'];
-                const jenisUsulanAsb = row['jenis usulan asb'] || row['Jenis Usulan ASB'] || row['jenis_usulan_asb'] || row['Jenis Usulan Asb'];
-                const klasifikasi = row['klasifikasi'] || row['Klasifikasi'];
-                const type = row['type'] || row['Type'] || row['TYPE'];
-                const nama = row['nama'] || row['Nama'];
-                const spec = row['spec'] || row['Spec'] || row['SPEC'];
-                const priceFrom = row['priceFrom'] || row['pricefrom'] || row['PriceFrom'] || row['price_from'];
-                const priceTo = row['priceTo'] || row['priceto'] || row['PriceTo'] || row['price_to'];
-                const satuan = row['satuan'] || row['Satuan'];
-                const standard = row['standard'] || row['Standard'] || row['STANDARD'];
+                // Skip header row (if tipe_bangunan equals "tipe_bangunan", it's likely the header)
+                if (row.tipe_bangunan && String(row.tipe_bangunan).trim().toLowerCase() === 'tipe_bangunan') {
+                    continue; // Skip header row
+                }
+
+                // Get values from row (using consistent header names from template)
+                const tipeBangunan = row.tipe_bangunan;
+                const jenisUsulanAsb = row['jenis usulan asb'];
+                const klasifikasi = row.klasifikasi;
+                const type = row.type;
+                const nama = row.nama;
+                const spec = row.spec;
+                const priceFrom = row.priceFrom;
+                const priceTo = row.priceTo;
+                const satuan = row.satuan;
+                const standard = row.standard;
 
                 // Validate required fields
-                if (!tipeBangunan || typeof tipeBangunan !== 'string' || tipeBangunan.toString().trim() === '') {
+                if (!tipeBangunan || typeof tipeBangunan !== 'string' || tipeBangunan.trim() === '') {
                     errors.push(`Row ${rowNumber}: tipe_bangunan is required and must be a non-empty string`);
                     continue;
                 }
 
-                if (!jenisUsulanAsb || typeof jenisUsulanAsb !== 'string' || jenisUsulanAsb.toString().trim() === '') {
+                if (!jenisUsulanAsb || typeof jenisUsulanAsb !== 'string' || jenisUsulanAsb.trim() === '') {
                     errors.push(`Row ${rowNumber}: jenis usulan asb is required and must be a non-empty string`);
                     continue;
                 }
 
-                if (!klasifikasi || typeof klasifikasi !== 'string' || klasifikasi.toString().trim() === '') {
+                if (!klasifikasi || typeof klasifikasi !== 'string' || klasifikasi.trim() === '') {
                     errors.push(`Row ${rowNumber}: klasifikasi is required and must be a non-empty string`);
                     continue;
                 }
 
-                if (!type || typeof type !== 'string' || type.toString().trim() === '') {
+                if (!type || typeof type !== 'string' || type.trim() === '') {
                     errors.push(`Row ${rowNumber}: type is required and must be a non-empty string`);
                     continue;
                 }
 
-                if (!nama || typeof nama !== 'string' || nama.toString().trim() === '') {
+                if (!nama || typeof nama !== 'string' || nama.trim() === '') {
                     errors.push(`Row ${rowNumber}: nama is required and must be a non-empty string`);
                     continue;
                 }
 
-                if (!spec || typeof spec !== 'string' || spec.toString().trim() === '') {
+                if (!spec || typeof spec !== 'string' || spec.trim() === '') {
                     errors.push(`Row ${rowNumber}: spec is required and must be a non-empty string`);
                     continue;
                 }
 
-                if (priceFrom === null || priceFrom === undefined || priceFrom === '') {
+                if (priceFrom === null || priceFrom === undefined) {
                     errors.push(`Row ${rowNumber}: priceFrom is required`);
                     continue;
                 }
 
-                if (priceTo === null || priceTo === undefined || priceTo === '') {
+                if (priceTo === null || priceTo === undefined) {
                     errors.push(`Row ${rowNumber}: priceTo is required`);
                     continue;
                 }
 
-                if (!satuan || typeof satuan !== 'string' || satuan.toString().trim() === '') {
+                if (!satuan || typeof satuan !== 'string' || satuan.trim() === '') {
                     errors.push(`Row ${rowNumber}: satuan is required and must be a non-empty string`);
                     continue;
                 }
 
-                if (standard === null || standard === undefined || standard === '') {
+                if (standard === null || standard === undefined) {
                     errors.push(`Row ${rowNumber}: standard is required`);
                     continue;
                 }
 
-                // Parse numeric values
-                const parsedPriceFrom = typeof priceFrom === 'number' 
-                    ? priceFrom 
-                    : parseFloat(String(priceFrom).replace(/[^\d.-]/g, ''));
+                // Parse numeric values - handle various formats
+                let parsedPriceFrom: number;
+                if (typeof priceFrom === 'number') {
+                    parsedPriceFrom = priceFrom;
+                } else {
+                    const priceFromStr = String(priceFrom).trim();
+                    if (priceFromStr === '') {
+                        errors.push(`Row ${rowNumber}: priceFrom is required`);
+                        continue;
+                    }
+                    const cleanedStr = priceFromStr.replace(/[^\d.-]/g, '');
+                    if (cleanedStr === '' || cleanedStr === '-' || cleanedStr === '.') {
+                        errors.push(`Row ${rowNumber}: priceFrom must be a valid number. Received: "${priceFrom}"`);
+                        continue;
+                    }
+                    parsedPriceFrom = parseFloat(cleanedStr);
+                }
 
-                if (isNaN(parsedPriceFrom) || parsedPriceFrom < 0) {
-                    errors.push(`Row ${rowNumber}: priceFrom must be a non-negative number`);
+                if (isNaN(parsedPriceFrom)) {
+                    errors.push(`Row ${rowNumber}: priceFrom must be a valid number. Received: "${priceFrom}" (parsed as NaN)`);
                     continue;
                 }
 
-                const parsedPriceTo = typeof priceTo === 'number' 
-                    ? priceTo 
-                    : parseFloat(String(priceTo).replace(/[^\d.-]/g, ''));
+                if (parsedPriceFrom < 0) {
+                    errors.push(`Row ${rowNumber}: priceFrom must be a non-negative number. Received: "${priceFrom}" (parsed as ${parsedPriceFrom})`);
+                    continue;
+                }
 
-                if (isNaN(parsedPriceTo) || parsedPriceTo < 0) {
-                    errors.push(`Row ${rowNumber}: priceTo must be a non-negative number`);
+                let parsedPriceTo: number;
+                if (typeof priceTo === 'number') {
+                    parsedPriceTo = priceTo;
+                } else {
+                    const priceToStr = String(priceTo).trim();
+                    if (priceToStr === '') {
+                        errors.push(`Row ${rowNumber}: priceTo is required`);
+                        continue;
+                    }
+                    const cleanedStr = priceToStr.replace(/[^\d.-]/g, '');
+                    if (cleanedStr === '' || cleanedStr === '-' || cleanedStr === '.') {
+                        errors.push(`Row ${rowNumber}: priceTo must be a valid number. Received: "${priceTo}"`);
+                        continue;
+                    }
+                    parsedPriceTo = parseFloat(cleanedStr);
+                }
+
+                if (isNaN(parsedPriceTo)) {
+                    errors.push(`Row ${rowNumber}: priceTo must be a valid number. Received: "${priceTo}" (parsed as NaN)`);
+                    continue;
+                }
+
+                if (parsedPriceTo < 0) {
+                    errors.push(`Row ${rowNumber}: priceTo must be a non-negative number. Received: "${priceTo}" (parsed as ${parsedPriceTo})`);
                     continue;
                 }
 
@@ -151,17 +199,35 @@ export class ParseExcelDataUseCase {
                     continue;
                 }
 
-                const parsedStandard = typeof standard === 'number' 
-                    ? standard 
-                    : parseFloat(String(standard).replace(/[^\d.-]/g, ''));
+                let parsedStandard: number;
+                if (typeof standard === 'number') {
+                    parsedStandard = standard;
+                } else {
+                    const standardStr = String(standard).trim();
+                    if (standardStr === '') {
+                        errors.push(`Row ${rowNumber}: standard is required`);
+                        continue;
+                    }
+                    const cleanedStr = standardStr.replace(/[^\d.-]/g, '');
+                    if (cleanedStr === '' || cleanedStr === '-' || cleanedStr === '.') {
+                        errors.push(`Row ${rowNumber}: standard must be a valid number. Received: "${standard}"`);
+                        continue;
+                    }
+                    parsedStandard = parseFloat(cleanedStr);
+                }
 
-                if (isNaN(parsedStandard) || parsedStandard <= 0) {
-                    errors.push(`Row ${rowNumber}: standard must be a positive number`);
+                if (isNaN(parsedStandard)) {
+                    errors.push(`Row ${rowNumber}: standard must be a valid number. Received: "${standard}" (parsed as NaN)`);
+                    continue;
+                }
+
+                if (parsedStandard <= 0) {
+                    errors.push(`Row ${rowNumber}: standard must be a positive number. Received: "${standard}" (parsed as ${parsedStandard})`);
                     continue;
                 }
 
                 // Validate and parse type enum
-                const typeValue = type.toString().trim().toLowerCase();
+                const typeValue = type.trim().toLowerCase();
                 if (!Object.values(AsbJakonType).includes(typeValue as AsbJakonType)) {
                     errors.push(`Row ${rowNumber}: type "${type}" is invalid. Must be one of: ${Object.values(AsbJakonType).join(', ')}`);
                     continue;
@@ -169,7 +235,7 @@ export class ParseExcelDataUseCase {
 
                 // Lookup tipe_bangunan
                 const tipeBangunanEntity = await this.asbTipeBangunanRepository.findByTipeBangunan(
-                    tipeBangunan.toString().trim()
+                    tipeBangunan.trim()
                 );
                 if (!tipeBangunanEntity) {
                     errors.push(`Row ${rowNumber}: tipe_bangunan "${tipeBangunan}" not found`);
@@ -178,7 +244,7 @@ export class ParseExcelDataUseCase {
 
                 // Lookup jenis usulan asb (asb_jenis)
                 const asbJenisEntity = await this.asbJenisRepository.findByJenis(
-                    jenisUsulanAsb.toString().trim()
+                    jenisUsulanAsb.trim()
                 );
                 if (!asbJenisEntity) {
                     errors.push(`Row ${rowNumber}: jenis usulan asb "${jenisUsulanAsb}" not found`);
@@ -187,7 +253,7 @@ export class ParseExcelDataUseCase {
 
                 // Lookup klasifikasi
                 const klasifikasiEntity = await this.asbKlasifikasiRepository.findByKlasifikasi(
-                    klasifikasi.toString().trim()
+                    klasifikasi.trim()
                 );
                 if (!klasifikasiEntity) {
                     errors.push(`Row ${rowNumber}: klasifikasi "${klasifikasi}" not found`);
@@ -203,14 +269,8 @@ export class ParseExcelDataUseCase {
                     continue;
                 }
 
-                // Lookup satuan
-                const satuanEntity = await this.satuanRepository.findBySatuan(
-                    satuan.toString().trim()
-                );
-                if (!satuanEntity) {
-                    errors.push(`Row ${rowNumber}: satuan "${satuan}" not found`);
-                    continue;
-                }
+                // Satuan is now a free text field, no lookup needed
+                // Just use the string value directly
 
                 // Add parsed row
                 parsedRows.push({
@@ -218,11 +278,11 @@ export class ParseExcelDataUseCase {
                     idAsbJenis: asbJenisEntity.id,
                     idAsbKlasifikasi: klasifikasiEntity.id,
                     type: typeValue as AsbJakonType,
-                    nama: nama.toString().trim(),
-                    spec: spec.toString().trim(),
+                    nama: nama.trim(),
+                    spec: spec.trim(),
                     priceFrom: parsedPriceFrom,
                     priceTo: parsedPriceTo,
-                    satuan: satuanEntity.satuan,
+                    satuan: satuan.trim(), // Use the string value directly
                     standard: parsedStandard,
                 });
             } catch (error) {

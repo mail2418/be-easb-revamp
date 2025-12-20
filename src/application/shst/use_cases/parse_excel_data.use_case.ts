@@ -69,17 +69,6 @@ export class ParseExcelDataUseCase {
                     continue; // Skip header row
                 }
 
-                // Skip completely empty rows (all fields are null/undefined/empty)
-                const isRowEmpty = (
-                    (!row.tipe_bangunan || String(row.tipe_bangunan).trim() === '') &&
-                    (!row.klasifikasi || String(row.klasifikasi).trim() === '') &&
-                    (!row.kabkota || String(row.kabkota).trim() === '') &&
-                    (row.nominal === null || row.nominal === undefined || String(row.nominal).trim() === '')
-                );
-                if (isRowEmpty) {
-                    continue; // Skip empty rows
-                }
-
                 // Validate required fields
                 if (!row.tipe_bangunan || typeof row.tipe_bangunan !== 'string' || row.tipe_bangunan.trim() === '') {
                     errors.push(`Row ${rowNumber}: tipe_bangunan is required and must be a non-empty string`);

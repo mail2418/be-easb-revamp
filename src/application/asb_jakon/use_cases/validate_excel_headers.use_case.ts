@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as XLSX from 'xlsx';
+import { JAKON_DATA_SHEET_NAME } from './generate_excel_template.use_case'; // Import locked sheet name
 
 @Injectable()
 export class ValidateExcelHeadersUseCase {
@@ -16,17 +17,16 @@ export class ValidateExcelHeadersUseCase {
         'standard'
     ];
     private readonly REQUIRED_HEADERS_COUNT = 10;
-    private readonly EXPECTED_SHEET_NAME = 'Jakon Data';
 
     execute(workbook: XLSX.WorkBook): void {
-        // Validate sheet name
-        if (!workbook.SheetNames.includes(this.EXPECTED_SHEET_NAME)) {
+        // Validate locked sheet name
+        if (!workbook.SheetNames.includes(JAKON_DATA_SHEET_NAME)) {
             throw new BadRequestException(
-                `Sheet "${this.EXPECTED_SHEET_NAME}" tidak ditemukan. Pastikan nama sheet adalah "${this.EXPECTED_SHEET_NAME}" dan tidak diubah.`
+                `Sheet "${JAKON_DATA_SHEET_NAME}" tidak ditemukan. Pastikan nama sheet adalah "${JAKON_DATA_SHEET_NAME}" dan tidak diubah.`
             );
         }
 
-        const worksheet = workbook.Sheets[this.EXPECTED_SHEET_NAME];
+        const worksheet = workbook.Sheets[JAKON_DATA_SHEET_NAME]; // Use the locked sheet name
         
         // Convert to JSON to get headers
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });

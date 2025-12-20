@@ -13,7 +13,6 @@ import { GenerateExcelTemplateUseCase } from '../../application/asb_jakon/use_ca
 import { AsbKlasifikasiModule } from '../asb_klasifikasi/asb_klasifikasi.module';
 import { AsbJenisModule } from '../asb_jenis/asb_jenis.module';
 import { AsbTipeBangunanModule } from '../asb_tipe_bangunan/asb_tipe_bangunan.module';
-import { SatuanModule } from '../satuan/satuan.module';
 import { AsbJakonService } from 'src/domain/asb_jakon/asb_jakon.service';
 import { AsbJakonRepository } from 'src/domain/asb_jakon/asb_jakon.repository';
 
@@ -23,7 +22,6 @@ import { AsbJakonRepository } from 'src/domain/asb_jakon/asb_jakon.repository';
         AsbKlasifikasiModule,
         AsbJenisModule,
         AsbTipeBangunanModule,
-        SatuanModule,
     ],
     controllers: [AsbJakonController],
     providers: [
