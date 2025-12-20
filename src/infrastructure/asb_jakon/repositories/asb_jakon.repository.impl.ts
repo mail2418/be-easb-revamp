@@ -12,6 +12,7 @@ import { GetAsbJakonDetailDto } from 'src/presentation/asb_jakon/dto/get_asb_jak
 import { AsbJakonType } from 'src/domain/asb_jakon/asb_jakon_type.enum';
 import { Injectable } from '@nestjs/common';
 import { GetJakonByPriceRangeDto } from 'src/application/asb_jakon/dto/get_jakon_by_price_range.dto';
+import { BulkCreateAsbJakonDto } from 'src/application/asb_jakon/dto/bulk_create_asb_jakon.dto';
 
 @Injectable()
 export class AsbJakonRepositoryImpl implements AsbJakonRepository {
@@ -168,6 +169,21 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
             }
 
             return entity || null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async bulkCreate(dtos: BulkCreateAsbJakonDto[]): Promise<AsbJakon[]> {
+        try {
+            // Convert DTOs to ORM entities
+            const ormEntities = dtos.map(dto => plainToInstance(AsbJakonOrmEntity, dto));
+
+            // TypeORM's save() method handles bulk insert automatically
+            // It will use a transaction internally and perform bulk insert for better performance
+            const savedEntities = await this.repo.save(ormEntities);
+            
+            return savedEntities;
         } catch (error) {
             throw error;
         }

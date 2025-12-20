@@ -10,6 +10,7 @@ import { ValidateExcelFileUseCase } from "../../application/shst/use_cases/valid
 import { ValidateExcelHeadersUseCase } from "../../application/shst/use_cases/validate_excel_headers.use_case";
 import { ParseExcelDataUseCase } from "../../application/shst/use_cases/parse_excel_data.use_case";
 import { HandleShstFileUseCase } from "../../application/shst/use_cases/handle_shst_file.use_case";
+import { GenerateExcelTemplateUseCase } from "../../application/shst/use_cases/generate_excel_template.use_case";
 import { AsbTipeBangunanModule } from "../asb_tipe_bangunan/asb_tipe_bangunan.module";
 import { AsbKlasifikasiModule } from "../asb_klasifikasi/asb_klasifikasi.module";
 import { KabKotaModule } from "../kabkota/kabkota.module";
@@ -36,6 +37,7 @@ import { KabKotaModule } from "../kabkota/kabkota.module";
     ValidateExcelHeadersUseCase,
     ParseExcelDataUseCase,
     HandleShstFileUseCase,
+    GenerateExcelTemplateUseCase,
   ],
   exports: [
     ShstService,

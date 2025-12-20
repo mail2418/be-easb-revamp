@@ -1,6 +1,6 @@
+import { Express } from 'express';
 import { CreateAsbJakonDto } from 'src/presentation/asb_jakon/dto/create_asb_jakon.dto';
 import { AsbJakon } from './asb_jakon.entity';
-import { AsbJakonType } from './asb_jakon_type.enum';
 import { UpdateAsbJakonDto } from 'src/presentation/asb_jakon/dto/update_asb_jakon.dto';
 import { DeleteAsbJakonDto } from 'src/presentation/asb_jakon/dto/delete_asb_jakon.dto';
 import { GetAsbJakonListDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon_list.dto';
@@ -8,9 +8,13 @@ import { GetAsbJakonDetailDto } from 'src/presentation/asb_jakon/dto/get_asb_jak
 import { GetAsbJakonListFilterDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon_list_filter.dto';
 import { GetJakonByPriceRangeDto } from 'src/application/asb_jakon/dto/get_jakon_by_price_range.dto';
 import { AsbJakonWithRelationsDto } from 'src/application/asb_jakon/dto/asb_jakon_with_relations.dto';
+import { CreateBulkAsbJakonDto } from 'src/presentation/asb_jakon/dto/create_bulk_asb_jakon.dto';
+import { CreateBulkAsbJakonResultDto } from 'src/presentation/asb_jakon/dto/create_bulk_asb_jakon_result.dto';
 
 export abstract class AsbJakonService {
     abstract create(dto: CreateAsbJakonDto): Promise<AsbJakon>;
+    abstract createBulk(dto: CreateBulkAsbJakonDto, file: Express.Multer.File): Promise<CreateBulkAsbJakonResultDto>;
+    abstract downloadTemplate(): Promise<{ buffer: Buffer; filename: string }>;
     abstract update(dto: UpdateAsbJakonDto): Promise<AsbJakon>;
     abstract delete(dto: DeleteAsbJakonDto): Promise<boolean>;
     abstract getAll(pagination: GetAsbJakonListDto): Promise<{ data: AsbJakon[]; total: number }>;

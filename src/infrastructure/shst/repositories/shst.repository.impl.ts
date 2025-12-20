@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository, InjectDataSource } from "@nestjs/typeorm";
-import { DataSource, Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 import { ShstRepository } from "../../../domain/shst/shst.repository";
 import { BulkCreateShstDto } from "../../../application/shst/dto/bulk_create_shst.dto";
 import { Shst } from "../../../domain/shst/shst.entity";
@@ -17,7 +17,6 @@ import { plainToInstance } from "class-transformer";
 export class ShstRepositoryImpl extends ShstRepository {
     constructor(
         @InjectRepository(ShstOrmEntity) private readonly repo: Repository<ShstOrmEntity>,
-        @InjectDataSource() private readonly dataSource: DataSource,
     ) {
         super();
     }
@@ -33,32 +32,17 @@ export class ShstRepositoryImpl extends ShstRepository {
     }
 
     async bulkCreate(dtos: BulkCreateShstDto[]): Promise<Shst[]> {
-        const queryRunner = this.dataSource.createQueryRunner();
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
-
         try {
             // Convert DTOs to ORM entities
             const ormEntities = dtos.map(dto => plainToInstance(ShstOrmEntity, dto));
 
-            // Use bulk insert for better performance
-            // Insert in chunks to avoid potential issues with very large datasets
-            const chunkSize = 1000;
-            const savedEntities: ShstOrmEntity[] = [];
-
-            for (let i = 0; i < ormEntities.length; i += chunkSize) {
-                const chunk = ormEntities.slice(i, i + chunkSize);
-                const inserted = await queryRunner.manager.save(ShstOrmEntity, chunk);
-                savedEntities.push(...inserted);
-            }
-
-            await queryRunner.commitTransaction();
+            // TypeORM's save() method handles bulk insert automatically
+            // It will use a transaction internally and perform bulk insert for better performance
+            const savedEntities = await this.repo.save(ormEntities);
+            
             return savedEntities;
         } catch (error) {
-            await queryRunner.rollbackTransaction();
             throw error;
-        } finally {
-            await queryRunner.release();
         }
     }
 

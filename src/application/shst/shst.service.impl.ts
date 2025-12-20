@@ -16,6 +16,7 @@ import { ValidateExcelFileUseCase } from "./use_cases/validate_excel_file.use_ca
 import { ValidateExcelHeadersUseCase } from "./use_cases/validate_excel_headers.use_case";
 import { ParseExcelDataUseCase } from "./use_cases/parse_excel_data.use_case";
 import { HandleShstFileUseCase } from "./use_cases/handle_shst_file.use_case";
+import { GenerateExcelTemplateUseCase } from "./use_cases/generate_excel_template.use_case";
 import { GetShstNominalDto } from './dto/get_shst_nominal.dto';
 import { ShstWithRelationsDto } from './dto/shst_with_relations.dto';
 
@@ -27,6 +28,7 @@ export class ShstServiceImpl extends ShstService {
         private readonly validateExcelHeadersUseCase: ValidateExcelHeadersUseCase,
         private readonly parseExcelDataUseCase: ParseExcelDataUseCase,
         private readonly handleFileUseCase: HandleShstFileUseCase,
+        private readonly generateExcelTemplateUseCase: GenerateExcelTemplateUseCase,
     ) {
         super();
     }
@@ -158,6 +160,20 @@ export class ShstServiceImpl extends ShstService {
             return {
                 filePath,
                 downloadUrl: `/public${filePath}`
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async downloadTemplate(): Promise<{ buffer: Buffer; filename: string }> {
+        try {
+            const buffer = this.generateExcelTemplateUseCase.execute();
+            const filename = `SHST_Template_${new Date().getFullYear()}.xlsx`;
+            
+            return {
+                buffer,
+                filename,
             };
         } catch (error) {
             throw error;
