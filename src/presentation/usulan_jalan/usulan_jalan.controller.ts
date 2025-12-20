@@ -6,11 +6,13 @@ import {
     Delete,
     Body,
     Query,
-    Request,
+    Req,
     HttpStatus,
     HttpException,
     ParseIntPipe,
+    UseGuards,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { UsulanJalanService } from '../../domain/usulan_jalan/usulan_jalan.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
@@ -25,6 +27,9 @@ import { VerifyUsulanJalanDto } from './dto/verify_usulan_jalan.dto';
 import { RejectUsulanJalanDto } from './dto/reject_usulan_jalan.dto';
 import { ForbiddenException } from '@nestjs/common';
 import { GetUsulanJalanAnalyticsFilterDto } from '../../application/usulan_jalan/dto/get_usulan_jalan_analytics_filter.dto';
+import { UserContext } from '../../common/types/user-context.type';
+import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
 
 interface ResponseDto {
     status: string;
@@ -34,6 +39,7 @@ interface ResponseDto {
 }
 
 @Controller('usulan-jalan')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsulanJalanController {
     constructor(private readonly usulanJalanService: UsulanJalanService) { }
 
@@ -41,13 +47,11 @@ export class UsulanJalanController {
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getAnalytics(
         @Query() filter: GetUsulanJalanAnalyticsFilterDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.getAnalytics(userIdOpd, userRoles, filter);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.getAnalytics(user.idOpd, user.roles, filter);
 
             return {
                 status: 'success',
@@ -91,13 +95,11 @@ export class UsulanJalanController {
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async findAll(
         @Query() dto: FindAllUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.findAll(dto, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.findAll(dto, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -141,13 +143,11 @@ export class UsulanJalanController {
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async findById(
         @Query('id', ParseIntPipe) id: number,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.findById(id, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.findById(id, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -191,13 +191,11 @@ export class UsulanJalanController {
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async storeInformasi(
         @Body() dto: StoreInformasiUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.storeInformasi(dto, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.storeInformasi(dto, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -241,13 +239,11 @@ export class UsulanJalanController {
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async storeRuangLingkup(
         @Body() dto: StoreRuangLingkupUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.storeRuangLingkup(dto, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.storeRuangLingkup(dto, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -291,13 +287,11 @@ export class UsulanJalanController {
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async update(
         @Body() dto: UpdateUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.updateUsulanJalan(dto, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.updateUsulanJalan(dto, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -341,13 +335,11 @@ export class UsulanJalanController {
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async delete(
         @Body() dto: DeleteUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.deleteUsulanJalan(dto.idUsulanJalan, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.deleteUsulanJalan(dto.idUsulanJalan, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -391,14 +383,11 @@ export class UsulanJalanController {
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async verifyInformasi(
         @Body() dto: VerifyInformasiUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userId = req.user?.id?.toString() || null;
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.verifyInformasi(dto, userId, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.verifyInformasi(dto, user.userId.toString(), user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -442,14 +431,11 @@ export class UsulanJalanController {
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async verifyRuangLingkup(
         @Body() dto: VerifyRuangLingkupUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userId = req.user?.id?.toString() || null;
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.verifyRuangLingkup(dto, userId, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.verifyRuangLingkup(dto, user.userId.toString(), user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -493,14 +479,11 @@ export class UsulanJalanController {
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async verifyAdbang(
         @Body() dto: VerifyUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userId = req.user?.id?.toString() || null;
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.verifyAdbang(dto.idUsulanJalan, userId, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.verifyAdbang(dto.idUsulanJalan, user.userId.toString(), user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -544,14 +527,11 @@ export class UsulanJalanController {
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async verifyBpkad(
         @Body() dto: VerifyUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userId = req.user?.id?.toString() || null;
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.verifyBpkad(dto.idUsulanJalan, userId, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.verifyBpkad(dto.idUsulanJalan, user.userId.toString(), user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -595,14 +575,11 @@ export class UsulanJalanController {
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async verifyBappeda(
         @Body() dto: VerifyUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userId = req.user?.id?.toString() || null;
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.verifyBappeda(dto.idUsulanJalan, userId, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.verifyBappeda(dto.idUsulanJalan, user.userId.toString(), user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -646,18 +623,19 @@ export class UsulanJalanController {
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async reject(
         @Body() dto: RejectUsulanJalanDto,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userId = req.user?.id?.toString() || null;
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
+            const user = req.user as UserContext;
+            const userId = user?.userId?.toString();
+            // const userRoles = user?.roles;
+            // const userIdOpd = user?.idOpd;
 
             if (!userId) {
                 throw new ForbiddenException('User ID is required');
             }
 
-            const result = await this.usulanJalanService.reject(dto.idUsulanJalan, dto.rejectReason, userId, userIdOpd, userRoles);
+            const result = await this.usulanJalanService.reject(dto.idUsulanJalan, dto.rejectReason, userId, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -701,13 +679,11 @@ export class UsulanJalanController {
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getRejectInfo(
         @Query('id', ParseIntPipe) id: number,
-        @Request() req,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
-            const userRoles = req.user?.roles || [];
-            const userIdOpd = req.user?.idOpd || null;
-
-            const result = await this.usulanJalanService.getRejectInfo(id, userIdOpd, userRoles);
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.getRejectInfo(id, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -747,5 +723,3 @@ export class UsulanJalanController {
         }
     }
 }
-
-
