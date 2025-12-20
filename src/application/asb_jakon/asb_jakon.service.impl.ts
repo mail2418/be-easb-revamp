@@ -230,7 +230,7 @@ export class AsbJakonServiceImpl implements AsbJakonService {
 
     async downloadTemplate(): Promise<{ buffer: Buffer; filename: string }> {
         try {
-            const buffer = this.generateExcelTemplateUseCase.execute();
+            const buffer = await this.generateExcelTemplateUseCase.execute();
             const filename = `Jakon_Template_${new Date().getFullYear()}.xlsx`;
             
             return {

@@ -5,15 +5,17 @@ import * as XLSX from 'xlsx';
 export class ValidateExcelHeadersUseCase {
     private readonly REQUIRED_HEADERS = ['tipe_bangunan', 'klasifikasi', 'kabkota', 'nominal'];
     private readonly REQUIRED_HEADERS_COUNT = 4;
+    private readonly EXPECTED_SHEET_NAME = 'SHST Data';
 
     execute(workbook: XLSX.WorkBook): void {
-        // Get the first worksheet
-        const sheetName = workbook.SheetNames[0];
-        if (!sheetName) {
-            throw new BadRequestException('Excel file must contain at least one worksheet');
+        // Validate sheet name
+        if (!workbook.SheetNames.includes(this.EXPECTED_SHEET_NAME)) {
+            throw new BadRequestException(
+                `Sheet "${this.EXPECTED_SHEET_NAME}" tidak ditemukan. Pastikan nama sheet adalah "${this.EXPECTED_SHEET_NAME}" dan tidak diubah.`
+            );
         }
 
-        const worksheet = workbook.Sheets[sheetName];
+        const worksheet = workbook.Sheets[this.EXPECTED_SHEET_NAME];
         
         // Convert to JSON to get headers
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });

@@ -168,7 +168,7 @@ export class ShstServiceImpl extends ShstService {
 
     async downloadTemplate(): Promise<{ buffer: Buffer; filename: string }> {
         try {
-            const buffer = this.generateExcelTemplateUseCase.execute();
+            const buffer = await this.generateExcelTemplateUseCase.execute();
             const filename = `SHST_Template_${new Date().getFullYear()}.xlsx`;
             
             return {

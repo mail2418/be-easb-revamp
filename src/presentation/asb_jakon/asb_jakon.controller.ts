@@ -15,7 +15,7 @@ import { GetAsbJakonDetailDto } from './dto/get_asb_jakon_detail.dto';
 import { ResponseDto } from '../../common/dto/response.dto';
 
 @Controller('asb-jakon')
-@Roles(Role.SUPERADMIN)
+@Roles(Role.SUPERADMIN, Role.ADMIN)
 export class AsbJakonController {
     constructor(private readonly service: AsbJakonService) { }
 

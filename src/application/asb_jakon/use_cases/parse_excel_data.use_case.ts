@@ -32,8 +32,16 @@ export class ParseExcelDataUseCase {
     async execute(file: Express.Multer.File): Promise<ParsedJakonRow[]> {
         // Read Excel file
         const workbook = XLSX.read(file.buffer, { type: 'buffer' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
+        
+        // Only read from the locked sheet name
+        const expectedSheetName = 'Jakon Data';
+        if (!workbook.SheetNames.includes(expectedSheetName)) {
+            throw new BadRequestException(
+                `Sheet "${expectedSheetName}" tidak ditemukan. Pastikan nama sheet adalah "${expectedSheetName}" dan tidak diubah.`
+            );
+        }
+        
+        const worksheet = workbook.Sheets[expectedSheetName];
 
         // Convert to JSON - XLSX will use first row as headers
         // We need to handle the header "jenis usulan asb" which has spaces
@@ -183,6 +191,15 @@ export class ParseExcelDataUseCase {
                 );
                 if (!klasifikasiEntity) {
                     errors.push(`Row ${rowNumber}: klasifikasi "${klasifikasi}" not found`);
+                    continue;
+                }
+
+                // Validate that klasifikasi belongs to the selected tipe_bangunan
+                if (klasifikasiEntity.id_asb_tipe_bangunan !== tipeBangunanEntity.id) {
+                    errors.push(
+                        `Row ${rowNumber}: klasifikasi "${klasifikasi}" tidak terikat dengan tipe_bangunan "${tipeBangunan}". ` +
+                        `Klasifikasi "${klasifikasi}" terikat dengan tipe bangunan yang berbeda.`
+                    );
                     continue;
                 }
 

@@ -28,8 +28,16 @@ export class ParseExcelDataUseCase {
     async execute(file: Express.Multer.File): Promise<ParsedShstData> {
         // Read Excel file
         const workbook = XLSX.read(file.buffer, { type: 'buffer' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
+        
+        // Only read from the locked sheet name
+        const expectedSheetName = 'SHST Data';
+        if (!workbook.SheetNames.includes(expectedSheetName)) {
+            throw new BadRequestException(
+                `Sheet "${expectedSheetName}" tidak ditemukan. Pastikan nama sheet adalah "${expectedSheetName}" dan tidak diubah.`
+            );
+        }
+        
+        const worksheet = workbook.Sheets[expectedSheetName];
 
         // Convert to JSON with header row
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
@@ -56,6 +64,22 @@ export class ParseExcelDataUseCase {
             const rowNumber = i + 2; // +2 because row 1 is header, and array is 0-indexed
 
             try {
+                // Skip header row (if tipe_bangunan equals "tipe_bangunan", it's likely the header)
+                if (row.tipe_bangunan && String(row.tipe_bangunan).trim().toLowerCase() === 'tipe_bangunan') {
+                    continue; // Skip header row
+                }
+
+                // Skip completely empty rows (all fields are null/undefined/empty)
+                const isRowEmpty = (
+                    (!row.tipe_bangunan || String(row.tipe_bangunan).trim() === '') &&
+                    (!row.klasifikasi || String(row.klasifikasi).trim() === '') &&
+                    (!row.kabkota || String(row.kabkota).trim() === '') &&
+                    (row.nominal === null || row.nominal === undefined || String(row.nominal).trim() === '')
+                );
+                if (isRowEmpty) {
+                    continue; // Skip empty rows
+                }
+
                 // Validate required fields
                 if (!row.tipe_bangunan || typeof row.tipe_bangunan !== 'string' || row.tipe_bangunan.trim() === '') {
                     errors.push(`Row ${rowNumber}: tipe_bangunan is required and must be a non-empty string`);
@@ -72,18 +96,42 @@ export class ParseExcelDataUseCase {
                     continue;
                 }
 
-                if (row.nominal === null || row.nominal === undefined || row.nominal === '') {
+                // Validate nominal exists
+                if (row.nominal === null || row.nominal === undefined) {
                     errors.push(`Row ${rowNumber}: nominal is required`);
                     continue;
                 }
 
-                // Parse nominal
-                const nominal = typeof row.nominal === 'number' 
-                    ? row.nominal 
-                    : parseFloat(String(row.nominal).replace(/[^\d.-]/g, ''));
+                // Parse nominal - handle various formats
+                let nominal: number;
+                if (typeof row.nominal === 'number') {
+                    nominal = row.nominal;
+                } else {
+                    const nominalStr = String(row.nominal).trim();
+                    
+                    // Check if string is empty after trim
+                    if (nominalStr === '') {
+                        errors.push(`Row ${rowNumber}: nominal is required`);
+                        continue;
+                    }
+                    
+                    // Remove common formatting characters but keep digits, dots, and minus
+                    const cleanedStr = nominalStr.replace(/[^\d.-]/g, '');
+                    if (cleanedStr === '' || cleanedStr === '-' || cleanedStr === '.') {
+                        errors.push(`Row ${rowNumber}: nominal must be a valid number. Received: "${row.nominal}"`);
+                        continue;
+                    }
+                    nominal = parseFloat(cleanedStr);
+                }
 
-                if (isNaN(nominal) || nominal <= 0) {
-                    errors.push(`Row ${rowNumber}: nominal must be a positive number`);
+                // Additional validation: check if parseFloat resulted in NaN
+                if (isNaN(nominal)) {
+                    errors.push(`Row ${rowNumber}: nominal must be a valid number. Received: "${row.nominal}" (parsed as NaN)`);
+                    continue;
+                }
+
+                if (nominal <= 0) {
+                    errors.push(`Row ${rowNumber}: nominal must be a positive number. Received: "${row.nominal}" (parsed as ${nominal})`);
                     continue;
                 }
 
@@ -102,6 +150,15 @@ export class ParseExcelDataUseCase {
                 );
                 if (!klasifikasi) {
                     errors.push(`Row ${rowNumber}: klasifikasi "${row.klasifikasi}" not found`);
+                    continue;
+                }
+
+                // Validate that klasifikasi belongs to the selected tipe_bangunan
+                if (klasifikasi.id_asb_tipe_bangunan !== tipeBangunan.id) {
+                    errors.push(
+                        `Row ${rowNumber}: klasifikasi "${row.klasifikasi}" tidak terikat dengan tipe_bangunan "${row.tipe_bangunan}". ` +
+                        `Klasifikasi "${row.klasifikasi}" terikat dengan tipe bangunan yang berbeda.`
+                    );
                     continue;
                 }
 
