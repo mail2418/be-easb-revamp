@@ -2,8 +2,8 @@ import { JalanSaluranRuangLingkup } from "../../../domain/jalan_saluran_ruang_li
 
 export class JalanSaluranRuangLingkupPaginationResultDto {
     data!: JalanSaluranRuangLingkup[];
-    page!: number;
-    amount!: number;
     total!: number;
+    page!: number;
+    limit!: number;
     totalPages!: number;
 }

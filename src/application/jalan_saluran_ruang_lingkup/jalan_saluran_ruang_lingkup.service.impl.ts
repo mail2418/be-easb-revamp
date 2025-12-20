@@ -74,7 +74,7 @@ export class JalanSaluranRuangLingkupServiceImpl implements JalanSaluranRuangLin
                 data: result.data,
                 total: result.total,
                 page: dto.page ?? 1,
-                amount: dto.amount ?? result.total,
+                limit: dto.amount ?? result.total,
                 totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
             };
         } catch (error) {
