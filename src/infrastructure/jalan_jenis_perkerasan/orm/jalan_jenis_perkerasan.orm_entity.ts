@@ -5,8 +5,8 @@ export class JalanJenisPerkerasanOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ type: "varchar", length: 255 })
-    jenis!: string;
+    @Column({ type: "varchar", length: 255, name: "jenis_perkerasan" })
+    jenis_perkerasan!: string;
 
     @CreateDateColumn({ name: "created_at", type: "timestamptz" })
     createdAt!: Date;

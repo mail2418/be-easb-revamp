@@ -1,4 +1,4 @@
 export class JalanJenisPerkerasan {
     id!: number;
-    jenis!: string;
+    jenis_perkerasan!: string;
 }

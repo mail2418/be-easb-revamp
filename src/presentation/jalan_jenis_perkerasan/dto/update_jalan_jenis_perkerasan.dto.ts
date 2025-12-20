@@ -7,5 +7,5 @@ export class UpdateJalanJenisPerkerasanDto {
 
     @IsOptional()
     @IsString()
-    jenis?: string;
+    jenis_perkerasan?: string;
 }
