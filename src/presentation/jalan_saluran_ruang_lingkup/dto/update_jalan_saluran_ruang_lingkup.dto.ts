@@ -13,11 +13,6 @@ export class UpdateJalanSaluranRuangLingkupDto {
     id_jenis_usulan?: number;
 
     @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
-    nomor_divisi?: number;
-
-    @IsOptional()
     @IsString()
-    deskripsi_divisi?: string;
+    deskripsi_ruang_lingkup?: string;
 }

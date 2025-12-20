@@ -8,6 +8,6 @@ export abstract class JalanSaluranRuangLingkupRepository {
     abstract update(dto: UpdateJalanSaluranRuangLingkupDto): Promise<JalanSaluranRuangLingkup>;
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<JalanSaluranRuangLingkup | null>;
-    abstract findByJenisUsulanAndDivisi(idJenisUsulan: number, nomorDivisi: number): Promise<JalanSaluranRuangLingkup | null>;
+    abstract findByJenisUsulanAndDeskripsi(idJenisUsulan: number, deskripsi: string): Promise<JalanSaluranRuangLingkup | null>;
     abstract findAll(dto: GetJalanSaluranRuangLingkupDto): Promise<{ data: JalanSaluranRuangLingkup[]; total: number }>;
 }

@@ -51,9 +51,9 @@ export class JalanSaluranRuangLingkupRepositoryImpl implements JalanSaluranRuang
         }
     }
 
-    async findByJenisUsulanAndDivisi(id_jenis_usulan: number, nomor_divisi: number): Promise<JalanSaluranRuangLingkup | null> {
+    async findByJenisUsulanAndDeskripsi(id_jenis_usulan: number, deskripsi_ruang_lingkup: string): Promise<JalanSaluranRuangLingkup | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id_jenis_usulan, nomor_divisi }, relations: ['jenisUsulan'] });
+            const entity = await this.repo.findOne({ where: { id_jenis_usulan, deskripsi_ruang_lingkup }, relations: ['jenisUsulan'] });
             return entity || null;
         } catch (error) {
             throw error;

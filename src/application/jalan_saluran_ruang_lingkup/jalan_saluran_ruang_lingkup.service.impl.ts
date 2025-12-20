@@ -15,9 +15,9 @@ export class JalanSaluranRuangLingkupServiceImpl implements JalanSaluranRuangLin
 
     async create(dto: CreateJalanSaluranRuangLingkupDto): Promise<JalanSaluranRuangLingkup> {
         try {
-            const existing = await this.repository.findByJenisUsulanAndDivisi(dto.id_jenis_usulan, dto.nomor_divisi);
+            const existing = await this.repository.findByJenisUsulanAndDeskripsi(dto.id_jenis_usulan, dto.deskripsi_ruang_lingkup);
             if (existing) {
-                throw new ConflictException(`JalanSaluranRuangLingkup with jenisUsulan ${dto.id_jenis_usulan} and nomorDivisi ${dto.nomor_divisi} already exists`);
+                throw new ConflictException(`JalanSaluranRuangLingkup with jenisUsulan ${dto.id_jenis_usulan} and deskripsi ${dto.deskripsi_ruang_lingkup} already exists`);
             }
             return await this.repository.create(dto);
         } catch (error) {
@@ -33,12 +33,12 @@ export class JalanSaluranRuangLingkupServiceImpl implements JalanSaluranRuangLin
             }
 
             const targetJenisUsulan = dto.id_jenis_usulan ?? existing.id_jenis_usulan;
-            const targetNomorDivisi = dto.nomor_divisi ?? existing.nomor_divisi;
+            const targetDeskripsi = dto.deskripsi_ruang_lingkup ?? existing.deskripsi_ruang_lingkup;
 
-            if (targetJenisUsulan !== existing.id_jenis_usulan || targetNomorDivisi !== existing.nomor_divisi) {
-                const duplicate = await this.repository.findByJenisUsulanAndDivisi(targetJenisUsulan, targetNomorDivisi);
+            if (targetJenisUsulan !== existing.id_jenis_usulan || targetDeskripsi !== existing.deskripsi_ruang_lingkup) {
+                const duplicate = await this.repository.findByJenisUsulanAndDeskripsi(targetJenisUsulan, targetDeskripsi);
                 if (duplicate) {
-                    throw new ConflictException(`JalanSaluranRuangLingkup with jenisUsulan ${targetJenisUsulan} and nomorDivisi ${targetNomorDivisi} already exists`);
+                    throw new ConflictException(`JalanSaluranRuangLingkup with jenisUsulan ${targetJenisUsulan} and deskripsi ${targetDeskripsi} already exists`);
                 }
             }
             return await this.repository.update(dto);
@@ -82,9 +82,9 @@ export class JalanSaluranRuangLingkupServiceImpl implements JalanSaluranRuangLin
         }
     }
 
-    async findByJenisUsulanAndDivisi(idJenisUsulan: number, nomorDivisi: number): Promise<JalanSaluranRuangLingkup | null> {
+    async findByJenisUsulanAndDeskripsi(idJenisUsulan: number, deskripsi: string): Promise<JalanSaluranRuangLingkup | null> {
         try {
-            return await this.repository.findByJenisUsulanAndDivisi(idJenisUsulan, nomorDivisi);
+            return await this.repository.findByJenisUsulanAndDeskripsi(idJenisUsulan, deskripsi);
         } catch (error) {
             throw error;
         }
