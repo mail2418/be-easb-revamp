@@ -61,7 +61,7 @@ export class PpnGlobalController {
     }
 
     @Get(':id')
-    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.ADMIN, Role.SUPERADMIN)
     async findById(@Param('id') id: string) {
         try {
             const result = await this.service.findById(Number(id));
@@ -77,7 +77,7 @@ export class PpnGlobalController {
     }
 
     @Get()
-    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.ADMIN, Role.SUPERADMIN)
     async findAll(@Query() dto: GetPpnGlobalDto) {
         try {
             const result = await this.service.findAll(dto);

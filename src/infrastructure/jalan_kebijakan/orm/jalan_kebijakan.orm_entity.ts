@@ -33,7 +33,7 @@ export class JalanKebijakanOrmEntity {
     @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
     deletedAt?: Date | null;
 
-    @ManyToOne(() => KabKotaOrmEntity)
+    @ManyToOne(() => KabKotaOrmEntity, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'id_kabkota' })
     kabkota!: KabKotaOrmEntity;
 }

@@ -29,11 +29,11 @@ export class JalanSpesifikasiDesainReviewController {
         }
     }
 
-    @Get('id')
+    @Get(':id')
     @Roles(Role.ADMIN, Role.SUPERADMIN, Role.VERIFIKATOR, Role.OPD)
-    async findById(@Query('id') id: number) {
+    async findById(@Param('id') id: string) {
         try {
-            const result = await this.jalanSpesifikasiDesainReviewService.findById(id);
+            const result = await this.jalanSpesifikasiDesainReviewService.findById(Number(id));
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,
@@ -46,7 +46,7 @@ export class JalanSpesifikasiDesainReviewController {
     }
 
     @Post()
-    @Roles(Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async create(@Body() dto: CreateJalanSpesifikasiDesainReviewDto) {
         try {
             const result = await this.jalanSpesifikasiDesainReviewService.create(dto);
@@ -62,7 +62,7 @@ export class JalanSpesifikasiDesainReviewController {
     }
 
     @Put()
-    @Roles(Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async update(@Body() dto: UpdateJalanSpesifikasiDesainReviewDto) {
         try {
             const result = await this.jalanSpesifikasiDesainReviewService.update(dto);
@@ -77,11 +77,11 @@ export class JalanSpesifikasiDesainReviewController {
         }
     }
 
-    @Delete()
+    @Delete(':id')
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async delete(@Query('id') id: number) {
+    async delete(@Param('id') id: string) {
         try {
-            const result = await this.jalanSpesifikasiDesainReviewService.delete(id);
+            const result = await this.jalanSpesifikasiDesainReviewService.delete(Number(id));
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,

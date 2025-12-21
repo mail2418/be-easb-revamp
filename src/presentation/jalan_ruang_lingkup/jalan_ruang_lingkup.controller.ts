@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { JalanRuangLingkupService } from "../../domain/jalan_ruang_lingkup/jalan_ruang_lingkup.service";
 import { JwtAuthGuard } from "../../common/guards/jwt_auth.guard";
 import { RolesGuard } from "../../common/guards/roles.guard";
@@ -29,11 +29,11 @@ export class JalanRuangLingkupController {
         }
     }
 
-    @Get('id')
+    @Get(':id')
     @Roles(Role.ADMIN, Role.SUPERADMIN, Role.VERIFIKATOR, Role.OPD)
-    async findById(@Query('id') id: number) {
+    async findById(@Param('id') id: string) {
         try {
-            const result = await this.jalanRuangLingkupService.findById(id);
+            const result = await this.jalanRuangLingkupService.findById(Number(id));
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,
@@ -77,11 +77,11 @@ export class JalanRuangLingkupController {
         }
     }
 
-    @Delete()
+    @Delete(':id')
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async delete(@Query('id') id: number) {
+    async delete(@Param('id') id: string) {
         try {
-            const result = await this.jalanRuangLingkupService.delete(id);
+            const result = await this.jalanRuangLingkupService.delete(Number(id));
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,

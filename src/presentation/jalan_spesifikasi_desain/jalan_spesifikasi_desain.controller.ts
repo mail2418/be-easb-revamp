@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { JalanSpesifikasiDesainService } from "../../domain/jalan_spesifikasi_desain/jalan_spesifikasi_desain.service";
 import { JwtAuthGuard } from "../../common/guards/jwt_auth.guard";
 import { RolesGuard } from "../../common/guards/roles.guard";
@@ -29,11 +29,11 @@ export class JalanSpesifikasiDesainController {
         }
     }
 
-    @Get('id')
+    @Get(':id')
     @Roles(Role.ADMIN, Role.SUPERADMIN, Role.VERIFIKATOR, Role.OPD)
-    async findById(@Query('id') id: number) {
+    async findById(@Param('id') id: string) {
         try {
-            const result = await this.jalanSpesifikasiDesainService.findById(id);
+            const result = await this.jalanSpesifikasiDesainService.findById(Number(id));
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,
@@ -46,7 +46,7 @@ export class JalanSpesifikasiDesainController {
     }
 
     @Post()
-    @Roles(Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.ADMIN, Role.SUPERADMIN, Role.OPD)
     async create(@Body() dto: CreateJalanSpesifikasiDesainDto) {
         try {
             const result = await this.jalanSpesifikasiDesainService.create(dto);
@@ -62,7 +62,7 @@ export class JalanSpesifikasiDesainController {
     }
 
     @Put()
-    @Roles(Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.ADMIN, Role.SUPERADMIN, Role.OPD)
     async update(@Body() dto: UpdateJalanSpesifikasiDesainDto) {
         try {
             const result = await this.jalanSpesifikasiDesainService.update(dto);
@@ -77,11 +77,11 @@ export class JalanSpesifikasiDesainController {
         }
     }
 
-    @Delete()
+    @Delete(':id')
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async delete(@Query('id') id: number) {
+    async delete(@Param('id') id: string) {
         try {
-            const result = await this.jalanSpesifikasiDesainService.delete(id);
+            const result = await this.jalanSpesifikasiDesainService.delete(Number(id));
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,
