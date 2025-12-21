@@ -11,6 +11,12 @@ export class RekeningOrmEntity {
     @Column({ name: 'rekening_uraian', type: 'varchar', length: 500 })
     rekening_uraian: string;
 
+    @Column({ name: 'bulan', type: 'int' })
+    bulan: number;
+
+    @Column({ name: 'tahun', type: 'int' })
+    tahun: number;
+
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt!: Date;
 
