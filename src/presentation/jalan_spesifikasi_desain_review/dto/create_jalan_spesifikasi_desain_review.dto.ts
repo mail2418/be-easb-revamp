@@ -1,7 +1,12 @@
 import { IsNotEmpty, IsNumber } from "class-validator";
 import { Transform } from "class-transformer";
 
-export class CreateJalanSpesifikasiDesainDto {
+export class CreateJalanSpesifikasiDesainReviewDto {
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    id_spesifikasi_desain!: number;
+
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
@@ -20,20 +25,20 @@ export class CreateJalanSpesifikasiDesainDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
-    volume!: number;
+    volume_review!: number;
 
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
-    lebar!: number;
+    lebar_review!: number;
 
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
-    spasi!: number;
+    spasi_review!: number;
 
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
-    tinggi!: number;
+    tinggi_review!: number;
 }

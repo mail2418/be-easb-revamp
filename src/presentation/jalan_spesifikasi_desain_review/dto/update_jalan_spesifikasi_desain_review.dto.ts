@@ -1,11 +1,16 @@
 import { IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 import { Transform } from "class-transformer";
 
-export class UpdateJalanSpesifikasiDesainDto {
+export class UpdateJalanSpesifikasiDesainReviewDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
     id!: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    id_spesifikasi_desain?: number;
 
     @IsOptional()
     @IsNumber()
@@ -25,20 +30,20 @@ export class UpdateJalanSpesifikasiDesainDto {
     @IsOptional()
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
-    volume?: number;
+    volume_review?: number;
 
     @IsOptional()
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
-    lebar?: number;
+    lebar_review?: number;
 
     @IsOptional()
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
-    spasi?: number;
+    spasi_review?: number;
 
     @IsOptional()
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
-    tinggi?: number;
+    tinggi_review?: number;
 }

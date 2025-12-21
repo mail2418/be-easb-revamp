@@ -9,11 +9,8 @@ export class JalanSaluranRuangLingkupOrmEntity {
     @Column({ name: 'id_jenis_usulan', type: 'int' })
     id_jenis_usulan!: number;
 
-    @Column({ name: 'nomor_divisi', type: 'int' })
-    nomor_divisi!: number;
-
-    @Column({ type: 'varchar', length: 255 })
-    deskripsi_divisi!: string;
+    @Column({ name: 'deskripsi_ruang_lingkup', type: 'varchar', length: 255 })
+    deskripsi_ruang_lingkup!: string;
 
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt!: Date;

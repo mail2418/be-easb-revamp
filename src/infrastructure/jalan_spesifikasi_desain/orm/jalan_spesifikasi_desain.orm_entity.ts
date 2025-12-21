@@ -5,26 +5,26 @@ export class JalanSpesifikasiDesainOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ type: "varchar", length: 50 })
-    kode!: string;
+    @Column({ name: 'id_usulan_jalan', type: 'int' })
+    id_usulan_jalan!: number;
 
-    @Column({ type: "varchar", length: 255 })
-    uraian!: string;
+    @Column({ name: 'id_ruang_lingkup', type: 'int' })
+    id_ruang_lingkup!: number;
 
-    @Column({ type: "varchar", length: 50 })
-    satuan!: string;
+    @Column({ name: 'id_hspk', type: 'int' })
+    id_hspk!: number;
 
-    @Column({ type: "numeric" })
-    harga_satuan!: number;
+    @Column({ name: 'volume', type: 'double precision' })
+    volume!: number;
 
-    @Column({ type: "numeric" })
+    @Column({ name: 'lebar', type: 'double precision' })
+    lebar!: number;
+
+    @Column({ name: 'spasi', type: 'double precision' })
+    spasi!: number;
+
+    @Column({ name: 'tinggi', type: 'double precision' })
     tinggi!: number;
-
-    @Column({ type: "numeric", nullable: true })
-    spasi?: number;
-
-    @Column({ type: "numeric" })
-    harga_total!: number;
 
     @CreateDateColumn({ name: "created_at", type: "timestamptz" })
     createdAt!: Date;
