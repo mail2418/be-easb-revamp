@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateHspkTable1766246710062 implements MigrationInterface {
-    name = 'CreateHspkTable1766246710062';
+export class CreateHspkTable1766321582111 implements MigrationInterface {
+    name = 'CreateHspkTable1766321582111';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create table

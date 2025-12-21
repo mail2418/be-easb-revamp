@@ -24,7 +24,7 @@ export class CreateJalanKebijakanTable1766321582108 implements MigrationInterfac
             ALTER TABLE "jalan_kebijakan"
             ADD CONSTRAINT "fk_jalan_kebijakan_kabkota"
             FOREIGN KEY ("id_kabkota")
-            REFERENCES "kab_kota"("id")
+            REFERENCES "kabkotas"("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE;
         `);
