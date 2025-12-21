@@ -1,36 +1,39 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { Type } from "class-transformer";
+import { IsNotEmpty, IsNumber } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class CreateJalanSpesifikasiDesainDto {
     @IsNotEmpty()
-    @IsString()
-    kode!: string;
-
-    @IsNotEmpty()
-    @IsString()
-    uraian!: string;
-
-    @IsNotEmpty()
-    @IsString()
-    satuan!: string;
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    id_usulan_jalan!: number;
 
     @IsNotEmpty()
     @IsNumber()
-    @Type(() => Number)
-    harga_satuan!: number;
+    @Transform(({ value }) => parseInt(value, 10))
+    id_ruang_lingkup!: number;
 
     @IsNotEmpty()
     @IsNumber()
-    @Type(() => Number)
+    @Transform(({ value }) => parseInt(value, 10))
+    id_hspk!: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseFloat(value))
+    volume!: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseFloat(value))
+    lebar!: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseFloat(value))
+    spasi!: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseFloat(value))
     tinggi!: number;
-
-    @IsOptional()
-    @IsNumber()
-    @Type(() => Number)
-    spasi?: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @Type(() => Number)
-    harga_total!: number;
 }

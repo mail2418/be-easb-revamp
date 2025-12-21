@@ -69,13 +69,4 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
             throw error;
         }
     }
-
-    async findByKode(kode: string): Promise<JalanSpesifikasiDesain | null> {
-        try {
-            const entity = await this.repo.findOne({ where: { kode: kode } });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
-    }
 }

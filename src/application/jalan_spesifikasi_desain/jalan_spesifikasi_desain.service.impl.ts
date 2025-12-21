@@ -15,10 +15,6 @@ export class JalanSpesifikasiDesainServiceImpl implements JalanSpesifikasiDesain
 
     async create(dto: CreateJalanSpesifikasiDesainDto): Promise<JalanSpesifikasiDesain> {
         try {
-            const existing = await this.jalanSpesifikasiDesainRepository.findByKode(dto.kode);
-            if (existing) {
-                throw new ConflictException(`JalanSpesifikasiDesain with kode ${dto.kode} already exists`);
-            }
             return await this.jalanSpesifikasiDesainRepository.create(dto);
         } catch (error) {
             throw error;
@@ -30,13 +26,6 @@ export class JalanSpesifikasiDesainServiceImpl implements JalanSpesifikasiDesain
             const existing = await this.jalanSpesifikasiDesainRepository.findById(dto.id);
             if (!existing) {
                 throw new NotFoundException(`JalanSpesifikasiDesain with id ${dto.id} not found`);
-            }
-
-            if (dto.kode && dto.kode !== existing.kode) {
-                const duplicate = await this.jalanSpesifikasiDesainRepository.findByKode(dto.kode);
-                if (duplicate) {
-                    throw new ConflictException(`JalanSpesifikasiDesain with kode ${dto.kode} already exists`);
-                }
             }
             return await this.jalanSpesifikasiDesainRepository.update(dto);
         } catch (error) {
@@ -74,14 +63,6 @@ export class JalanSpesifikasiDesainServiceImpl implements JalanSpesifikasiDesain
                 limit: dto.amount ?? result.total,
                 totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
             };
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async findByKode(kode: string): Promise<JalanSpesifikasiDesain | null> {
-        try {
-            return await this.jalanSpesifikasiDesainRepository.findByKode(kode);
         } catch (error) {
             throw error;
         }

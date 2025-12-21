@@ -10,5 +10,4 @@ export abstract class JalanSpesifikasiDesainService {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<JalanSpesifikasiDesain | null>;
     abstract findAll(dto: GetJalanSpesifikasiDesainDto): Promise<JalanSpesifikasiDesainPaginationResultDto>;
-    abstract findByKode(kode: string): Promise<JalanSpesifikasiDesain | null>;
 }
