@@ -4,11 +4,11 @@ import { Transform } from "class-transformer";
 export class GetPpnGlobalDto {
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     page?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     amount?: number;
 }

@@ -6,12 +6,12 @@ export class GetAsbByMonthYearDto {
     @IsNotEmpty()
     @Min(1)
     @Max(12)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     month!: number;
 
     @IsNumber()
     @IsNotEmpty()
     @Min(2000)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     year!: number;
 }

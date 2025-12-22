@@ -1,22 +1,21 @@
-import { IsInt, Min, IsOptional } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
+import { IsInt, Min, IsOptional, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class GetAsbBipekNonStdByAsbDto {
     @IsInt()
-    @Type(() => Number)
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
     idAsb: number;
 
     @IsOptional()
-    @Transform(({ value }) => (value === null || value === '' ? undefined : value))
     @IsInt()
     @Min(1)
-    @Type(() => Number)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     page?: number;
 
     @IsOptional()
-    @Transform(({ value }) => (value === null || value === '' ? undefined : value))
     @IsInt()
     @Min(1)
-    @Type(() => Number)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     amount?: number;
 }

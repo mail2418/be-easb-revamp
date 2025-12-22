@@ -4,7 +4,7 @@ import { Transform } from 'class-transformer';
 export class UpdateAsbStoreLantaiDto {
     @IsInt()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     id_asb!: number;
 
     @IsArray()
@@ -39,6 +39,6 @@ export class UpdateAsbStoreLantaiDto {
 
     @IsOptional()
     @IsInt()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => value !== undefined && value !== null ? parseInt(value, 10) : undefined)
     id_asb_klasifikasi?: number;
 }

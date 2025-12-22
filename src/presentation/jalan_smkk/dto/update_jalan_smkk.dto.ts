@@ -9,16 +9,16 @@ export class UpdateJalanSmkkDto {
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     bulan?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     tahun?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseFloat(value))
+    @Transform(({ value }) => value ? parseFloat(value) : undefined)
     persentase_smkk?: number;
 }

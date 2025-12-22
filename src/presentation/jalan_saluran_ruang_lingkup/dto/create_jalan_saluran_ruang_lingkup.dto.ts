@@ -4,7 +4,7 @@ import { Transform } from "class-transformer";
 export class CreateJalanSaluranRuangLingkupDto {
     @IsNotEmpty()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     id_jenis_usulan!: number;
 
     @IsNotEmpty()

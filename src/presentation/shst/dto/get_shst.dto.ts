@@ -16,17 +16,21 @@ export class GetShstDto {
 
   @IsOptional()
   @IsNumber()
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
   tahun?: number;
 
   @IsOptional()
   @IsNumber()
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
   id_asb_tipe_bangunan?: number;
 
   @IsOptional()
   @IsNumber()
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
   id_asb_klasifikasi?: number;
 
   @IsOptional()
   @IsNumber()
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
   id_kabkota?: number;
 }

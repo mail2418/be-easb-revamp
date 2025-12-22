@@ -1,10 +1,10 @@
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export class RejectUsulanJalanDto {
     @IsInt()
     @IsNotEmpty()
-    @Type(() => Number)
+    @Transform(({ value }) => parseInt(value, 10))
     idUsulanJalan: number;
 
     @IsString()

@@ -9,7 +9,7 @@ export class CreateAsbFungsiRuangDto {
 
   @IsNumber()
   @IsNotEmpty()
-  @Transform(({ value }) => value ? parseFloat(value) : undefined)
+  @Transform(({ value }) => parseFloat(value))
   koef!: number;
 
   @IsBoolean()

@@ -3,7 +3,8 @@ import { Transform } from 'class-transformer';
 
 export class UpdateAsbKomponenBangunanProsNonstdDto {
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
     id!: number;
 
     @IsNumber()

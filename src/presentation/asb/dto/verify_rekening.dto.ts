@@ -4,11 +4,11 @@ import { Transform } from 'class-transformer';
 export class VerifyRekeningDto {
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     id_asb!: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     id_rekening_review!: number;
 }

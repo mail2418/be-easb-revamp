@@ -9,16 +9,16 @@ export class UpdatePpnGlobalDto {
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     bulan?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     tahun?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseFloat(value))
+    @Transform(({ value }) => value ? parseFloat(value) : undefined)
     persentase_ppn?: number;
 }

@@ -4,12 +4,12 @@ import { Transform } from "class-transformer";
 export class UpdateUsulanJalanDto {
     @IsNotEmpty()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     idUsulanJalan: number;
 
     @IsNotEmpty()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     idKabkota: number;
 
     @IsOptional()
@@ -24,7 +24,7 @@ export class UpdateUsulanJalanDto {
 
     @IsNotEmpty()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     tahunAnggaran: number;
 
     @IsNotEmpty()
@@ -37,7 +37,7 @@ export class UpdateUsulanJalanDto {
 
     @IsNotEmpty()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     lebarJalan: number;
 
     @IsOptional()
@@ -47,7 +47,7 @@ export class UpdateUsulanJalanDto {
 
     @IsNotEmpty()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     idJalanJenisPerkerasan: number;
 
     @IsOptional()

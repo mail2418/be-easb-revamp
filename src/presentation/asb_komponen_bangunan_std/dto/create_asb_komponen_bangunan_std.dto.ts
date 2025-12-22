@@ -14,11 +14,11 @@ export class CreateAsbKomponenBangunanStdDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     idAsbJenis!: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     idAsbTipeBangunan!: number;
 }

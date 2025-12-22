@@ -5,7 +5,7 @@ export class CreateBulkAsbJakonDto {
   @IsNumber()
   @IsNotEmpty()
   @IsPositive()
-  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  @Transform(({ value }) => parseInt(value, 10))
   tahun!: number;
   
   // Note: File is handled separately via @UploadedFile() decorator in controller

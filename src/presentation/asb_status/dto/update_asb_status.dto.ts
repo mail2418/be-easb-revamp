@@ -4,7 +4,7 @@ import { Transform } from "class-transformer";
 export class UpdateAsbStatusDto {
   @IsNumber()
   @IsNotEmpty()
-  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  @Transform(({ value }) => parseInt(value, 10))
   id!: number;
 
   @IsString()

@@ -1,27 +1,25 @@
 import { IsInt, IsOptional, IsString } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export class FindAllUsulanJalanDto {
     @IsOptional()
     @IsInt()
-    @Type(() => Number)
-    @Transform(({ value }) => (value === null || value === '' ? undefined : value))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     page?: number;
 
     @IsOptional()
     @IsInt()
-    @Type(() => Number)
-    @Transform(({ value }) => (value === null || value === '' ? undefined : value))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     amount?: number;
 
     @IsOptional()
     @IsInt()
-    @Type(() => Number)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idUsulanJalanStatus?: number;
 
     @IsOptional()
     @IsInt()
-    @Type(() => Number)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     tahunAnggaran?: number;
 
     @IsOptional()
@@ -30,22 +28,22 @@ export class FindAllUsulanJalanDto {
 
     @IsOptional()
     @IsInt()
-    @Type(() => Number)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idKabkota?: number;
 
     @IsOptional()
     @IsInt()
-    @Type(() => Number)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idKecamatan?: number;
 
     @IsOptional()
     @IsInt()
-    @Type(() => Number)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idKelurahan?: number;
 
     @IsOptional()
     @IsInt()
-    @Type(() => Number)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idJalanJenisPerkerasan?: number;
 }
 

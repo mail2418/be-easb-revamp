@@ -5,22 +5,22 @@ import { AsbJakonType } from '../../../domain/asb_jakon/asb_jakon_type.enum';
 export class CreateAsbJakonDto {
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     idAsbTipeBangunan!: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     idAsbJenis!: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     idAsbKlasifikasi!: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     tahun!: number;
 
     @IsEnum(AsbJakonType)
@@ -39,12 +39,12 @@ export class CreateAsbJakonDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    @Transform(({ value }) => parseFloat(value))
     priceFrom!: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    @Transform(({ value }) => parseFloat(value))
     priceTo!: number;
 
     @IsString()
@@ -54,6 +54,6 @@ export class CreateAsbJakonDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    @Transform(({ value }) => parseFloat(value))
     standard!: number;
 }

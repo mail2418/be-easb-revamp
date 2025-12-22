@@ -18,22 +18,22 @@ export class FindAllAsbDto {
     // Filters (optional)
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => (value ? Number(value) : undefined))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idAsbJenis?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => (value ? Number(value) : undefined))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idAsbStatus?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => (value ? Number(value) : undefined))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idTipeBangunan?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => (value ? Number(value) : undefined))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     tahunAnggaran?: number;
 
     @IsOptional()

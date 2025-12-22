@@ -1,20 +1,20 @@
 import { IsInt, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export class VerifyInformasiUsulanJalanDto {
     @IsInt()
     @IsNotEmpty()
-    @Type(() => Number)
+    @Transform(({ value }) => parseInt(value, 10))
     idUsulanJalan: number;
 
     @IsOptional()
     @IsNumber()
-    @Type(() => Number)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     verifLebarJalan?: number;
 
     @IsOptional()
     @IsInt()
-    @Type(() => Number)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     verifIdJalanJenisPerkerasan?: number;
 }
 

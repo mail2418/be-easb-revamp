@@ -9,6 +9,7 @@ export class UpdateHspkDto {
 
     @IsOptional()
     @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     id_ruang_lingkup?: number;
 
     @IsOptional()
@@ -22,6 +23,7 @@ export class UpdateHspkDto {
     @IsOptional()
     @IsNumber()
     @Min(0)
+    @Transform(({ value }) => value ? parseFloat(value) : undefined)
     harga_satuan?: number;
 }
 

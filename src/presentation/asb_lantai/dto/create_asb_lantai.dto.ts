@@ -14,11 +14,11 @@ export class CreateAsbLantaiDto {
 
   @IsNumber()
   @IsNotEmpty()
-  @Transform(({ value }) => value ? parseFloat(value) : undefined)
+  @Transform(({ value }) => parseFloat(value))
   koef!: number;
 
   @IsNumber()
   @IsNotEmpty()
-  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  @Transform(({ value }) => parseInt(value, 10))
   id_satuan!: number;
 }

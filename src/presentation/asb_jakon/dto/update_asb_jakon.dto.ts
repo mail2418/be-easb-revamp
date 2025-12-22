@@ -4,7 +4,8 @@ import { AsbJakonType } from '../../../domain/asb_jakon/asb_jakon_type.enum';
 
 export class UpdateAsbJakonDto {
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
     id!: number;
 
     @IsNumber()

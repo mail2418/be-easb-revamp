@@ -4,12 +4,12 @@ import { Transform } from 'class-transformer';
 export class UpdateAsbBpsGalleryNonstdDto {
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     id!: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     idAsb!: number;
 
     @IsOptional()

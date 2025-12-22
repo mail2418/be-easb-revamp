@@ -4,7 +4,8 @@ import { AsbKomponenBangunanStdFiles } from '../../../domain/asb_komponen_bangun
 
 export class UpdateAsbKomponenBangunanStdDto {
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
     id!: number;
 
     @IsString()
