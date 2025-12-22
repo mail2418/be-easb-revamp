@@ -1,85 +1,116 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { Transform } from "class-transformer";
 
 export class UpdateUsulanJalanDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    idUsulanJalan: number;
+    id!: number;
 
-    @IsNotEmpty()
+    // Optional Foreign Keys
+    @IsOptional()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    idKabkota: number;
+    idOpd?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
+    idUsulanJalanStatus?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    idAsbJenis?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    idJalanJenisPemeliharaan?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    idJalanJenisPerkerasan?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    idRekening?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    idRekeningReview?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    idKabkota?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
     idKecamatan?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => parseInt(value, 10))
     idKelurahan?: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    tahunAnggaran: number;
+    idVerifikatorAdbang?: number;
 
-    @IsNotEmpty()
-    @IsString()
-    namaUsulanJalan: string;
-
-    @IsNotEmpty()
-    @IsString()
-    alamat: string;
-
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    lebarJalan: number;
+    idVerifikatorBpkad?: number;
 
     @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
-    lebarJalanReview?: number;
-
-    @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    idJalanJenisPerkerasan: number;
+    idVerifikatorBappeda?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
-    idJalanJenisPerkerasanReview?: number;
+    @Transform(({ value }) => parseInt(value, 10))
+    idRejectVerif?: number;
+
+    // Core Fields
+    @IsOptional()
+    @IsBoolean()
+    @Transform(({ value }) => value === 'true' || value === true)
+    isIncludePpn?: boolean;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
-    idSpesifikasiDesain?: number;
-
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
-    idSpesifikasiDesainReview?: number;
-
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
-    idRuangLingkup?: number;
-
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
-    idRuangLingkupReview?: number;
+    @Transform(({ value }) => parseInt(value, 10))
+    tahunAnggaran?: number;
 
     @IsOptional()
     @IsString()
-    keteranganTambahan?: string;
+    namaUsulan?: string;
 
     @IsOptional()
     @IsString()
-    keteranganTambahanReview?: string;
+    uraian?: string;
+
+    @IsOptional()
+    @IsString()
+    spesifikasi?: string;
+
+    @IsOptional()
+    @IsString()
+    satuan?: string;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseFloat(value))
+    hargaSatuan?: number;
+
+    @IsOptional()
+    @IsString()
+    deskripsiDesain?: string;
 }
