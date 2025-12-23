@@ -61,18 +61,20 @@ export class AsbBpsGalleryStdController {
         @Query() filterDto: GetAsbBpsGalleryStdListFilterDto,
     ) {
         try {
+            const page = paginationDto.page ?? 1;
+            const amount = paginationDto.amount ?? 10;
             const result = await this.service.findAll(
-                paginationDto.page,
-                paginationDto.amount,
+                page,
+                amount,
                 filterDto,
             );
 
             const response: AsbBpsGalleryStdPaginationResultDto = {
                 data: result.data,
                 total: result.total,
-                page: paginationDto.page,
-                amount: paginationDto.amount,
-                totalPages: Math.ceil(result.total / paginationDto.amount),
+                page,
+                amount,
+                totalPages: Math.ceil(result.total / amount),
             };
 
             return {

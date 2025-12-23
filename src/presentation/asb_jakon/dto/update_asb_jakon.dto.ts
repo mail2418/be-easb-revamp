@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsEnum, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsEnum, IsString, IsNotEmpty } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { AsbJakonType } from '../../../domain/asb_jakon/asb_jakon_type.enum';
 

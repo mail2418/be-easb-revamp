@@ -69,16 +69,22 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const usulanJalan = await this.repository.create({
                 idOpd,
                 idUsulanJalanStatus: 1,
-                idKabkota: dto.idKabkota,
+                idAsbJenis: dto.idAsbJenis,
+                idJalanJenisPemeliharaan: dto.idJalanJenisPemeliharaan ?? null,
+                idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan ?? null,
+                idRekening: dto.idRekening,
+                idRekeningReview: dto.idRekeningReview,
+                idKabkota: dto.idKabkota ?? null,
                 idKecamatan: dto.idKecamatan ?? null,
                 idKelurahan: dto.idKelurahan ?? null,
+                isIncludePpn: dto.isIncludePpn ?? false,
                 tahunAnggaran: dto.tahunAnggaran,
-                namaUsulanJalan: dto.namaUsulanJalan,
-                alamat: dto.alamat,
-                lebarJalan: dto.lebarJalan,
-                lebarJalanReview: dto.lebarJalanReview ?? null,
-                idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan,
-                idJalanJenisPerkerasanReview: dto.idJalanJenisPerkerasanReview ?? null,
+                namaUsulan: dto.namaUsulan,
+                uraian: dto.uraian,
+                spesifikasi: dto.spesifikasi,
+                satuan: dto.satuan,
+                hargaSatuan: dto.hargaSatuan,
+                deskripsiDesain: dto.deskripsiDesain,
             });
 
             return {
@@ -114,12 +120,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // Update with status 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
             const updated = await this.repository.update(dto.idUsulanJalan, {
                 idUsulanJalanStatus: 2,
-                idSpesifikasiDesain: dto.idSpesifikasiDesain ?? null,
-                idSpesifikasiDesainReview: dto.idSpesifikasiDesainReview ?? null,
-                idRuangLingkup: dto.idRuangLingkup ?? null,
-                idRuangLingkupReview: dto.idRuangLingkupReview ?? null,
-                keteranganTambahan: dto.keteranganTambahan ?? null,
-                keteranganTambahanReview: dto.keteranganTambahanReview ?? null,
             });
 
             return {
@@ -134,30 +134,34 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
     async updateUsulanJalan(dto: UpdateUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // Check existence and permission
-            const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+            const usulanJalan = await this.findById(dto.id, userIdOpd, userRoles);
             if (!usulanJalan) {
-                throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
+                throw new NotFoundException(`Usulan Jalan with id ${dto.id} not found`);
             }
 
             // Update all fields
-            const updated = await this.repository.update(dto.idUsulanJalan, {
-                idKabkota: dto.idKabkota,
-                idKecamatan: dto.idKecamatan ?? null,
-                idKelurahan: dto.idKelurahan ?? null,
-                tahunAnggaran: dto.tahunAnggaran,
-                namaUsulanJalan: dto.namaUsulanJalan,
-                alamat: dto.alamat,
-                lebarJalan: dto.lebarJalan,
-                lebarJalanReview: dto.lebarJalanReview ?? null,
-                idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan,
-                idJalanJenisPerkerasanReview: dto.idJalanJenisPerkerasanReview ?? null,
-                idSpesifikasiDesain: dto.idSpesifikasiDesain ?? null,
-                idSpesifikasiDesainReview: dto.idSpesifikasiDesainReview ?? null,
-                idRuangLingkup: dto.idRuangLingkup ?? null,
-                idRuangLingkupReview: dto.idRuangLingkupReview ?? null,
-                keteranganTambahan: dto.keteranganTambahan ?? null,
-                keteranganTambahanReview: dto.keteranganTambahanReview ?? null,
-            });
+            const updateData: any = {};
+            
+            if (dto.idOpd !== undefined) updateData.idOpd = dto.idOpd;
+            if (dto.idUsulanJalanStatus !== undefined) updateData.idUsulanJalanStatus = dto.idUsulanJalanStatus;
+            if (dto.idAsbJenis !== undefined) updateData.idAsbJenis = dto.idAsbJenis;
+            if (dto.idJalanJenisPemeliharaan !== undefined) updateData.idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan ?? null;
+            if (dto.idJalanJenisPerkerasan !== undefined) updateData.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan ?? null;
+            if (dto.idRekening !== undefined) updateData.idRekening = dto.idRekening;
+            if (dto.idRekeningReview !== undefined) updateData.idRekeningReview = dto.idRekeningReview;
+            if (dto.idKabkota !== undefined) updateData.idKabkota = dto.idKabkota ?? null;
+            if (dto.idKecamatan !== undefined) updateData.idKecamatan = dto.idKecamatan ?? null;
+            if (dto.idKelurahan !== undefined) updateData.idKelurahan = dto.idKelurahan ?? null;
+            if (dto.isIncludePpn !== undefined) updateData.isIncludePpn = dto.isIncludePpn;
+            if (dto.tahunAnggaran !== undefined) updateData.tahunAnggaran = dto.tahunAnggaran;
+            if (dto.namaUsulan !== undefined) updateData.namaUsulan = dto.namaUsulan;
+            if (dto.uraian !== undefined) updateData.uraian = dto.uraian;
+            if (dto.spesifikasi !== undefined) updateData.spesifikasi = dto.spesifikasi;
+            if (dto.satuan !== undefined) updateData.satuan = dto.satuan;
+            if (dto.hargaSatuan !== undefined) updateData.hargaSatuan = dto.hargaSatuan;
+            if (dto.deskripsiDesain !== undefined) updateData.deskripsiDesain = dto.deskripsiDesain;
+
+            const updated = await this.repository.update(dto.id, updateData);
 
             return {
                 id: updated.id,
@@ -207,8 +211,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // Update review fields and status to 5 (Verifikasi Informasi Usulan Jalan)
             const updated = await this.repository.update(dto.idUsulanJalan, {
                 idUsulanJalanStatus: 5,
-                lebarJalanReview: dto.verifLebarJalan ?? usulanJalan.lebarJalan,
-                idJalanJenisPerkerasanReview: dto.verifIdJalanJenisPerkerasan ?? usulanJalan.idJalanJenisPerkerasan,
             });
 
             return {
@@ -243,9 +245,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // Update review fields and status to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)
             const updated = await this.repository.update(dto.idUsulanJalan, {
                 idUsulanJalanStatus: 6,
-                idSpesifikasiDesainReview: dto.verifIdSpesifikasiDesain ?? usulanJalan.idSpesifikasiDesain,
-                idRuangLingkupReview: dto.verifIdRuangLingkup ?? usulanJalan.idRuangLingkup,
-                keteranganTambahanReview: dto.verifKeteranganTambahan ?? usulanJalan.keteranganTambahan,
             });
 
             return {
@@ -281,7 +280,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const updated = await this.repository.update(id, {
                 idUsulanJalanStatus: 7,
                 idVerifikatorAdbang: Number(userId),
-                verifiedAdbangAt: new Date(),
+                verifikatorAdbangReviewAt: new Date(),
             });
 
             return {
@@ -322,7 +321,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const updated = await this.repository.update(id, {
                 idUsulanJalanStatus: 8,
                 idVerifikatorBpkad: Number(userId),
-                verifiedBpkadAt: new Date(),
+                verifikatorBpkadReviewAt: new Date(),
             });
 
             return {
@@ -363,7 +362,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const updated = await this.repository.update(id, {
                 idUsulanJalanStatus: 3,
                 idVerifikatorBappeda: Number(userId),
-                verifiedBappedaAt: new Date(),
+                verifikatorBappedaReviewAt: new Date(),
             });
 
             return {
@@ -386,9 +385,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // Update status to 4 (Tidak Memenuhi Syarat - Rejected)
             const updated = await this.repository.update(id, {
                 idUsulanJalanStatus: 4,
+                idRejectVerif: Number(userId),
                 rejectReason: rejectReason,
-                rejectVerifId: Number(userId),
-                rejectedAt: new Date(),
+                rejectVerifikatorReviewAt: new Date(),
             });
 
             return {

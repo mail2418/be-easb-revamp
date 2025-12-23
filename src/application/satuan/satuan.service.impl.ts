@@ -80,13 +80,16 @@ export class SatuanServiceImpl implements SatuanService {
 
     async getSatuans(pagination: GetSatuansDto): Promise<SatuansPaginationResult> {
         try {
-            const result = await this.satuanRepository.findAll(pagination);
+            const page = pagination.page ?? 1;
+            const amount = pagination.amount ?? 10;
+            const paginationData = { page, amount };
+            const result = await this.satuanRepository.findAll(paginationData);
             return {
                 satuans: result.data,
                 total: result.total,
-                page: pagination.page,
-                amount: pagination.amount,
-                totalPages: Math.ceil(result.total / pagination.amount)
+                page,
+                amount,
+                totalPages: Math.ceil(result.total / amount)
             };
         } catch (error) {
             throw error;

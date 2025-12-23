@@ -67,8 +67,10 @@ export class StandardKlasifikasiRepositoryImpl extends StandardKlasifikasiReposi
             }
 
             // Pagination
-            const skip = (dto.page - 1) * dto.amount;
-            queryBuilder.skip(skip).take(dto.amount);
+            const page = dto.page ?? 1;
+            const amount = dto.amount ?? 10;
+            const skip = (page - 1) * amount;
+            queryBuilder.skip(skip).take(amount);
 
             // Order
             queryBuilder.orderBy("standard_klasifikasi.id", "DESC");

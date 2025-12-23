@@ -93,13 +93,15 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
 
     async getByAsb(dto: GetAsbDetailReviewByAsbDto): Promise<{ data: AsbDetailReview[], total: number, page: number, amount: number, totalPages: number }> {
         try {
-            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            const page = dto.page ?? 1;
+            const amount = dto.amount ?? 10;
+            const [data, total] = await this.repository.findByAsb(dto.idAsb, page, amount);
             return {
                 data,
                 total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(total / dto.amount)
+                page,
+                amount,
+                totalPages: Math.ceil(total / amount)
             };
         } catch (error) {
             console.log(error);

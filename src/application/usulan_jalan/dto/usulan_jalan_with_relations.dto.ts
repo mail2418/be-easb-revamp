@@ -2,31 +2,31 @@ export class UsulanJalanWithRelationsDto {
     id!: number;
     idOpd!: number;
     idUsulanJalanStatus!: number;
-    idJalanJenisPerkerasan!: number;
-    idJalanJenisPerkerasanReview!: number | null;
-    idSpesifikasiDesain!: number | null;
-    idSpesifikasiDesainReview!: number | null;
-    idRuangLingkup!: number | null;
-    idRuangLingkupReview!: number | null;
+    idAsbJenis!: number;
+    idJalanJenisPemeliharaan!: number | null;
+    idJalanJenisPerkerasan!: number | null;
+    idRekening!: number;
+    idRekeningReview!: number;
     idKabkota!: number | null;
     idKecamatan!: number | null;
     idKelurahan!: number | null;
     idVerifikatorAdbang!: number | null;
     idVerifikatorBpkad!: number | null;
     idVerifikatorBappeda!: number | null;
-    rejectVerifId!: number | null;
-    tahunAnggaran!: number;
-    namaUsulanJalan!: string;
-    alamat!: string;
-    lebarJalan!: number;
-    lebarJalanReview!: number | null;
-    keteranganTambahan!: string | null;
-    keteranganTambahanReview!: string | null;
-    verifiedAdbangAt!: Date | null;
-    verifiedBpkadAt!: Date | null;
-    verifiedBappedaAt!: Date | null;
-    rejectedAt!: Date | null;
+    idRejectVerif!: number | null;
+    verifikatorAdbangReviewAt!: Date | null;
+    verifikatorBpkadReviewAt!: Date | null;
+    verifikatorBappedaReviewAt!: Date | null;
+    rejectVerifikatorReviewAt!: Date | null;
     rejectReason!: string | null;
+    isIncludePpn!: boolean;
+    tahunAnggaran!: number;
+    namaUsulan!: string;
+    uraian!: string;
+    spesifikasi!: string;
+    satuan!: string;
+    hargaSatuan!: number;
+    deskripsiDesain!: string;
     createdAt!: Date;
     updatedAt!: Date;
     deletedAt!: Date | null;
@@ -38,6 +38,16 @@ export class UsulanJalanWithRelationsDto {
         alias: string;
     };
 
+    asbJenis?: {
+        id: number;
+        jenis: string;
+    };
+
+    jalanJenisPemeliharaan?: {
+        id: number;
+        jenis: string;
+    } | null;
+
     usulanJalanStatus?: {
         id: number;
         status: string;
@@ -46,34 +56,19 @@ export class UsulanJalanWithRelationsDto {
     jalanJenisPerkerasan?: {
         id: number;
         jenis: string;
+    } | null;
+
+    rekening?: {
+        id: number;
+        kode: string;
+        uraian: string;
     };
 
-    jalanJenisPerkerasanReview?: {
-        id: number;
-        jenis: string;
-    } | null;
-
-    spesifikasiDesain?: {
+    rekeningReview?: {
         id: number;
         kode: string;
         uraian: string;
-    } | null;
-
-    spesifikasiDesainReview?: {
-        id: number;
-        kode: string;
-        uraian: string;
-    } | null;
-
-    ruangLingkup?: {
-        id: number;
-        ruang_lingkup: string;
-    } | null;
-
-    ruangLingkupReview?: {
-        id: number;
-        ruang_lingkup: string;
-    } | null;
+    };
 
     kabkota?: {
         id: number;

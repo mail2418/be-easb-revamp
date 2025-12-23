@@ -59,14 +59,16 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
 
     async getByAsb(dto: GetAsbDocumentByAsbDto, idOpd?: number | null, role?: Role): Promise<{ data: AsbDocument[], total: number, page: number, amount: number, totalPages: number }> {
         try {
+            const page = dto.page ?? 1;
+            const amount = dto.amount ?? 10;
             const opdFilter = role ? this.getOpdFilter(idOpd ?? null, role) : undefined;
-            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount, opdFilter);
+            const [data, total] = await this.repository.findByAsb(dto.idAsb, page, amount, opdFilter);
             return {
                 data,
                 total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(total / dto.amount)
+                page,
+                amount,
+                totalPages: Math.ceil(total / amount)
             };
         } catch (error) {
             throw error;

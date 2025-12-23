@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsNotEmpty } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class UpdateAsbKomponenBangunanProsNonstdDto {

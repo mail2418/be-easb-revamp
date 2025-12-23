@@ -16,10 +16,12 @@ export class UsulanJalan {
     idOpd!: number;
     idUsulanJalanStatus!: number;
     idAsbJenis!: number;
-    idJalanJenisPemeliharaan!: number;
-    idJalanJenisPerkerasan!: number;
     idRekening!: number;
     idRekeningReview!: number;
+
+    // Optional Foreign Keys - Jalan
+    idJalanJenisPemeliharaan!: number | null;
+    idJalanJenisPerkerasan!: number | null;
 
     // Optional Foreign Keys - Location
     idKabkota!: number | null;
@@ -38,6 +40,9 @@ export class UsulanJalan {
     verifikatorBappedaReviewAt!: Date | null;
     rejectVerifikatorReviewAt!: Date | null;
 
+    // Reject reason
+    rejectReason!: string | null;
+
     // Core fields
     isIncludePpn!: boolean;
     tahunAnggaran!: number;
@@ -52,10 +57,12 @@ export class UsulanJalan {
     opd?: Opd;
     usulanJalanStatus?: UsulanJalanStatus;
     asbJenis?: AsbJenis;
-    jalanJenisPemeliharaan?: JalanJenisPemeliharaan;
-    jalanJenisPerkerasan?: JalanJenisPerkerasan;
     rekening?: Rekening;
     rekeningReview?: Rekening;
+
+    // Relations - Optional (Jalan)
+    jalanJenisPemeliharaan?: JalanJenisPemeliharaan | null;
+    jalanJenisPerkerasan?: JalanJenisPerkerasan | null;
 
     // Relations - Optional (Location)
     kabkota?: KabKota | null;

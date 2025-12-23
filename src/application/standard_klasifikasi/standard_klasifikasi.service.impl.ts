@@ -83,13 +83,16 @@ export class StandardKlasifikasiServiceImpl extends StandardKlasifikasiService {
 
     async findAll(dto: GetStandardKlasifikasisDto): Promise<StandardKlasifikasisPaginationResultDto> {
         try {
-            const result = await this.standardKlasifikasiRepository.findAll(dto);
+            const page = dto.page ?? 1;
+            const amount = dto.amount ?? 10;
+            const paginationData = { page, amount };
+            const result = await this.standardKlasifikasiRepository.findAll(paginationData);
             return {
                 data: result.data,
                 total: result.total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(result.total / dto.amount)
+                page,
+                amount,
+                totalPages: Math.ceil(result.total / amount)
             };
         } catch (error) {
             throw error;

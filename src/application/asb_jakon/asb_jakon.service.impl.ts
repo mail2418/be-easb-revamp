@@ -90,13 +90,16 @@ export class AsbJakonServiceImpl implements AsbJakonService {
 
     async getAll(pagination: GetAsbJakonListDto): Promise<any> {
         try {
-            const result = await this.repository.findAll(pagination);
+            const page = pagination.page ?? 1;
+            const amount = pagination.amount ?? 10;
+            const paginationData = { page, amount };
+            const result = await this.repository.findAll(paginationData);
             return {
                 data: result.data,
                 total: result.total,
-                page: pagination.page,
-                amount: pagination.amount,
-                totalPages: Math.ceil(result.total / pagination.amount),
+                page,
+                amount,
+                totalPages: Math.ceil(result.total / amount),
             };
         } catch (error) {
             throw error;

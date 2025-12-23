@@ -61,7 +61,7 @@ export class SatuanRepositoryImpl implements SatuanRepository {
         }
     }
 
-    async findAll(pagination: GetSatuansDto): Promise<{ data: Satuan[], total: number }> {
+    async findAll(pagination: { page: number; amount: number }): Promise<{ data: Satuan[], total: number }> {
         try {
             const [satuans, total] = await this.repo.findAndCount({
                 skip: (pagination.page - 1) * pagination.amount,

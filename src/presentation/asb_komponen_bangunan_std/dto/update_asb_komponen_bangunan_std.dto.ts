@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsOptional, IsEnum } from 'class-validator';
+import { IsNumber, IsString, IsOptional, IsEnum, IsNotEmpty } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { AsbKomponenBangunanStdFiles } from '../../../domain/asb_komponen_bangunan_std/asb_komponen_bangunan_std_files.enum';
 

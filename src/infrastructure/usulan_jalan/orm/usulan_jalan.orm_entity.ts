@@ -34,17 +34,18 @@ export class UsulanJalanOrmEntity {
     @Column({ name: 'id_asb_jenis', type: 'int' })
     idAsbJenis!: number;
 
-    @Column({ name: 'id_jalan_jenis_pemeliharaan', type: 'int' })
-    idJalanJenisPemeliharaan!: number;
-
-    @Column({ name: 'id_jalan_jenis_perkerasan', type: 'int' })
-    idJalanJenisPerkerasan!: number;
-
     @Column({ name: 'id_rekening', type: 'int' })
     idRekening!: number;
 
     @Column({ name: 'id_rekening_review', type: 'int' })
     idRekeningReview!: number;
+
+    // Optional Foreign Keys - Jalan
+    @Column({ name: 'id_jalan_jenis_pemeliharaan', type: 'int', nullable: true })
+    idJalanJenisPemeliharaan!: number | null;
+
+    @Column({ name: 'id_jalan_jenis_perkerasan', type: 'int', nullable: true })
+    idJalanJenisPerkerasan!: number | null;
 
     // Optional Foreign Keys - Location
     @Column({ name: 'id_kabkota', type: 'int', nullable: true })
@@ -68,6 +69,23 @@ export class UsulanJalanOrmEntity {
 
     @Column({ name: 'id_reject_verif', type: 'int', nullable: true })
     idRejectVerif!: number | null;
+
+    // Reject reason
+    @Column({ name: 'reject_reason', type: 'text', nullable: true })
+    rejectReason!: string | null;
+
+    // Verifikator Review At
+    @Column({ name: 'verifikator_adbang_review_at', type: 'timestamptz', nullable: true })
+    verifikatorAdbangReviewAt!: Date | null;
+
+    @Column({ name: 'verifikator_bpkad_review_at', type: 'timestamptz', nullable: true })
+    verifikatorBpkadReviewAt!: Date | null;
+
+    @Column({ name: 'verifikator_bappeda_review_at', type: 'timestamptz', nullable: true })
+    verifikatorBappedaReviewAt!: Date | null;
+
+    @Column({ name: 'reject_verifikator_review_at', type: 'timestamptz', nullable: true })
+    rejectVerifikatorReviewAt!: Date | null;
 
     // Core fields
     @Column({ name: 'is_include_ppn', type: 'boolean', default: false })
@@ -117,14 +135,6 @@ export class UsulanJalanOrmEntity {
     @JoinColumn({ name: 'id_asb_jenis' })
     asbJenis!: AsbJenisOrmEntity;
 
-    @ManyToOne(() => JalanJenisPemeliharaanOrmEntity, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'id_jalan_jenis_pemeliharaan' })
-    jalanJenisPemeliharaan!: JalanJenisPemeliharaanOrmEntity;
-
-    @ManyToOne(() => JalanJenisPerkerasanOrmEntity, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'id_jalan_jenis_perkerasan' })
-    jalanJenisPerkerasan!: JalanJenisPerkerasanOrmEntity;
-
     @ManyToOne(() => RekeningOrmEntity, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'id_rekening' })
     rekening!: RekeningOrmEntity;
@@ -134,6 +144,14 @@ export class UsulanJalanOrmEntity {
     rekeningReview!: RekeningOrmEntity;
 
     // Relationships - Optional FKs (SET NULL)
+    @ManyToOne(() => JalanJenisPemeliharaanOrmEntity, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'id_jalan_jenis_pemeliharaan' })
+    jalanJenisPemeliharaan!: JalanJenisPemeliharaanOrmEntity | null;
+
+    @ManyToOne(() => JalanJenisPerkerasanOrmEntity, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'id_jalan_jenis_perkerasan' })
+    jalanJenisPerkerasan!: JalanJenisPerkerasanOrmEntity | null;
+
     @ManyToOne(() => KabKotaOrmEntity, { onDelete: 'SET NULL', nullable: true })
     @JoinColumn({ name: 'id_kabkota' })
     kabkota!: KabKotaOrmEntity | null;

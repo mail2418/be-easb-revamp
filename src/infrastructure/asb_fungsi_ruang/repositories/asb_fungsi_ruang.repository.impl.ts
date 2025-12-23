@@ -51,9 +51,11 @@ export class AsbFungsiRuangRepositoryImpl implements AsbFungsiRuangRepository {
 
     async findAll(pagination: GetAsbFungsiRuangsDto): Promise<{ data: AsbFungsiRuang[]; total: number }> {
         try {
+            const page = pagination.page ?? 1;
+            const amount = pagination.amount ?? 10;
             const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
+                skip: (page - 1) * amount,
+                take: amount,
                 order: { id: 'DESC' }
             });
 

@@ -21,22 +21,23 @@ export class StoreInformasiUsulanJalanDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    idJalanJenisPemeliharaan!: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
-    idJalanJenisPerkerasan!: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
     idRekening!: number;
 
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
     idRekeningReview!: number;
+
+    // Optional Foreign Keys - Jalan
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    idJalanJenisPemeliharaan?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    idJalanJenisPerkerasan?: number;
 
     // Optional Foreign Keys - Location
     @IsOptional()

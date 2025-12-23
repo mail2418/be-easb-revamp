@@ -306,34 +306,81 @@ export class AsbServiceImpl implements AsbService {
     }
 
     async updateIndex(dto: UpdateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
-        // Check permissions
-        const isAdmin = userRoles.includes(Role.ADMIN);
-        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
-        const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
-        const isOpd = userRoles.includes(Role.OPD);
+        try {
+            // Check permissions
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
+            const isOpd = userRoles.includes(Role.OPD);
 
-        // Verify existence and ownership
-        let existingAsb: AsbWithRelationsDto | null = null;
+            // Verify existence and ownership
+            let existingAsb: AsbWithRelationsDto | null = null;
 
-        if (isAdmin || isSuperAdmin || isVerifikator) {
-            console.log("isAdmin || isSuperAdmin || isVerifikator");
-            existingAsb = await this.repository.findById(dto.id);
-        } else if (isOpd) {
-            if (!userIdOpd) {
-                throw new ForbiddenException('OPD user has no associated OPD');
+            if (isAdmin || isSuperAdmin || isVerifikator) {
+                existingAsb = await this.repository.findById(dto.id);
+            } else if (isOpd) {
+                if (!userIdOpd) {
+                    throw new ForbiddenException('OPD user has no associated OPD');
+                }
+                existingAsb = await this.repository.findById(dto.id, userIdOpd);
+            } else {
+                throw new ForbiddenException('User is not authorized to update this ASB');
             }
-            existingAsb = await this.repository.findById(dto.id, userIdOpd);
-        } else {
-            throw new ForbiddenException('User is not authorized to update this ASB');
+
+            if (!existingAsb) {
+                throw new NotFoundException(`ASB with id ${dto.id} not found or access denied`);
+            }
+
+            // Validate luasTanah based on building type
+            if (dto.idAsbTipeBangunan === 2) {
+                // Type 2 (Non-Gedung) requires luas_tanah
+                if (!dto.luasTanah) {
+                    throw new BadRequestException('luas_tanah is required for Non-Gedung buildings (type 2)');
+                }
+            } else if (dto.idAsbTipeBangunan === 1 && dto.luasTanah !== undefined) {
+                // Type 1 (Gedung) should not have luas_tanah
+                throw new BadRequestException('luas_tanah cannot be set for Gedung buildings (type 1)');
+            }
+
+            // Prepare update data
+            const updateData: any = {
+                tahunAnggaran: dto.tahunAnggaran,
+                namaAsb: dto.namaAsb,
+                alamat: dto.alamat,
+                totalLantai: dto.totalLantai,
+                idAsbTipeBangunan: dto.idAsbTipeBangunan,
+                idKabkota: dto.idKabkota,
+                idKecamatan: dto.idKecamatan ?? null,
+                idKelurahan: dto.idKelurahan ?? null,
+                jumlahKontraktor: dto.jumlahKontraktor,
+                idAsbJenis: dto.idAsbJenis,
+            };
+
+            // Handle luasTanah based on building type
+            if (dto.idAsbTipeBangunan === 2) {
+                updateData.luasTanah = dto.luasTanah;
+            } else if (dto.idAsbTipeBangunan === 1) {
+                updateData.luasTanah = null;
+            }
+
+            // Handle idOpd if provided (only for admin/superadmin)
+            if (dto.idOpd !== undefined && (isAdmin || isSuperAdmin)) {
+                updateData.idOpd = dto.idOpd;
+            }
+
+            // Handle idAsbStatus if provided (only for admin/superadmin)
+            if (dto.idAsbStatus !== undefined && (isAdmin || isSuperAdmin)) {
+                updateData.idAsbStatus = dto.idAsbStatus;
+            }
+
+            // Update ASB
+            const updatedAsb = await this.repository.update(dto.id, updateData);
+
+            return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
+        } catch (error) {
+            console.log(error);
+            throw error;
         }
-
-        if (!existingAsb) {
-            throw new NotFoundException(`ASB with id ${dto.id} not found or access denied`);
-        }
-
-        console.log("existingAsb", existingAsb);
-
-        return { id: existingAsb.id, status: existingAsb.idAsbStatus };
     }
 
     async deleteAsb(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }> {
