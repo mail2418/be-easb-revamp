@@ -10,11 +10,17 @@ import { VerifyInformasiUsulanJalanDto } from 'src/presentation/usulan_jalan/dto
 import { VerifyRuangLingkupUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/verify_ruang_lingkup_usulan_jalan.dto';
 import { GetUsulanJalanAnalyticsFilterDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_analytics_filter.dto';
 import { UsulanJalanAnalyticsDto } from 'src/application/usulan_jalan/dto/usulan_jalan_analytics.dto';
+import { CreateUsulanJalanStoreIndexDto } from 'src/application/usulan_jalan/dto/create_usulan_jalan_store_index.dto';
+import { UpdateUsulanJalanStoreIndexDto } from 'src/application/usulan_jalan/dto/update_usulan_jalan_store_index.dto';
 
 export abstract class UsulanJalanService {
     // Query methods
     abstract findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanWithRelationsDto | null>;
     abstract findAll(dto: FindAllUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanListResultDto>;
+
+    // Index CRUD operations (SUPERADMIN, ADMIN, OPD)  
+    abstract createIndex(dto: CreateUsulanJalanStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract updateIndex(dto: UpdateUsulanJalanStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
 
     // CRUD operations (SUPERADMIN, ADMIN, OPD)
     abstract storeInformasi(dto: StoreInformasiUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;

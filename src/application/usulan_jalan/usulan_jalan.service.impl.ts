@@ -15,6 +15,8 @@ import { VerifyInformasiUsulanJalanDto } from '../../presentation/usulan_jalan/d
 import { VerifyRuangLingkupUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_ruang_lingkup_usulan_jalan.dto';
 import { GetUsulanJalanAnalyticsFilterDto } from './dto/get_usulan_jalan_analytics_filter.dto';
 import { UsulanJalanAnalyticsDto } from './dto/usulan_jalan_analytics.dto';
+import { CreateUsulanJalanStoreIndexDto } from './dto/create_usulan_jalan_store_index.dto';
+import { UpdateUsulanJalanStoreIndexDto } from './dto/update_usulan_jalan_store_index.dto';
 
 @Injectable()
 export class UsulanJalanServiceImpl implements UsulanJalanService {
@@ -50,6 +52,125 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 amount,
                 total,
                 totalPages,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async createIndex(dto: CreateUsulanJalanStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // Validate that user has idOpd (must be OPD user or admin setting OPD)
+            if (!userIdOpd && !dto.idOpd) {
+                throw new ForbiddenException('User is not sync to an opd');
+            }
+
+            const idOpd = userIdOpd ?? dto.idOpd;
+
+            // Validate idJalanJenisPemeliharaan based on idAsbJenis
+            let idJalanJenisPemeliharaan: number | null = null;
+            if (dto.idAsbJenis === 1) {
+                // If idAsbJenis is 1 (Gedung), idJalanJenisPemeliharaan must be null
+                idJalanJenisPemeliharaan = null;
+            } else if (dto.idAsbJenis === 2) {
+                // If idAsbJenis is 2 (Jalan), idJalanJenisPemeliharaan is required
+                if (!dto.idJalanJenisPemeliharaan) {
+                    throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Jalan)');
+                }
+                idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
+            }
+
+            // Create with status 1 (Input Informasi Usulan Jalan)
+            const usulanJalan = await this.repository.create({
+                idOpd,
+                idUsulanJalanStatus: 1,
+                idAsbJenis: dto.idAsbJenis,
+                idJalanJenisPemeliharaan,
+                idJalanJenisPerkerasan: undefined,
+                idRekening: undefined,
+                idRekeningReview: undefined,
+                idKabkota: dto.idKabkota,
+                idKecamatan: dto.idKecamatan ?? null,
+                idKelurahan: dto.idKelurahan ?? null,
+                isIncludePpn: false,
+                tahunAnggaran: dto.tahunAnggaran,
+                namaUsulan: dto.namaUsulan,
+                uraian: '',
+                spesifikasi: '',
+                satuan: '',
+                hargaSatuan: 0,
+                deskripsiDesain: '',
+            });
+
+            return {
+                id: usulanJalan.id,
+                status: usulanJalan.usulanJalanStatus,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateIndex(dto: UpdateUsulanJalanStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // Check permissions
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            const isOpd = userRoles.includes(Role.OPD);
+
+            // Verify existence and ownership
+            let existingUsulanJalan: UsulanJalanWithRelationsDto | null = null;
+
+            if (isAdmin || isSuperAdmin) {
+                existingUsulanJalan = await this.repository.findById(dto.id);
+            } else if (isOpd) {
+                if (!userIdOpd) {
+                    throw new ForbiddenException('OPD user has no associated OPD');
+                }
+                existingUsulanJalan = await this.repository.findById(dto.id, userIdOpd);
+            } else {
+                throw new ForbiddenException('User is not authorized to update this Usulan Jalan');
+            }
+
+            if (!existingUsulanJalan) {
+                throw new NotFoundException(`Usulan Jalan with id ${dto.id} not found or access denied`);
+            }
+
+            // Validate idJalanJenisPemeliharaan based on idAsbJenis
+            let idJalanJenisPemeliharaan: number | null = null;
+            if (dto.idAsbJenis === 1) {
+                // If idAsbJenis is 1 (Gedung), idJalanJenisPemeliharaan must be null
+                idJalanJenisPemeliharaan = null;
+            } else if (dto.idAsbJenis === 2) {
+                // If idAsbJenis is 2 (Jalan), idJalanJenisPemeliharaan is required
+                if (!dto.idJalanJenisPemeliharaan) {
+                    throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Jalan)');
+                }
+                idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
+            }
+
+            // Prepare update data
+            const updateData: any = {
+                idAsbJenis: dto.idAsbJenis,
+                idJalanJenisPemeliharaan,
+                idKabkota: dto.idKabkota,
+                idKecamatan: dto.idKecamatan ?? null,
+                idKelurahan: dto.idKelurahan ?? null,
+                tahunAnggaran: dto.tahunAnggaran,
+                namaUsulan: dto.namaUsulan,
+            };
+
+            // Handle idOpd if provided (only for admin/superadmin)
+            if (dto.idOpd !== undefined && (isAdmin || isSuperAdmin)) {
+                updateData.idOpd = dto.idOpd;
+            }
+
+            // Update Usulan Jalan
+            const updatedUsulanJalan = await this.repository.update(dto.id, updateData);
+
+            return {
+                id: updatedUsulanJalan.id,
+                status: updatedUsulanJalan.usulanJalanStatus,
             };
         } catch (error) {
             throw error;
@@ -141,7 +262,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
             // Update all fields
             const updateData: any = {};
-            
+
             if (dto.idOpd !== undefined) updateData.idOpd = dto.idOpd;
             if (dto.idUsulanJalanStatus !== undefined) updateData.idUsulanJalanStatus = dto.idUsulanJalanStatus;
             if (dto.idAsbJenis !== undefined) updateData.idAsbJenis = dto.idAsbJenis;
