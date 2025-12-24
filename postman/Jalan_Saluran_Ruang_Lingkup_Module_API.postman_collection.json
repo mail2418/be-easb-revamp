@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "jalan-saluran-ruang-lingkup-collection-001",
+		"name": "Jalan Saluran Ruang Lingkup Module",
+		"description": "API collection for Jalan Saluran Ruang Lingkup (Road Drainage Scope) module - Master data for drainage scope descriptions by proposal type",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Jalan Saluran Ruang Lingkup (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-saluran-ruang-lingkup?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-saluran-ruang-lingkup"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all jalan saluran ruang lingkup with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanSaluranRuangLingkup list retrieved successfully\",\n  \"data\": {\n    \"data\": [\n      {\n        \"id\": 1,\n        \"id_jenis_usulan\": 1,\n        \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan\",\n        \"createdAt\": \"...\",\n        \"updatedAt\": \"...\"\n      }\n    ],\n    \"page\": 1,\n    \"amount\": 10,\n    \"total\": 5,\n    \"totalPages\": 1\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Jalan Saluran Ruang Lingkup by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-saluran-ruang-lingkup/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-saluran-ruang-lingkup", "1"]
+						},
+						"description": "Get single jalan saluran ruang lingkup by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanSaluranRuangLingkup retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"id_jenis_usulan\": 1,\n    \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read endpoints accessible by all roles"
+		},
+		{
+			"name": "CRUD Endpoints (ADMIN, SUPERADMIN)",
+			"item": [
+				{
+					"name": "Create Jalan Saluran Ruang Lingkup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_jenis_usulan\": 1,\n  \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-saluran-ruang-lingkup",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-saluran-ruang-lingkup"]
+						},
+						"description": "Create new jalan saluran ruang lingkup entry.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Body**:\n```json\n{\n  \"id_jenis_usulan\": number,        // Required - Road proposal type ID\n  \"deskripsi_ruang_lingkup\": string  // Required - Drainage scope description\n}\n```\n\n**Common Descriptions**:\n- \"Saluran drainase sisi kiri dan kanan jalan\" (Left and right side drainage)\n- \"Saluran drainase tengah jalan\" (Center drainage)\n- \"Saluran drainase kombinasi\" (Combined drainage)\n- \"Saluran drainase dengan gorong-gorong\" (Drainage with culverts)\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"JalanSaluranRuangLingkup created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"id_jenis_usulan\": 1,\n    \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Jalan Saluran Ruang Lingkup",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"id_jenis_usulan\": 1,\n  \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan (Updated)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-saluran-ruang-lingkup",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-saluran-ruang-lingkup"]
+						},
+						"description": "Update existing jalan saluran ruang lingkup.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Body**:\n```json\n{\n  \"id\": number,                     // Required - ID to update\n  \"id_jenis_usulan\": number,        // Optional - Road proposal type ID\n  \"deskripsi_ruang_lingkup\": string  // Optional - Drainage scope description\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanSaluranRuangLingkup updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"id_jenis_usulan\": 1,\n    \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan (Updated)\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Jalan Saluran Ruang Lingkup",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-saluran-ruang-lingkup/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-saluran-ruang-lingkup", "1"]
+						},
+						"description": "Delete jalan saluran ruang lingkup by ID.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanSaluranRuangLingkup deleted successfully\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update, Delete operations - Accessible by ADMIN and SUPERADMIN"
+		}
+	]
+}
+

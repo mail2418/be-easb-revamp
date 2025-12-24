@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "jalan-spesifikasi-desain-collection-001",
+		"name": "Jalan Spesifikasi Desain Module",
+		"description": "API collection for Jalan Spesifikasi Desain (Road Design Specification) module - Management of road design specifications with volume, dimensions, and HSPK references",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Jalan Spesifikasi Desain (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all jalan spesifikasi desain with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Spesifikasi Desain list retrieved successfully\",\n  \"data\": {\n    \"data\": [\n      {\n        \"id\": 1,\n        \"id_usulan_jalan\": 1,\n        \"id_ruang_lingkup\": 1,\n        \"id_hspk\": 1,\n        \"volume\": 100.5,\n        \"lebar\": 6.0,\n        \"spasi\": 0.5,\n        \"tinggi\": 0.3,\n        \"createdAt\": \"...\",\n        \"updatedAt\": \"...\"\n      }\n    ],\n    \"page\": 1,\n    \"amount\": 10,\n    \"total\": 5,\n    \"totalPages\": 1\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Jalan Spesifikasi Desain by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain", "1"]
+						},
+						"description": "Get single jalan spesifikasi desain by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Spesifikasi Desain retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"id_usulan_jalan\": 1,\n    \"id_ruang_lingkup\": 1,\n    \"id_hspk\": 1,\n    \"volume\": 100.5,\n    \"lebar\": 6.0,\n    \"spasi\": 0.5,\n    \"tinggi\": 0.3,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read endpoints accessible by all roles"
+		},
+		{
+			"name": "CRUD Endpoints (ADMIN, SUPERADMIN, OPD)",
+			"item": [
+				{
+					"name": "Create Jalan Spesifikasi Desain",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_usulan_jalan\": 1,\n  \"id_ruang_lingkup\": 1,\n  \"id_hspk\": 1,\n  \"volume\": 100.5,\n  \"lebar\": 6.0,\n  \"spasi\": 0.5,\n  \"tinggi\": 0.3\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain"]
+						},
+						"description": "Create new jalan spesifikasi desain entry.\n\n**Roles**: ADMIN, SUPERADMIN, OPD\n\n**Body**:\n```json\n{\n  \"id_usulan_jalan\": number,    // Required - Road proposal ID\n  \"id_ruang_lingkup\": number,    // Required - Road scope ID\n  \"id_hspk\": number,            // Required - HSPK (Harga Satuan Pokok Kegiatan) ID\n  \"volume\": number,              // Required - Volume (m³)\n  \"lebar\": number,               // Required - Width (m)\n  \"spasi\": number,                // Required - Spacing (m)\n  \"tinggi\": number                // Required - Height (m)\n}\n```\n\n**Field Descriptions**:\n- **id_usulan_jalan**: Reference to road proposal\n- **id_ruang_lingkup**: Reference to road scope\n- **id_hspk**: Reference to standard unit price (HSPK)\n- **volume**: Total volume in cubic meters\n- **lebar**: Width dimension in meters\n- **spasi**: Spacing between elements in meters\n- **tinggi**: Height dimension in meters\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"Jalan Spesifikasi Desain created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"id_usulan_jalan\": 1,\n    \"id_ruang_lingkup\": 1,\n    \"id_hspk\": 1,\n    \"volume\": 100.5,\n    \"lebar\": 6.0,\n    \"spasi\": 0.5,\n    \"tinggi\": 0.3,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Jalan Spesifikasi Desain",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"id_usulan_jalan\": 1,\n  \"id_ruang_lingkup\": 1,\n  \"id_hspk\": 1,\n  \"volume\": 105.0,\n  \"lebar\": 6.5,\n  \"spasi\": 0.5,\n  \"tinggi\": 0.3\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain"]
+						},
+						"description": "Update existing jalan spesifikasi desain.\n\n**Roles**: ADMIN, SUPERADMIN, OPD\n\n**Body**:\n```json\n{\n  \"id\": number,                 // Required - ID to update\n  \"id_usulan_jalan\": number,    // Optional - Road proposal ID\n  \"id_ruang_lingkup\": number,   // Optional - Road scope ID\n  \"id_hspk\": number,            // Optional - HSPK ID\n  \"volume\": number,             // Optional - Volume (m³)\n  \"lebar\": number,               // Optional - Width (m)\n  \"spasi\": number,               // Optional - Spacing (m)\n  \"tinggi\": number               // Optional - Height (m)\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Spesifikasi Desain updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"id_usulan_jalan\": 1,\n    \"id_ruang_lingkup\": 1,\n    \"id_hspk\": 1,\n    \"volume\": 105.0,\n    \"lebar\": 6.5,\n    \"spasi\": 0.5,\n    \"tinggi\": 0.3,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Jalan Spesifikasi Desain",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-spesifikasi-desain/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-spesifikasi-desain", "1"]
+						},
+						"description": "Delete jalan spesifikasi desain by ID.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Spesifikasi Desain deleted successfully\",\n  \"data\": true\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update operations accessible by ADMIN, SUPERADMIN, OPD. Delete only by ADMIN, SUPERADMIN"
+		}
+	]
+}
+

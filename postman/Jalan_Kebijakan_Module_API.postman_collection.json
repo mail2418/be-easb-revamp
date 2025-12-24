@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "jalan-kebijakan-collection-001",
+		"name": "Jalan Kebijakan Module",
+		"description": "API collection for Jalan Kebijakan (Road Policy) module - Management of road policy values including PPN, SMKK, and interest rates by region, month, and year",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Jalan Kebijakan (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-kebijakan?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-kebijakan"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all jalan kebijakan with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanKebijakan list retrieved successfully\",\n  \"data\": {\n    \"data\": [\n      {\n        \"id\": 1,\n        \"idKabkota\": 1,\n        \"bulan\": 1,\n        \"tahun\": 2024,\n        \"nilai_ppn\": 11.0,\n        \"nilai_smkk\": 15.5,\n        \"suku_bunga\": 6.5,\n        \"createdAt\": \"...\",\n        \"updatedAt\": \"...\"\n      }\n    ],\n    \"page\": 1,\n    \"amount\": 10,\n    \"total\": 50,\n    \"totalPages\": 5\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Jalan Kebijakan by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-kebijakan/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-kebijakan", "1"]
+						},
+						"description": "Get single jalan kebijakan by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanKebijakan retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"idKabkota\": 1,\n    \"bulan\": 1,\n    \"tahun\": 2024,\n    \"nilai_ppn\": 11.0,\n    \"nilai_smkk\": 15.5,\n    \"suku_bunga\": 6.5,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read endpoints accessible by all roles"
+		},
+		{
+			"name": "CRUD Endpoints (ADMIN, SUPERADMIN)",
+			"item": [
+				{
+					"name": "Create Jalan Kebijakan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idKabkota\": 1,\n  \"bulan\": 1,\n  \"tahun\": 2024,\n  \"nilai_ppn\": 11.0,\n  \"nilai_smkk\": 15.5,\n  \"suku_bunga\": 6.5\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-kebijakan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-kebijakan"]
+						},
+						"description": "Create new jalan kebijakan entry.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Body**:\n```json\n{\n  \"idKabkota\": number,      // Required - City/Regency ID\n  \"bulan\": number,           // Required - Month (1-12)\n  \"tahun\": number,           // Required - Year (>=2000)\n  \"nilai_ppn\": number,       // Required - PPN (VAT) percentage (0-100)\n  \"nilai_smkk\": number,      // Required - SMKK percentage (0-100)\n  \"suku_bunga\": number       // Required - Interest rate percentage (0-100)\n}\n```\n\n**Policy Values**:\n- **PPN (Pajak Pertambahan Nilai)**: VAT percentage, typically 11% in Indonesia\n- **SMKK (Standar Mutu Konstruksi dan Keamanan)**: Construction quality and safety standard percentage, typically 10-20%\n- **Suku Bunga**: Interest rate for financing, typically 5-8%\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"JalanKebijakan created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"idKabkota\": 1,\n    \"bulan\": 1,\n    \"tahun\": 2024,\n    \"nilai_ppn\": 11.0,\n    \"nilai_smkk\": 15.5,\n    \"suku_bunga\": 6.5,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Jalan Kebijakan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"idKabkota\": 1,\n  \"bulan\": 1,\n  \"tahun\": 2024,\n  \"nilai_ppn\": 11.5,\n  \"nilai_smkk\": 16.0,\n  \"suku_bunga\": 7.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-kebijakan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-kebijakan"]
+						},
+						"description": "Update existing jalan kebijakan.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Body**:\n```json\n{\n  \"id\": number,              // Required - ID to update\n  \"idKabkota\": number,      // Optional - City/Regency ID\n  \"bulan\": number,          // Optional - Month (1-12)\n  \"tahun\": number,          // Optional - Year (>=2000)\n  \"nilai_ppn\": number,      // Optional - PPN percentage\n  \"nilai_smkk\": number,     // Optional - SMKK percentage\n  \"suku_bunga\": number      // Optional - Interest rate percentage\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanKebijakan updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"idKabkota\": 1,\n    \"bulan\": 1,\n    \"tahun\": 2024,\n    \"nilai_ppn\": 11.5,\n    \"nilai_smkk\": 16.0,\n    \"suku_bunga\": 7.0,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Jalan Kebijakan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-kebijakan/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-kebijakan", "1"]
+						},
+						"description": "Delete jalan kebijakan by ID.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanKebijakan deleted successfully\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update, Delete operations - Accessible by ADMIN and SUPERADMIN"
+		}
+	]
+}
+
