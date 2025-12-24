@@ -17,9 +17,6 @@ export class JalanSpesifikasiDesainOrmEntity {
     @Column({ name: 'volume', type: 'double precision' })
     volume!: number;
 
-    @Column({ name: 'lebar', type: 'double precision' })
-    lebar!: number;
-
     @Column({ name: 'spasi', type: 'double precision' })
     spasi!: number;
 

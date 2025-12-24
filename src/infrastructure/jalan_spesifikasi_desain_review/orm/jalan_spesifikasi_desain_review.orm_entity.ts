@@ -24,9 +24,6 @@ export class JalanSpesifikasiDesainReviewOrmEntity {
     @Column({ name: 'volume_review', type: 'double precision' })
     volume_review!: number;
 
-    @Column({ name: 'lebar_review', type: 'double precision' })
-    lebar_review!: number;
-
     @Column({ name: 'spasi_review', type: 'double precision' })
     spasi_review!: number;
 

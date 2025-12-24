@@ -112,6 +112,9 @@ export class UsulanJalanOrmEntity {
     @Column({ name: 'deskripsi_desain', type: 'text' })
     deskripsiDesain!: string;
 
+    @Column({ name: 'lebar', type: 'double precision', nullable: true })
+    lebar!: number | null;
+
     // Timestamps
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt!: Date;

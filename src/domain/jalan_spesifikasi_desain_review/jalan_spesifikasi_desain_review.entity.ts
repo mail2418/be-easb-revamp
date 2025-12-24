@@ -5,7 +5,6 @@ export class JalanSpesifikasiDesainReview {
     id_ruang_lingkup!: number;
     id_hspk!: number;
     volume_review!: number;
-    lebar_review!: number;
     spasi_review!: number;
     tinggi_review!: number;
 }

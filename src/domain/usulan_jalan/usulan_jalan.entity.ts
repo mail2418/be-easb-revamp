@@ -52,6 +52,7 @@ export class UsulanJalan {
     satuan!: string;
     hargaSatuan!: number;
     deskripsiDesain!: string;
+    lebar!: number | null;
 
     // Relations - Required
     opd?: Opd;

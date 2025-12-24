@@ -4,7 +4,6 @@ export class JalanSpesifikasiDesain {
     id_ruang_lingkup!: number;
     id_hspk!: number;
     volume!: number;
-    lebar!: number;
     spasi!: number;
     tinggi!: number;
 }
