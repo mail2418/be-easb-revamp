@@ -30,10 +30,18 @@ export class CreateJalanSaluranRuangLingkupTable1766321582110 implements Migrati
             CREATE INDEX IF NOT EXISTS "idx_jalan_saluran_ruang_lingkup_jenis" 
             ON "jalan_saluran_ruang_lingkup" ("id_jenis_usulan");
         `);
+
+        // Unique constraint to prevent duplicate combinations
+        await queryRunner.query(`
+            ALTER TABLE "jalan_saluran_ruang_lingkup"
+            ADD CONSTRAINT "uq_jalan_saluran_ruang_lingkup_jenis_deskripsi"
+            UNIQUE ("id_jenis_usulan", "deskripsi_ruang_lingkup");
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_ruang_lingkup_jenis";`);
+        await queryRunner.query(`ALTER TABLE "jalan_saluran_ruang_lingkup" DROP CONSTRAINT IF EXISTS "uq_jalan_saluran_ruang_lingkup_jenis_deskripsi";`);
         await queryRunner.query(`ALTER TABLE "jalan_saluran_ruang_lingkup" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_ruang_lingkup_jenis_usulan";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_saluran_ruang_lingkup";`);
     }

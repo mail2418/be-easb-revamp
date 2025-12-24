@@ -40,17 +40,10 @@ import { StandardKlasifikasiModule } from './presentation/standard_klasifikasi/s
 import { KecamatanModule } from './presentation/kecamatan/kecamatan.module';
 import { KelurahanModule } from './presentation/kelurahan/kelurahan.module';
 import { JalanJenisPerkerasanModule } from './presentation/jalan_jenis_perkerasan/jalan_jenis_perkerasan.module';
-import { JalanMutuBetonModule } from './presentation/jalan_mutu_beton/jalan_mutu_beton.module';
-import { JalanSpesifikasiDesainLenturModule } from './presentation/jalan_spesifikasi_desain_lentur/jalan_spesifikasi_desain_lentur.module';
-import { JalanSpesifikasiDesainKakuModule } from './presentation/jalan_spesifikasi_desain_kaku/jalan_spesifikasi_desain_kaku.module';
-import { JalanRuangLingkupPerkerasanLenturModule } from './presentation/jalan_ruang_lingkup_perkerasan_lentur/jalan_ruang_lingkup_perkerasan_lentur.module';
-import { JalanRuangLingkupPerkerasanKakuModule } from './presentation/jalan_ruang_lingkup_perkerasan_kaku/jalan_ruang_lingkup_perkerasan_kaku.module';
 import { UsulanJalanStatusModule } from './presentation/usulan_jalan_status/usulan_jalan_status.module';
 import { UsulanJalanModule } from './presentation/usulan_jalan/usulan_jalan.module';
 import { JalanJenisUsulanModule } from './presentation/jalan_jenis_usulan/jalan_jenis_usulan.module';
 import { JalanJenisPemeliharaanModule } from './presentation/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.module';
-import { JalanTipePerkerasanLenturModule } from './presentation/jalan_tipe_perkerasan_lentur/jalan_tipe_perkerasan_lentur.module';
-import { JalanTipePerkerasanKakuModule } from './presentation/jalan_tipe_perkerasan_kaku/jalan_tipe_perkerasan_kaku.module';
 import { PpnGlobalModule } from './presentation/ppn_global/ppn_global.module';
 import { JalanSmkkModule } from './presentation/jalan_smkk/jalan_smkk.module';
 import { JalanKebijakanModule } from './presentation/jalan_kebijakan/jalan_kebijakan.module';
@@ -135,17 +128,10 @@ import { DataSourceOptions } from 'typeorm';
         KecamatanModule,
         KelurahanModule,
         JalanJenisPerkerasanModule,
-        JalanMutuBetonModule,
-        JalanSpesifikasiDesainLenturModule,
-        JalanSpesifikasiDesainKakuModule,
-        JalanRuangLingkupPerkerasanLenturModule,
-        JalanRuangLingkupPerkerasanKakuModule,
         UsulanJalanStatusModule,
         UsulanJalanModule,
         JalanJenisUsulanModule,
         JalanJenisPemeliharaanModule,
-        JalanTipePerkerasanLenturModule,
-        JalanTipePerkerasanKakuModule,
         PpnGlobalModule,
         JalanSmkkModule,
         JalanKebijakanModule,

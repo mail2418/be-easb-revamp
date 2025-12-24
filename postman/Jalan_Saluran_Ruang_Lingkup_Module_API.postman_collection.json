@@ -1,83 +1,13 @@
 {
 	"info": {
-		"_postman_id": "jalan-saluran-ruang-lingkup-collection-001",
-		"name": "Jalan Saluran Ruang Lingkup Module",
-		"description": "API collection for Jalan Saluran Ruang Lingkup (Road Drainage Scope) module - Master data for drainage scope descriptions by proposal type",
+		"_postman_id": "jalan-saluran-ruang-lingkup-module-api-collection",
+		"name": "EASB - Jalan Saluran Ruang Lingkup Module API",
+		"description": "API collection for Jalan Saluran Ruang Lingkup Module - managing ruang lingkup data for jalan and saluran projects.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
-	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://localhost:3000",
-			"type": "string"
-		},
-		{
-			"key": "token",
-			"value": "your_jwt_token_here",
-			"type": "string"
-		}
-	],
 	"item": [
 		{
-			"name": "Query Endpoints",
-			"item": [
-				{
-					"name": "Get All Jalan Saluran Ruang Lingkup (with pagination)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/jalan-saluran-ruang-lingkup?page=1&amount=10",
-							"host": ["{{baseUrl}}"],
-							"path": ["jalan-saluran-ruang-lingkup"],
-							"query": [
-								{
-									"key": "page",
-									"value": "1",
-									"description": "Page number (optional)"
-								},
-								{
-									"key": "amount",
-									"value": "10",
-									"description": "Items per page (optional)"
-								}
-							]
-						},
-						"description": "Get all jalan saluran ruang lingkup with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanSaluranRuangLingkup list retrieved successfully\",\n  \"data\": {\n    \"data\": [\n      {\n        \"id\": 1,\n        \"id_jenis_usulan\": 1,\n        \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan\",\n        \"createdAt\": \"...\",\n        \"updatedAt\": \"...\"\n      }\n    ],\n    \"page\": 1,\n    \"amount\": 10,\n    \"total\": 5,\n    \"totalPages\": 1\n  }\n}\n```"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Jalan Saluran Ruang Lingkup by ID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/jalan-saluran-ruang-lingkup/1",
-							"host": ["{{baseUrl}}"],
-							"path": ["jalan-saluran-ruang-lingkup", "1"]
-						},
-						"description": "Get single jalan saluran ruang lingkup by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanSaluranRuangLingkup retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"id_jenis_usulan\": 1,\n    \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
-					},
-					"response": []
-				}
-			],
-			"description": "Read endpoints accessible by all roles"
-		},
-		{
-			"name": "CRUD Endpoints (ADMIN, SUPERADMIN)",
+			"name": "Jalan Saluran Ruang Lingkup Management (ADMIN, SUPERADMIN)",
 			"item": [
 				{
 					"name": "Create Jalan Saluran Ruang Lingkup",
@@ -85,26 +15,29 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
+								"key": "Content-Type",
+								"value": "application/json"
 							},
 							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for ADMIN or SUPERADMIN role"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id_jenis_usulan\": 1,\n  \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan\"\n}"
+							"raw": "{\n  \"id_jenis_usulan\": 2,\n  \"deskripsi_ruang_lingkup\": \"SMKK\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/jalan-saluran-ruang-lingkup",
-							"host": ["{{baseUrl}}"],
-							"path": ["jalan-saluran-ruang-lingkup"]
+							"raw": "{{base_url}}/jalan-saluran-ruang-lingkup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"jalan-saluran-ruang-lingkup"
+							]
 						},
-						"description": "Create new jalan saluran ruang lingkup entry.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Body**:\n```json\n{\n  \"id_jenis_usulan\": number,        // Required - Road proposal type ID\n  \"deskripsi_ruang_lingkup\": string  // Required - Drainage scope description\n}\n```\n\n**Common Descriptions**:\n- \"Saluran drainase sisi kiri dan kanan jalan\" (Left and right side drainage)\n- \"Saluran drainase tengah jalan\" (Center drainage)\n- \"Saluran drainase kombinasi\" (Combined drainage)\n- \"Saluran drainase dengan gorong-gorong\" (Drainage with culverts)\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"JalanSaluranRuangLingkup created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"id_jenis_usulan\": 1,\n    \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+						"description": "Create a new Jalan Saluran Ruang Lingkup entry. Requires ADMIN or SUPERADMIN role.\n\n**Fields:**\n- `id_jenis_usulan` (number, required): ID of the jenis usulan\n- `deskripsi_ruang_lingkup` (string, required): Description of the ruang lingkup"
 					},
 					"response": []
 				},
@@ -114,26 +47,29 @@
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
+								"key": "Content-Type",
+								"value": "application/json"
 							},
 							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for ADMIN or SUPERADMIN role"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": 1,\n  \"id_jenis_usulan\": 1,\n  \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan (Updated)\"\n}"
+							"raw": "{\n  \"id\": 1,\n  \"id_jenis_usulan\": 2,\n  \"deskripsi_ruang_lingkup\": \"PERKERASAN BETON\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/jalan-saluran-ruang-lingkup",
-							"host": ["{{baseUrl}}"],
-							"path": ["jalan-saluran-ruang-lingkup"]
+							"raw": "{{base_url}}/jalan-saluran-ruang-lingkup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"jalan-saluran-ruang-lingkup"
+							]
 						},
-						"description": "Update existing jalan saluran ruang lingkup.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Body**:\n```json\n{\n  \"id\": number,                     // Required - ID to update\n  \"id_jenis_usulan\": number,        // Optional - Road proposal type ID\n  \"deskripsi_ruang_lingkup\": string  // Optional - Drainage scope description\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanSaluranRuangLingkup updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"id_jenis_usulan\": 1,\n    \"deskripsi_ruang_lingkup\": \"Saluran drainase sisi kiri dan kanan jalan (Updated)\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+						"description": "Update an existing Jalan Saluran Ruang Lingkup. Requires ADMIN or SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the ruang lingkup\n- `id_jenis_usulan` (number, optional): ID of the jenis usulan\n- `deskripsi_ruang_lingkup` (string, optional): Description of the ruang lingkup"
 					},
 					"response": []
 				},
@@ -143,23 +79,136 @@
 						"method": "DELETE",
 						"header": [
 							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for ADMIN or SUPERADMIN role"
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/jalan-saluran-ruang-lingkup/1",
-							"host": ["{{baseUrl}}"],
-							"path": ["jalan-saluran-ruang-lingkup", "1"]
+							"raw": "{{base_url}}/jalan-saluran-ruang-lingkup/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"jalan-saluran-ruang-lingkup",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID of the ruang lingkup to delete"
+								}
+							]
 						},
-						"description": "Delete jalan saluran ruang lingkup by ID.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"JalanSaluranRuangLingkup deleted successfully\"\n}\n```"
+						"description": "Delete a Jalan Saluran Ruang Lingkup entry. Requires ADMIN or SUPERADMIN role.\n\n**Path Parameters:**\n- `id` (number, required): ID of the ruang lingkup to delete"
 					},
 					"response": []
 				}
 			],
-			"description": "Create, Update, Delete operations - Accessible by ADMIN and SUPERADMIN"
+			"description": "Management operations for Jalan Saluran Ruang Lingkup"
+		},
+		{
+			"name": "Jalan Saluran Ruang Lingkup Queries",
+			"item": [
+				{
+					"name": "Get All Jalan Saluran Ruang Lingkup (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/jalan-saluran-ruang-lingkup?page=1&amount=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"jalan-saluran-ruang-lingkup"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)",
+									"disabled": false
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)",
+									"disabled": false
+								}
+							]
+						},
+						"description": "Get paginated list of Jalan Saluran Ruang Lingkup entries.\n\n**Query Parameters:**\n- `page` (number, optional): Page number\n- `amount` (number, optional): Items per page"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Jalan Saluran Ruang Lingkup By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/jalan-saluran-ruang-lingkup/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"jalan-saluran-ruang-lingkup",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID of the ruang lingkup"
+								}
+							]
+						},
+						"description": "Get detailed information for a specific Jalan Saluran Ruang Lingkup entry.\n\n**Path Parameters:**\n- `id` (number, required): ID of the ruang lingkup"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving Jalan Saluran Ruang Lingkup information"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api/dev/v1",
+			"type": "string",
+			"description": "Base URL for the API server (includes API prefix)"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
 		}
 	]
 }
-

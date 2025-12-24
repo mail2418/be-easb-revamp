@@ -5,7 +5,8 @@ export class Hspk {
     id_ruang_lingkup!: number;
     no_mata_pembayaran!: string;
     satuan!: string;
-    harga_satuan!: number;
+    harga_satuan!: number | null;
+    uraian!: string | null;
 
     jalanSaluranRuangLingkup?: JalanSaluranRuangLingkup;
 }

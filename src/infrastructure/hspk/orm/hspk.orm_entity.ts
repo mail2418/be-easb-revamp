@@ -15,8 +15,11 @@ export class HspkOrmEntity {
     @Column({ type: 'varchar', length: 255 })
     satuan!: string;
 
-    @Column({ name: 'harga_satuan', type: 'decimal', precision: 15, scale: 2 })
-    harga_satuan!: number;
+    @Column({ name: 'harga_satuan', type: 'decimal', precision: 15, scale: 2, nullable: true })
+    harga_satuan!: number | null;
+
+    @Column({ type: 'text', nullable: true })
+    uraian!: string | null;
 
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt!: Date;
