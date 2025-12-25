@@ -81,4 +81,24 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
             throw error;
         }
     }
+
+    async findByUsulanJalan(idUsulanJalan: number, page?: number, amount?: number): Promise<[JalanSpesifikasiDesain[], number]> {
+        try {
+            const queryOptions: any = {
+                where: { id_usulan_jalan: idUsulanJalan },
+                order: { id: 'DESC' }
+            };
+
+            // Only apply pagination if both page and amount are provided
+            if (page !== undefined && amount !== undefined) {
+                queryOptions.skip = (page - 1) * amount;
+                queryOptions.take = amount;
+            }
+
+            const [entities, total] = await this.repo.findAndCount(queryOptions);
+            return [entities, total];
+        } catch (error) {
+            throw error;
+        }
+    }
 }

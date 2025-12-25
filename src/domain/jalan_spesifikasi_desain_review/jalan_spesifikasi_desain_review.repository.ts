@@ -10,4 +10,5 @@ export abstract class JalanSpesifikasiDesainReviewRepository {
     abstract findById(id: number): Promise<JalanSpesifikasiDesainReview | null>;
     abstract findAll(dto: GetJalanSpesifikasiDesainReviewDto): Promise<{ data: JalanSpesifikasiDesainReview[]; total: number }>;
     abstract deleteByUsulanJalanId(idUsulanJalan: number): Promise<void>;
+    abstract findByUsulanJalan(idUsulanJalan: number, page?: number, amount?: number): Promise<[JalanSpesifikasiDesainReview[], number]>;
 }

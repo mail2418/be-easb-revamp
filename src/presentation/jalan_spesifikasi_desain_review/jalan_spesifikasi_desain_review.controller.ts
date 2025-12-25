@@ -1,95 +1,57 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
-import { JalanSpesifikasiDesainReviewService } from "../../domain/jalan_spesifikasi_desain_review/jalan_spesifikasi_desain_review.service";
-import { JwtAuthGuard } from "../../common/guards/jwt_auth.guard";
-import { RolesGuard } from "../../common/guards/roles.guard";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { Role } from "../../domain/user/user_role.enum";
-import { CreateJalanSpesifikasiDesainReviewDto } from "./dto/create_jalan_spesifikasi_desain_review.dto";
-import { UpdateJalanSpesifikasiDesainReviewDto } from "./dto/update_jalan_spesifikasi_desain_review.dto";
-import { GetJalanSpesifikasiDesainReviewDto } from "./dto/get_jalan_spesifikasi_desain_review.dto";
+import {
+    Controller,
+    Get,
+    Query,
+    UseGuards,
+    HttpStatus,
+    HttpException,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../domain/user/user_role.enum';
+import { JalanSpesifikasiDesainReviewService } from '../../domain/jalan_spesifikasi_desain_review/jalan_spesifikasi_desain_review.service';
+import { GetJalanSpesifikasiDesainReviewByUsulanJalanDto } from './dto/get_jalan_spesifikasi_desain_review_by_usulan_jalan.dto';
 
 @Controller('jalan-spesifikasi-desain-review')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
 export class JalanSpesifikasiDesainReviewController {
-    constructor(private readonly jalanSpesifikasiDesainReviewService: JalanSpesifikasiDesainReviewService) { }
+    constructor(private readonly service: JalanSpesifikasiDesainReviewService) { }
 
-    @Get()
-    @Roles(Role.ADMIN, Role.SUPERADMIN, Role.VERIFIKATOR, Role.OPD)
-    async findAll(@Query() dto: GetJalanSpesifikasiDesainReviewDto) {
+    @Get('get-by-usulan-jalan')
+    async getByUsulanJalan(@Query() dto: GetJalanSpesifikasiDesainReviewByUsulanJalanDto) {
         try {
-            const result = await this.jalanSpesifikasiDesainReviewService.findAll(dto);
+            const result = await this.service.getByUsulanJalan(dto);
             return {
-                status: 'success',
-                responseCode: HttpStatus.OK,
+                statusCode: HttpStatus.OK,
                 message: 'Jalan Spesifikasi Desain Review list retrieved successfully',
-                data: result
+                data: result,
             };
         } catch (error) {
-            throw error;
+            this.handleError(error);
         }
     }
 
-    @Get(':id')
-    @Roles(Role.ADMIN, Role.SUPERADMIN, Role.VERIFIKATOR, Role.OPD)
-    async findById(@Param('id') id: string) {
-        try {
-            const result = await this.jalanSpesifikasiDesainReviewService.findById(Number(id));
-            return {
-                status: 'success',
-                responseCode: HttpStatus.OK,
-                message: 'Jalan Spesifikasi Desain Review retrieved successfully',
-                data: result
-            };
-        } catch (error) {
+    private handleError(error: any): never {
+        if (error instanceof HttpException) {
             throw error;
         }
-    }
 
-    @Post()
-    @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async create(@Body() dto: CreateJalanSpesifikasiDesainReviewDto) {
-        try {
-            const result = await this.jalanSpesifikasiDesainReviewService.create(dto);
-            return {
-                status: 'success',
-                responseCode: HttpStatus.CREATED,
-                message: 'Jalan Spesifikasi Desain Review created successfully',
-                data: result
-            };
-        } catch (error) {
-            throw error;
+        if (error.message?.includes('not found')) {
+            throw new HttpException(error.message, HttpStatus.NOT_FOUND);
         }
-    }
 
-    @Put()
-    @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async update(@Body() dto: UpdateJalanSpesifikasiDesainReviewDto) {
-        try {
-            const result = await this.jalanSpesifikasiDesainReviewService.update(dto);
-            return {
-                status: 'success',
-                responseCode: HttpStatus.OK,
-                message: 'Jalan Spesifikasi Desain Review updated successfully',
-                data: result
-            };
-        } catch (error) {
-            throw error;
+        if (error.code === '23503') {
+            throw new HttpException(
+                'Foreign key constraint violation',
+                HttpStatus.BAD_REQUEST,
+            );
         }
-    }
 
-    @Delete(':id')
-    @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async delete(@Param('id') id: string) {
-        try {
-            const result = await this.jalanSpesifikasiDesainReviewService.delete(Number(id));
-            return {
-                status: 'success',
-                responseCode: HttpStatus.OK,
-                message: 'Jalan Spesifikasi Desain Review deleted successfully',
-                data: result
-            };
-        } catch (error) {
-            throw error;
-        }
+        throw new HttpException(
+            'Internal server error',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+        );
     }
 }

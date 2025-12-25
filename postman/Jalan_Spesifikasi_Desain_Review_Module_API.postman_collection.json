@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "jalan-spesifikasi-desain-module-collection",
-		"name": "Jalan Spesifikasi Desain Module API Collection",
-		"description": "API collection for Jalan Spesifikasi Desain (Road Design Specification) module - manages design specification records for Usulan Jalan entries",
+		"_postman_id": "jalan-spesifikasi-desain-review-module-collection",
+		"name": "Jalan Spesifikasi Desain Review Module API Collection",
+		"description": "API collection for Jalan Spesifikasi Desain Review module - manages reviewed design specification records for Usulan Jalan entries",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"auth": {
@@ -37,22 +37,22 @@
 	],
 	"item": [
 		{
-			"name": "Jalan Spesifikasi Desain",
+			"name": "Jalan Spesifikasi Desain Review",
 			"item": [
 				{
-					"name": "Get Jalan Spesifikasi Desain by Usulan Jalan",
+					"name": "Get Jalan Spesifikasi Desain Review by Usulan Jalan",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/{{api_prefix}}/jalan-spesifikasi-desain/get-by-usulan-jalan?idUsulanJalan=1&page=1&amount=10",
+							"raw": "{{base_url}}/{{api_prefix}}/jalan-spesifikasi-desain-review/get-by-usulan-jalan?idUsulanJalan=1&page=1&amount=10",
 							"host": ["{{base_url}}"],
-							"path": ["{{api_prefix}}", "jalan-spesifikasi-desain", "get-by-usulan-jalan"],
+							"path": ["{{api_prefix}}", "jalan-spesifikasi-desain-review", "get-by-usulan-jalan"],
 							"query": [
 								{
 									"key": "idUsulanJalan",
 									"value": "1",
-									"description": "ID of the Usulan Jalan to get design specifications for"
+									"description": "ID of the Usulan Jalan to get reviewed design specifications for"
 								},
 								{
 									"key": "page",
@@ -66,12 +66,13 @@
 								}
 							]
 						},
-						"description": "Get all Jalan Spesifikasi Desain records for a specific Usulan Jalan with pagination. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+						"description": "Get all Jalan Spesifikasi Desain Review records for a specific Usulan Jalan with pagination. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
 					},
 					"response": []
 				}
 			],
-			"description": "Endpoints for retrieving Jalan Spesifikasi Desain records"
+			"description": "Endpoints for retrieving Jalan Spesifikasi Desain Review records"
 		}
 	]
 }
+

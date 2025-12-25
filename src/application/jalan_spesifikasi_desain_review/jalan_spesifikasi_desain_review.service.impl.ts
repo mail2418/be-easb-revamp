@@ -9,6 +9,7 @@ import { JalanSpesifikasiDesainReviewPaginationResultDto } from "../../presentat
 import { CalculateVolumeJalanSpesifikasiDesainReviewUseCase } from "./use_cases/calculate_volume_jalan_spesifikasi_desain_review.use_case";
 import { HspkService } from "../../domain/hspk/hspk.service";
 import { UsulanJalanRepository } from "../../domain/usulan_jalan/usulan_jalan.repository";
+import { GetJalanSpesifikasiDesainReviewByUsulanJalanDto } from "../../presentation/jalan_spesifikasi_desain_review/dto/get_jalan_spesifikasi_desain_review_by_usulan_jalan.dto";
 
 @Injectable()
 export class JalanSpesifikasiDesainReviewServiceImpl implements JalanSpesifikasiDesainReviewService {
@@ -118,6 +119,26 @@ export class JalanSpesifikasiDesainReviewServiceImpl implements JalanSpesifikasi
     async deleteByUsulanJalanId(idUsulanJalan: number): Promise<void> {
         try {
             await this.repository.deleteByUsulanJalanId(idUsulanJalan);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getByUsulanJalan(dto: GetJalanSpesifikasiDesainReviewByUsulanJalanDto): Promise<{ data: JalanSpesifikasiDesainReview[]; total: number; page: number; amount: number; totalPages: number }> {
+        try {
+            const [data, total] = await this.repository.findByUsulanJalan(dto.idUsulanJalan, dto.page, dto.amount);
+            
+            // If pagination is not provided, return all data with page=1, amount=total
+            const page = dto.page ?? 1;
+            const amount = dto.amount ?? total;
+            
+            return {
+                data,
+                total,
+                page,
+                amount,
+                totalPages: amount > 0 ? Math.ceil(total / amount) : 1
+            };
         } catch (error) {
             throw error;
         }
