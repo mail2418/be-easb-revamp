@@ -186,14 +186,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"lebar\": 5.5,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi\": 100,\n                    \"tinggi\": 150\n                }\n            ]\n        }\n    ]\n}"
+							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"lebar\": 5.5,\n    \"idRekening\": 1,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi\": 100,\n                    \"tinggi\": 150\n                }\n            ]\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/store-informasi",
 							"host": ["{{base_url}}"],
 							"path": ["{{api_prefix}}", "usulan-jalan", "store-informasi"]
 						},
-						"description": "Store informasi usulan jalan including lebar and data_ruang_lingkup with HSPK data. Volume and harga_spec will be calculated automatically. Requires OPD, ADMIN, or SUPERADMIN role."
+						"description": "Store informasi usulan jalan including lebar, idRekening, and data_ruang_lingkup with HSPK data. Volume and harga_spec will be calculated automatically. Requires OPD, ADMIN, or SUPERADMIN role."
 					},
 					"response": []
 				},
@@ -261,14 +261,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"lebar\": 5.5,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi_review\": 100,\n                    \"tinggi_review\": 150\n                }\n            ]\n        }\n    ]\n}"
+							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"lebar\": 5.5,\n    \"idRekeningReview\": 1,\n    \"idJalanJenisPerkerasan\": 1,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi_review\": 100,\n                    \"tinggi_review\": 150\n                }\n            ]\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/verify-informasi",
 							"host": ["{{base_url}}"],
 							"path": ["{{api_prefix}}", "usulan-jalan", "verify-informasi"]
 						},
-						"description": "Verify informasi usulan jalan by ADBANG verifikator. Volume_review and harga_spec_review will be calculated automatically. lebar is optional - if not provided, will use existing lebar. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
+						"description": "Verify informasi usulan jalan by ADBANG verifikator. Volume_review and harga_spec_review will be calculated automatically. lebar and idJalanJenisPerkerasan are optional - if not provided, will use existing values. idRekeningReview is required. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
 					},
 					"response": []
 				},

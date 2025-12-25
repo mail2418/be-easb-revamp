@@ -18,6 +18,11 @@ export class VerifyInformasiUsulanJalanDto {
     @Transform(({ value }) => parseInt(value, 10))
     idRekeningReview!: number;
 
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    idJalanJenisPerkerasan?: number;
+
     @IsArray()
     @ArrayMinSize(1)
     @ValidateNested({ each: true })

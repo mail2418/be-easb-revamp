@@ -17,6 +17,11 @@ export class UpdateUsulanJalanStoreIndexDto {
     @Transform(({ value }) => parseInt(value, 10))
     idJalanJenisPemeliharaan?: number;
 
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    idJalanJenisPerkerasan?: number;
+
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))

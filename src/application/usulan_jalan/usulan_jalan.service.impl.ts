@@ -96,6 +96,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 idOpd,
                 idAsbJenis: dto.idAsbJenis,
                 idJalanJenisPemeliharaan,
+                idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan ?? null,
                 idKabkota: dto.idKabkota,
                 idKecamatan: dto.idKecamatan,
                 idKelurahan: dto.idKelurahan,
@@ -157,6 +158,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 id: dto.id,
                 idAsbJenis: dto.idAsbJenis,
                 idJalanJenisPemeliharaan,
+                idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan ?? null,
                 idKabkota: dto.idKabkota,
                 idKecamatan: dto.idKecamatan,
                 idKelurahan: dto.idKelurahan,
@@ -373,14 +375,20 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 spesifikasiMap.set(key, spec.id);
             }
 
+            // Use idJalanJenisPerkerasan from DTO if provided, otherwise use existing one
+            const idJalanJenisPerkerasanToUse = dto.idJalanJenisPerkerasan ?? usulanJalan.idJalanJenisPerkerasan;
+            
             // Validate that idJalanJenisPerkerasan is set (required for generating uraian)
-            if (!usulanJalan.idJalanJenisPerkerasan) {
-                throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in storeIndex first');
+            if (!idJalanJenisPerkerasanToUse) {
+                throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in storeIndex or provided in request');
             }
 
+            // Get jenis perkerasan from existing relation for generating uraian
+            // If idJalanJenisPerkerasan is different in DTO, we'll update it but still use existing jenis for generation
             if (!usulanJalan.jalanJenisPerkerasan) {
                 throw new NotFoundException('JalanJenisPerkerasan relation not found');
             }
+            const jenisPerkerasan = usulanJalan.jalanJenisPerkerasan.jenis;
 
             // Step 2: Always delete all JalanSpesifikasiDesainReview records for this Usulan Jalan to ensure clean state
             await this.jalanSpesifikasiDesainReviewService.deleteByUsulanJalanId(dto.idUsulanJalan);
@@ -426,11 +434,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             }
 
             // Step 4: Generate uraian, spesifikasi, satuan, and deskripsiDesain automatically based on review data
-            const jenisPerkerasan = usulanJalan.jalanJenisPerkerasan.jenis;
             const uraian = await this.generateUraianUsulanJalanUseCase.execute(jenisPerkerasan, lebarReview);
             
-            const idJenisPerkerasan = usulanJalan.idJalanJenisPerkerasan;
-            const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(tinggiReviewValues, idJenisPerkerasan);
+            const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(tinggiReviewValues, idJalanJenisPerkerasanToUse);
 
             // Satuan is always "m^1"
             const satuan = 'm^1';
@@ -451,6 +457,10 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
             if (dto.lebar !== undefined) {
                 updateData.lebar = dto.lebar;
+            }
+
+            if (dto.idJalanJenisPerkerasan !== undefined) {
+                updateData.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan;
             }
 
             const updated = await this.repository.update(dto.idUsulanJalan, updateData);
