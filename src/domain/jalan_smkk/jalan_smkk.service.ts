@@ -11,4 +11,5 @@ export abstract class JalanSmkkService {
     abstract findById(id: number): Promise<JalanSmkk | null>;
     abstract findByBulanAndTahun(bulan: number, tahun: number): Promise<JalanSmkk | null>;
     abstract findAll(dto: GetJalanSmkkDto): Promise<JalanSmkkPaginationResultDto>;
+    abstract getLatestPersentaseSmkk(): Promise<number | null>;
 }

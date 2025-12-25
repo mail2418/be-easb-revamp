@@ -78,4 +78,15 @@ export class PpnGlobalRepositoryImpl implements PpnGlobalRepository {
             throw error;
         }
     }
+
+    async getLatest(): Promise<PpnGlobal | null> {
+        try {
+            const entity = await this.repo.findOne({
+                order: { tahun: 'DESC', bulan: 'DESC' }
+            });
+            return entity || null;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

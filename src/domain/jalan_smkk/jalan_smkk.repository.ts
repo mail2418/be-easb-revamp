@@ -10,4 +10,5 @@ export abstract class JalanSmkkRepository {
     abstract findById(id: number): Promise<JalanSmkk | null>;
     abstract findByBulanAndTahun(bulan: number, tahun: number): Promise<JalanSmkk | null>;
     abstract findAll(dto: GetJalanSmkkDto): Promise<{ data: JalanSmkk[]; total: number }>;
+    abstract getLatest(): Promise<JalanSmkk | null>;
 }

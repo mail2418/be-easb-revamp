@@ -11,4 +11,5 @@ export abstract class PpnGlobalService {
     abstract findById(id: number): Promise<PpnGlobal | null>;
     abstract findByBulanAndTahun(bulan: number, tahun: number): Promise<PpnGlobal | null>;
     abstract findAll(dto: GetPpnGlobalDto): Promise<PpnGlobalPaginationResultDto>;
+    abstract getLatestPersentasePPn(): Promise<number | null>;
 }

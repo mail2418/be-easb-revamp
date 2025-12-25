@@ -9,6 +9,7 @@ import { UsulanJalanController } from './usulan_jalan.controller';
 import { VerifikatorModule } from '../verifikator/verifikator.module';
 import { JalanSpesifikasiDesainModule } from '../jalan_spesifikasi_desain/jalan_spesifikasi_desain.module';
 import { JalanSpesifikasiDesainReviewModule } from '../jalan_spesifikasi_desain_review/jalan_spesifikasi_desain_review.module';
+import { PpnGlobalModule } from '../ppn_global/ppn_global.module';
 import { GenerateUraianUsulanJalanUseCase } from '../../application/usulan_jalan/use_cases/generate_uraian_usulan_jalan.use_case';
 import { GenerateSpesifikasiUsulanJalanUseCase } from '../../application/usulan_jalan/use_cases/generate_spesifikasi_usulan_jalan.use_case';
 
@@ -18,6 +19,7 @@ import { GenerateSpesifikasiUsulanJalanUseCase } from '../../application/usulan_
         VerifikatorModule,
         JalanSpesifikasiDesainModule,
         JalanSpesifikasiDesainReviewModule,
+        PpnGlobalModule,
     ],
     providers: [
         {

@@ -10,4 +10,5 @@ export abstract class PpnGlobalRepository {
     abstract findById(id: number): Promise<PpnGlobal | null>;
     abstract findByBulanAndTahun(bulan: number, tahun: number): Promise<PpnGlobal | null>;
     abstract findAll(dto: GetPpnGlobalDto): Promise<{ data: PpnGlobal[]; total: number }>;
+    abstract getLatest(): Promise<PpnGlobal | null>;
 }

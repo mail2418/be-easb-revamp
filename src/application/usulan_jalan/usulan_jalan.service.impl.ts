@@ -4,6 +4,7 @@ import { UsulanJalanRepository } from '../../domain/usulan_jalan/usulan_jalan.re
 import { VerifikatorService } from '../../domain/verifikator/verifikator.service';
 import { JalanSpesifikasiDesainService } from '../../domain/jalan_spesifikasi_desain/jalan_spesifikasi_desain.service';
 import { JalanSpesifikasiDesainReviewService } from '../../domain/jalan_spesifikasi_desain_review/jalan_spesifikasi_desain_review.service';
+import { PpnGlobalService } from '../../domain/ppn_global/ppn_global.service';
 import { Role } from '../../domain/user/user_role.enum';
 import { JenisVerifikator } from '../../domain/verifikator/jenis_verifikator.enum';
 import { UsulanJalanWithRelationsDto } from './dto/usulan_jalan_with_relations.dto';
@@ -30,6 +31,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         private readonly verifikatorService: VerifikatorService,
         private readonly jalanSpesifikasiDesainService: JalanSpesifikasiDesainService,
         private readonly jalanSpesifikasiDesainReviewService: JalanSpesifikasiDesainReviewService,
+        private readonly ppnGlobalService: PpnGlobalService,
         private readonly generateUraianUsulanJalanUseCase: GenerateUraianUsulanJalanUseCase,
         private readonly generateSpesifikasiUsulanJalanUseCase: GenerateSpesifikasiUsulanJalanUseCase,
     ) { }
@@ -240,6 +242,14 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 }
             }
 
+            // Apply PPN if is_include_ppn is true
+            if (existingUsulanJalan.isIncludePpn) {
+                const persentasePpn = await this.ppnGlobalService.getLatestPersentasePPn();
+                if (persentasePpn !== null) {
+                    totalHarga = totalHarga * (100 + persentasePpn) / 100;
+                }
+            }
+
             // Step 3: Generate uraian, spesifikasi, satuan, and deskripsiDesain automatically
             const jenisPerkerasan = existingUsulanJalan.jalanJenisPerkerasan.jenis;
             const uraian = await this.generateUraianUsulanJalanUseCase.execute(jenisPerkerasan, dto.lebar);
@@ -261,6 +271,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 deskripsiDesain,
                 lebar: dto.lebar,
                 totalHarga,
+                idRekening: dto.idRekening,
                 idUsulanJalanStatus: 2, // Input Ruang Lingkup dan Spesifikasi Jalan
             });
 
@@ -406,6 +417,14 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 }
             }
 
+            // Apply PPN if is_include_ppn is true
+            if (usulanJalan.isIncludePpn) {
+                const persentasePpn = await this.ppnGlobalService.getLatestPersentasePPn();
+                if (persentasePpn !== null) {
+                    totalHargaReview = totalHargaReview * (100 + persentasePpn) / 100;
+                }
+            }
+
             // Step 4: Generate uraian, spesifikasi, satuan, and deskripsiDesain automatically based on review data
             const jenisPerkerasan = usulanJalan.jalanJenisPerkerasan.jenis;
             const uraian = await this.generateUraianUsulanJalanUseCase.execute(jenisPerkerasan, lebarReview);
@@ -427,6 +446,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 satuan,
                 deskripsiDesain,
                 totalHarga: totalHargaReview,
+                idRekeningReview: dto.idRekeningReview,
             };
 
             if (dto.lebar !== undefined) {

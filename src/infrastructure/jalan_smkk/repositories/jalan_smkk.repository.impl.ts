@@ -78,4 +78,15 @@ export class JalanSmkkRepositoryImpl implements JalanSmkkRepository {
             throw error;
         }
     }
+
+    async getLatest(): Promise<JalanSmkk | null> {
+        try {
+            const entity = await this.repo.findOne({
+                order: { tahun: 'DESC', bulan: 'DESC' }
+            });
+            return entity || null;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

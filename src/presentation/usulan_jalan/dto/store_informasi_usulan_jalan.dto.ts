@@ -13,6 +13,11 @@ export class StoreInformasiUsulanJalanDto {
     @Transform(({ value }) => parseFloat(value))
     lebar!: number;
 
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    idRekening!: number;
+
     @IsArray()
     @ArrayMinSize(1)
     @ValidateNested({ each: true })

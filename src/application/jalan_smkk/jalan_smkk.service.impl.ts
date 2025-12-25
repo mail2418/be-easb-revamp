@@ -90,4 +90,13 @@ export class JalanSmkkServiceImpl implements JalanSmkkService {
             throw error;
         }
     }
+
+    async getLatestPersentaseSmkk(): Promise<number | null> {
+        try {
+            const latest = await this.repository.getLatest();
+            return latest?.persentase_smkk || null;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

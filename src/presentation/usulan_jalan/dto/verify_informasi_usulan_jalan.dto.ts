@@ -13,6 +13,11 @@ export class VerifyInformasiUsulanJalanDto {
     @Transform(({ value }) => value ? parseFloat(value) : undefined)
     lebar?: number;
 
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    idRekeningReview!: number;
+
     @IsArray()
     @ArrayMinSize(1)
     @ValidateNested({ each: true })
