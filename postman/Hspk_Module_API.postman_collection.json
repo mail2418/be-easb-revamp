@@ -1,0 +1,211 @@
+{
+	"info": {
+		"_postman_id": "hspk-module-api-collection",
+		"name": "HSPK Module API Collection",
+		"description": "Complete API collection for HSPK (Harga Satuan Pokok Kegiatan) module - managing standard unit prices for road construction activities. HSPK contains pricing information linked to ruang lingkup (scope of work).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		},
+		{
+			"key": "api_prefix",
+			"value": "api/dev/v1",
+			"type": "string",
+			"description": "API prefix (api/dev/v1 for development, api/v1 for production)"
+		}
+	],
+	"item": [
+		{
+			"name": "CRUD Operations",
+			"item": [
+				{
+					"name": "Create HSPK",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id_ruang_lingkup\": 1,\n    \"no_mata_pembayaran\": \"001.01.01.01\",\n    \"satuan\": \"m^1\",\n    \"harga_satuan\": 150000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/hspks",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "hspks"]
+						},
+						"description": "Create a new HSPK (Harga Satuan Pokok Kegiatan) record. Requires ADMIN or SUPERADMIN role.\n\n**Fields:**\n- `id_ruang_lingkup` (number, required): ID of the ruang lingkup (scope of work)\n- `no_mata_pembayaran` (string, required): Payment code/number (must be unique)\n- `satuan` (string, required): Unit of measurement (e.g., m^1, m2, m3, unit, etc.)\n- `harga_satuan` (number, required, min: 0): Unit price\n\n**Note:** `no_mata_pembayaran` must be unique across all HSPK records."
+					},
+					"response": []
+				},
+				{
+					"name": "Update HSPK",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"id_ruang_lingkup\": 1,\n    \"no_mata_pembayaran\": \"001.01.01.01\",\n    \"satuan\": \"m^1\",\n    \"harga_satuan\": 160000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/hspks",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "hspks"]
+						},
+						"description": "Update an existing HSPK record. All fields except `id` are optional. Requires ADMIN or SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): HSPK ID to update\n- `id_ruang_lingkup` (number, optional): New ruang lingkup ID\n- `no_mata_pembayaran` (string, optional): New payment code (must be unique if changed)\n- `satuan` (string, optional): New unit of measurement\n- `harga_satuan` (number, optional, min: 0): New unit price"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete HSPK",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/hspks",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "hspks"]
+						},
+						"description": "Delete an HSPK record by ID. Requires ADMIN or SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): HSPK ID to delete"
+					},
+					"response": []
+				}
+			],
+			"description": "CRUD operations for HSPK management - All endpoints require ADMIN or SUPERADMIN role"
+		},
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All HSPK (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/hspks?page=1&amount=10",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "hspks"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional, default: 1, min: 1)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional, min: 1)"
+								}
+							]
+						},
+						"description": "Get paginated list of all HSPK records. Requires ADMIN or SUPERADMIN role.\n\n**Query Parameters:**\n- `page` (number, optional, min: 1): Page number (default: 1)\n- `amount` (number, optional, min: 1): Items per page\n\n**Response includes:**\n- `data`: Array of HSPK objects\n- `total`: Total number of HSPK records\n- `page`: Current page number\n- `limit`: Items per page\n- `totalPages`: Total number of pages"
+					},
+					"response": []
+				},
+				{
+					"name": "Get HSPK by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/hspks/detail?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "hspks", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "HSPK ID"
+								}
+							]
+						},
+						"description": "Get detailed information for a specific HSPK by ID. Requires ADMIN or SUPERADMIN role.\n\n**Query Parameters:**\n- `id` (number, required): HSPK ID to retrieve\n\n**Returns:** Complete HSPK object with all fields"
+					},
+					"response": []
+				},
+				{
+					"name": "Get HSPK by No Mata Pembayaran",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/hspks/by-no-mata-pembayaran?no_mata_pembayaran=001.01.01.01",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "hspks", "by-no-mata-pembayaran"],
+							"query": [
+								{
+									"key": "no_mata_pembayaran",
+									"value": "001.01.01.01",
+									"description": "Payment code/number (must be unique)"
+								}
+							]
+						},
+						"description": "Get HSPK by payment code (no_mata_pembayaran). Requires ADMIN or SUPERADMIN role.\n\n**Query Parameters:**\n- `no_mata_pembayaran` (string, required): Payment code to search for\n\n**Returns:** HSPK object if found, 404 if not found"
+					},
+					"response": []
+				},
+				{
+					"name": "Get HSPK by Ruang Lingkup",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/hspks/by-ruang-lingkup?id_ruang_lingkup=1",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "hspks", "by-ruang-lingkup"],
+							"query": [
+								{
+									"key": "id_ruang_lingkup",
+									"value": "1",
+									"description": "Ruang lingkup (scope of work) ID"
+								}
+							]
+						},
+						"description": "Get all HSPK records associated with a specific ruang lingkup (scope of work). Requires ADMIN or SUPERADMIN role.\n\n**Query Parameters:**\n- `id_ruang_lingkup` (number, required): Ruang lingkup ID\n\n**Returns:** Array of HSPK objects associated with the specified ruang lingkup"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving HSPK information - All require ADMIN or SUPERADMIN role"
+		}
+	]
+}
+
