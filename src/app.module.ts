@@ -48,6 +48,7 @@ import { JalanSmkkModule } from './presentation/jalan_smkk/jalan_smkk.module';
 import { JalanKebijakanModule } from './presentation/jalan_kebijakan/jalan_kebijakan.module';
 import { JenisUsulanModule } from './presentation/jenis_usulan/jenis_usulan.module';
 import { JalanSaluranRuangLingkupModule } from './presentation/jalan_saluran_ruang_lingkup/jalan_saluran_ruang_lingkup.module';
+import { HspkModule } from './presentation/hspk/hspk.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -135,6 +136,7 @@ import { DataSourceOptions } from 'typeorm';
         JalanKebijakanModule,
         JenisUsulanModule,
         JalanSaluranRuangLingkupModule,
+        HspkModule,
         // other modules...
     ],
     providers: [
