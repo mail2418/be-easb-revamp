@@ -30,6 +30,9 @@ export class JalanSpesifikasiDesainReviewOrmEntity {
     @Column({ name: 'tinggi_review', type: 'double precision' })
     tinggi_review!: number;
 
+    @Column({ name: 'harga_spec_review', type: 'double precision' })
+    harga_spec_review!: number;
+
     @CreateDateColumn({ name: "created_at", type: "timestamptz" })
     createdAt!: Date;
 

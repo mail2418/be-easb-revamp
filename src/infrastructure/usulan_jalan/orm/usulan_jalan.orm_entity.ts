@@ -106,14 +106,14 @@ export class UsulanJalanOrmEntity {
     @Column({ name: 'satuan', type: 'varchar', length: 255 })
     satuan!: string;
 
-    @Column({ name: 'harga_satuan', type: 'decimal', precision: 15, scale: 2 })
-    hargaSatuan!: number;
-
     @Column({ name: 'deskripsi_desain', type: 'text' })
     deskripsiDesain!: string;
 
     @Column({ name: 'lebar', type: 'double precision', nullable: true })
     lebar!: number | null;
+
+    @Column({ name: 'total_harga', type: 'decimal', precision: 15, scale: 2, nullable: true })
+    totalHarga!: number | null;
 
     // Timestamps
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })

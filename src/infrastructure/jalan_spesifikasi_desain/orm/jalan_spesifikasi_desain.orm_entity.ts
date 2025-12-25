@@ -23,6 +23,9 @@ export class JalanSpesifikasiDesainOrmEntity {
     @Column({ name: 'tinggi', type: 'double precision' })
     tinggi!: number;
 
+    @Column({ name: 'harga_spec', type: 'double precision' })
+    harga_spec!: number;
+
     @CreateDateColumn({ name: "created_at", type: "timestamptz" })
     createdAt!: Date;
 

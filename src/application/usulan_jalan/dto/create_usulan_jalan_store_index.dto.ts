@@ -5,11 +5,6 @@ export class CreateUsulanJalanStoreIndexDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    idOpd!: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
     idAsbJenis!: number;
 
     @IsOptional()

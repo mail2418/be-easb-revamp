@@ -7,4 +7,5 @@ export class JalanSpesifikasiDesainReview {
     volume_review!: number;
     spasi_review!: number;
     tinggi_review!: number;
+    harga_spec_review!: number;
 }

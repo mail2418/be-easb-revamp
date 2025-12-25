@@ -18,11 +18,9 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
 import { FindAllUsulanJalanDto } from '../../application/usulan_jalan/dto/find_all_usulan_jalan.dto';
 import { StoreInformasiUsulanJalanDto } from './dto/store_informasi_usulan_jalan.dto';
-import { StoreRuangLingkupUsulanJalanDto } from './dto/store_ruang_lingkup_usulan_jalan.dto';
 import { UpdateUsulanJalanDto } from './dto/update_usulan_jalan.dto';
 import { DeleteUsulanJalanDto } from './dto/delete_usulan_jalan.dto';
 import { VerifyInformasiUsulanJalanDto } from './dto/verify_informasi_usulan_jalan.dto';
-import { VerifyRuangLingkupUsulanJalanDto } from './dto/verify_ruang_lingkup_usulan_jalan.dto';
 import { VerifyUsulanJalanDto } from './dto/verify_usulan_jalan.dto';
 import { RejectUsulanJalanDto } from './dto/reject_usulan_jalan.dto';
 import { ForbiddenException } from '@nestjs/common';
@@ -187,7 +185,7 @@ export class UsulanJalanController {
         }
     }
 
-    @Post('store-informasi')
+    @Put('store-informasi')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async storeInformasi(
         @Body() dto: StoreInformasiUsulanJalanDto,
@@ -199,56 +197,8 @@ export class UsulanJalanController {
 
             return {
                 status: 'success',
-                responseCode: HttpStatus.CREATED,
-                message: 'Informasi Usulan Jalan stored successfully',
-                data: result,
-            };
-        } catch (error) {
-            if (error instanceof HttpException) {
-                const status = error.getStatus();
-                const response = error.getResponse();
-
-                let message: string;
-                if (typeof response === 'string') {
-                    message = response;
-                } else {
-                    const resObj = response as any;
-                    message = Array.isArray(resObj.message)
-                        ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
-                }
-
-                return {
-                    status: 'error',
-                    responseCode: status,
-                    message,
-                    data: null,
-                };
-            }
-
-            return {
-                status: 'error',
-                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: 'Internal server error',
-                data: null,
-            };
-        }
-    }
-
-    @Put('store-ruang-lingkup')
-    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async storeRuangLingkup(
-        @Body() dto: StoreRuangLingkupUsulanJalanDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
-        try {
-            const user = req.user as UserContext;
-            const result = await this.usulanJalanService.storeRuangLingkup(dto, user.idOpd, user.roles);
-
-            return {
-                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: 'Ruang Lingkup Usulan Jalan stored successfully',
+                message: 'Informasi Usulan Jalan stored successfully',
                 data: result,
             };
         } catch (error) {
@@ -393,54 +343,6 @@ export class UsulanJalanController {
                 status: 'success',
                 responseCode: HttpStatus.OK,
                 message: 'Informasi Usulan Jalan verified successfully',
-                data: result,
-            };
-        } catch (error) {
-            if (error instanceof HttpException) {
-                const status = error.getStatus();
-                const response = error.getResponse();
-
-                let message: string;
-                if (typeof response === 'string') {
-                    message = response;
-                } else {
-                    const resObj = response as any;
-                    message = Array.isArray(resObj.message)
-                        ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
-                }
-
-                return {
-                    status: 'error',
-                    responseCode: status,
-                    message,
-                    data: null,
-                };
-            }
-
-            return {
-                status: 'error',
-                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: 'Internal server error',
-                data: null,
-            };
-        }
-    }
-
-    @Put('verify-ruang-lingkup')
-    @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async verifyRuangLingkup(
-        @Body() dto: VerifyRuangLingkupUsulanJalanDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
-        try {
-            const user = req.user as UserContext;
-            const result = await this.usulanJalanService.verifyRuangLingkup(dto, user.userId.toString(), user.idOpd, user.roles);
-
-            return {
-                status: 'success',
-                responseCode: HttpStatus.OK,
-                message: 'Ruang Lingkup Usulan Jalan verified successfully',
                 data: result,
             };
         } catch (error) {

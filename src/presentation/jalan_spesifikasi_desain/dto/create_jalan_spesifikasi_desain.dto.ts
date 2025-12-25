@@ -20,16 +20,6 @@ export class CreateJalanSpesifikasiDesainDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
-    volume!: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @Transform(({ value }) => parseFloat(value))
-    lebar!: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @Transform(({ value }) => parseFloat(value))
     spasi!: number;
 
     @IsNotEmpty()

@@ -25,8 +25,9 @@ export class UsulanJalanWithRelationsDto {
     uraian!: string;
     spesifikasi!: string;
     satuan!: string;
-    hargaSatuan!: number;
     deskripsiDesain!: string;
+    lebar!: number | null;
+    totalHarga!: number | null;
     createdAt!: Date;
     updatedAt!: Date;
     deletedAt!: Date | null;

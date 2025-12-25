@@ -6,16 +6,63 @@ import { UpdateJalanSpesifikasiDesainReviewDto } from "../../presentation/jalan_
 import { GetJalanSpesifikasiDesainReviewDto } from "../../presentation/jalan_spesifikasi_desain_review/dto/get_jalan_spesifikasi_desain_review.dto";
 import { JalanSpesifikasiDesainReview } from "../../domain/jalan_spesifikasi_desain_review/jalan_spesifikasi_desain_review.entity";
 import { JalanSpesifikasiDesainReviewPaginationResultDto } from "../../presentation/jalan_spesifikasi_desain_review/dto/jalan_spesifikasi_desain_review_pagination_result.dto";
+import { CalculateVolumeJalanSpesifikasiDesainReviewUseCase } from "./use_cases/calculate_volume_jalan_spesifikasi_desain_review.use_case";
+import { HspkService } from "../../domain/hspk/hspk.service";
+import { UsulanJalanRepository } from "../../domain/usulan_jalan/usulan_jalan.repository";
 
 @Injectable()
 export class JalanSpesifikasiDesainReviewServiceImpl implements JalanSpesifikasiDesainReviewService {
     constructor(
-        private readonly repository: JalanSpesifikasiDesainReviewRepository
+        private readonly repository: JalanSpesifikasiDesainReviewRepository,
+        private readonly calculateVolumeReviewUseCase: CalculateVolumeJalanSpesifikasiDesainReviewUseCase,
+        private readonly hspkService: HspkService,
+        private readonly usulanJalanRepository: UsulanJalanRepository,
     ) { }
 
-    async create(dto: CreateJalanSpesifikasiDesainReviewDto): Promise<JalanSpesifikasiDesainReview> {
+    async create(dto: CreateJalanSpesifikasiDesainReviewDto, lebar?: number): Promise<JalanSpesifikasiDesainReview> {
         try {
-            return await this.repository.create(dto);
+            // Get lebar from usulan_jalan if not provided
+            let lebarValue = lebar;
+            if (lebarValue === undefined) {
+                const usulanJalan = await this.usulanJalanRepository.findById(dto.id_usulan_jalan);
+                if (!usulanJalan) {
+                    throw new NotFoundException(`Usulan Jalan with id ${dto.id_usulan_jalan} not found`);
+                }
+                if (!usulanJalan.lebar) {
+                    throw new NotFoundException(`Usulan Jalan with id ${dto.id_usulan_jalan} has no lebar`);
+                }
+                lebarValue = usulanJalan.lebar;
+            }
+
+            // Get HSPK to get harga_satuan
+            const hspk = await this.hspkService.findById(dto.id_hspk);
+            if (!hspk) {
+                throw new NotFoundException(`HSPK with id ${dto.id_hspk} not found`);
+            }
+
+            if (!hspk.harga_satuan) {
+                throw new NotFoundException(`HSPK with id ${dto.id_hspk} has no harga_satuan`);
+            }
+
+            // Calculate volume_review based on satuan from HSPK
+            const volume_review = await this.calculateVolumeReviewUseCase.execute(
+                dto.id_hspk,
+                lebarValue,
+                dto.tinggi_review,
+                dto.spasi_review,
+            );
+
+            // Calculate harga_spec_review = harga_satuan * volume_review
+            const harga_spec_review = hspk.harga_satuan * volume_review;
+
+            // Add calculated fields to DTO
+            const dtoWithCalculations = {
+                ...dto,
+                volume_review,
+                harga_spec_review,
+            };
+
+            return await this.repository.create(dtoWithCalculations);
         } catch (error) {
             throw error;
         }
@@ -63,6 +110,14 @@ export class JalanSpesifikasiDesainReviewServiceImpl implements JalanSpesifikasi
                 limit: dto.amount ?? result.total,
                 totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
             };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteByUsulanJalanId(idUsulanJalan: number): Promise<void> {
+        try {
+            await this.repository.deleteByUsulanJalanId(idUsulanJalan);
         } catch (error) {
             throw error;
         }

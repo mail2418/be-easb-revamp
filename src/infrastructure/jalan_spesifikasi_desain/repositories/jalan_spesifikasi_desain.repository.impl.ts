@@ -57,6 +57,10 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
                 order: { id: "DESC" }
             };
 
+            if (dto.id_usulan_jalan !== undefined) {
+                findOptions.where = { id_usulan_jalan: dto.id_usulan_jalan };
+            }
+
             if (dto.page !== undefined && dto.amount !== undefined) {
                 findOptions.skip = (dto.page - 1) * dto.amount;
                 findOptions.take = dto.amount;
@@ -65,6 +69,14 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
             const [data, total] = await this.repo.findAndCount(findOptions);
 
             return { data, total };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteByUsulanJalanId(idUsulanJalan: number): Promise<void> {
+        try {
+            await this.repo.softDelete({ id_usulan_jalan: idUsulanJalan });
         } catch (error) {
             throw error;
         }

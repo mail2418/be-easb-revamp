@@ -6,16 +6,63 @@ import { UpdateJalanSpesifikasiDesainDto } from "../../presentation/jalan_spesif
 import { GetJalanSpesifikasiDesainDto } from "../../presentation/jalan_spesifikasi_desain/dto/get_jalan_spesifikasi_desain.dto";
 import { JalanSpesifikasiDesain } from "../../domain/jalan_spesifikasi_desain/jalan_spesifikasi_desain.entity";
 import { JalanSpesifikasiDesainPaginationResultDto } from "../../presentation/jalan_spesifikasi_desain/dto/jalan_spesifikasi_desain_pagination_result.dto";
+import { CalculateVolumeJalanSpesifikasiDesainUseCase } from "./use_cases/calculate_volume_jalan_spesifikasi_desain.use_case";
+import { HspkService } from "../../domain/hspk/hspk.service";
+import { UsulanJalanRepository } from "../../domain/usulan_jalan/usulan_jalan.repository";
 
 @Injectable()
 export class JalanSpesifikasiDesainServiceImpl implements JalanSpesifikasiDesainService {
     constructor(
-        private readonly jalanSpesifikasiDesainRepository: JalanSpesifikasiDesainRepository
+        private readonly jalanSpesifikasiDesainRepository: JalanSpesifikasiDesainRepository,
+        private readonly calculateVolumeUseCase: CalculateVolumeJalanSpesifikasiDesainUseCase,
+        private readonly hspkService: HspkService,
+        private readonly usulanJalanRepository: UsulanJalanRepository,
     ) { }
 
-    async create(dto: CreateJalanSpesifikasiDesainDto): Promise<JalanSpesifikasiDesain> {
+    async create(dto: CreateJalanSpesifikasiDesainDto, lebar?: number): Promise<JalanSpesifikasiDesain> {
         try {
-            return await this.jalanSpesifikasiDesainRepository.create(dto);
+            // Get lebar from usulan_jalan if not provided
+            let lebarValue = lebar;
+            if (lebarValue === undefined) {
+                const usulanJalan = await this.usulanJalanRepository.findById(dto.id_usulan_jalan);
+                if (!usulanJalan) {
+                    throw new NotFoundException(`Usulan Jalan with id ${dto.id_usulan_jalan} not found`);
+                }
+                if (!usulanJalan.lebar) {
+                    throw new NotFoundException(`Usulan Jalan with id ${dto.id_usulan_jalan} has no lebar`);
+                }
+                lebarValue = usulanJalan.lebar;
+            }
+
+            // Get HSPK to get harga_satuan and satuan
+            const hspk = await this.hspkService.findById(dto.id_hspk);
+            if (!hspk) {
+                throw new NotFoundException(`HSPK with id ${dto.id_hspk} not found`);
+            }
+
+            if (!hspk.harga_satuan) {
+                throw new NotFoundException(`HSPK with id ${dto.id_hspk} has no harga_satuan`);
+            }
+
+            // Calculate volume based on satuan from HSPK
+            const volume = await this.calculateVolumeUseCase.execute(
+                dto.id_hspk,
+                lebarValue,
+                dto.tinggi,
+                dto.spasi,
+            );
+
+            // Calculate harga_spec = harga_satuan * volume
+            const harga_spec = hspk.harga_satuan * volume;
+
+            // Add calculated fields to DTO
+            const dtoWithCalculations = {
+                ...dto,
+                volume,
+                harga_spec,
+            };
+
+            return await this.jalanSpesifikasiDesainRepository.create(dtoWithCalculations);
         } catch (error) {
             throw error;
         }
@@ -63,6 +110,14 @@ export class JalanSpesifikasiDesainServiceImpl implements JalanSpesifikasiDesain
                 limit: dto.amount ?? result.total,
                 totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
             };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteByUsulanJalanId(idUsulanJalan: number): Promise<void> {
+        try {
+            await this.jalanSpesifikasiDesainRepository.deleteByUsulanJalanId(idUsulanJalan);
         } catch (error) {
             throw error;
         }

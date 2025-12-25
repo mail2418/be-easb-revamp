@@ -25,16 +25,6 @@ export class CreateJalanSpesifikasiDesainReviewDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
-    volume_review!: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @Transform(({ value }) => parseFloat(value))
-    lebar_review!: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @Transform(({ value }) => parseFloat(value))
     spasi_review!: number;
 
     @IsNotEmpty()

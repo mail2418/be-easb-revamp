@@ -2,6 +2,8 @@ import { Injectable, NotFoundException, ForbiddenException, BadRequestException 
 import { UsulanJalanService } from '../../domain/usulan_jalan/usulan_jalan.service';
 import { UsulanJalanRepository } from '../../domain/usulan_jalan/usulan_jalan.repository';
 import { VerifikatorService } from '../../domain/verifikator/verifikator.service';
+import { JalanSpesifikasiDesainService } from '../../domain/jalan_spesifikasi_desain/jalan_spesifikasi_desain.service';
+import { JalanSpesifikasiDesainReviewService } from '../../domain/jalan_spesifikasi_desain_review/jalan_spesifikasi_desain_review.service';
 import { Role } from '../../domain/user/user_role.enum';
 import { JenisVerifikator } from '../../domain/verifikator/jenis_verifikator.enum';
 import { UsulanJalanWithRelationsDto } from './dto/usulan_jalan_with_relations.dto';
@@ -9,20 +11,27 @@ import { FindAllUsulanJalanDto } from './dto/find_all_usulan_jalan.dto';
 import { UsulanJalanListResultDto } from './dto/usulan_jalan_list_result.dto';
 import { RejectInfoDto } from './dto/reject_info.dto';
 import { StoreInformasiUsulanJalanDto } from '../../presentation/usulan_jalan/dto/store_informasi_usulan_jalan.dto';
-import { StoreRuangLingkupUsulanJalanDto } from '../../presentation/usulan_jalan/dto/store_ruang_lingkup_usulan_jalan.dto';
 import { UpdateUsulanJalanDto } from '../../presentation/usulan_jalan/dto/update_usulan_jalan.dto';
 import { VerifyInformasiUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_informasi_usulan_jalan.dto';
-import { VerifyRuangLingkupUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_ruang_lingkup_usulan_jalan.dto';
 import { GetUsulanJalanAnalyticsFilterDto } from './dto/get_usulan_jalan_analytics_filter.dto';
 import { UsulanJalanAnalyticsDto } from './dto/usulan_jalan_analytics.dto';
 import { CreateUsulanJalanStoreIndexDto } from './dto/create_usulan_jalan_store_index.dto';
 import { UpdateUsulanJalanStoreIndexDto } from './dto/update_usulan_jalan_store_index.dto';
+import { CreateJalanSpesifikasiDesainDto } from '../../presentation/jalan_spesifikasi_desain/dto/create_jalan_spesifikasi_desain.dto';
+import { CreateJalanSpesifikasiDesainReviewDto } from '../../presentation/jalan_spesifikasi_desain_review/dto/create_jalan_spesifikasi_desain_review.dto';
+import { GetJalanSpesifikasiDesainDto } from '../../presentation/jalan_spesifikasi_desain/dto/get_jalan_spesifikasi_desain.dto';
+import { GenerateUraianUsulanJalanUseCase } from './use_cases/generate_uraian_usulan_jalan.use_case';
+import { GenerateSpesifikasiUsulanJalanUseCase } from './use_cases/generate_spesifikasi_usulan_jalan.use_case';
 
 @Injectable()
 export class UsulanJalanServiceImpl implements UsulanJalanService {
     constructor(
         private readonly repository: UsulanJalanRepository,
         private readonly verifikatorService: VerifikatorService,
+        private readonly jalanSpesifikasiDesainService: JalanSpesifikasiDesainService,
+        private readonly jalanSpesifikasiDesainReviewService: JalanSpesifikasiDesainReviewService,
+        private readonly generateUraianUsulanJalanUseCase: GenerateUraianUsulanJalanUseCase,
+        private readonly generateSpesifikasiUsulanJalanUseCase: GenerateSpesifikasiUsulanJalanUseCase,
     ) { }
 
     async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanWithRelationsDto | null> {
@@ -60,12 +69,12 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
     async createIndex(dto: CreateUsulanJalanStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
-            // Validate that user has idOpd (must be OPD user or admin setting OPD)
-            if (!userIdOpd && !dto.idOpd) {
+            // Validate that user has idOpd (must be OPD user)
+            if (!userIdOpd) {
                 throw new ForbiddenException('User is not sync to an opd');
             }
 
-            const idOpd = userIdOpd ?? dto.idOpd;
+            const idOpd = userIdOpd;
 
             // Validate idJalanJenisPemeliharaan based on idAsbJenis
             let idJalanJenisPemeliharaan: number | null = null;
@@ -83,23 +92,15 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // Create with status 1 (Input Informasi Usulan Jalan)
             const usulanJalan = await this.repository.create({
                 idOpd,
-                idUsulanJalanStatus: 1,
                 idAsbJenis: dto.idAsbJenis,
                 idJalanJenisPemeliharaan,
-                idJalanJenisPerkerasan: undefined,
-                idRekening: undefined,
-                idRekeningReview: undefined,
                 idKabkota: dto.idKabkota,
-                idKecamatan: dto.idKecamatan ?? null,
-                idKelurahan: dto.idKelurahan ?? null,
-                isIncludePpn: false,
+                idKecamatan: dto.idKecamatan,
+                idKelurahan: dto.idKelurahan,
+                isIncludePpn: true,
                 tahunAnggaran: dto.tahunAnggaran,
                 namaUsulan: dto.namaUsulan,
-                uraian: '',
-                spesifikasi: '',
-                satuan: '',
-                hargaSatuan: 0,
-                deskripsiDesain: '',
+                idUsulanJalanStatus: 1,
             });
 
             return {
@@ -151,19 +152,19 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
             // Prepare update data
             const updateData: any = {
+                id: dto.id,
                 idAsbJenis: dto.idAsbJenis,
                 idJalanJenisPemeliharaan,
                 idKabkota: dto.idKabkota,
-                idKecamatan: dto.idKecamatan ?? null,
-                idKelurahan: dto.idKelurahan ?? null,
+                idKecamatan: dto.idKecamatan,
+                idKelurahan: dto.idKelurahan,
+                isIncludePpn: true,
                 tahunAnggaran: dto.tahunAnggaran,
                 namaUsulan: dto.namaUsulan,
+                idUsulanJalanStatus: 1,
             };
 
-            // Handle idOpd if provided (only for admin/superadmin)
-            if (dto.idOpd !== undefined && (isAdmin || isSuperAdmin)) {
-                updateData.idOpd = dto.idOpd;
-            }
+            // idOpd is not allowed to be updated from request body, it comes from UserContext
 
             // Update Usulan Jalan
             const updatedUsulanJalan = await this.repository.update(dto.id, updateData);
@@ -179,78 +180,99 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
     async storeInformasi(dto: StoreInformasiUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
-            // Validate that user has idOpd (must be OPD user)
-            if (!userIdOpd) {
+            // Check permissions
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            const isOpd = userRoles.includes(Role.OPD);
+
+            // Validate that user has idOpd (must be OPD user or admin)
+            if (!userIdOpd && !isAdmin && !isSuperAdmin) {
                 throw new ForbiddenException('User is not sync to an opd');
             }
 
-            const idOpd = userIdOpd;
+            // Verify existence and ownership
+            let existingUsulanJalan: UsulanJalanWithRelationsDto | null = null;
 
-            // Create with status 1 (Input Informasi Usulan Jalan)
-            const usulanJalan = await this.repository.create({
-                idOpd,
-                idUsulanJalanStatus: 1,
-                idAsbJenis: dto.idAsbJenis,
-                idJalanJenisPemeliharaan: dto.idJalanJenisPemeliharaan ?? null,
-                idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan ?? null,
-                idRekening: dto.idRekening,
-                idRekeningReview: dto.idRekeningReview,
-                idKabkota: dto.idKabkota ?? null,
-                idKecamatan: dto.idKecamatan ?? null,
-                idKelurahan: dto.idKelurahan ?? null,
-                isIncludePpn: dto.isIncludePpn ?? false,
-                tahunAnggaran: dto.tahunAnggaran,
-                namaUsulan: dto.namaUsulan,
-                uraian: dto.uraian,
-                spesifikasi: dto.spesifikasi,
-                satuan: dto.satuan,
-                hargaSatuan: dto.hargaSatuan,
-                deskripsiDesain: dto.deskripsiDesain,
-            });
-
-            return {
-                id: usulanJalan.id,
-                status: usulanJalan.usulanJalanStatus,
-            };
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async storeRuangLingkup(dto: StoreRuangLingkupUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
-        try {
-            // Check existence and permission
-            const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
-            if (!usulanJalan) {
-                throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
+            if (isAdmin || isSuperAdmin) {
+                existingUsulanJalan = await this.repository.findById(dto.idUsulanJalan);
+            } else if (isOpd) {
+                if (!userIdOpd) {
+                    throw new ForbiddenException('OPD user has no associated OPD');
+                }
+                existingUsulanJalan = await this.repository.findById(dto.idUsulanJalan, userIdOpd);
+            } else {
+                throw new ForbiddenException('User is not authorized to update this Usulan Jalan');
             }
 
-            // Validate conditional fields based on jenis perkerasan
-            // if (usulanJalan.idJalanJenisPerkerasan === 1) {
-            //     // Lentur - require lentur fields
-            //     if (!dto.idSpesifikasiDesainLentur || !dto.idRuangLingkupPerkerasanLentur) {
-            //         throw new ForbiddenException('Spesifikasi Desain Lentur and Ruang Lingkup Perkerasan Lentur are required for Lentur type');
-            //     }
-            // } else if (usulanJalan.idJalanJenisPerkerasan === 2) {
-            //     // Kaku - require kaku fields
-            //     if (!dto.idSpesifikasiDesainKaku || !dto.idRuangLingkupPerkerasanKaku) {
-            //         throw new ForbiddenException('Spesifikasi Desain Kaku and Ruang Lingkup Perkerasan Kaku are required for Kaku type');
-            //     }
-            // }
+            if (!existingUsulanJalan) {
+                throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found or access denied`);
+            }
 
-            // Update with status 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
-            const updated = await this.repository.update(dto.idUsulanJalan, {
-                idUsulanJalanStatus: 2,
+            // Validate that idJalanJenisPerkerasan is set (required for generating uraian)
+            if (!existingUsulanJalan.idJalanJenisPerkerasan) {
+                throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in storeIndex first');
+            }
+
+            if (!existingUsulanJalan.jalanJenisPerkerasan) {
+                throw new NotFoundException('JalanJenisPerkerasan relation not found');
+            }
+
+            // Step 1: Always delete all JalanSpesifikasiDesain records for this Usulan Jalan to ensure clean state
+            await this.jalanSpesifikasiDesainService.deleteByUsulanJalanId(dto.idUsulanJalan);
+
+            // Step 2: Create JalanSpesifikasiDesain records for each ruang lingkup and hspk
+            // Collect all tinggi values for MIN/MAX calculation and calculate total harga
+            const tinggiValues: number[] = [];
+            let totalHarga = 0;
+            for (const ruangLingkup of dto.data_ruang_lingkup) {
+                for (const hspk of ruangLingkup.data_hspk) {
+                    const createSpesifikasiDto = new CreateJalanSpesifikasiDesainDto();
+                    createSpesifikasiDto.id_usulan_jalan = dto.idUsulanJalan;
+                    createSpesifikasiDto.id_ruang_lingkup = ruangLingkup.id;
+                    createSpesifikasiDto.id_hspk = hspk.id_hspk;
+                    createSpesifikasiDto.spasi = hspk.spasi;
+                    createSpesifikasiDto.tinggi = hspk.tinggi;
+
+                    // volume and harga_spec will be calculated in the service layer
+                    const createdSpesifikasi = await this.jalanSpesifikasiDesainService.create(createSpesifikasiDto, dto.lebar);
+                    tinggiValues.push(hspk.tinggi);
+                    totalHarga += createdSpesifikasi.harga_spec;
+                }
+            }
+
+            // Step 3: Generate uraian, spesifikasi, satuan, and deskripsiDesain automatically
+            const jenisPerkerasan = existingUsulanJalan.jalanJenisPerkerasan.jenis;
+            const uraian = await this.generateUraianUsulanJalanUseCase.execute(jenisPerkerasan, dto.lebar);
+            
+            const idJenisPerkerasan = existingUsulanJalan.idJalanJenisPerkerasan;
+            const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(tinggiValues, idJenisPerkerasan);
+
+            // Satuan is always "m^1"
+            const satuan = 'm^1';
+
+            // deskripsiDesain is always empty string
+            const deskripsiDesain = '';
+
+            // Step 4: Update Usulan Jalan with new information and status 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
+            const updatedUsulanJalan = await this.repository.update(dto.idUsulanJalan, {
+                uraian,
+                spesifikasi,
+                satuan,
+                deskripsiDesain,
+                lebar: dto.lebar,
+                totalHarga,
+                idUsulanJalanStatus: 2, // Input Ruang Lingkup dan Spesifikasi Jalan
             });
 
             return {
-                id: updated.id,
-                status: updated.usulanJalanStatus,
+                id: updatedUsulanJalan.id,
+                status: updatedUsulanJalan.usulanJalanStatus,
             };
         } catch (error) {
             throw error;
         }
     }
+
 
     async updateUsulanJalan(dto: UpdateUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
@@ -263,7 +285,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // Update all fields
             const updateData: any = {};
 
-            if (dto.idOpd !== undefined) updateData.idOpd = dto.idOpd;
+            // idOpd is not allowed to be updated from request body, it comes from UserContext
             if (dto.idUsulanJalanStatus !== undefined) updateData.idUsulanJalanStatus = dto.idUsulanJalanStatus;
             if (dto.idAsbJenis !== undefined) updateData.idAsbJenis = dto.idAsbJenis;
             if (dto.idJalanJenisPemeliharaan !== undefined) updateData.idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan ?? null;
@@ -279,7 +301,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             if (dto.uraian !== undefined) updateData.uraian = dto.uraian;
             if (dto.spesifikasi !== undefined) updateData.spesifikasi = dto.spesifikasi;
             if (dto.satuan !== undefined) updateData.satuan = dto.satuan;
-            if (dto.hargaSatuan !== undefined) updateData.hargaSatuan = dto.hargaSatuan;
             if (dto.deskripsiDesain !== undefined) updateData.deskripsiDesain = dto.deskripsiDesain;
 
             const updated = await this.repository.update(dto.id, updateData);
@@ -329,10 +350,90 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
             }
 
-            // Update review fields and status to 5 (Verifikasi Informasi Usulan Jalan)
-            const updated = await this.repository.update(dto.idUsulanJalan, {
+            // Step 1: Get all existing JalanSpesifikasiDesain records for this Usulan Jalan
+            const getSpesifikasiDto = new GetJalanSpesifikasiDesainDto();
+            getSpesifikasiDto.id_usulan_jalan = dto.idUsulanJalan;
+            const existingSpesifikasi = await this.jalanSpesifikasiDesainService.findAll(getSpesifikasiDto);
+
+            // Create a map of (id_ruang_lingkup, id_hspk) -> id_spesifikasi_desain
+            const spesifikasiMap = new Map<string, number>();
+            for (const spec of existingSpesifikasi.data) {
+                const key = `${spec.id_ruang_lingkup}_${spec.id_hspk}`;
+                spesifikasiMap.set(key, spec.id);
+            }
+
+            // Validate that idJalanJenisPerkerasan is set (required for generating uraian)
+            if (!usulanJalan.idJalanJenisPerkerasan) {
+                throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in storeIndex first');
+            }
+
+            if (!usulanJalan.jalanJenisPerkerasan) {
+                throw new NotFoundException('JalanJenisPerkerasan relation not found');
+            }
+
+            // Step 2: Always delete all JalanSpesifikasiDesainReview records for this Usulan Jalan to ensure clean state
+            await this.jalanSpesifikasiDesainReviewService.deleteByUsulanJalanId(dto.idUsulanJalan);
+
+            // Step 3: Create JalanSpesifikasiDesainReview records for each ruang lingkup and hspk
+            // Collect all tinggi_review values for MIN/MAX calculation and calculate total harga
+            const tinggiReviewValues: number[] = [];
+            let totalHargaReview = 0;
+            // Use lebar from review if provided, otherwise use existing lebar
+            const lebarReview = dto.lebar !== undefined ? dto.lebar : (usulanJalan.lebar ?? 0);
+            for (const ruangLingkup of dto.data_ruang_lingkup) {
+                for (const hspk of ruangLingkup.data_hspk) {
+                    const key = `${ruangLingkup.id}_${hspk.id_hspk}`;
+                    const idSpesifikasiDesain = spesifikasiMap.get(key);
+
+                    if (!idSpesifikasiDesain) {
+                        throw new NotFoundException(
+                            `JalanSpesifikasiDesain not found for id_ruang_lingkup=${ruangLingkup.id} and id_hspk=${hspk.id_hspk}`
+                        );
+                    }
+
+                    const createReviewDto = new CreateJalanSpesifikasiDesainReviewDto();
+                    createReviewDto.id_spesifikasi_desain = idSpesifikasiDesain;
+                    createReviewDto.id_usulan_jalan = dto.idUsulanJalan;
+                    createReviewDto.id_ruang_lingkup = ruangLingkup.id;
+                    createReviewDto.id_hspk = hspk.id_hspk;
+                    createReviewDto.spasi_review = hspk.spasi_review;
+                    createReviewDto.tinggi_review = hspk.tinggi_review;
+
+                    // volume_review and harga_spec_review will be calculated in the service layer
+                    const createdReview = await this.jalanSpesifikasiDesainReviewService.create(createReviewDto, lebarReview);
+                    tinggiReviewValues.push(hspk.tinggi_review);
+                    totalHargaReview += createdReview.harga_spec_review;
+                }
+            }
+
+            // Step 4: Generate uraian, spesifikasi, satuan, and deskripsiDesain automatically based on review data
+            const jenisPerkerasan = usulanJalan.jalanJenisPerkerasan.jenis;
+            const uraian = await this.generateUraianUsulanJalanUseCase.execute(jenisPerkerasan, lebarReview);
+            
+            const idJenisPerkerasan = usulanJalan.idJalanJenisPerkerasan;
+            const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(tinggiReviewValues, idJenisPerkerasan);
+
+            // Satuan is always "m^1"
+            const satuan = 'm^1';
+
+            // deskripsiDesain is always empty string
+            const deskripsiDesain = '';
+
+            // Step 5: Update Usulan Jalan with review information and status to 5 (Verifikasi Informasi Usulan Jalan)
+            const updateData: any = {
                 idUsulanJalanStatus: 5,
-            });
+                uraian,
+                spesifikasi,
+                satuan,
+                deskripsiDesain,
+                totalHarga: totalHargaReview,
+            };
+
+            if (dto.lebar !== undefined) {
+                updateData.lebar = dto.lebar;
+            }
+
+            const updated = await this.repository.update(dto.idUsulanJalan, updateData);
 
             return {
                 id: updated.id,
@@ -343,39 +444,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
     }
 
-    async verifyRuangLingkup(dto: VerifyRuangLingkupUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
-        try {
-            // Check verificator type - only ADBANG
-            if (userRoles.includes(Role.VERIFIKATOR)) {
-                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
-                if (!verificatorType) {
-                    throw new NotFoundException(`User not sync with verifikator`);
-                }
-
-                if (verificatorType !== JenisVerifikator.ADBANG) {
-                    throw new ForbiddenException(`Only ADBANG can verify ruang lingkup usulan jalan`);
-                }
-            }
-
-            // Check existence
-            const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
-            if (!usulanJalan) {
-                throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
-            }
-
-            // Update review fields and status to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)
-            const updated = await this.repository.update(dto.idUsulanJalan, {
-                idUsulanJalanStatus: 6,
-            });
-
-            return {
-                id: updated.id,
-                status: updated.usulanJalanStatus,
-            };
-        } catch (error) {
-            throw error;
-        }
-    }
 
     async verifyAdbang(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {

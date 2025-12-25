@@ -5,9 +5,10 @@ import { UpdateJalanSpesifikasiDesainReviewDto } from "../../presentation/jalan_
 import { JalanSpesifikasiDesainReview } from "./jalan_spesifikasi_desain_review.entity";
 
 export abstract class JalanSpesifikasiDesainReviewService {
-    abstract create(dto: CreateJalanSpesifikasiDesainReviewDto): Promise<JalanSpesifikasiDesainReview>;
+    abstract create(dto: CreateJalanSpesifikasiDesainReviewDto, lebar?: number): Promise<JalanSpesifikasiDesainReview>;
     abstract update(dto: UpdateJalanSpesifikasiDesainReviewDto): Promise<JalanSpesifikasiDesainReview>;
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<JalanSpesifikasiDesainReview | null>;
     abstract findAll(dto: GetJalanSpesifikasiDesainReviewDto): Promise<JalanSpesifikasiDesainReviewPaginationResultDto>;
+    abstract deleteByUsulanJalanId(idUsulanJalan: number): Promise<void>;
 }

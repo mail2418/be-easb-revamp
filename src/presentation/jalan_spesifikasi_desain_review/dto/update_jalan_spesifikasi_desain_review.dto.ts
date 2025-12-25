@@ -46,4 +46,9 @@ export class UpdateJalanSpesifikasiDesainReviewDto {
     @IsNumber()
     @Transform(({ value }) => value ? parseFloat(value) : undefined)
     tinggi_review?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    harga_spec_review?: number;
 }

@@ -11,11 +11,6 @@ export class UpdateUsulanJalanDto {
     @IsOptional()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    idOpd?: number;
-
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
     idUsulanJalanStatus?: number;
 
     @IsOptional()
@@ -104,11 +99,6 @@ export class UpdateUsulanJalanDto {
     @IsOptional()
     @IsString()
     satuan?: string;
-
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => parseFloat(value))
-    hargaSatuan?: number;
 
     @IsOptional()
     @IsString()

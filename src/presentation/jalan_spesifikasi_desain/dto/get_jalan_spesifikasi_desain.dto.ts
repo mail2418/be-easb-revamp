@@ -13,4 +13,9 @@ export class GetJalanSpesifikasiDesainDto {
     @Min(1)
     @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     amount?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    id_usulan_jalan?: number;
 }

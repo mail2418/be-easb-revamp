@@ -41,4 +41,9 @@ export class UpdateJalanSpesifikasiDesainDto {
     @IsNumber()
     @Transform(({ value }) => value ? parseFloat(value) : undefined)
     tinggi?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    harga_spec?: number;
 }

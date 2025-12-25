@@ -50,9 +50,9 @@ export class UsulanJalan {
     uraian!: string;
     spesifikasi!: string;
     satuan!: string;
-    hargaSatuan!: number;
     deskripsiDesain!: string;
     lebar!: number | null;
+    totalHarga!: number;
 
     // Relations - Required
     opd?: Opd;

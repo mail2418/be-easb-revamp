@@ -70,4 +70,12 @@ export class JalanSpesifikasiDesainReviewRepositoryImpl implements JalanSpesifik
             throw error;
         }
     }
+
+    async deleteByUsulanJalanId(idUsulanJalan: number): Promise<void> {
+        try {
+            await this.repo.softDelete({ id_usulan_jalan: idUsulanJalan });
+        } catch (error) {
+            throw error;
+        }
+    }
 }

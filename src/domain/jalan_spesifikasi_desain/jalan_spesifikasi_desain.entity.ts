@@ -6,4 +6,5 @@ export class JalanSpesifikasiDesain {
     volume!: number;
     spasi!: number;
     tinggi!: number;
+    harga_spec!: number;
 }
