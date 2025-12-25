@@ -75,7 +75,7 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
             }
 
             if (dto.namaUsulanJalan) {
-                whereClause.namaUsulanJalan = Raw(
+                whereClause.namaUsulan = Raw(
                     (alias) => `LOWER(${alias}) LIKE :namaUsulanJalan`,
                     { namaUsulanJalan: `%${dto.namaUsulanJalan.toLowerCase()}%` },
                 );
@@ -103,18 +103,11 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
                 relations: [
                     'opd',
                     'usulanJalanStatus',
+                    'asbJenis',
+                    'jalanJenisPemeliharaan',
                     'jalanJenisPerkerasan',
-                    'jalanJenisPerkerasanReview',
-                    'mutuBeton',
-                    'mutuBetonReview',
-                    'spesifikasiDesainLentur',
-                    'spesifikasiDesainLenturReview',
-                    'spesifikasiDesainKaku',
-                    'spesifikasiDesainKakuReview',
-                    'ruangLingkupPerkerasanLentur',
-                    'ruangLingkupPerkerasanLenturReview',
-                    'ruangLingkupPerkerasanKaku',
-                    'ruangLingkupPerkerasanKakuReview',
+                    'rekening',
+                    'rekeningReview',
                     'kabkota',
                     'kecamatan',
                     'kelurahan',
