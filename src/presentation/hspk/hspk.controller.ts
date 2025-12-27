@@ -23,10 +23,10 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 
 @Controller('hspks')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.SUPERADMIN, Role.ADMIN)
 export class HspkController {
     constructor(private readonly hspkService: HspkService) { }
 
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Post()
     async create(@Body() dto: CreateHspkDto): Promise<ResponseDto> {
         try {
@@ -73,6 +73,7 @@ export class HspkController {
         }
     }
 
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Put()
     async update(@Body() dto: UpdateHspkDto): Promise<ResponseDto> {
         try {
@@ -119,6 +120,7 @@ export class HspkController {
         }
     }
 
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Delete()
     async delete(@Body() dto: { id: number }): Promise<ResponseDto> {
         try {
@@ -165,6 +167,7 @@ export class HspkController {
         }
     }
 
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.OPD, Role.VERIFIKATOR)
     @Get()
     async findAll(@Query() dto: GetHspkDto): Promise<ResponseDto> {
         try {
@@ -211,6 +214,7 @@ export class HspkController {
         }
     }
 
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.OPD, Role.VERIFIKATOR)
     @Get('detail')
     async findById(@Query('id', ParseIntPipe) id: number): Promise<ResponseDto> {
         try {
@@ -266,6 +270,7 @@ export class HspkController {
         }
     }
 
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.OPD, Role.VERIFIKATOR)
     @Get('by-no-mata-pembayaran')
     async findByNoMataPembayaran(@Query('no_mata_pembayaran') no_mata_pembayaran: string): Promise<ResponseDto> {
         try {
@@ -321,6 +326,7 @@ export class HspkController {
         }
     }
 
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.OPD, Role.VERIFIKATOR)
     @Get('by-ruang-lingkup')
     async findByRuangLingkup(@Query('id_ruang_lingkup', ParseIntPipe) id_ruang_lingkup: number): Promise<ResponseDto> {
         try {
