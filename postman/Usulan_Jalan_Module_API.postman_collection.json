@@ -175,6 +175,52 @@
 			"name": "CRUD Operations",
 			"item": [
 				{
+					"name": "Store Index",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idAsbJenis\": 2,\n    \"idJalanJenisPemeliharaan\": 1,\n    \"idJalanJenisPerkerasan\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Jalan Baru\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/store-index",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "store-index"]
+						},
+						"description": "Create a new usulan jalan index. This creates a basic usulan jalan record with status 1 (Input Informasi Usulan Jalan). idJalanJenisPerkerasan is optional. Note: idOpd is automatically extracted from UserContext (JWT token), so it should not be included in request body. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Index",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"idAsbJenis\": 2,\n    \"idJalanJenisPemeliharaan\": 1,\n    \"idJalanJenisPerkerasan\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Jalan Baru (Updated)\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/update-index",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "update-index"]
+						},
+						"description": "Update usulan jalan index. OPD users can only update their own data. idJalanJenisPerkerasan is optional. Note: idOpd cannot be updated from request body, it comes from UserContext. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
 					"name": "Store Informasi",
 					"request": {
 						"method": "PUT",
@@ -186,14 +232,19 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"lebar\": 5.5,\n    \"idRekening\": 1,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi\": 100,\n                    \"tinggi\": 150\n                }\n            ]\n        }\n    ]\n}"
+							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"lebar\": 5.5,\n    \"idRekening\": 1,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi\": 100,\n                    \"tinggi\": 150\n                }\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
 							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/store-informasi",
 							"host": ["{{base_url}}"],
 							"path": ["{{api_prefix}}", "usulan-jalan", "store-informasi"]
 						},
-						"description": "Store informasi usulan jalan including lebar, idRekening, and data_ruang_lingkup with HSPK data. Volume and harga_spec will be calculated automatically. Requires OPD, ADMIN, or SUPERADMIN role."
+						"description": "Store informasi usulan jalan including lebar, idRekening, and data_ruang_lingkup with HSPK data. Volume and harga_spec will be calculated automatically. Requires OPD, ADMIN, or SUPERADMIN role.\n\nRequest body structure:\n- idUsulanJalan (number, required): ID of the usulan jalan\n- lebar (number, required): Width of the road\n- idRekening (number, required): Budget account ID\n- data_ruang_lingkup (array, required, min 1 item): Array of ruang lingkup data\n  - id (number, required): ID of the ruang lingkup\n  - data_hspk (array, required, min 1 item): Array of HSPK data\n    - id_hspk (number, required): ID of the HSPK\n    - spasi (number, required): Spacing value\n    - tinggi (number, required): Height value"
 					},
 					"response": []
 				},

@@ -81,12 +81,12 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // Validate idJalanJenisPemeliharaan based on idAsbJenis
             let idJalanJenisPemeliharaan: number | null = null;
             if (dto.idAsbJenis === 1) {
-                // If idAsbJenis is 1 (Gedung), idJalanJenisPemeliharaan must be null
+                // If idAsbJenis is 1 (Pembangunan), idJalanJenisPemeliharaan must be null
                 idJalanJenisPemeliharaan = null;
             } else if (dto.idAsbJenis === 2) {
-                // If idAsbJenis is 2 (Jalan), idJalanJenisPemeliharaan is required
+                // If idAsbJenis is 2 (Pemeliharaan), idJalanJenisPemeliharaan is required
                 if (!dto.idJalanJenisPemeliharaan) {
-                    throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Jalan)');
+                    throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)');
                 }
                 idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
             }

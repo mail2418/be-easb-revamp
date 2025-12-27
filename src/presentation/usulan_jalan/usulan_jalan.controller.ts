@@ -17,6 +17,8 @@ import { UsulanJalanService } from '../../domain/usulan_jalan/usulan_jalan.servi
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
 import { FindAllUsulanJalanDto } from '../../application/usulan_jalan/dto/find_all_usulan_jalan.dto';
+import { CreateUsulanJalanStoreIndexDto } from '../../application/usulan_jalan/dto/create_usulan_jalan_store_index.dto';
+import { UpdateUsulanJalanStoreIndexDto } from '../../application/usulan_jalan/dto/update_usulan_jalan_store_index.dto';
 import { StoreInformasiUsulanJalanDto } from './dto/store_informasi_usulan_jalan.dto';
 import { UpdateUsulanJalanDto } from './dto/update_usulan_jalan.dto';
 import { DeleteUsulanJalanDto } from './dto/delete_usulan_jalan.dto';
@@ -151,6 +153,102 @@ export class UsulanJalanController {
                 status: 'success',
                 responseCode: HttpStatus.OK,
                 message: 'Usulan Jalan retrieved successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    message = Array.isArray(resObj.message)
+                        ? resObj.message.join(', ')
+                        : resObj.message ?? 'Error';
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Post('store-index')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    async storeIndex(
+        @Body() dto: CreateUsulanJalanStoreIndexDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.createIndex(dto, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Jalan index created successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    message = Array.isArray(resObj.message)
+                        ? resObj.message.join(', ')
+                        : resObj.message ?? 'Error';
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Put('update-index')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    async updateIndex(
+        @Body() dto: UpdateUsulanJalanStoreIndexDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.updateIndex(dto, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Jalan index updated successfully',
                 data: result,
             };
         } catch (error) {
