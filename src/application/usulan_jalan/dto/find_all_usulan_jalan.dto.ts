@@ -24,6 +24,7 @@ export class FindAllUsulanJalanDto {
 
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value?.trim())
     namaUsulanJalan?: string;
 
     @IsOptional()

@@ -9,6 +9,7 @@ export class RejectUsulanJalanDto {
 
     @IsString()
     @IsNotEmpty()
+    @Transform(({ value }) => value?.trim())
     rejectReason: string;
 }
 

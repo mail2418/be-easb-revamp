@@ -9,12 +9,12 @@ export class CreateUsulanJalanStoreIndexDto {
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idJalanJenisPemeliharaan?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     idJalanJenisPerkerasan?: number;
 
     @IsNotEmpty()
