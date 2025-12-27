@@ -22,6 +22,7 @@ export class UsulanJalanWithRelationsDto {
     isIncludePpn!: boolean;
     tahunAnggaran!: number;
     namaUsulan!: string;
+    alamat!: string | null;
     uraian!: string;
     spesifikasi!: string;
     satuan!: string;

@@ -97,6 +97,9 @@ export class UsulanJalanOrmEntity {
     @Column({ name: 'nama_usulan', type: 'text' })
     namaUsulan!: string;
 
+    @Column({ name: 'alamat', type: 'text', nullable: true })
+    alamat!: string | null;
+
     @Column({ name: 'uraian', type: 'text', nullable: true })
     uraian!: string | null;
 

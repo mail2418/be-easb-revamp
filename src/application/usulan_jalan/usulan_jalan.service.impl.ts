@@ -103,6 +103,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 isIncludePpn: true,
                 tahunAnggaran: dto.tahunAnggaran,
                 namaUsulan: dto.namaUsulan,
+                alamat: dto.alamat ?? null,
                 idUsulanJalanStatus: 1,
             });
 
@@ -165,6 +166,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 isIncludePpn: true,
                 tahunAnggaran: dto.tahunAnggaran,
                 namaUsulan: dto.namaUsulan,
+                alamat: dto.alamat ?? null,
                 idUsulanJalanStatus: 1,
             };
 
@@ -311,6 +313,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             if (dto.isIncludePpn !== undefined) updateData.isIncludePpn = dto.isIncludePpn;
             if (dto.tahunAnggaran !== undefined) updateData.tahunAnggaran = dto.tahunAnggaran;
             if (dto.namaUsulan !== undefined) updateData.namaUsulan = dto.namaUsulan;
+            if (dto.alamat !== undefined) updateData.alamat = dto.alamat ?? null;
             if (dto.uraian !== undefined) updateData.uraian = dto.uraian;
             if (dto.spesifikasi !== undefined) updateData.spesifikasi = dto.spesifikasi;
             if (dto.satuan !== undefined) updateData.satuan = dto.satuan;

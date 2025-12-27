@@ -92,6 +92,11 @@ export class UpdateUsulanJalanDto {
     @IsOptional()
     @IsString()
     @Transform(({ value }) => value?.trim())
+    alamat?: string;
+
+    @IsOptional()
+    @IsString()
+    @Transform(({ value }) => value?.trim())
     uraian?: string;
 
     @IsOptional()

@@ -46,4 +46,9 @@ export class UpdateUsulanJalanStoreIndexDto {
     @IsString()
     @Transform(({ value }) => value?.trim())
     namaUsulan!: string;
+
+    @IsOptional()
+    @IsString()
+    @Transform(({ value }) => value?.trim())
+    alamat?: string;
 }

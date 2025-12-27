@@ -47,6 +47,7 @@ export class UsulanJalan {
     isIncludePpn!: boolean;
     tahunAnggaran!: number;
     namaUsulan!: string;
+    alamat!: string | null;
     uraian!: string | null;
     spesifikasi!: string | null;
     satuan!: string | null;
