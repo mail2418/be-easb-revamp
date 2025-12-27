@@ -16,8 +16,8 @@ export class UsulanJalan {
     idOpd!: number;
     idUsulanJalanStatus!: number;
     idAsbJenis!: number;
-    idRekening!: number;
-    idRekeningReview!: number;
+    idRekening!: number | null;
+    idRekeningReview!: number | null;
 
     // Optional Foreign Keys - Jalan
     idJalanJenisPemeliharaan!: number | null;
@@ -52,14 +52,14 @@ export class UsulanJalan {
     satuan!: string;
     deskripsiDesain!: string;
     lebar!: number | null;
-    totalHarga!: number;
+    totalHarga!: number | null;
 
     // Relations - Required
     opd?: Opd;
     usulanJalanStatus?: UsulanJalanStatus;
     asbJenis?: AsbJenis;
-    rekening?: Rekening;
-    rekeningReview?: Rekening;
+    rekening?: Rekening | null;
+    rekeningReview?: Rekening | null;
 
     // Relations - Optional (Jalan)
     jalanJenisPemeliharaan?: JalanJenisPemeliharaan | null;

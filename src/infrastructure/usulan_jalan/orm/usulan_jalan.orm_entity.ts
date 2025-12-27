@@ -34,11 +34,11 @@ export class UsulanJalanOrmEntity {
     @Column({ name: 'id_asb_jenis', type: 'int' })
     idAsbJenis!: number;
 
-    @Column({ name: 'id_rekening', type: 'int' })
-    idRekening!: number;
+    @Column({ name: 'id_rekening', type: 'int', nullable: true })
+    idRekening!: number | null;
 
-    @Column({ name: 'id_rekening_review', type: 'int' })
-    idRekeningReview!: number;
+    @Column({ name: 'id_rekening_review', type: 'int', nullable: true })
+    idRekeningReview!: number | null;
 
     // Optional Foreign Keys - Jalan
     @Column({ name: 'id_jalan_jenis_pemeliharaan', type: 'int', nullable: true })
@@ -138,13 +138,13 @@ export class UsulanJalanOrmEntity {
     @JoinColumn({ name: 'id_asb_jenis' })
     asbJenis!: AsbJenisOrmEntity;
 
-    @ManyToOne(() => RekeningOrmEntity, { onDelete: 'CASCADE' })
+    @ManyToOne(() => RekeningOrmEntity, { onDelete: 'SET NULL', nullable: true })
     @JoinColumn({ name: 'id_rekening' })
-    rekening!: RekeningOrmEntity;
+    rekening!: RekeningOrmEntity | null;
 
-    @ManyToOne(() => RekeningOrmEntity, { onDelete: 'CASCADE' })
+    @ManyToOne(() => RekeningOrmEntity, { onDelete: 'SET NULL', nullable: true })
     @JoinColumn({ name: 'id_rekening_review' })
-    rekeningReview!: RekeningOrmEntity;
+    rekeningReview!: RekeningOrmEntity | null;
 
     // Relationships - Optional FKs (SET NULL)
     @ManyToOne(() => JalanJenisPemeliharaanOrmEntity, { onDelete: 'SET NULL', nullable: true })
