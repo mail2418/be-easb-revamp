@@ -97,17 +97,17 @@ export class UsulanJalanOrmEntity {
     @Column({ name: 'nama_usulan', type: 'text' })
     namaUsulan!: string;
 
-    @Column({ name: 'uraian', type: 'text' })
-    uraian!: string;
+    @Column({ name: 'uraian', type: 'text', nullable: true })
+    uraian!: string | null;
 
     @Column({ name: 'spesifikasi', type: 'text' })
     spesifikasi!: string;
 
-    @Column({ name: 'satuan', type: 'varchar', length: 255 })
-    satuan!: string;
+    @Column({ name: 'satuan', type: 'varchar', length: 255, nullable: true })
+    satuan!: string | null;
 
-    @Column({ name: 'deskripsi_desain', type: 'text' })
-    deskripsiDesain!: string;
+    @Column({ name: 'deskripsi_desain', type: 'text', nullable: true })
+    deskripsiDesain!: string | null;
 
     @Column({ name: 'lebar', type: 'double precision', nullable: true })
     lebar!: number | null;

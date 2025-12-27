@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class MakeRekeningNullableInUsulanJalan1766826550858 implements MigrationInterface {
-    name = 'MakeRekeningNullableInUsulanJalan1766826550858';
+    name = 'MakeRekeningAndCoreFieldsNullableInUsulanJalan1766826550858';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Drop existing foreign key constraints
@@ -25,6 +25,24 @@ export class MakeRekeningNullableInUsulanJalan1766826550858 implements Migration
             ALTER TABLE "usulan_jalan"
             ALTER COLUMN "id_rekening_review" DROP NOT NULL
         `);
+
+        // Make core fields nullable
+        await queryRunner.query(`
+            ALTER TABLE "usulan_jalan"
+            ALTER COLUMN "uraian" DROP NOT NULL
+        `);
+
+        await queryRunner.query(`
+            ALTER TABLE "usulan_jalan"
+            ALTER COLUMN "satuan" DROP NOT NULL
+        `);
+
+        await queryRunner.query(`
+            ALTER TABLE "usulan_jalan"
+            ALTER COLUMN "deskripsi_desain" DROP NOT NULL
+        `);
+
+        // Note: lebar and total_harga are already nullable, spesifikasi remains NOT NULL
 
         // Re-add foreign key constraints with SET NULL on delete
         await queryRunner.query(`
@@ -67,6 +85,22 @@ export class MakeRekeningNullableInUsulanJalan1766826550858 implements Migration
         await queryRunner.query(`
             ALTER TABLE "usulan_jalan"
             ALTER COLUMN "id_rekening" SET NOT NULL
+        `);
+
+        // Make core fields NOT NULL again (will fail if there are NULL values)
+        await queryRunner.query(`
+            ALTER TABLE "usulan_jalan"
+            ALTER COLUMN "deskripsi_desain" SET NOT NULL
+        `);
+
+        await queryRunner.query(`
+            ALTER TABLE "usulan_jalan"
+            ALTER COLUMN "satuan" SET NOT NULL
+        `);
+
+        await queryRunner.query(`
+            ALTER TABLE "usulan_jalan"
+            ALTER COLUMN "uraian" SET NOT NULL
         `);
 
         // Re-add foreign key constraints with CASCADE on delete
