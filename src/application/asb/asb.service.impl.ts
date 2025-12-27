@@ -653,7 +653,7 @@ export class AsbServiceImpl implements AsbService {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
             }
 
-            const rekapitulasiBiayaKonstruksi = Number(asb.totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi);
+            const rekapitulasiBiayaKonstruksi = Number(totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi);
 
             const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
 
@@ -991,7 +991,7 @@ export class AsbServiceImpl implements AsbService {
                 nominalManagementKonstruksi = managementKonstruksi.standard;
             }
 
-            const rekapitulasiBiayaKonstruksi = Number(asb.totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi);
+            const rekapitulasiBiayaKonstruksi = Number(totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi);
 
             const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
 
