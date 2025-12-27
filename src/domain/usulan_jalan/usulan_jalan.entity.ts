@@ -48,7 +48,7 @@ export class UsulanJalan {
     tahunAnggaran!: number;
     namaUsulan!: string;
     uraian!: string | null;
-    spesifikasi!: string;
+    spesifikasi!: string | null;
     satuan!: string | null;
     deskripsiDesain!: string | null;
     lebar!: number | null;

@@ -100,8 +100,8 @@ export class UsulanJalanOrmEntity {
     @Column({ name: 'uraian', type: 'text', nullable: true })
     uraian!: string | null;
 
-    @Column({ name: 'spesifikasi', type: 'text' })
-    spesifikasi!: string;
+    @Column({ name: 'spesifikasi', type: 'text', nullable: true })
+    spesifikasi!: string | null;
 
     @Column({ name: 'satuan', type: 'varchar', length: 255, nullable: true })
     satuan!: string | null;

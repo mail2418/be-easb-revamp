@@ -42,7 +42,12 @@ export class MakeRekeningNullableInUsulanJalan1766826550858 implements Migration
             ALTER COLUMN "deskripsi_desain" DROP NOT NULL
         `);
 
-        // Note: lebar and total_harga are already nullable, spesifikasi remains NOT NULL
+        await queryRunner.query(`
+            ALTER TABLE "usulan_jalan"
+            ALTER COLUMN "spesifikasi" DROP NOT NULL
+        `);
+
+        // Note: lebar and total_harga are already nullable
 
         // Re-add foreign key constraints with SET NULL on delete
         await queryRunner.query(`
@@ -101,6 +106,11 @@ export class MakeRekeningNullableInUsulanJalan1766826550858 implements Migration
         await queryRunner.query(`
             ALTER TABLE "usulan_jalan"
             ALTER COLUMN "uraian" SET NOT NULL
+        `);
+
+        await queryRunner.query(`
+            ALTER TABLE "usulan_jalan"
+            ALTER COLUMN "spesifikasi" SET NOT NULL
         `);
 
         // Re-add foreign key constraints with CASCADE on delete
