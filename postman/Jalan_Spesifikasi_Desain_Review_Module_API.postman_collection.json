@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "jalan-spesifikasi-desain-review-module-collection",
 		"name": "Jalan Spesifikasi Desain Review Module API Collection",
-		"description": "API collection for Jalan Spesifikasi Desain Review module - manages reviewed design specification records for Usulan Jalan entries",
+		"description": "API collection for Jalan Spesifikasi Desain Review (Road Design Specification Review) module - manages review design specification records for Usulan Jalan entries",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"auth": {
@@ -52,7 +52,7 @@
 								{
 									"key": "idUsulanJalan",
 									"value": "1",
-									"description": "ID of the Usulan Jalan to get reviewed design specifications for"
+									"description": "ID of the Usulan Jalan to get review design specifications for"
 								},
 								{
 									"key": "page",
@@ -75,4 +75,3 @@
 		}
 	]
 }
-
