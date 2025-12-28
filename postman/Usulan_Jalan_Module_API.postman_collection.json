@@ -370,7 +370,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["{{api_prefix}}", "usulan-jalan", "verify-adbang"]
 						},
-						"description": "Approve usulan jalan by ADBANG verifikator. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
+						"description": "Approve usulan jalan by ADBANG verifikator. This changes status to 7 (Verifikasi Adbang). Only requires idUsulanJalan. ADBANG must have already completed verifyIndex and verifyInformasi before this step. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
 					},
 					"response": []
 				},
@@ -386,14 +386,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"idUsulanJalan\": 1\n}"
+							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"idRekeningReview\": 1\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/verify-bpkad",
 							"host": ["{{base_url}}"],
 							"path": ["{{api_prefix}}", "usulan-jalan", "verify-bpkad"]
 						},
-						"description": "Approve usulan jalan by BPKAD verifikator. Requires VERIFIKATOR (BPKAD), ADMIN, or SUPERADMIN role."
+						"description": "Approve usulan jalan by BPKAD verifikator and verify rekening. This changes status to 8 (Verifikasi Bpkad). Requires idUsulanJalan and idRekeningReview (both required). This is the only endpoint that can update idRekeningReview field. ADBANG must have verified first. Requires VERIFIKATOR (BPKAD), ADMIN, or SUPERADMIN role."
 					},
 					"response": []
 				},
@@ -416,7 +416,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["{{api_prefix}}", "usulan-jalan", "verify-bappeda"]
 						},
-						"description": "Approve usulan jalan by BAPPEDA verifikator. Requires VERIFIKATOR (BAPPEDA), ADMIN, or SUPERADMIN role."
+						"description": "Approve usulan jalan by BAPPEDA verifikator. This changes status to 3 (Memenuhi Syarat - Final approved). Only requires idUsulanJalan. ADBANG and BPKAD must have verified first. Requires VERIFIKATOR (BAPPEDA), ADMIN, or SUPERADMIN role."
 					},
 					"response": []
 				},

@@ -11,6 +11,8 @@ import { UsulanJalanAnalyticsDto } from 'src/application/usulan_jalan/dto/usulan
 import { CreateUsulanJalanStoreIndexDto } from 'src/application/usulan_jalan/dto/create_usulan_jalan_store_index.dto';
 import { UpdateUsulanJalanStoreIndexDto } from 'src/application/usulan_jalan/dto/update_usulan_jalan_store_index.dto';
 import { VerifyIndexUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/verify_index_usulan_jalan.dto';
+import { VerifyUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/verify_usulan_jalan.dto';
+import { VerifyBpkadUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/verify_bpkad_usulan_jalan.dto';
 
 export abstract class UsulanJalanService {
     // Query methods
@@ -32,7 +34,7 @@ export abstract class UsulanJalanService {
 
     // Final approval/rejection by specific verificators
     abstract verifyAdbang(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyBpkad(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verifyBpkad(dto: VerifyBpkadUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyBappeda(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
 
     abstract reject(id: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;

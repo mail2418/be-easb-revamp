@@ -19,6 +19,7 @@ import { UsulanJalanAnalyticsDto } from './dto/usulan_jalan_analytics.dto';
 import { CreateUsulanJalanStoreIndexDto } from './dto/create_usulan_jalan_store_index.dto';
 import { UpdateUsulanJalanStoreIndexDto } from './dto/update_usulan_jalan_store_index.dto';
 import { VerifyIndexUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_index_usulan_jalan.dto';
+import { VerifyBpkadUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_bpkad_usulan_jalan.dto';
 import { CreateJalanSpesifikasiDesainDto } from '../../presentation/jalan_spesifikasi_desain/dto/create_jalan_spesifikasi_desain.dto';
 import { CreateJalanSpesifikasiDesainReviewDto } from '../../presentation/jalan_spesifikasi_desain_review/dto/create_jalan_spesifikasi_desain_review.dto';
 import { GetJalanSpesifikasiDesainDto } from '../../presentation/jalan_spesifikasi_desain/dto/get_jalan_spesifikasi_desain.dto';
@@ -591,7 +592,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
     }
 
-    async verifyBpkad(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyBpkad(dto: VerifyBpkadUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // Check verificator type - only BPKAD
             if (userRoles.includes(Role.VERIFIKATOR)) {
@@ -606,9 +607,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             }
 
             // Check existence
-            const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+            const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
             if (!usulanJalan) {
-                throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+                throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
             }
 
             // Check that ADBANG verified first
@@ -616,12 +617,16 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new ForbiddenException(`ADBANG must verify first`);
             }
 
-            // Update status to 8 (Verifikasi Bpkad) and set verificator
-            const updated = await this.repository.update(id, {
-                idUsulanJalanStatus: 8,
+            // Prepare update data
+            const updateData: any = {
+                idUsulanJalanStatus: 8, // Verifikasi Bpkad
                 idVerifikatorBpkad: Number(userId),
                 verifikatorBpkadReviewAt: new Date(),
-            });
+                idRekeningReview: dto.idRekeningReview,
+            };
+
+            // Update status to 8 (Verifikasi Bpkad), set verificator, and update rekening review
+            const updated = await this.repository.update(dto.idUsulanJalan, updateData);
 
             return {
                 id: updated.id,

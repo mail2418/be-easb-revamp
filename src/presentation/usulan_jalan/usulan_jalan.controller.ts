@@ -25,6 +25,7 @@ import { DeleteUsulanJalanDto } from './dto/delete_usulan_jalan.dto';
 import { VerifyIndexUsulanJalanDto } from './dto/verify_index_usulan_jalan.dto';
 import { VerifyInformasiUsulanJalanDto } from './dto/verify_informasi_usulan_jalan.dto';
 import { VerifyUsulanJalanDto } from './dto/verify_usulan_jalan.dto';
+import { VerifyBpkadUsulanJalanDto } from './dto/verify_bpkad_usulan_jalan.dto';
 import { RejectUsulanJalanDto } from './dto/reject_usulan_jalan.dto';
 import { ForbiddenException } from '@nestjs/common';
 import { GetUsulanJalanAnalyticsFilterDto } from '../../application/usulan_jalan/dto/get_usulan_jalan_analytics_filter.dto';
@@ -569,12 +570,12 @@ export class UsulanJalanController {
     @Put('verify-bpkad')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async verifyBpkad(
-        @Body() dto: VerifyUsulanJalanDto,
+        @Body() dto: VerifyBpkadUsulanJalanDto,
         @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.verifyBpkad(dto.idUsulanJalan, user.userId.toString(), user.idOpd, user.roles);
+            const result = await this.usulanJalanService.verifyBpkad(dto, user.userId.toString(), user.idOpd, user.roles);
 
             return {
                 status: 'success',
