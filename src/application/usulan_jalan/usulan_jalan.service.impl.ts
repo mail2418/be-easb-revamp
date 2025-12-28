@@ -526,6 +526,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const deskripsiDesain = '';
 
             // Step 5: Update Usulan Jalan with review information and status to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)
+            // Note: idRekeningReview can only be updated by BPKAD in verifyBpkad endpoint
             const updateData: any = {
                 idUsulanJalanStatus: 6,
                 uraian,
@@ -533,7 +534,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 satuan,
                 deskripsiDesain,
                 totalHarga: totalHargaReview,
-                idRekeningReview: dto.idRekeningReview,
             };
 
             if (dto.lebar !== undefined) {
