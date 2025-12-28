@@ -216,6 +216,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found or access denied`);
             }
 
+            // Step 1: Always delete all JalanSpesifikasiDesain records for this Usulan Jalan to ensure clean state
+            await this.jalanSpesifikasiDesainService.deleteByUsulanJalanId(dto.idUsulanJalan);
+
             // Validate that idJalanJenisPerkerasan is set (required for generating uraian)
             if (!existingUsulanJalan.idJalanJenisPerkerasan) {
                 throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in storeIndex first');
@@ -224,9 +227,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             if (!existingUsulanJalan.jalanJenisPerkerasan) {
                 throw new NotFoundException('JalanJenisPerkerasan relation not found');
             }
-
-            // Step 1: Always delete all JalanSpesifikasiDesain records for this Usulan Jalan to ensure clean state
-            await this.jalanSpesifikasiDesainService.deleteByUsulanJalanId(dto.idUsulanJalan);
 
             // Step 2: Create JalanSpesifikasiDesain records for each ruang lingkup and hspk
             // Collect all tinggi values for MIN/MAX calculation and calculate total harga
@@ -244,13 +244,15 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                     // volume and harga_spec will be calculated in the service layer
                     const createdSpesifikasi = await this.jalanSpesifikasiDesainService.create(createSpesifikasiDto, dto.lebar);
                     tinggiValues.push(hspk.tinggi);
+                    console.log('createdSpesifikasi', createdSpesifikasi);
                     totalHarga += createdSpesifikasi.harga_spec;
                 }
             }
-
+            
             // Apply PPN if is_include_ppn is true
             if (existingUsulanJalan.isIncludePpn) {
                 const persentasePpn = await this.ppnGlobalService.getLatestPersentasePPn();
+                console.log('persentasePpn', persentasePpn);
                 if (persentasePpn !== null) {
                     totalHarga = totalHarga * (100 + persentasePpn) / 100;
                 }
@@ -369,8 +371,8 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             }
 
             // Check that status is 1 (Input Informasi Usulan Jalan)
-            if (usulanJalan.idUsulanJalanStatus !== 1) {
-                throw new BadRequestException(`Usulan Jalan must be in status 1 (Input Informasi Usulan Jalan) to verify index`);
+            if (usulanJalan.idUsulanJalanStatus !== 2) {
+                throw new BadRequestException(`Usulan Jalan must be in status 2 (Input Informasi Usulan Jalan) to verify index`);
             }
 
             // Use idAsbJenis from DTO if provided, otherwise use existing one
@@ -444,7 +446,15 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
             }
 
-            // Step 1: Get all existing JalanSpesifikasiDesain records for this Usulan Jalan
+            // Check that status is 5 (Verifikasi Informasi Usulan Jalan)
+            if (usulanJalan.idUsulanJalanStatus !== 5) {
+                throw new BadRequestException(`Usulan Jalan must be in status 5 (Verifikasi Informasi Usulan Jalan) to verify informasi`);
+            }
+
+            // Step 1: Always delete all JalanSpesifikasiDesainReview records for this Usulan Jalan to ensure clean state
+            await this.jalanSpesifikasiDesainReviewService.deleteByUsulanJalanId(dto.idUsulanJalan);
+
+            // Step 2: Get all existing JalanSpesifikasiDesain records for this Usulan Jalan
             const getSpesifikasiDto = new GetJalanSpesifikasiDesainDto();
             getSpesifikasiDto.id_usulan_jalan = dto.idUsulanJalan;
             const existingSpesifikasi = await this.jalanSpesifikasiDesainService.findAll(getSpesifikasiDto);
@@ -470,9 +480,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new NotFoundException('JalanJenisPerkerasan relation not found');
             }
             const jenisPerkerasan = usulanJalan.jalanJenisPerkerasan.jenis;
-
-            // Step 2: Always delete all JalanSpesifikasiDesainReview records for this Usulan Jalan to ensure clean state
-            await this.jalanSpesifikasiDesainReviewService.deleteByUsulanJalanId(dto.idUsulanJalan);
 
             // Step 3: Create JalanSpesifikasiDesainReview records for each ruang lingkup and hspk
             // Collect all tinggi_review values for MIN/MAX calculation and calculate total harga
@@ -574,6 +581,11 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const usulanJalan = await this.findById(id, userIdOpd, userRoles);
             if (!usulanJalan) {
                 throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+            }
+
+            // Check that status is 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)
+            if (usulanJalan.idUsulanJalanStatus !== 6) {
+                throw new BadRequestException(`Usulan Jalan must be in status 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan) to verify adbang`);
             }
 
             // Update status to 7 (Verifikasi Adbang) and set verificator

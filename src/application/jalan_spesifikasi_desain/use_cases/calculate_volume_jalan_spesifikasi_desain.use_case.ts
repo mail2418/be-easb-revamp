@@ -21,17 +21,22 @@ export class CalculateVolumeJalanSpesifikasiDesainUseCase {
         const satuan = hspk.satuan;
         let volume = 0;
 
+        console.log('satuan', satuan);
+        console.log('lebar', lebar);
+        console.log('tinggi', tinggi);
+        console.log('spasi', spasi);
+
         // Calculate volume based on satuan
         if (satuan === 'Ton') {
             volume = (lebar * tinggi / 1000) * 2;
-        } else if (satuan === 'M^3') {
+        } else if (satuan === 'M3') {
             volume = lebar * tinggi / 1000;
         } else if (satuan === 'Kg') {
             const pi = Math.PI;
             volume = 7850 * (pi / 4) * Math.ceil(1000 / spasi) * Math.pow(tinggi / 1000, 2);
-        } else if (satuan === 'M^2') {
+        } else if (satuan === 'M2') {
             volume = lebar;
-        } else if (satuan === 'M^2*') {
+        } else if (satuan === 'M2*') {
             volume = 1 * 2 * tinggi / 1000;
         } else if (satuan === 'Buah') {
             volume = 1000 / spasi;

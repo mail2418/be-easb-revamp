@@ -81,11 +81,16 @@ export class PpnGlobalRepositoryImpl implements PpnGlobalRepository {
 
     async getLatest(): Promise<PpnGlobal | null> {
         try {
-            const entity = await this.repo.findOne({
-                order: { tahun: 'DESC', bulan: 'DESC' }
-            });
+            const entity = await this.repo
+                .createQueryBuilder('ppn')
+                .where('ppn.deletedAt IS NULL')
+                .orderBy('ppn.tahun', 'DESC')
+                .addOrderBy('ppn.bulan', 'DESC')
+                .getOne();
+            console.log('entity', entity);
             return entity || null;
         } catch (error) {
+            console.error('Error in getLatest:', error);
             throw error;
         }
     }

@@ -94,6 +94,8 @@ export class PpnGlobalServiceImpl implements PpnGlobalService {
     async getLatestPersentasePPn(): Promise<number | null> {
         try {
             const latest = await this.repository.getLatest();
+            console.log('latest', latest);
+            console.log('latest?.persentase_ppn', latest?.persentase_ppn);
             return latest?.persentase_ppn || null;
         } catch (error) {
             throw error;
