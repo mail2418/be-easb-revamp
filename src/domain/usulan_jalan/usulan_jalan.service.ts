@@ -26,6 +26,7 @@ export abstract class UsulanJalanService {
     abstract deleteUsulanJalan(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }>;
 
     // Verification operations (SUPERADMIN, ADMIN, VERIFIKATOR)
+    abstract verifyIndex(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyInformasi(dto: VerifyInformasiUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
 
     // Final approval/rejection by specific verificators

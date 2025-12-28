@@ -25,6 +25,7 @@ import { GetAsbBpsGalleryNonstdListDto } from './dto/get_asb_bps_gallery_nonstd_
 import { GetAsbBpsGalleryNonstdListFilterDto } from './dto/get_asb_bps_gallery_nonstd_list_filter.dto';
 import { GetAsbBpsGalleryNonstdDetailDto } from './dto/get_asb_bps_gallery_nonstd_detail.dto';
 import { AsbBpsGalleryNonstdPaginationResultDto } from './dto/asb_bps_gallery_nonstd_pagination_result.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
 import type { Express } from 'express';
 
 @Controller('asb-bps-gallery-nonstd')
@@ -38,7 +39,7 @@ export class AsbBpsGalleryNonstdController {
     async create(
         @Body() dto: CreateAsbBpsGalleryNonstdDto,
         @UploadedFile() file: Express.Multer.File,
-    ) {
+    ): Promise<ResponseDto> {
         try {
             if (!file) {
                 throw new HttpException('File is required', HttpStatus.BAD_REQUEST);
@@ -46,7 +47,8 @@ export class AsbBpsGalleryNonstdController {
 
             const result = await this.service.create(dto, file);
             return {
-                statusCode: HttpStatus.CREATED,
+                status: 'success',
+                responseCode: HttpStatus.CREATED,
                 message: 'AsbBpsGallery created successfully',
                 data: result,
             };
@@ -59,7 +61,7 @@ export class AsbBpsGalleryNonstdController {
     async findAll(
         @Query() paginationDto: GetAsbBpsGalleryNonstdListDto,
         @Query() filterDto: GetAsbBpsGalleryNonstdListFilterDto,
-    ) {
+    ): Promise<ResponseDto<AsbBpsGalleryNonstdPaginationResultDto>> {
         try {
             const page = paginationDto.page ?? 1;
             const amount = paginationDto.amount ?? 10;
@@ -78,7 +80,8 @@ export class AsbBpsGalleryNonstdController {
             };
 
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbBpsGallery list retrieved successfully',
                 data: response,
             };
@@ -88,11 +91,12 @@ export class AsbBpsGalleryNonstdController {
     }
 
     @Get('detail')
-    async findOne(@Query() dto: GetAsbBpsGalleryNonstdDetailDto) {
+    async findOne(@Query() dto: GetAsbBpsGalleryNonstdDetailDto): Promise<ResponseDto> {
         try {
             const result = await this.service.findById(dto.id);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbBpsGallery detail retrieved successfully',
                 data: result,
             };
@@ -106,11 +110,12 @@ export class AsbBpsGalleryNonstdController {
     async update(
         @Body() dto: UpdateAsbBpsGalleryNonstdDto,
         @UploadedFile() file?: Express.Multer.File,
-    ) {
+    ): Promise<ResponseDto> {
         try {
             const result = await this.service.update(dto.id, dto, file);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbBpsGallery updated successfully',
                 data: result,
             };
@@ -120,11 +125,12 @@ export class AsbBpsGalleryNonstdController {
     }
 
     @Delete()
-    async remove(@Body() dto: DeleteAsbBpsGalleryNonstdDto) {
+    async remove(@Body() dto: DeleteAsbBpsGalleryNonstdDto): Promise<ResponseDto> {
         try {
             await this.service.delete(dto.id);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbBpsGallery deleted successfully',
             };
         } catch (error) {
@@ -133,11 +139,12 @@ export class AsbBpsGalleryNonstdController {
     }
 
     @Get('by-komponen-bangunan-nonstd')
-    async findByKomponenBangunanNonstd(@Query('id') id: number) {
+    async findByKomponenBangunanNonstd(@Query('id') id: number): Promise<ResponseDto> {
         try {
             const result = await this.service.findByKomponenBangunanNonstdId(id);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbBpsGallery list by komponen bangunan retrieved successfully',
                 data: result,
             };

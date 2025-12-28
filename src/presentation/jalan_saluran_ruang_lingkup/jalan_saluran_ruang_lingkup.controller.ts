@@ -7,6 +7,7 @@ import { JalanSaluranRuangLingkupService } from "../../domain/jalan_saluran_ruan
 import { CreateJalanSaluranRuangLingkupDto } from "./dto/create_jalan_saluran_ruang_lingkup.dto";
 import { UpdateJalanSaluranRuangLingkupDto } from "./dto/update_jalan_saluran_ruang_lingkup.dto";
 import { GetJalanSaluranRuangLingkupDto } from "./dto/get_jalan_saluran_ruang_lingkup.dto";
+import { ResponseDto } from "../../common/dto/response.dto";
 
 @Controller('jalan-saluran-ruang-lingkup')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -15,7 +16,7 @@ export class JalanSaluranRuangLingkupController {
 
     @Post()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async create(@Body() dto: CreateJalanSaluranRuangLingkupDto) {
+    async create(@Body() dto: CreateJalanSaluranRuangLingkupDto): Promise<ResponseDto> {
         try {
             const result = await this.service.create(dto);
             return {
@@ -31,7 +32,7 @@ export class JalanSaluranRuangLingkupController {
 
     @Put()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async update(@Body() dto: UpdateJalanSaluranRuangLingkupDto) {
+    async update(@Body() dto: UpdateJalanSaluranRuangLingkupDto): Promise<ResponseDto> {
         try {
             const result = await this.service.update(dto);
             return {
@@ -47,7 +48,7 @@ export class JalanSaluranRuangLingkupController {
 
     @Delete(':id')
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async delete(@Param('id') id: string) {
+    async delete(@Param('id') id: string): Promise<ResponseDto> {
         try {
             await this.service.delete(Number(id));
             return {
@@ -62,7 +63,7 @@ export class JalanSaluranRuangLingkupController {
 
     @Get(':id')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async findById(@Param('id') id: string) {
+    async findById(@Param('id') id: string): Promise<ResponseDto> {
         try {
             const result = await this.service.findById(Number(id));
             return {
@@ -78,7 +79,7 @@ export class JalanSaluranRuangLingkupController {
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async findAll(@Query() dto: GetJalanSaluranRuangLingkupDto) {
+    async findAll(@Query() dto: GetJalanSaluranRuangLingkupDto): Promise<ResponseDto> {
         try {
             const result = await this.service.findAll(dto);
             return {

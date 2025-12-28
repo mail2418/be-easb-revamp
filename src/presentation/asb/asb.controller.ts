@@ -26,6 +26,7 @@ import { VerifyBpsDto } from './dto/verify_bps.dto';
 import { VerifyPekerjaanDto } from './dto/verify_pekerjaan.dto';
 import { VerifyDto } from './dto/verify.dto';
 import { RejectDto } from './dto/reject.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
 
 @Controller('asb')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -37,7 +38,7 @@ export class AsbController {
     async findAll(
         @Query() dto: FindAllAsbDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.findAll(dto, user.idOpd, user.roles);
@@ -87,7 +88,7 @@ export class AsbController {
     async findById(
         @Query('id', ParseIntPipe) id: number,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: AsbWithRelationsDto }> {
+    ): Promise<ResponseDto<AsbWithRelationsDto>> {
         const user = req.user as UserContext;
 
         const asb = await this.asbService.findById(id, user.idOpd, user.roles);
@@ -105,7 +106,7 @@ export class AsbController {
     async getAsbByMonthYear(
         @Query() dto: GetAsbByMonthYearDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: { date: string; count: number }[] }> {
+    ): Promise<ResponseDto<{ date: string; count: number }[]>> {
         const user = req.user as UserContext;
 
         const data = await this.asbService.getAsbByMonthYear(dto, user.idOpd, user.roles);
@@ -123,7 +124,7 @@ export class AsbController {
     async getAsbByMonthYearStatus(
         @Query() dto: GetAsbByMonthYearDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: { asbStatus: string; amount: number }[] }> {
+    ): Promise<ResponseDto<{ asbStatus: string; amount: number }[]>> {
         const user = req.user as UserContext;
 
         const data = await this.asbService.getAsbByMonthYearStatus(dto, user.idOpd, user.roles);
@@ -141,7 +142,7 @@ export class AsbController {
     async getAsbAnalytic(
         @Query() filter: GetAsbAnalyticsFilterDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const data = await this.asbService.getAsbAnalytics(user.idOpd, user.roles, filter);
@@ -191,7 +192,7 @@ export class AsbController {
     async storeIndex(
         @Body() dto: CreateAsbStoreIndexDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             console.log("Dto: ", dto);
             const user = req.user as UserContext;
@@ -242,7 +243,7 @@ export class AsbController {
     async updateIndex(
         @Body() dto: UpdateAsbStoreIndexDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.updateIndex(dto, user.idOpd, user.roles);
@@ -292,7 +293,7 @@ export class AsbController {
     async deleteAsb(
         @Body() dto: DeleteAsbDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.deleteAsb(dto.id_asb, user.idOpd, user.roles);
@@ -342,7 +343,7 @@ export class AsbController {
     async storeLantai(
         @Body() dto: UpdateAsbStoreLantaiDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeLantai(dto, user.idOpd, user.roles);
@@ -392,7 +393,7 @@ export class AsbController {
     async storeBps(
         @Body() dto: StoreBpsDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeBps(dto, user.idOpd, user.roles);
@@ -442,7 +443,7 @@ export class AsbController {
     async storeBpns(
         @Body() dto: StoreBpnsDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeBpns(dto, user.idOpd, user.roles);
@@ -492,7 +493,7 @@ export class AsbController {
     async storeRekening(
         @Body() dto: StoreRekeningDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeRekening(dto, user.idOpd, user.roles);
@@ -542,7 +543,7 @@ export class AsbController {
     async storeVerif(
         @Body() dto: StoreVerifDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeVerif(dto, user.idOpd, user.roles);
@@ -592,7 +593,7 @@ export class AsbController {
     async verifyLantai(
         @Body() dto: VerifyLantaiDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verifyLantai(dto, user.userId, user.idOpd, user.roles);
@@ -642,7 +643,7 @@ export class AsbController {
     async verifyBps(
         @Body() dto: VerifyBpsDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verifyBps(dto, user.userId, user.idOpd, user.roles);
@@ -692,7 +693,7 @@ export class AsbController {
     async verifyBpns(
         @Body() dto: VerifyBpnsDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verifyBpns(dto, user.userId, user.idOpd, user.roles);
@@ -742,7 +743,7 @@ export class AsbController {
     async verifyRekening(
         @Body() dto: VerifyRekeningDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verifyRekening(dto, user.userId, user.idOpd, user.roles);
@@ -792,7 +793,7 @@ export class AsbController {
     async verifyPekerjaan(
         @Body() dto: VerifyPekerjaanDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verifyPekerjaan(dto, user.userId, user.idOpd, user.roles);
@@ -842,7 +843,7 @@ export class AsbController {
     async verify(
         @Body() dto: VerifyDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verify(dto.id_asb, user.userId, user.idOpd, user.roles);
@@ -892,7 +893,7 @@ export class AsbController {
     async reject(
         @Body() dto: RejectDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.reject(dto.id_asb, dto.reject_reason, user.userId, user.idOpd, user.roles);
@@ -942,7 +943,7 @@ export class AsbController {
     async getRejectInfo(
         @Query('id', ParseIntPipe) id: number,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.getRejectInfo(id, user.idOpd, user.roles);

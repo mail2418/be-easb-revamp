@@ -346,6 +346,45 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
     }
 
+    async verifyIndex(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // Check verificator type - only ADBANG
+            if (userRoles.includes(Role.VERIFIKATOR)) {
+                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+                if (!verificatorType) {
+                    throw new NotFoundException(`User not sync with verifikator`);
+                }
+
+                if (verificatorType !== JenisVerifikator.ADBANG) {
+                    throw new ForbiddenException(`Only ADBANG can verify index usulan jalan`);
+                }
+            }
+
+            // Check existence
+            const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+            if (!usulanJalan) {
+                throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+            }
+
+            // Check that status is 1 (Input Informasi Usulan Jalan)
+            if (usulanJalan.idUsulanJalanStatus !== 1) {
+                throw new BadRequestException(`Usulan Jalan must be in status 1 (Input Informasi Usulan Jalan) to verify index`);
+            }
+
+            // Update status to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan) - indicating index is verified and ready for storeInformasi
+            const updated = await this.repository.update(id, {
+                idUsulanJalanStatus: 6,
+            });
+
+            return {
+                id: updated.id,
+                status: updated.usulanJalanStatus,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async verifyInformasi(dto: VerifyInformasiUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // Check verificator type - only ADBANG

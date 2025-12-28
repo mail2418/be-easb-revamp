@@ -7,6 +7,7 @@ import { JalanSmkkService } from "../../domain/jalan_smkk/jalan_smkk.service";
 import { CreateJalanSmkkDto } from "./dto/create_jalan_smkk.dto";
 import { UpdateJalanSmkkDto } from "./dto/update_jalan_smkk.dto";
 import { GetJalanSmkkDto } from "./dto/get_jalan_smkk.dto";
+import { ResponseDto } from "../../common/dto/response.dto";
 
 @Controller('jalan-smkk')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -15,7 +16,7 @@ export class JalanSmkkController {
 
     @Post()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async create(@Body() dto: CreateJalanSmkkDto) {
+    async create(@Body() dto: CreateJalanSmkkDto): Promise<ResponseDto> {
         try {
             const result = await this.service.create(dto);
             return {
@@ -31,7 +32,7 @@ export class JalanSmkkController {
 
     @Put()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async update(@Body() dto: UpdateJalanSmkkDto) {
+    async update(@Body() dto: UpdateJalanSmkkDto): Promise<ResponseDto> {
         try {
             const result = await this.service.update(dto);
             return {
@@ -47,7 +48,7 @@ export class JalanSmkkController {
 
     @Delete(':id')
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async delete(@Param('id') id: string) {
+    async delete(@Param('id') id: string): Promise<ResponseDto> {
         try {
             await this.service.delete(Number(id));
             return {
@@ -62,7 +63,7 @@ export class JalanSmkkController {
 
     @Get(':id')
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async findById(@Param('id') id: string) {
+    async findById(@Param('id') id: string): Promise<ResponseDto> {
         try {
             const result = await this.service.findById(Number(id));
             return {
@@ -78,7 +79,7 @@ export class JalanSmkkController {
 
     @Get()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async findAll(@Query() dto: GetJalanSmkkDto) {
+    async findAll(@Query() dto: GetJalanSmkkDto): Promise<ResponseDto> {
         try {
             const result = await this.service.findAll(dto);
             return {

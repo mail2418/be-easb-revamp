@@ -12,6 +12,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
 import { AsbBipekStandardService } from '../../domain/asb_bipek_standard/asb_bipek_standard.service';
 import { GetAsbBipekStandardByAsbDto } from './dto/get_asb_bipek_standard_by_asb.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
 
 @Controller('asb-bipek-standard')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -20,11 +21,12 @@ export class AsbBipekStandardController {
     constructor(private readonly service: AsbBipekStandardService) { }
 
     @Get('get-by-asb')
-    async getByAsb(@Query() dto: GetAsbBipekStandardByAsbDto) {
+    async getByAsb(@Query() dto: GetAsbBipekStandardByAsbDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getByAsb(dto);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'ASB Bipek Standard list retrieved successfully',
                 data: result,
             };

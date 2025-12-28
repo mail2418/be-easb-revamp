@@ -7,6 +7,7 @@ import { JalanKebijakanService } from "../../domain/jalan_kebijakan/jalan_kebija
 import { CreateJalanKebijakanDto } from "./dto/create_jalan_kebijakan.dto";
 import { UpdateJalanKebijakanDto } from "./dto/update_jalan_kebijakan.dto";
 import { GetJalanKebijakanDto } from "./dto/get_jalan_kebijakan.dto";
+import { ResponseDto } from "../../common/dto/response.dto";
 
 @Controller('jalan-kebijakan')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -15,7 +16,7 @@ export class JalanKebijakanController {
 
     @Post()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async create(@Body() dto: CreateJalanKebijakanDto) {
+    async create(@Body() dto: CreateJalanKebijakanDto): Promise<ResponseDto> {
         try {
             const result = await this.service.create(dto);
             return {
@@ -31,7 +32,7 @@ export class JalanKebijakanController {
 
     @Put()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async update(@Body() dto: UpdateJalanKebijakanDto) {
+    async update(@Body() dto: UpdateJalanKebijakanDto): Promise<ResponseDto> {
         try {
             const result = await this.service.update(dto);
             return {
@@ -47,7 +48,7 @@ export class JalanKebijakanController {
 
     @Delete(':id')
     @Roles(Role.ADMIN, Role.SUPERADMIN)
-    async delete(@Param('id') id: string) {
+    async delete(@Param('id') id: string): Promise<ResponseDto> {
         try {
             await this.service.delete(Number(id));
             return {
@@ -62,7 +63,7 @@ export class JalanKebijakanController {
 
     @Get(':id')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async findById(@Param('id') id: string) {
+    async findById(@Param('id') id: string): Promise<ResponseDto> {
         try {
             const result = await this.service.findById(Number(id));
             return {
@@ -78,7 +79,7 @@ export class JalanKebijakanController {
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async findAll(@Query() dto: GetJalanKebijakanDto) {
+    async findAll(@Query() dto: GetJalanKebijakanDto): Promise<ResponseDto> {
         try {
             const result = await this.service.findAll(dto);
             return {

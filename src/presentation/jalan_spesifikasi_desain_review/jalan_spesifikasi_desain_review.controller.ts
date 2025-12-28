@@ -12,6 +12,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
 import { JalanSpesifikasiDesainReviewService } from '../../domain/jalan_spesifikasi_desain_review/jalan_spesifikasi_desain_review.service';
 import { GetJalanSpesifikasiDesainReviewByUsulanJalanDto } from './dto/get_jalan_spesifikasi_desain_review_by_usulan_jalan.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
 
 @Controller('jalan-spesifikasi-desain-review')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -20,11 +21,12 @@ export class JalanSpesifikasiDesainReviewController {
     constructor(private readonly service: JalanSpesifikasiDesainReviewService) { }
 
     @Get('get-by-usulan-jalan')
-    async getByUsulanJalan(@Query() dto: GetJalanSpesifikasiDesainReviewByUsulanJalanDto) {
+    async getByUsulanJalan(@Query() dto: GetJalanSpesifikasiDesainReviewByUsulanJalanDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getByUsulanJalan(dto);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'Jalan Spesifikasi Desain Review list retrieved successfully',
                 data: result,
             };

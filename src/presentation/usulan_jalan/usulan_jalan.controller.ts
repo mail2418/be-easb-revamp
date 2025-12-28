@@ -22,6 +22,7 @@ import { UpdateUsulanJalanStoreIndexDto } from '../../application/usulan_jalan/d
 import { StoreInformasiUsulanJalanDto } from './dto/store_informasi_usulan_jalan.dto';
 import { UpdateUsulanJalanDto } from './dto/update_usulan_jalan.dto';
 import { DeleteUsulanJalanDto } from './dto/delete_usulan_jalan.dto';
+import { VerifyIndexUsulanJalanDto } from './dto/verify_index_usulan_jalan.dto';
 import { VerifyInformasiUsulanJalanDto } from './dto/verify_informasi_usulan_jalan.dto';
 import { VerifyUsulanJalanDto } from './dto/verify_usulan_jalan.dto';
 import { RejectUsulanJalanDto } from './dto/reject_usulan_jalan.dto';
@@ -30,13 +31,7 @@ import { GetUsulanJalanAnalyticsFilterDto } from '../../application/usulan_jalan
 import { UserContext } from '../../common/types/user-context.type';
 import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
-
-interface ResponseDto {
-    status: string;
-    responseCode: number;
-    message: string;
-    data: any;
-}
+import { ResponseDto } from '../../common/dto/response.dto';
 
 @Controller('usulan-jalan')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -393,6 +388,54 @@ export class UsulanJalanController {
                 status: 'success',
                 responseCode: HttpStatus.OK,
                 message: 'Usulan Jalan deleted successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    message = Array.isArray(resObj.message)
+                        ? resObj.message.join(', ')
+                        : resObj.message ?? 'Error';
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Put('verify-index')
+    @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async verifyIndex(
+        @Body() dto: VerifyIndexUsulanJalanDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.usulanJalanService.verifyIndex(dto.idUsulanJalan, user.userId.toString(), user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Jalan index verified successfully',
                 data: result,
             };
         } catch (error) {
