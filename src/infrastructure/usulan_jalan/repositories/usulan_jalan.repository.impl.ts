@@ -43,6 +43,13 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
                     'verifikatorBpkad',
                     'verifikatorBappeda',
                     'rejectVerifikator',
+                    'spesifikasiDesain',
+                    'spesifikasiDesain.ruangLingkup',
+                    'spesifikasiDesain.hspk',
+                    'spesifikasiDesainReview',
+                    'spesifikasiDesainReview.spesifikasiDesain',
+                    'spesifikasiDesainReview.ruangLingkup',
+                    'spesifikasiDesainReview.hspk',
                 ],
             });
 
@@ -115,6 +122,13 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
                     'verifikatorBpkad',
                     'verifikatorBappeda',
                     'rejectVerifikator',
+                    'spesifikasiDesain',
+                    'spesifikasiDesain.ruangLingkup',
+                    'spesifikasiDesain.hspk',
+                    'spesifikasiDesainReview',
+                    'spesifikasiDesainReview.spesifikasiDesain',
+                    'spesifikasiDesainReview.ruangLingkup',
+                    'spesifikasiDesainReview.hspk',
                 ],
                 order: { id: 'DESC' }
             };

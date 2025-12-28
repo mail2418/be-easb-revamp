@@ -113,4 +113,57 @@ export class UsulanJalanWithRelationsDto {
         username: string;
         name: string;
     } | null;
+
+    spesifikasiDesain?: Array<{
+        id: number;
+        id_usulan_jalan: number;
+        id_ruang_lingkup: number;
+        id_hspk: number;
+        volume: number;
+        spasi: number;
+        tinggi: number;
+        harga_spec: number;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        ruangLingkup?: {
+            id: number;
+            deskripsi_ruang_lingkup: string;
+        } | null;
+        hspk?: {
+            id: number;
+            kode: string;
+            uraian: string;
+        } | null;
+    }>;
+
+    spesifikasiDesainReview?: Array<{
+        id: number;
+        id_spesifikasi_desain: number;
+        id_usulan_jalan: number;
+        id_ruang_lingkup: number;
+        id_hspk: number;
+        volume_review: number;
+        spasi_review: number;
+        tinggi_review: number;
+        harga_spec_review: number;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        spesifikasiDesain?: {
+            id: number;
+            id_usulan_jalan: number;
+            id_ruang_lingkup: number;
+            id_hspk: number;
+        } | null;
+        ruangLingkup?: {
+            id: number;
+            deskripsi_ruang_lingkup: string;
+        } | null;
+        hspk?: {
+            id: number;
+            kode: string;
+            uraian: string;
+        } | null;
+    }>;
 }

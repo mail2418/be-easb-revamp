@@ -370,52 +370,37 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
             }
 
-            // Check that status is 1 (Input Informasi Usulan Jalan)
+            // Check that status is 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
             if (usulanJalan.idUsulanJalanStatus !== 2) {
-                throw new BadRequestException(`Usulan Jalan must be in status 2 (Input Informasi Usulan Jalan) to verify index`);
+                throw new BadRequestException(`Usulan Jalan must be in status 2 (Input Ruang Lingkup dan Spesifikasi Jalan) to verify index`);
             }
-
-            // Use idAsbJenis from DTO if provided, otherwise use existing one
-            const idAsbJenisToUse = dto.idAsbJenis ?? usulanJalan.idAsbJenis;
 
             // Validate idJalanJenisPemeliharaan based on idAsbJenis
-            if (idAsbJenisToUse === 2) {
+            let idJalanJenisPemeliharaan: number | null = null;
+            if (dto.idAsbJenis === 1) {
+                // If idAsbJenis is 1 (Pembangunan), idJalanJenisPemeliharaan must be null
+                idJalanJenisPemeliharaan = null;
+            } else if (dto.idAsbJenis === 2) {
                 // If idAsbJenis is 2 (Pemeliharaan), idJalanJenisPemeliharaan is required
-                if (dto.idJalanJenisPemeliharaan === undefined || dto.idJalanJenisPemeliharaan === null) {
+                if (!dto.idJalanJenisPemeliharaan) {
                     throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)');
                 }
-            } else if (idAsbJenisToUse === 1) {
-                // If idAsbJenis is 1 (Pembangunan), idJalanJenisPemeliharaan must be null
-                if (dto.idJalanJenisPemeliharaan !== undefined && dto.idJalanJenisPemeliharaan !== null) {
-                    throw new BadRequestException('idJalanJenisPemeliharaan must be null when idAsbJenis is 1 (Pembangunan)');
-                }
+                idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
             }
 
-            // Prepare update data
-            const updateData: any = {
+            // Update with all fields from DTO (same as createIndex)
+            const updated = await this.repository.update(dto.idUsulanJalan, {
+                idAsbJenis: dto.idAsbJenis,
+                idJalanJenisPemeliharaan,
+                idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan ?? null,
+                idKabkota: dto.idKabkota,
+                idKecamatan: dto.idKecamatan,
+                idKelurahan: dto.idKelurahan,
+                tahunAnggaran: dto.tahunAnggaran,
+                namaUsulan: dto.namaUsulan,
+                alamat: dto.alamat ?? null,
                 idUsulanJalanStatus: 5, // Verifikasi Informasi Usulan Jalan
-            };
-
-            // Update idAsbJenis if provided
-            if (dto.idAsbJenis !== undefined) {
-                updateData.idAsbJenis = dto.idAsbJenis;
-            }
-
-            // Update idJalanJenisPerkerasan if provided
-            if (dto.idJalanJenisPerkerasan !== undefined) {
-                updateData.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan;
-            }
-
-            // Update idJalanJenisPemeliharaan if provided
-            if (dto.idJalanJenisPemeliharaan !== undefined) {
-                updateData.idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
-            } else if (dto.idAsbJenis === 1) {
-                // If idAsbJenis is changed to 1 (Pembangunan), set idJalanJenisPemeliharaan to null
-                updateData.idJalanJenisPemeliharaan = null;
-            }
-
-            // Update status to 5 (Verifikasi Informasi Usulan Jalan)
-            const updated = await this.repository.update(dto.idUsulanJalan, updateData);
+            });
 
             return {
                 id: updated.id,

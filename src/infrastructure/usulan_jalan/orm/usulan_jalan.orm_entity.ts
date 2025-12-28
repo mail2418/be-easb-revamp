@@ -3,6 +3,7 @@ import {
     PrimaryGeneratedColumn,
     Column,
     ManyToOne,
+    OneToMany,
     JoinColumn,
     CreateDateColumn,
     UpdateDateColumn,
@@ -18,6 +19,8 @@ import { KabKotaOrmEntity } from '../../kabkota/orm/kabkota.orm_entity';
 import { KecamatanOrmEntity } from '../../kecamatan/orm/kecamatan.orm_entity';
 import { KelurahanOrmEntity } from '../../kelurahan/orm/kelurahan.orm_entity';
 import { UserOrmEntity } from '../../user/orm/user.orm_entity';
+import { JalanSpesifikasiDesainOrmEntity } from '../../jalan_spesifikasi_desain/orm/jalan_spesifikasi_desain.orm_entity';
+import { JalanSpesifikasiDesainReviewOrmEntity } from '../../jalan_spesifikasi_desain_review/orm/jalan_spesifikasi_desain_review.orm_entity';
 
 @Entity('usulan_jalan')
 export class UsulanJalanOrmEntity {
@@ -185,4 +188,11 @@ export class UsulanJalanOrmEntity {
     @ManyToOne(() => UserOrmEntity, { nullable: true, onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_reject_verif' })
     rejectVerifikator!: UserOrmEntity | null;
+
+    // OneToMany Relations
+    @OneToMany(() => JalanSpesifikasiDesainOrmEntity, (entity) => entity.usulanJalan)
+    spesifikasiDesain!: JalanSpesifikasiDesainOrmEntity[];
+
+    @OneToMany(() => JalanSpesifikasiDesainReviewOrmEntity, (entity) => entity.usulanJalan)
+    spesifikasiDesainReview!: JalanSpesifikasiDesainReviewOrmEntity[];
 }
