@@ -451,20 +451,18 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 spesifikasiMap.set(key, spec.id);
             }
 
-            // Use idJalanJenisPerkerasan from DTO if provided, otherwise use existing one
-            const idJalanJenisPerkerasanToUse = dto.idJalanJenisPerkerasan ?? usulanJalan.idJalanJenisPerkerasan;
-            
             // Validate that idJalanJenisPerkerasan is set (required for generating uraian)
-            if (!idJalanJenisPerkerasanToUse) {
-                throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in storeIndex or provided in request');
+            // idJalanJenisPerkerasan should already be set in verifyIndex
+            if (!usulanJalan.idJalanJenisPerkerasan) {
+                throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in verifyIndex first');
             }
 
             // Get jenis perkerasan from existing relation for generating uraian
-            // If idJalanJenisPerkerasan is different in DTO, we'll update it but still use existing jenis for generation
             if (!usulanJalan.jalanJenisPerkerasan) {
                 throw new NotFoundException('JalanJenisPerkerasan relation not found');
             }
             const jenisPerkerasan = usulanJalan.jalanJenisPerkerasan.jenis;
+            const idJalanJenisPerkerasanToUse = usulanJalan.idJalanJenisPerkerasan;
 
             // Step 3: Create JalanSpesifikasiDesainReview records for each ruang lingkup and hspk
             // Collect all tinggi_review values for MIN/MAX calculation and calculate total harga
@@ -530,10 +528,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
             if (dto.lebar !== undefined) {
                 updateData.lebar = dto.lebar;
-            }
-
-            if (dto.idJalanJenisPerkerasan !== undefined) {
-                updateData.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan;
             }
 
             const updated = await this.repository.update(dto.idUsulanJalan, updateData);

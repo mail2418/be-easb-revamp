@@ -13,11 +13,6 @@ export class VerifyInformasiUsulanJalanDto {
     @Transform(({ value }) => value ? parseFloat(value) : undefined)
     lebar?: number;
 
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
-    idJalanJenisPerkerasan?: number;
-
     @IsArray()
     @ArrayMinSize(1)
     @ValidateNested({ each: true })

@@ -340,14 +340,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"lebar\": 5.5,\n    \"idJalanJenisPerkerasan\": 1,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi_review\": 100,\n                    \"tinggi_review\": 150\n                }\n            ]\n        }\n    ]\n}"
+							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"lebar\": 5.5,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi_review\": 100,\n                    \"tinggi_review\": 150\n                }\n            ]\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/verify-informasi",
 							"host": ["{{base_url}}"],
 							"path": ["{{api_prefix}}", "usulan-jalan", "verify-informasi"]
 						},
-						"description": "Verify informasi usulan jalan by ADBANG verifikator. This changes status from 5 (Verifikasi Informasi Usulan Jalan) to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan). Volume_review and harga_spec_review will be calculated automatically. lebar and idJalanJenisPerkerasan are optional - if not provided, will use existing values. Note: idRekeningReview cannot be updated here, only BPKAD can update rekening review in verifyBpkad endpoint. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
+						"description": "Verify informasi usulan jalan by ADBANG verifikator. This changes status from 5 (Verifikasi Informasi Usulan Jalan) to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan). Volume_review and harga_spec_review will be calculated automatically. lebar is optional - if not provided, will use existing value. Note: idJalanJenisPerkerasan should already be set in verifyIndex and cannot be changed here. idRekeningReview cannot be updated here, only BPKAD can update rekening review in verifyBpkad endpoint. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
 					},
 					"response": []
 				},
