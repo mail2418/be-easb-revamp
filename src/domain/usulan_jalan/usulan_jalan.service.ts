@@ -10,6 +10,7 @@ import { GetUsulanJalanAnalyticsFilterDto } from 'src/application/usulan_jalan/d
 import { UsulanJalanAnalyticsDto } from 'src/application/usulan_jalan/dto/usulan_jalan_analytics.dto';
 import { CreateUsulanJalanStoreIndexDto } from 'src/application/usulan_jalan/dto/create_usulan_jalan_store_index.dto';
 import { UpdateUsulanJalanStoreIndexDto } from 'src/application/usulan_jalan/dto/update_usulan_jalan_store_index.dto';
+import { VerifyIndexUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/verify_index_usulan_jalan.dto';
 
 export abstract class UsulanJalanService {
     // Query methods
@@ -26,7 +27,7 @@ export abstract class UsulanJalanService {
     abstract deleteUsulanJalan(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }>;
 
     // Verification operations (SUPERADMIN, ADMIN, VERIFIKATOR)
-    abstract verifyIndex(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verifyIndex(dto: VerifyIndexUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyInformasi(dto: VerifyInformasiUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
 
     // Final approval/rejection by specific verificators

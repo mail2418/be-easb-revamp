@@ -430,7 +430,7 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.verifyIndex(dto.idUsulanJalan, user.userId.toString(), user.idOpd, user.roles);
+            const result = await this.usulanJalanService.verifyIndex(dto, user.userId.toString(), user.idOpd, user.roles);
 
             return {
                 status: 'success',

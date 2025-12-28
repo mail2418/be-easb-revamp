@@ -18,6 +18,7 @@ import { GetUsulanJalanAnalyticsFilterDto } from './dto/get_usulan_jalan_analyti
 import { UsulanJalanAnalyticsDto } from './dto/usulan_jalan_analytics.dto';
 import { CreateUsulanJalanStoreIndexDto } from './dto/create_usulan_jalan_store_index.dto';
 import { UpdateUsulanJalanStoreIndexDto } from './dto/update_usulan_jalan_store_index.dto';
+import { VerifyIndexUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_index_usulan_jalan.dto';
 import { CreateJalanSpesifikasiDesainDto } from '../../presentation/jalan_spesifikasi_desain/dto/create_jalan_spesifikasi_desain.dto';
 import { CreateJalanSpesifikasiDesainReviewDto } from '../../presentation/jalan_spesifikasi_desain_review/dto/create_jalan_spesifikasi_desain_review.dto';
 import { GetJalanSpesifikasiDesainDto } from '../../presentation/jalan_spesifikasi_desain/dto/get_jalan_spesifikasi_desain.dto';
@@ -346,7 +347,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
     }
 
-    async verifyIndex(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyIndex(dto: VerifyIndexUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // Check verificator type - only ADBANG
             if (userRoles.includes(Role.VERIFIKATOR)) {
@@ -361,9 +362,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             }
 
             // Check existence
-            const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+            const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
             if (!usulanJalan) {
-                throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+                throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
             }
 
             // Check that status is 1 (Input Informasi Usulan Jalan)
@@ -371,10 +372,47 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new BadRequestException(`Usulan Jalan must be in status 1 (Input Informasi Usulan Jalan) to verify index`);
             }
 
-            // Update status to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan) - indicating index is verified and ready for storeInformasi
-            const updated = await this.repository.update(id, {
-                idUsulanJalanStatus: 6,
-            });
+            // Use idAsbJenis from DTO if provided, otherwise use existing one
+            const idAsbJenisToUse = dto.idAsbJenis ?? usulanJalan.idAsbJenis;
+
+            // Validate idJalanJenisPemeliharaan based on idAsbJenis
+            if (idAsbJenisToUse === 2) {
+                // If idAsbJenis is 2 (Pemeliharaan), idJalanJenisPemeliharaan is required
+                if (dto.idJalanJenisPemeliharaan === undefined || dto.idJalanJenisPemeliharaan === null) {
+                    throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)');
+                }
+            } else if (idAsbJenisToUse === 1) {
+                // If idAsbJenis is 1 (Pembangunan), idJalanJenisPemeliharaan must be null
+                if (dto.idJalanJenisPemeliharaan !== undefined && dto.idJalanJenisPemeliharaan !== null) {
+                    throw new BadRequestException('idJalanJenisPemeliharaan must be null when idAsbJenis is 1 (Pembangunan)');
+                }
+            }
+
+            // Prepare update data
+            const updateData: any = {
+                idUsulanJalanStatus: 5, // Verifikasi Informasi Usulan Jalan
+            };
+
+            // Update idAsbJenis if provided
+            if (dto.idAsbJenis !== undefined) {
+                updateData.idAsbJenis = dto.idAsbJenis;
+            }
+
+            // Update idJalanJenisPerkerasan if provided
+            if (dto.idJalanJenisPerkerasan !== undefined) {
+                updateData.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan;
+            }
+
+            // Update idJalanJenisPemeliharaan if provided
+            if (dto.idJalanJenisPemeliharaan !== undefined) {
+                updateData.idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
+            } else if (dto.idAsbJenis === 1) {
+                // If idAsbJenis is changed to 1 (Pembangunan), set idJalanJenisPemeliharaan to null
+                updateData.idJalanJenisPemeliharaan = null;
+            }
+
+            // Update status to 5 (Verifikasi Informasi Usulan Jalan)
+            const updated = await this.repository.update(dto.idUsulanJalan, updateData);
 
             return {
                 id: updated.id,
@@ -486,9 +524,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // deskripsiDesain is always empty string
             const deskripsiDesain = '';
 
-            // Step 5: Update Usulan Jalan with review information and status to 5 (Verifikasi Informasi Usulan Jalan)
+            // Step 5: Update Usulan Jalan with review information and status to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)
             const updateData: any = {
-                idUsulanJalanStatus: 5,
+                idUsulanJalanStatus: 6,
                 uraian,
                 spesifikasi,
                 satuan,
