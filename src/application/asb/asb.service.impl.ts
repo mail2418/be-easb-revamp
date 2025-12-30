@@ -363,13 +363,13 @@ export class AsbServiceImpl implements AsbService {
                 updateData.luasTanah = null;
             }
 
-            // Handle idOpd if provided (only for admin/superadmin)
-            if (dto.idOpd !== undefined && (isAdmin || isSuperAdmin)) {
+            // Handle idOpd if provided (only for admin/superadmin/verifikator)
+            if (dto.idOpd !== undefined && (isAdmin || isSuperAdmin || isVerifikator)) {
                 updateData.idOpd = dto.idOpd;
             }
 
-            // Handle idAsbStatus if provided (only for admin/superadmin)
-            if (dto.idAsbStatus !== undefined && (isAdmin || isSuperAdmin)) {
+            // Handle idAsbStatus if provided (only for admin/superadmin/verifikator)
+            if (dto.idAsbStatus !== undefined && (isAdmin || isSuperAdmin || isVerifikator)) {
                 updateData.idAsbStatus = dto.idAsbStatus;
             }
 
@@ -727,6 +727,7 @@ export class AsbServiceImpl implements AsbService {
 
     async verifyLantai(dto: VerifyLantaiDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
+            console.log("dto verify lantai", dto);
             // 1. Check permissions and existence
             if (userRoles.includes(Role.VERIFIKATOR)) {
                 const verificatorType = await this.verifikatorService.findByUserId(Number(userId));
@@ -749,19 +750,32 @@ export class AsbServiceImpl implements AsbService {
                 throw new Error("ASB is missing totalLantai");
             }
 
-            // 2. Always delete all AsbDetailReview records for this ASB (by id_asb) to ensure clean state
+            // 2. Validate input arrays length matches totalLantai
+            if (dto.verif_luas_lantai.length !== asb.totalLantai ||
+                dto.verif_id_asb_lantai.length !== asb.totalLantai ||
+                dto.verif_id_asb_fungsi_ruang.length !== asb.totalLantai) {
+                throw new BadRequestException(
+                    `Array lengths must match total_lantai (${asb.totalLantai}). ` +
+                    `Received: verif_luas_lantai=${dto.verif_luas_lantai.length}, ` +
+                    `verif_id_asb_lantai=${dto.verif_id_asb_lantai.length}, ` +
+                    `verif_id_asb_fungsi_ruang=${dto.verif_id_asb_fungsi_ruang.length}`
+                );
+            }
+
+            // 3. Always delete all AsbDetailReview records for this ASB (by id_asb) to ensure clean state
             await this.asbDetailReviewService.deleteByAsbId(dto.id_asb);
 
-            // 3. Get all AsbDetail records (without pagination)
+            // 4. Get all AsbDetail records (without pagination)
             const asbDetails = await this.asbDetailService.getByAsb({
                 idAsb: dto.id_asb
             });
 
-            // 4. Create AsbDetailReview records for each lantai
+            // 5. Create AsbDetailReview records for each lantai
             for (let i = 0; i < asb.totalLantai; i++) {
                 const createDetailReviewDto = new CreateAsbDetailReviewDto();
                 createDetailReviewDto.idAsb = dto.id_asb;
-                createDetailReviewDto.idAsbDetail = asbDetails.data[i].id; // Will be set by the service if needed
+                // Use optional chaining to safely access asbDetails.data[i] - it may not exist if store-lantai wasn't called yet
+                createDetailReviewDto.idAsbDetail = asbDetails.data[i]?.id ?? null; // Will be set by the service if needed
                 createDetailReviewDto.files = Files.REVIEW;
                 createDetailReviewDto.idAsbLantai = dto.verif_id_asb_lantai[i];
                 createDetailReviewDto.idAsbFungsiRuang = dto.verif_id_asb_fungsi_ruang[i];
