@@ -87,9 +87,12 @@ export class CalculateBobotBPSReviewUseCase {
 
                 const bobot = (bobotInputs[i] / 100) * bobotAcuan;
 
+                // Use optional chaining to safely access idAsbBipekStandard[i] - it may not exist if arrays are mismatched
+                const idAsbBipekStandardValue = idAsbBipekStandard[i] ?? null;
+                
                 const asbBipekReviewStandard = {
                     idAsb,
-                    idAsbBipekStandard: idAsbBipekStandard[i],
+                    idAsbBipekStandard: idAsbBipekStandardValue,
                     idAsbKomponenBangunanStd: komponenIds[i],
                     bobotInput: bobotInputs[i],
                     calculationMethod: calculationMethod,

@@ -93,9 +93,12 @@ export class CalculateBobotBPNSReviewUseCase {
 
                 const bobot = (bobotInputs[i] / 100) * bobotAcuan;
 
+                // Use optional chaining to safely access idAsbBipekNonStd[i] - it may not exist if arrays are mismatched
+                const idAsbBipekNonStdValue = idAsbBipekNonStd[i] ?? null;
+
                 const asbBipekNonStdReview = {
                     idAsb: idAsb,
-                    idAsbBipekNonStd: idAsbBipekNonStd[i],
+                    idAsbBipekNonStd: idAsbBipekNonStdValue,
                     idAsbKomponenBangunanNonstd: komponenIds[i],
                     bobotInput: bobotInputs[i],
                     calculationMethod: calculationMethod,

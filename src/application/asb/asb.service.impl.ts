@@ -861,6 +861,17 @@ export class AsbServiceImpl implements AsbService {
             }
             const asbBipekStandardIds = asbBipekStandard.data.map((asbBipekStandard) => asbBipekStandard.id);
 
+            // 4.1. Validate input arrays length matches AsbBipekStandard count
+            const expectedCount = asbBipekStandardIds.length;
+            if (dto.verif_komponen_std.length !== expectedCount ||
+                dto.verif_bobot_acuan_std.length !== expectedCount) {
+                throw new BadRequestException(
+                    `Array lengths must match AsbBipekStandard count (${expectedCount}). ` +
+                    `Received: verif_komponen_std=${dto.verif_komponen_std.length}, ` +
+                    `verif_bobot_acuan_std=${dto.verif_bobot_acuan_std.length}`
+                );
+            }
+
             // 5. Calculate BPS Review
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
@@ -932,6 +943,17 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
             const asbBipekNonstdIds = asbBipekNonstd.data.map((asbBipekNonstd) => asbBipekNonstd.id);
+
+            // 4.1. Validate input arrays length matches AsbBipekNonStd count
+            const expectedCount = asbBipekNonstdIds.length;
+            if (dto.verif_komponen_nonstd.length !== expectedCount ||
+                dto.verif_bobot_acuan_nonstd.length !== expectedCount) {
+                throw new BadRequestException(
+                    `Array lengths must match AsbBipekNonStd count (${expectedCount}). ` +
+                    `Received: verif_komponen_nonstd=${dto.verif_komponen_nonstd.length}, ` +
+                    `verif_bobot_acuan_nonstd=${dto.verif_bobot_acuan_nonstd.length}`
+                );
+            }
 
             // 5. Calculate BPNS Review
             if (!asb.totalLantai) {
