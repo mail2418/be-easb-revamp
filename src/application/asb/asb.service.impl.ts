@@ -373,6 +373,100 @@ export class AsbServiceImpl implements AsbService {
                 updateData.idAsbStatus = dto.idAsbStatus;
             }
 
+            // Check if Jakon prices need to be recalculated
+            // Condition: jumlahKontraktor >= 2 AND totalLantai >= 4
+            // AND either: previous values didn't meet condition (totalLantai <= 4 AND jumlahKontraktor <= 2) OR values were 0/null
+            const previousConditionMet = existingAsb.totalLantai !== null && 
+                                        existingAsb.jumlahKontraktor !== null &&
+                                        existingAsb.totalLantai <= 4 && 
+                                        existingAsb.jumlahKontraktor <= 2;
+            
+            const shouldRecalculateJakon = 
+                dto.jumlahKontraktor >= 2 && 
+                dto.totalLantai >= 4 &&
+                (previousConditionMet || 
+                 existingAsb.managementKonstruksi === 0 || 
+                 existingAsb.managementKonstruksi === null ||
+                 existingAsb.totalLantai === null || 
+                 existingAsb.jumlahKontraktor === null);
+
+            if (shouldRecalculateJakon) {
+                // Need totalBiayaPembangunan and classification data to calculate Jakon prices
+                if (existingAsb.totalBiayaPembangunan && 
+                    existingAsb.idAsbKlasifikasi && 
+                    existingAsb.idAsbTipeBangunan && 
+                    existingAsb.idAsbJenis) {
+                    
+                    // Calculate perencanaanKonstruksi
+                    const perencanaanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
+                        id_asb_klasifikasi: existingAsb.idAsbKlasifikasi,
+                        id_asb_tipe_bangunan: existingAsb.idAsbTipeBangunan,
+                        id_asb_jenis: existingAsb.idAsbJenis,
+                        type: AsbJakonType.PERENCANAAN,
+                        total_biaya_pembangunan: existingAsb.totalBiayaPembangunan
+                    });
+
+                    let nominalPerencanaanKonstruksi = 0;
+                    if (perencanaanKonstruksi === null) {
+                        nominalPerencanaanKonstruksi = 0;
+                    } else {
+                        nominalPerencanaanKonstruksi = perencanaanKonstruksi.standard;
+                    }
+
+                    // Calculate pengawasanKonstruksi
+                    const pengawasanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
+                        id_asb_klasifikasi: existingAsb.idAsbKlasifikasi,
+                        id_asb_tipe_bangunan: existingAsb.idAsbTipeBangunan,
+                        id_asb_jenis: existingAsb.idAsbJenis,
+                        type: AsbJakonType.PENGAWASAN,
+                        total_biaya_pembangunan: existingAsb.totalBiayaPembangunan
+                    });
+
+                    let nominalPengawasanKonstruksi = 0;
+                    if (pengawasanKonstruksi === null) {
+                        nominalPengawasanKonstruksi = 0;
+                    } else {
+                        nominalPengawasanKonstruksi = pengawasanKonstruksi.standard;
+                    }
+
+                    // Calculate managementKonstruksi using same logic as storeBpns and verifyBpns
+                    // Condition: if totalLantai <= 4 AND jumlahKontraktor <= 2, then 0
+                    // Otherwise, calculate using Jakon service
+                    const managementKonstruksi = (dto.totalLantai <= 4 && dto.jumlahKontraktor <= 2) 
+                        ? 0 
+                        : await this.asbJakonService.getJakonByPriceRange({
+                            id_asb_klasifikasi: existingAsb.idAsbKlasifikasi,
+                            id_asb_tipe_bangunan: existingAsb.idAsbTipeBangunan,
+                            id_asb_jenis: existingAsb.idAsbJenis,
+                            type: AsbJakonType.MANAGEMENT,
+                            total_biaya_pembangunan: existingAsb.totalBiayaPembangunan
+                        });
+
+                    let nominalManagementKonstruksi = 0;
+                    if (managementKonstruksi === null || managementKonstruksi === 0) {
+                        nominalManagementKonstruksi = 0;
+                    } else {
+                        nominalManagementKonstruksi = managementKonstruksi.standard;
+                    }
+
+                    // Recalculate rekapitulasiBiayaKonstruksi with all updated Jakon prices
+                    const rekapitulasiBiayaKonstruksi = 
+                        Number(existingAsb.totalBiayaPembangunan ?? 0) + 
+                        Number(nominalPerencanaanKonstruksi) + 
+                        Number(nominalPengawasanKonstruksi) + 
+                        Number(nominalManagementKonstruksi);
+
+                    const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
+
+                    // Add to update data
+                    updateData.perencanaanKonstruksi = nominalPerencanaanKonstruksi;
+                    updateData.pengawasanKonstruksi = nominalPengawasanKonstruksi;
+                    updateData.managementKonstruksi = nominalManagementKonstruksi;
+                    updateData.rekapitulasiBiayaKonstruksi = rekapitulasiBiayaKonstruksi;
+                    updateData.rekapitulasiBiayaKonstruksiRounded = rekapitulasiBiayaKonstruksiRounded;
+                }
+            }
+
             // Update ASB
             const updatedAsb = await this.repository.update(dto.id, updateData);
 
@@ -528,6 +622,15 @@ export class AsbServiceImpl implements AsbService {
             // 2. Always delete all AsbBipekStandard records for this ASB (by id_asb) to ensure clean state
             await this.asbBipekStandardService.deleteByAsbId(dto.id_asb);
 
+            // 2.1. Validate input arrays length match
+            if (dto.komponen_std.length !== dto.bobot_std.length) {
+                throw new BadRequestException(
+                    `Array lengths must match. ` +
+                    `Received: komponen_std=${dto.komponen_std.length}, ` +
+                    `bobot_std=${dto.bobot_std.length}`
+                );
+            }
+
             // 3. Calculate BPS
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
@@ -575,6 +678,15 @@ export class AsbServiceImpl implements AsbService {
 
             // 2. Always delete all AsbBipekNonStd records for this ASB (by id_asb) to ensure clean state
             await this.asbBipekNonStdService.deleteByAsbId(dto.id_asb);
+
+            // 2.1. Validate ifnput arrays length match
+            if (dto.komponen_nonstd.length !== dto.bobot_nonstd.length) {
+                throw new BadRequestException(
+                    `Array lengths must match. ` +
+                    `Received: komponen_nonstd=${dto.komponen_nonstd.length}, ` +
+                    `bobot_nonstd=${dto.bobot_nonstd.length}`
+                );
+            }
 
             // Ensure optional fields are present or handle error
             if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
