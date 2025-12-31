@@ -394,13 +394,19 @@ export class AsbServiceImpl implements AsbService {
                 // Need totalBiayaPembangunan and classification data to calculate Jakon prices
                 if (existingAsb.totalBiayaPembangunan && 
                     existingAsb.idAsbKlasifikasi && 
-                    existingAsb.idAsbTipeBangunan && 
                     existingAsb.idAsbJenis) {
+                    
+                    // Use idAsbTipeBangunan from dto if provided, otherwise use existing
+                    const idAsbTipeBangunan = dto.idAsbTipeBangunan ?? existingAsb.idAsbTipeBangunan;
+                    
+                    if (!idAsbTipeBangunan) {
+                        throw new BadRequestException('idAsbTipeBangunan is required for Jakon calculation');
+                    }
                     
                     // Calculate perencanaanKonstruksi
                     const perencanaanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
                         id_asb_klasifikasi: existingAsb.idAsbKlasifikasi,
-                        id_asb_tipe_bangunan: existingAsb.idAsbTipeBangunan,
+                        id_asb_tipe_bangunan: idAsbTipeBangunan,
                         id_asb_jenis: existingAsb.idAsbJenis,
                         type: AsbJakonType.PERENCANAAN,
                         total_biaya_pembangunan: existingAsb.totalBiayaPembangunan
@@ -416,7 +422,7 @@ export class AsbServiceImpl implements AsbService {
                     // Calculate pengawasanKonstruksi
                     const pengawasanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
                         id_asb_klasifikasi: existingAsb.idAsbKlasifikasi,
-                        id_asb_tipe_bangunan: existingAsb.idAsbTipeBangunan,
+                        id_asb_tipe_bangunan: idAsbTipeBangunan,
                         id_asb_jenis: existingAsb.idAsbJenis,
                         type: AsbJakonType.PENGAWASAN,
                         total_biaya_pembangunan: existingAsb.totalBiayaPembangunan
@@ -436,7 +442,7 @@ export class AsbServiceImpl implements AsbService {
                         ? 0 
                         : await this.asbJakonService.getJakonByPriceRange({
                             id_asb_klasifikasi: existingAsb.idAsbKlasifikasi,
-                            id_asb_tipe_bangunan: existingAsb.idAsbTipeBangunan,
+                            id_asb_tipe_bangunan: idAsbTipeBangunan,
                             id_asb_jenis: existingAsb.idAsbJenis,
                             type: AsbJakonType.MANAGEMENT,
                             total_biaya_pembangunan: existingAsb.totalBiayaPembangunan
@@ -858,6 +864,13 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
+            // 2. Validate status flow: must be 6 (SUBMITTED) before verifyLantai
+            if (asb.idAsbStatus !== 6) {
+                throw new BadRequestException(
+                    `ASB must be in status 6 (SUBMITTED) before verifying Lantai. Current status: ${asb.idAsbStatus}`
+                );
+            }
+
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
             }
@@ -960,10 +973,26 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 3. Always delete all AsbBipekStandardReview records for this ASB (by id_asb) to ensure clean state
+            // 2. Validate status flow: must be 9 (VERIFY LANTAI) before verifyBps
+            if (asb.idAsbStatus !== 9) {
+                throw new BadRequestException(
+                    `ASB must be in status 9 (VERIFY LANTAI) before verifying BPS. Current status: ${asb.idAsbStatus}`
+                );
+            }
+
+            // 3. Validate input arrays length match
+            if (dto.verif_komponen_std.length !== dto.verif_bobot_acuan_std.length) {
+                throw new BadRequestException(
+                    `Array lengths must match. ` +
+                    `Received: verif_komponen_std=${dto.verif_komponen_std.length}, ` +
+                    `verif_bobot_acuan_std=${dto.verif_bobot_acuan_std.length}`
+                );
+            }
+
+            // 4. Always delete all AsbBipekStandardReview records for this ASB (by id_asb) to ensure clean state
             await this.asbBipekStandardReviewService.deleteByAsbId(dto.id_asb);
 
-            // 4. Calculate AsbBipekStandard (get all without pagination)
+            // 5. Get AsbBipekStandard (get all without pagination) for reference IDs
             const getAsbBipekStandardByAsbDto = {
                 idAsb: dto.id_asb
             };
@@ -973,20 +1002,13 @@ export class AsbServiceImpl implements AsbService {
             }
             const asbBipekStandardIds = asbBipekStandard.data.map((asbBipekStandard) => asbBipekStandard.id);
 
-            // 4.1. Validate input arrays length matches AsbBipekStandard count
-            const expectedCount = asbBipekStandardIds.length;
-            if (dto.verif_komponen_std.length !== expectedCount ||
-                dto.verif_bobot_acuan_std.length !== expectedCount) {
-                throw new BadRequestException(
-                    `Array lengths must match AsbBipekStandard count (${expectedCount}). ` +
-                    `Received: verif_komponen_std=${dto.verif_komponen_std.length}, ` +
-                    `verif_bobot_acuan_std=${dto.verif_bobot_acuan_std.length}`
-                );
-            }
-
-            // 5. Calculate BPS Review
+            // 6. Calculate BPS Review
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
+            }
+
+            if (!asb.shst) {
+                throw new BadRequestException('SHST must be calculated first. Please verify Lantai.');
             }
 
             const [BPSReview, jumlahBobot] = await this.calculateBobotBPSReviewUseCase.execute(
@@ -1001,10 +1023,23 @@ export class AsbServiceImpl implements AsbService {
                 asb.luasTotalBangunan || 0,
             );
 
-            // 5. Calculate Total Biaya Pembangunan
+            // 7. Calculate Total Biaya Pembangunan using latest nominalBpns (from ASB, could be from review or original)
             const totalBiayaPembangunan = Number(BPSReview) + Number(asb.nominalBpns ?? 0);
 
-            // 6. Update ASB status to 10
+            // 8. Re-read ASB data before update to prevent race condition
+            const asbBeforeUpdate = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asbBeforeUpdate) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            // 9. Re-validate status before update (race condition protection)
+            if (asbBeforeUpdate.idAsbStatus !== 9) {
+                throw new BadRequestException(
+                    `ASB status has changed. Expected status 9, but got ${asbBeforeUpdate.idAsbStatus}. Please refresh and try again.`
+                );
+            }
+
+            // 10. Update ASB status to 10
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 10,
                 nominalBps: BPSReview,
@@ -1042,10 +1077,26 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 3. Always delete all AsbBipekNonStdReview records for this ASB (by id_asb) to ensure clean state
+            // 2. Validate status flow: must be 10 (VERIFY BPS) before verifyBpns
+            if (asb.idAsbStatus !== 10) {
+                throw new BadRequestException(
+                    `ASB must be in status 10 (VERIFY BPS) before verifying BPNS. Current status: ${asb.idAsbStatus}`
+                );
+            }
+
+            // 3. Validate input arrays length match
+            if (dto.verif_komponen_nonstd.length !== dto.verif_bobot_acuan_nonstd.length) {
+                throw new BadRequestException(
+                    `Array lengths must match. ` +
+                    `Received: verif_komponen_nonstd=${dto.verif_komponen_nonstd.length}, ` +
+                    `verif_bobot_acuan_nonstd=${dto.verif_bobot_acuan_nonstd.length}`
+                );
+            }
+
+            // 4. Always delete all AsbBipekNonStdReview records for this ASB (by id_asb) to ensure clean state
             await this.asbBipekNonStdReviewService.deleteByAsbId(dto.id_asb);
 
-            // 4. Get AsbBipekNonstd (get all without pagination)
+            // 5. Get AsbBipekNonstd (get all without pagination) for reference IDs
             const getAsbBipekNonstdByAsbDto = {
                 idAsb: dto.id_asb
             };
@@ -1056,20 +1107,13 @@ export class AsbServiceImpl implements AsbService {
             }
             const asbBipekNonstdIds = asbBipekNonstd.data.map((asbBipekNonstd) => asbBipekNonstd.id);
 
-            // 4.1. Validate input arrays length matches AsbBipekNonStd count
-            const expectedCount = asbBipekNonstdIds.length;
-            if (dto.verif_komponen_nonstd.length !== expectedCount ||
-                dto.verif_bobot_acuan_nonstd.length !== expectedCount) {
-                throw new BadRequestException(
-                    `Array lengths must match AsbBipekNonStd count (${expectedCount}). ` +
-                    `Received: verif_komponen_nonstd=${dto.verif_komponen_nonstd.length}, ` +
-                    `verif_bobot_acuan_nonstd=${dto.verif_bobot_acuan_nonstd.length}`
-                );
-            }
-
-            // 5. Calculate BPNS Review
+            // 6. Calculate BPNS Review
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
+            }
+
+            if (!asb.shst) {
+                throw new BadRequestException('SHST must be calculated first. Please verify Lantai.');
             }
 
             const [BPNSReview, jumlahBobot] = await this.calculateBobotBPNSReviewUseCase.execute(
@@ -1085,6 +1129,7 @@ export class AsbServiceImpl implements AsbService {
                 asb.bobotTotalBpns || 0
             );
 
+            // 7. Calculate Total Biaya Pembangunan using latest nominalBps (from ASB, could be from review or original)
             const totalBiayaPembangunan = Number(BPNSReview) + Number(asb.nominalBps || 0);
 
             // Set Jakon prices
@@ -1143,7 +1188,20 @@ export class AsbServiceImpl implements AsbService {
 
             const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
 
-            // 6. Update ASB status to 11
+            // 8. Re-read ASB data before update to prevent race condition
+            const asbBeforeUpdate = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asbBeforeUpdate) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            // 9. Re-validate status before update (race condition protection)
+            if (asbBeforeUpdate.idAsbStatus !== 10) {
+                throw new BadRequestException(
+                    `ASB status has changed. Expected status 10, but got ${asbBeforeUpdate.idAsbStatus}. Please refresh and try again.`
+                );
+            }
+
+            // 10. Update ASB status to 11
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 11,
                 nominalBpns: BPNSReview,
@@ -1185,6 +1243,13 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
+            // 2. Validate status flow: must be 11 (VERIFY BPNS) before verifyRekening
+            if (asb.idAsbStatus !== 11) {
+                throw new BadRequestException(
+                    `ASB must be in status 11 (VERIFY BPNS) before verifying Rekening. Current status: ${asb.idAsbStatus}`
+                );
+            }
+
             // 2. Update ASB idRekeningReview and status to 12
             console.log(dto.id_rekening_review);
             const updatedAsb = await this.repository.update(dto.id_asb, {
@@ -1224,6 +1289,13 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
+            // 2. Validate status flow: must be 12 (VERIFY REKENING) before verifyPekerjaan
+            if (asb.idAsbStatus !== 12) {
+                throw new BadRequestException(
+                    `ASB must be in status 12 (VERIFY REKENING) before verifying Pekerjaan. Current status: ${asb.idAsbStatus}`
+                );
+            }
+
             // 2. Update ASB data pekerjaan and status to 13
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 perencanaanKonstruksi: dto.perencanaan_konstruksi,
@@ -1245,34 +1317,48 @@ export class AsbServiceImpl implements AsbService {
 
     async verify(id_asb: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
-            // 1. Update Asb Verification
-            const asbBeforeVerify = await this.findById(id_asb, userIdOpd, userRoles);
-            if (!asbBeforeVerify) {
-                throw new NotFoundException(`ASB with id ${id_asb} not found`);
-            }
-
-             // 1. Check permissions and existence
-             if (userRoles.includes(Role.VERIFIKATOR)) {
+            // 1. Check permissions and existence
+            if (userRoles.includes(Role.VERIFIKATOR)) {
                 const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
                 if (!verificatorType) {
                     throw new NotFoundException(`User not sync with verifikator`);
                 }
 
                 if (verificatorType === JenisVerifikator.ADBANG || verificatorType === JenisVerifikator.BPKAD) {
-                    throw new ForbiddenException(`User not allowed to verify Pekerjaan ASB`);
+                    throw new ForbiddenException(`User not allowed to verify ASB`);
                 }
             }
 
-            const asb = await this.findById(id_asb, userIdOpd, userRoles)
+            // 2. Read ASB data (with potential race condition protection by reading fresh data)
+            const asb = await this.findById(id_asb, userIdOpd, userRoles);
 
             if (!asb) {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
 
+            // 3. Validate status flow: must be 13 (VERIFY PEKERJAAN) before final verify
+            if (asb.idAsbStatus !== 13) {
+                throw new BadRequestException(
+                    `ASB must be in status 13 (VERIFY PEKERJAAN) before final approval. Current status: ${asb.idAsbStatus}`
+                );
+            }
 
-            // if not all verifikator verified
+            // 4. Validate all verifikators have verified
             if (!asb?.idVerifikatorAdpem || !asb?.idVerifikatorBPKAD) {
                 throw new ForbiddenException(`All verificators must verify ASB first`);
+            }
+
+            // 5. Re-read ASB data before update to prevent race condition
+            const asbBeforeUpdate = await this.findById(id_asb, userIdOpd, userRoles);
+            if (!asbBeforeUpdate) {
+                throw new NotFoundException(`ASB with id ${id_asb} not found`);
+            }
+
+            // 6. Re-validate status before update (race condition protection)
+            if (asbBeforeUpdate.idAsbStatus !== 13) {
+                throw new BadRequestException(
+                    `ASB status has changed. Expected status 13, but got ${asbBeforeUpdate.idAsbStatus}. Please refresh and try again.`
+                );
             }
 
             await this.repository.update(id_asb, {
