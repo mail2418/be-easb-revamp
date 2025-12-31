@@ -73,81 +73,85 @@ export class AsbRepositoryImpl implements AsbRepository {
 
     async findAll(dto: FindAllAsbDto, idOpd?: number): Promise<{ data: AsbWithRelationsDto[]; total: number }> {
         try {
-            const whereClause: any = {};
-
-            // OPD filter
-            if (idOpd) {
-            whereClause.idOpd = idOpd;
-            }
-
-            // Optional filters
-            if (dto.idAsbJenis) {
-            whereClause.idAsbJenis = dto.idAsbJenis;
-            }
-
-            if (dto.idAsbStatus) {
-            whereClause.idAsbStatus = dto.idAsbStatus;
-            }
-
-            if (dto.tahunAnggaran) {
-            whereClause.tahunAnggaran = dto.tahunAnggaran;
-            }
-
-            if (dto.namaAsb) {
-            whereClause.namaAsb = Raw(
-                (alias) => `LOWER(${alias}) LIKE :namaAsb`,
-                { namaAsb: `%${dto.namaAsb.toLowerCase()}%` },
-            );
-            }
-
-            if (dto.idTipeBangunan) {
-            whereClause.idTipeBangunan = dto.idTipeBangunan;
-            }
-
             // ✅ SAFE pagination
             const page = Math.max(dto.page ?? 1, 1);
             const amount = Math.max(dto.amount ?? 10, 1);
             const skip = (page - 1) * amount;
 
-            const [entities, total] = await this.repo.findAndCount({
-            where: whereClause,
-            relations: [
-                'kabkota',
-                'kecamatan',
-                'kelurahan',
-                'asbStatus',
-                'asbJenis',
-                'opd',
-                'asbTipeBangunan',
-                'asbKlasifikasi',
-                'rekening',
-                'rekeningReview',
-                'verifikatorAdpem',
-                'verifikatorBPKAD',
-                'verifikatorBappeda',
-                'rejectVerifikator',
-                'asbDetails',
-                'asbDetails.asbLantai',
-                'asbDetails.asbFungsiRuang',
-                'asbDetailReviews',
-                'asbDetailReviews.asbLantai',
-                'asbDetailReviews.asbFungsiRuang',
-                'asbBipekStandards',
-                'asbBipekStandards.asbKomponenBangunanStd',
-                'asbBipekStandardReviews',
-                'asbBipekStandardReviews.asbKomponenBangunanStd',
-                'asbBipekNonStds',
-                'asbBipekNonStds.asbKomponenBangunanNonstd',
-                'asbBipekNonStdReviews',
-                'asbBipekNonStdReviews.asbKomponenBangunanNonstd',
-            ],
-            skip,
-            take: amount,
-            order: { createdAt: 'DESC' },
-            });
+            // Build where conditions array (shared between main query and count query)
+            const whereConditions: string[] = [];
+            const whereParams: any = {};
+
+            if (idOpd) {
+                whereConditions.push('asb.idOpd = :idOpd');
+                whereParams.idOpd = idOpd;
+            }
+
+            if (dto.idAsbJenis) {
+                whereConditions.push('asb.idAsbJenis = :idAsbJenis');
+                whereParams.idAsbJenis = dto.idAsbJenis;
+            }
+
+            if (dto.idAsbStatus) {
+                whereConditions.push('asb.idAsbStatus = :idAsbStatus');
+                whereParams.idAsbStatus = dto.idAsbStatus;
+            }
+
+            if (dto.tahunAnggaran) {
+                whereConditions.push('asb.tahunAnggaran = :tahunAnggaran');
+                whereParams.tahunAnggaran = dto.tahunAnggaran;
+            }
+
+            if (dto.namaAsb) {
+                whereConditions.push('LOWER(asb.namaAsb) LIKE :namaAsb');
+                whereParams.namaAsb = `%${dto.namaAsb.toLowerCase()}%`;
+            }
+
+            if (dto.idTipeBangunan) {
+                whereConditions.push('asb.idAsbTipeBangunan = :idTipeBangunan');
+                whereParams.idTipeBangunan = dto.idTipeBangunan;
+            }
+
+            // Use QueryBuilder for optimized query with only necessary relations for list view
+            const qb = this.repo.createQueryBuilder('asb')
+                .leftJoinAndSelect('asb.kabkota', 'kabkota')
+                .leftJoinAndSelect('asb.kecamatan', 'kecamatan')
+                .leftJoinAndSelect('asb.kelurahan', 'kelurahan')
+                .leftJoinAndSelect('asb.asbStatus', 'asbStatus')
+                .leftJoinAndSelect('asb.asbJenis', 'asbJenis')
+                .leftJoinAndSelect('asb.opd', 'opd')
+                .leftJoinAndSelect('asb.asbTipeBangunan', 'asbTipeBangunan')
+                .leftJoinAndSelect('asb.asbKlasifikasi', 'asbKlasifikasi')
+                .leftJoinAndSelect('asb.rekening', 'rekening')
+                .leftJoinAndSelect('asb.rekeningReview', 'rekeningReview')
+                .leftJoinAndSelect('asb.verifikatorAdpem', 'verifikatorAdpem')
+                .leftJoinAndSelect('asb.verifikatorBPKAD', 'verifikatorBPKAD')
+                .leftJoinAndSelect('asb.verifikatorBappeda', 'verifikatorBappeda')
+                .leftJoinAndSelect('asb.rejectVerifikator', 'rejectVerifikator')
+                // Note: Excluding heavy relations (asbDetails, asbDetailReviews, asbBipekStandards, etc.)
+                // These are only needed for detail view, not list view
+                .orderBy('asb.createdAt', 'DESC')
+                .skip(skip)
+                .take(amount);
+
+            // Apply where conditions
+            if (whereConditions.length > 0) {
+                qb.where(whereConditions.join(' AND '), whereParams);
+            }
+
+            // Get total count (without relations for performance)
+            const totalQb = this.repo.createQueryBuilder('asb');
+            if (whereConditions.length > 0) {
+                totalQb.where(whereConditions.join(' AND '), whereParams);
+            }
+
+            const [entities, total] = await Promise.all([
+                qb.getMany(),
+                totalQb.getCount()
+            ]);
 
             const data = entities.map((entity) =>
-            plainToInstance(AsbWithRelationsDto, entity),
+                plainToInstance(AsbWithRelationsDto, entity),
             );
 
             return { data, total };
@@ -155,7 +159,7 @@ export class AsbRepositoryImpl implements AsbRepository {
             console.error('Error finding all ASBs:', error);
             throw error;
         }
-        }
+    }
 
 
     async getAllByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ date: string; count: number }[]> {
