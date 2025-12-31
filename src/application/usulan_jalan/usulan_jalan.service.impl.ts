@@ -216,6 +216,13 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found or access denied`);
             }
 
+            // Validate status flow: must be 1 (Input Informasi Usulan Jalan) before storeInformasi
+            if (existingUsulanJalan.idUsulanJalanStatus !== 1) {
+                throw new BadRequestException(
+                    `Usulan Jalan must be in status 1 (Input Informasi Usulan Jalan) before storing Informasi. Current status: ${existingUsulanJalan.idUsulanJalanStatus}`
+                );
+            }
+
             // Step 1: Always delete all JalanSpesifikasiDesain records for this Usulan Jalan to ensure clean state
             await this.jalanSpesifikasiDesainService.deleteByUsulanJalanId(dto.idUsulanJalan);
 
@@ -603,9 +610,29 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
             }
 
+            // Check that status is 7 (Verifikasi Adbang)
+            if (usulanJalan.idUsulanJalanStatus !== 7) {
+                throw new BadRequestException(
+                    `Usulan Jalan must be in status 7 (Verifikasi Adbang) before verifying BPKAD. Current status: ${usulanJalan.idUsulanJalanStatus}`
+                );
+            }
+
             // Check that ADBANG verified first
             if (!usulanJalan.idVerifikatorAdbang) {
                 throw new ForbiddenException(`ADBANG must verify first`);
+            }
+
+            // Re-read Usulan Jalan data before update to prevent race condition
+            const usulanJalanBeforeUpdate = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+            if (!usulanJalanBeforeUpdate) {
+                throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
+            }
+
+            // Re-validate status before update (race condition protection)
+            if (usulanJalanBeforeUpdate.idUsulanJalanStatus !== 7) {
+                throw new BadRequestException(
+                    `Usulan Jalan status has changed. Expected status 7, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
+                );
             }
 
             // Prepare update data
@@ -648,9 +675,29 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
             }
 
+            // Check that status is 8 (Verifikasi Bpkad)
+            if (usulanJalan.idUsulanJalanStatus !== 8) {
+                throw new BadRequestException(
+                    `Usulan Jalan must be in status 8 (Verifikasi Bpkad) before verifying BAPPEDA. Current status: ${usulanJalan.idUsulanJalanStatus}`
+                );
+            }
+
             // Check that ADBANG and BPKAD verified first
             if (!usulanJalan.idVerifikatorAdbang || !usulanJalan.idVerifikatorBpkad) {
                 throw new ForbiddenException(`ADBANG and BPKAD must verify first`);
+            }
+
+            // Re-read Usulan Jalan data before update to prevent race condition
+            const usulanJalanBeforeUpdate = await this.findById(id, userIdOpd, userRoles);
+            if (!usulanJalanBeforeUpdate) {
+                throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+            }
+
+            // Re-validate status before update (race condition protection)
+            if (usulanJalanBeforeUpdate.idUsulanJalanStatus !== 8) {
+                throw new BadRequestException(
+                    `Usulan Jalan status has changed. Expected status 8, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
+                );
             }
 
             // Update status to 3 (Memenuhi Syarat - Final approved) and set verificator
@@ -675,6 +722,27 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const usulanJalan = await this.findById(id, userIdOpd, userRoles);
             if (!usulanJalan) {
                 throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+            }
+
+            // Validate status flow: reject can only be done on status 5-8 (VERIFICATION)
+            const allowedStatuses = [5, 6, 7, 8];
+            if (!allowedStatuses.includes(usulanJalan.idUsulanJalanStatus)) {
+                throw new BadRequestException(
+                    `Usulan Jalan can only be rejected when in status 5-8 (VERIFICATION). Current status: ${usulanJalan.idUsulanJalanStatus}`
+                );
+            }
+
+            // Re-read Usulan Jalan data before update to prevent race condition
+            const usulanJalanBeforeUpdate = await this.findById(id, userIdOpd, userRoles);
+            if (!usulanJalanBeforeUpdate) {
+                throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+            }
+
+            // Re-validate status before update (race condition protection)
+            if (!allowedStatuses.includes(usulanJalanBeforeUpdate.idUsulanJalanStatus)) {
+                throw new BadRequestException(
+                    `Usulan Jalan status has changed. Expected status 5-8, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
+                );
             }
 
             // Update status to 4 (Tidak Memenuhi Syarat - Rejected)
