@@ -65,81 +65,95 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
 
     async findAll(dto: FindAllUsulanJalanDto, idOpd?: number): Promise<{ data: UsulanJalanWithRelationsDto[]; total: number }> {
         try {
-            const whereClause: any = {};
+            // ✅ SAFE pagination
+            const page = dto.page ? Math.max(dto.page, 1) : undefined;
+            const amount = dto.amount ? Math.max(dto.amount, 1) : undefined;
+            const skip = page && amount ? (page - 1) * amount : undefined;
 
-            // OPD filter
+            // Build where conditions array (shared between main query and count query)
+            const whereConditions: string[] = [];
+            const whereParams: any = {};
+
             if (idOpd) {
-                whereClause.idOpd = idOpd;
+                whereConditions.push('uj.idOpd = :idOpd');
+                whereParams.idOpd = idOpd;
             }
 
-            // Optional filters
             if (dto.idUsulanJalanStatus) {
-                whereClause.idUsulanJalanStatus = dto.idUsulanJalanStatus;
+                whereConditions.push('uj.idUsulanJalanStatus = :idUsulanJalanStatus');
+                whereParams.idUsulanJalanStatus = dto.idUsulanJalanStatus;
             }
 
             if (dto.tahunAnggaran) {
-                whereClause.tahunAnggaran = dto.tahunAnggaran;
+                whereConditions.push('uj.tahunAnggaran = :tahunAnggaran');
+                whereParams.tahunAnggaran = dto.tahunAnggaran;
             }
 
             if (dto.namaUsulanJalan) {
-                whereClause.namaUsulan = Raw(
-                    (alias) => `LOWER(${alias}) LIKE :namaUsulanJalan`,
-                    { namaUsulanJalan: `%${dto.namaUsulanJalan.toLowerCase()}%` },
-                );
+                whereConditions.push('LOWER(uj.namaUsulan) LIKE :namaUsulanJalan');
+                whereParams.namaUsulanJalan = `%${dto.namaUsulanJalan.toLowerCase()}%`;
             }
 
             if (dto.idKabkota) {
-                whereClause.idKabkota = dto.idKabkota;
+                whereConditions.push('uj.idKabkota = :idKabkota');
+                whereParams.idKabkota = dto.idKabkota;
             }
 
             if (dto.idKecamatan) {
-                whereClause.idKecamatan = dto.idKecamatan;
+                whereConditions.push('uj.idKecamatan = :idKecamatan');
+                whereParams.idKecamatan = dto.idKecamatan;
             }
 
             if (dto.idKelurahan) {
-                whereClause.idKelurahan = dto.idKelurahan;
+                whereConditions.push('uj.idKelurahan = :idKelurahan');
+                whereParams.idKelurahan = dto.idKelurahan;
             }
 
             if (dto.idJalanJenisPerkerasan) {
-                whereClause.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan;
+                whereConditions.push('uj.idJalanJenisPerkerasan = :idJalanJenisPerkerasan');
+                whereParams.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan;
             }
 
-            // Query with pagination
-            const queryOptions: any = {
-                where: whereClause,
-                relations: [
-                    'opd',
-                    'usulanJalanStatus',
-                    'asbJenis',
-                    'jalanJenisPemeliharaan',
-                    'jalanJenisPerkerasan',
-                    'rekening',
-                    'rekeningReview',
-                    'kabkota',
-                    'kecamatan',
-                    'kelurahan',
-                    'verifikatorAdbang',
-                    'verifikatorBpkad',
-                    'verifikatorBappeda',
-                    'rejectVerifikator',
-                    'spesifikasiDesain',
-                    'spesifikasiDesain.ruangLingkup',
-                    'spesifikasiDesain.hspk',
-                    'spesifikasiDesainReview',
-                    'spesifikasiDesainReview.spesifikasiDesain',
-                    'spesifikasiDesainReview.ruangLingkup',
-                    'spesifikasiDesainReview.hspk',
-                ],
-                order: { id: 'DESC' }
-            };
+            // Use QueryBuilder for optimized query with only necessary relations for list view
+            const qb = this.repo.createQueryBuilder('uj')
+                .leftJoinAndSelect('uj.opd', 'opd')
+                .leftJoinAndSelect('uj.usulanJalanStatus', 'usulanJalanStatus')
+                .leftJoinAndSelect('uj.asbJenis', 'asbJenis')
+                .leftJoinAndSelect('uj.jalanJenisPemeliharaan', 'jalanJenisPemeliharaan')
+                .leftJoinAndSelect('uj.jalanJenisPerkerasan', 'jalanJenisPerkerasan')
+                .leftJoinAndSelect('uj.rekening', 'rekening')
+                .leftJoinAndSelect('uj.rekeningReview', 'rekeningReview')
+                .leftJoinAndSelect('uj.kabkota', 'kabkota')
+                .leftJoinAndSelect('uj.kecamatan', 'kecamatan')
+                .leftJoinAndSelect('uj.kelurahan', 'kelurahan')
+                .leftJoinAndSelect('uj.verifikatorAdbang', 'verifikatorAdbang')
+                .leftJoinAndSelect('uj.verifikatorBpkad', 'verifikatorBpkad')
+                .leftJoinAndSelect('uj.verifikatorBappeda', 'verifikatorBappeda')
+                .leftJoinAndSelect('uj.rejectVerifikator', 'rejectVerifikator')
+                // Note: Excluding heavy relations (spesifikasiDesain, spesifikasiDesainReview, etc.)
+                // These are only needed for detail view, not list view
+                .orderBy('uj.id', 'DESC');
 
-            // Optional pagination
-            if (dto.page && dto.amount) {
-                queryOptions.skip = (dto.page - 1) * dto.amount;
-                queryOptions.take = dto.amount;
+            // Apply where conditions
+            if (whereConditions.length > 0) {
+                qb.where(whereConditions.join(' AND '), whereParams);
             }
 
-            const [data, total] = await this.repo.findAndCount(queryOptions);
+            // Apply pagination if provided
+            if (skip !== undefined && amount !== undefined) {
+                qb.skip(skip).take(amount);
+            }
+
+            // Get total count (without relations for performance)
+            const totalQb = this.repo.createQueryBuilder('uj');
+            if (whereConditions.length > 0) {
+                totalQb.where(whereConditions.join(' AND '), whereParams);
+            }
+
+            const [data, total] = await Promise.all([
+                qb.getMany(),
+                totalQb.getCount()
+            ]);
 
             return {
                 data: data.map(e => plainToInstance(UsulanJalanWithRelationsDto, e)),
