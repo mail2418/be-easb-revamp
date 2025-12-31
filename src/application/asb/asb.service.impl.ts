@@ -542,6 +542,13 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found or access denied`);
             }
 
+            // Validate status flow: must be 1 (STORE INDEX) before storeLantai
+            if (existingAsb.idAsbStatus !== 1) {
+                throw new BadRequestException(
+                    `ASB must be in status 1 (STORE INDEX) before storing Lantai. Current status: ${existingAsb.idAsbStatus}`
+                );
+            }
+
             // Step 1: Always delete all AsbDetail records for this ASB (by id_asb) to ensure clean state
             await this.asbDetailService.deleteByAsbId(dto.id_asb);
 
@@ -625,7 +632,14 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Always delete all AsbBipekStandard records for this ASB (by id_asb) to ensure clean state
+            // 2. Validate status flow: must be 5 (STORE REKENING) before storeBps
+            if (asb.idAsbStatus !== 5) {
+                throw new BadRequestException(
+                    `ASB must be in status 5 (STORE REKENING) before storing BPS. Current status: ${asb.idAsbStatus}`
+                );
+            }
+
+            // 3. Always delete all AsbBipekStandard records for this ASB (by id_asb) to ensure clean state
             await this.asbBipekStandardService.deleteByAsbId(dto.id_asb);
 
             // 2.1. Validate input arrays length match
@@ -682,7 +696,14 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Always delete all AsbBipekNonStd records for this ASB (by id_asb) to ensure clean state
+            // 2. Validate status flow: must be 3 (STORE BPS) before storeBpns
+            if (asb.idAsbStatus !== 3) {
+                throw new BadRequestException(
+                    `ASB must be in status 3 (STORE BPS) before storing BPNS. Current status: ${asb.idAsbStatus}`
+                );
+            }
+
+            // 3. Always delete all AsbBipekNonStd records for this ASB (by id_asb) to ensure clean state
             await this.asbBipekNonStdService.deleteByAsbId(dto.id_asb);
 
             // 2.1. Validate ifnput arrays length match
@@ -806,7 +827,14 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Update Rekening &  ASB status to 5
+            // 2. Validate status flow: must be 2 (STORE LANTAI) before storeRekening
+            if (asb.idAsbStatus !== 2) {
+                throw new BadRequestException(
+                    `ASB must be in status 2 (STORE LANTAI) before storing Rekening. Current status: ${asb.idAsbStatus}`
+                );
+            }
+
+            // 3. Update Rekening &  ASB status to 5
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 5,
                 idRekening: dto.id_rekening
@@ -829,7 +857,14 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Update ASB status to 5
+            // 2. Validate status flow: must be 4 (STORE BPNS) before storeVerif
+            if (asb.idAsbStatus !== 4) {
+                throw new BadRequestException(
+                    `ASB must be in status 4 (STORE BPNS) before submitting for verification. Current status: ${asb.idAsbStatus}`
+                );
+            }
+
+            // 3. Update ASB status to 6
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 6
             });
@@ -1243,14 +1278,14 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Validate status flow: must be 11 (VERIFY BPNS) before verifyRekening
-            if (asb.idAsbStatus !== 11) {
+            // 2. Validate status flow: must be 13 (VERIFY PEKERJAAN) before verifyRekening
+            if (asb.idAsbStatus !== 13) {
                 throw new BadRequestException(
-                    `ASB must be in status 11 (VERIFY BPNS) before verifying Rekening. Current status: ${asb.idAsbStatus}`
+                    `ASB must be in status 13 (VERIFY PEKERJAAN) before verifying Rekening. Current status: ${asb.idAsbStatus}`
                 );
             }
 
-            // 2. Update ASB idRekeningReview and status to 12
+            // 3. Update ASB idRekeningReview and status to 12
             console.log(dto.id_rekening_review);
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idRekeningReview: dto.id_rekening_review,
@@ -1289,10 +1324,10 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Validate status flow: must be 12 (VERIFY REKENING) before verifyPekerjaan
-            if (asb.idAsbStatus !== 12) {
+            // 2. Validate status flow: must be 11 (VERIFY BPNS) before verifyPekerjaan
+            if (asb.idAsbStatus !== 11) {
                 throw new BadRequestException(
-                    `ASB must be in status 12 (VERIFY REKENING) before verifying Pekerjaan. Current status: ${asb.idAsbStatus}`
+                    `ASB must be in status 11 (VERIFY BPNS) before verifying Pekerjaan. Current status: ${asb.idAsbStatus}`
                 );
             }
 
@@ -1336,10 +1371,10 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
 
-            // 3. Validate status flow: must be 13 (VERIFY PEKERJAAN) before final verify
-            if (asb.idAsbStatus !== 13) {
+            // 3. Validate status flow: must be 12 (VERIFY REKENING) before final verify
+            if (asb.idAsbStatus !== 12) {
                 throw new BadRequestException(
-                    `ASB must be in status 13 (VERIFY PEKERJAAN) before final approval. Current status: ${asb.idAsbStatus}`
+                    `ASB must be in status 12 (VERIFY REKENING) before final approval. Current status: ${asb.idAsbStatus}`
                 );
             }
 
@@ -1355,9 +1390,9 @@ export class AsbServiceImpl implements AsbService {
             }
 
             // 6. Re-validate status before update (race condition protection)
-            if (asbBeforeUpdate.idAsbStatus !== 13) {
+            if (asbBeforeUpdate.idAsbStatus !== 12) {
                 throw new BadRequestException(
-                    `ASB status has changed. Expected status 13, but got ${asbBeforeUpdate.idAsbStatus}. Please refresh and try again.`
+                    `ASB status has changed. Expected status 12, but got ${asbBeforeUpdate.idAsbStatus}. Please refresh and try again.`
                 );
             }
 
@@ -1457,7 +1492,28 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
 
-            // 2. Update ASB idAsbStatus to 7
+            // 2. Validate status flow: reject can only be done on status 6 (SUBMITTED) or status 9-13 (VERIFICATION)
+            const allowedStatuses = [6, 9, 10, 11, 12, 13];
+            if (!allowedStatuses.includes(asb.idAsbStatus)) {
+                throw new BadRequestException(
+                    `ASB can only be rejected when in status 6 (SUBMITTED) or status 9-13 (VERIFICATION). Current status: ${asb.idAsbStatus}`
+                );
+            }
+
+            // 3. Re-read ASB data before update to prevent race condition
+            const asbBeforeUpdate = await this.findById(id_asb, userIdOpd, userRoles);
+            if (!asbBeforeUpdate) {
+                throw new NotFoundException(`ASB with id ${id_asb} not found`);
+            }
+
+            // 4. Re-validate status before update (race condition protection)
+            if (!allowedStatuses.includes(asbBeforeUpdate.idAsbStatus)) {
+                throw new BadRequestException(
+                    `ASB status has changed. Expected status 6 or 9-13, but got ${asbBeforeUpdate.idAsbStatus}. Please refresh and try again.`
+                );
+            }
+
+            // 5. Update ASB idAsbStatus to 7
             const updatedAsb = await this.repository.update(id_asb, {
                 idAsbStatus: 7,
                 rejectReason: rejectReason,
