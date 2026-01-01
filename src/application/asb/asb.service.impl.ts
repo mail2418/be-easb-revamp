@@ -632,10 +632,10 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Validate status flow: must be 5 (STORE REKENING) before storeBps
-            if (asb.idAsbStatus !== 5) {
+            // 2. Validate status flow: must be 2 (STORE LANTAI) before storeBps
+            if (asb.idAsbStatus !== 2) {
                 throw new BadRequestException(
-                    `ASB must be in status 5 (STORE REKENING) before storing BPS. Current status: ${asb.idAsbStatus}`
+                    `ASB must be in status 2 (STORE LANTAI) before storing BPS. Current status: ${asb.idAsbStatus}`
                 );
             }
 
