@@ -55,7 +55,11 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
 
     async findById(id: number): Promise<AsbLantai | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id } });
+            const entity = await this.repo
+                .createQueryBuilder('asb_lantai')
+                .select(['asb_lantai.id', 'asb_lantai.lantai', 'asb_lantai.koef'])
+                .where('asb_lantai.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;

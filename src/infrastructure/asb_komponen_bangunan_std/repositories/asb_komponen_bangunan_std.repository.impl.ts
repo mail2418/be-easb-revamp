@@ -47,7 +47,11 @@ export class AsbKomponenBangunanStdRepositoryImpl implements AsbKomponenBangunan
 
     async findById(id: number): Promise<AsbKomponenBangunanStd | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id } });
+            const entity = await this.repo
+                .createQueryBuilder('asb_komponen_bangunan_std')
+                .select(['asb_komponen_bangunan_std.id', 'asb_komponen_bangunan_std.komponen'])
+                .where('asb_komponen_bangunan_std.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;

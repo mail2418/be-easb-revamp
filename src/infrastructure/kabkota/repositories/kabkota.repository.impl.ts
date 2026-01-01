@@ -45,7 +45,11 @@ export class KabKotaRepositoryImpl implements KabKotaRepository {
 
     async findById(id: number): Promise<KabKota | null> {
         try {
-            const kabkota = await this.repo.findOne({ where: { id } });
+            const kabkota = await this.repo
+                .createQueryBuilder('kabkota')
+                .select(['kabkota.id', 'kabkota.nama', 'kabkota.id_provinsi'])
+                .where('kabkota.id = :id', { id })
+                .getOne();
             return kabkota || null;
         } catch (error) {
             console.error('Error finding kabkota by id:', error);

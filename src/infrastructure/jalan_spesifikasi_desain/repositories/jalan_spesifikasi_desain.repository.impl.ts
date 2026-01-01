@@ -44,7 +44,20 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
 
     async findById(id: number): Promise<JalanSpesifikasiDesain | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id } });
+            const entity = await this.repo
+                .createQueryBuilder('jsd')
+                .select([
+                    'jsd.id',
+                    'jsd.id_usulan_jalan',
+                    'jsd.id_ruang_lingkup',
+                    'jsd.id_hspk',
+                    'jsd.volume',
+                    'jsd.spasi',
+                    'jsd.tinggi',
+                    'jsd.harga_spec'
+                ])
+                .where('jsd.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;
@@ -53,20 +66,30 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
 
     async findAll(dto: GetJalanSpesifikasiDesainDto): Promise<{ data: JalanSpesifikasiDesain[]; total: number; }> {
         try {
-            const findOptions: any = {
-                order: { id: "DESC" }
-            };
+            const queryBuilder = this.repo
+                .createQueryBuilder('jsd')
+                .select([
+                    'jsd.id',
+                    'jsd.id_usulan_jalan',
+                    'jsd.id_ruang_lingkup',
+                    'jsd.id_hspk',
+                    'jsd.volume',
+                    'jsd.spasi',
+                    'jsd.tinggi',
+                    'jsd.harga_spec'
+                ])
+                .orderBy('jsd.id', 'DESC');
 
             if (dto.id_usulan_jalan !== undefined) {
-                findOptions.where = { id_usulan_jalan: dto.id_usulan_jalan };
+                queryBuilder.where('jsd.id_usulan_jalan = :id_usulan_jalan', { id_usulan_jalan: dto.id_usulan_jalan });
             }
 
             if (dto.page !== undefined && dto.amount !== undefined) {
-                findOptions.skip = (dto.page - 1) * dto.amount;
-                findOptions.take = dto.amount;
+                const skip = (dto.page - 1) * dto.amount;
+                queryBuilder.skip(skip).take(dto.amount);
             }
 
-            const [data, total] = await this.repo.findAndCount(findOptions);
+            const [data, total] = await queryBuilder.getManyAndCount();
 
             return { data, total };
         } catch (error) {
@@ -84,18 +107,27 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
 
     async findByUsulanJalan(idUsulanJalan: number, page?: number, amount?: number): Promise<[JalanSpesifikasiDesain[], number]> {
         try {
-            const queryOptions: any = {
-                where: { id_usulan_jalan: idUsulanJalan },
-                order: { id: 'DESC' }
-            };
+            const queryBuilder = this.repo
+                .createQueryBuilder('jsd')
+                .select([
+                    'jsd.id',
+                    'jsd.id_usulan_jalan',
+                    'jsd.id_ruang_lingkup',
+                    'jsd.id_hspk',
+                    'jsd.volume',
+                    'jsd.spasi',
+                    'jsd.tinggi',
+                    'jsd.harga_spec'
+                ])
+                .where('jsd.id_usulan_jalan = :idUsulanJalan', { idUsulanJalan })
+                .orderBy('jsd.id', 'DESC');
 
-            // Only apply pagination if both page and amount are provided
             if (page !== undefined && amount !== undefined) {
-                queryOptions.skip = (page - 1) * amount;
-                queryOptions.take = amount;
+                const skip = (page - 1) * amount;
+                queryBuilder.skip(skip).take(amount);
             }
 
-            const [entities, total] = await this.repo.findAndCount(queryOptions);
+            const [entities, total] = await queryBuilder.getManyAndCount();
             return [entities, total];
         } catch (error) {
             throw error;

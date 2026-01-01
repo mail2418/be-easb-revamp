@@ -47,7 +47,18 @@ export class HspkRepositoryImpl implements HspkRepository {
 
     async findById(id: number): Promise<Hspk | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id } });
+            const entity = await this.repo
+                .createQueryBuilder('hspk')
+                .select([
+                    'hspk.id',
+                    'hspk.id_ruang_lingkup',
+                    'hspk.no_mata_pembayaran',
+                    'hspk.satuan',
+                    'hspk.harga_satuan',
+                    'hspk.uraian'
+                ])
+                .where('hspk.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;

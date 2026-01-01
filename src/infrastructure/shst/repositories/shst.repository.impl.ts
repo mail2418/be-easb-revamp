@@ -67,15 +67,21 @@ export class ShstRepositoryImpl extends ShstRepository {
 
     async findAll(dto: GetShstDto): Promise<{ data: Shst[]; total: number }> {
         try {
-            const queryBuilder = this.repo.createQueryBuilder("shst");
-
-            // Add relations
-            queryBuilder
+            const queryBuilder = this.repo
+                .createQueryBuilder("shst")
+                .select([
+                    'shst.id',
+                    'shst.tahun',
+                    'shst.id_asb_tipe_bangunan',
+                    'shst.id_asb_klasifikasi',
+                    'shst.id_kabkota',
+                    'shst.nominal',
+                    'shst.file'
+                ])
                 .leftJoinAndSelect("shst.asbTipeBangunan", "asbTipeBangunan")
                 .leftJoinAndSelect("shst.asbKlasifikasi", "asbKlasifikasi")
                 .leftJoinAndSelect("shst.kabkota", "kabkota");
 
-            // Apply filters
             if (dto.tahun) {
                 queryBuilder.andWhere("shst.tahun = :tahun", { tahun: dto.tahun });
             }
@@ -93,18 +99,14 @@ export class ShstRepositoryImpl extends ShstRepository {
                 queryBuilder.andWhere("shst.id_kabkota = :id_kabkota", { id_kabkota: dto.id_kabkota });
             }
 
-            // Pagination
             if (dto.page !== undefined && dto.amount !== undefined) {
                 const skip = (dto.page - 1) * dto.amount;
                 queryBuilder.skip(skip).take(dto.amount);
             }
 
-            // Order
             queryBuilder.orderBy("shst.id", "DESC");
-            console.log("queryBuilder:", queryBuilder.getSql());
 
             const [data, total] = await queryBuilder.getManyAndCount();
-            console.log("data:", data, total);
 
             return { data, total };
         } catch (error) {
@@ -114,10 +116,22 @@ export class ShstRepositoryImpl extends ShstRepository {
 
     async findById(id: number): Promise<Shst | null> {
         try {
-            const entity = await this.repo.findOne({ 
-                where: { id },
-                relations: ['asbTipeBangunan', 'asbKlasifikasi', 'kabkota']
-            });
+            const entity = await this.repo
+                .createQueryBuilder('shst')
+                .select([
+                    'shst.id',
+                    'shst.tahun',
+                    'shst.id_asb_tipe_bangunan',
+                    'shst.id_asb_klasifikasi',
+                    'shst.id_kabkota',
+                    'shst.nominal',
+                    'shst.file'
+                ])
+                .leftJoinAndSelect('shst.asbTipeBangunan', 'asb_tipe_bangunan')
+                .leftJoinAndSelect('shst.asbKlasifikasi', 'asb_klasifikasi')
+                .leftJoinAndSelect('shst.kabkota', 'kabkota')
+                .where('shst.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;
@@ -135,14 +149,20 @@ export class ShstRepositoryImpl extends ShstRepository {
 
     async getNominal(dto: GetShstNominalDto): Promise<number> {
         try {
-            const entity = await this.repo.findOne({
-                where: {
-                    id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan,
-                    id_asb_klasifikasi: dto.id_asb_klasifikasi,
+            const entity = await this.repo
+                .createQueryBuilder('shst')
+                .select(['shst.id', 'shst.nominal'])
+                .where('shst.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
+                    id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+                })
+                .andWhere('shst.id_asb_klasifikasi = :id_asb_klasifikasi', {
+                    id_asb_klasifikasi: dto.id_asb_klasifikasi
+                })
+                .andWhere('shst.id_kabkota = :id_kabkota', {
                     id_kabkota: dto.id_kabkota
-                },
-                order: { id: 'DESC' }
-            });
+                })
+                .orderBy('shst.id', 'DESC')
+                .getOne();
 
             if (!entity) {
                 throw new NotFoundException(`SHST record not found`);

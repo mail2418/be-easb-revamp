@@ -42,7 +42,11 @@ export class AsbFungsiRuangRepositoryImpl implements AsbFungsiRuangRepository {
 
     async findById(id: number): Promise<AsbFungsiRuang | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id } });
+            const entity = await this.repo
+                .createQueryBuilder('asb_fungsi_ruang')
+                .select(['asb_fungsi_ruang.id', 'asb_fungsi_ruang.nama_fungsi_ruang', 'asb_fungsi_ruang.koef'])
+                .where('asb_fungsi_ruang.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;

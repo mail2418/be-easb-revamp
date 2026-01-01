@@ -115,10 +115,31 @@ export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
 
     async getAsbDetailReviewWithRelation(idAsb: number): Promise<AsbDetailReviewWithRelationDto[]> {
         try {
-            const entities = await this.repository.find({
-                where: { idAsb },
-                relations: ['asbDetail', 'asbLantai', 'asbFungsiRuang']
-            });
+            const entities = await this.repository
+                .createQueryBuilder('asb_detail_review')
+                .select([
+                    'asb_detail_review.id',
+                    'asb_detail_review.id_asb_detail',
+                    'asb_detail_review.id_asb_lantai',
+                    'asb_detail_review.id_asb_fungsi_ruang',
+                    'asb_detail_review.asb_fungsi_ruang_koef',
+                    'asb_detail_review.lantai_koef',
+                    'asb_detail_review.luas'
+                ])
+                .leftJoin('asb_detail_review.asbLantai', 'asb_lantai')
+                .addSelect([
+                    'asb_lantai.id',
+                    'asb_lantai.lantai',
+                    'asb_lantai.koef'
+                ])
+                .leftJoin('asb_detail_review.asbFungsiRuang', 'asb_fungsi_ruang')
+                .addSelect([
+                    'asb_fungsi_ruang.id',
+                    'asb_fungsi_ruang.nama_fungsi_ruang',
+                    'asb_fungsi_ruang.koef'
+                ])
+                .where('asb_detail_review.id_asb = :idAsb', { idAsb })
+                .getMany();
 
             const domainEntities: AsbDetailReviewWithRelationDto[] = entities.map((e) => {
                 return {
@@ -130,18 +151,17 @@ export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
                     lantai_koef: e.lantaiKoef,
                     luas: e.luas,
                     asb_lantai: {
-                        id: e.asbLantai.id,
-                        lantai: e.asbLantai.lantai,
-                        koef: e.asbLantai.koef
+                        id: e.asbLantai?.id ?? null,
+                        lantai: e.asbLantai?.lantai ?? '',
+                        koef: e.asbLantai?.koef ?? 0
                     },
                     asb_fungsi_ruang: {
-                        id: e.asbFungsiRuang.id,
-                        fungsi_ruang: e.asbFungsiRuang.nama_fungsi_ruang,
-                        koef: e.asbFungsiRuang.koef
+                        id: e.asbFungsiRuang?.id ?? null,
+                        fungsi_ruang: e.asbFungsiRuang?.nama_fungsi_ruang ?? '',
+                        koef: e.asbFungsiRuang?.koef ?? 0
                     }
                 }
             });
-            console.log("domainEntities", domainEntities);
             return domainEntities;
         } catch (error) {
             throw error;

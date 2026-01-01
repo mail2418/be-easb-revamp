@@ -43,7 +43,11 @@ export class RekeningRepositoryImpl implements RekeningRepository {
 
     async findById(id: number): Promise<Rekening | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id } });
+            const entity = await this.repo
+                .createQueryBuilder('rekening')
+                .select(['rekening.id', 'rekening.rekening_kode', 'rekening.rekening'])
+                .where('rekening.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;
@@ -54,6 +58,7 @@ export class RekeningRepositoryImpl implements RekeningRepository {
         try {
             const entity = await this.repo
                 .createQueryBuilder('rekening')
+                .select(['rekening.id', 'rekening.rekening_kode', 'rekening.rekening'])
                 .where('rekening.rekening_kode LIKE :rekeningKode', { rekeningKode: `%${rekeningKode}%` })
                 .getOne();
             return entity || null;

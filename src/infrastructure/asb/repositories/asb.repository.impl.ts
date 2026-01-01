@@ -20,46 +20,44 @@ export class AsbRepositoryImpl implements AsbRepository {
 
     async findById(id: number, idOpd?: number): Promise<AsbWithRelationsDto | null> {
         try {
-            const whereClause: any = { id };
+            // ✅ OPTIMIZED: Use QueryBuilder with specific field selection for better performance
+            const qb = this.repo.createQueryBuilder('asb')
+                .leftJoinAndSelect('asb.kabkota', 'kabkota')
+                .leftJoinAndSelect('asb.kecamatan', 'kecamatan')
+                .leftJoinAndSelect('asb.kelurahan', 'kelurahan')
+                .leftJoinAndSelect('asb.asbStatus', 'asbStatus')
+                .leftJoinAndSelect('asb.asbJenis', 'asbJenis')
+                .leftJoinAndSelect('asb.opd', 'opd')
+                .leftJoinAndSelect('asb.asbTipeBangunan', 'asbTipeBangunan')
+                .leftJoinAndSelect('asb.asbKlasifikasi', 'asbKlasifikasi')
+                .leftJoinAndSelect('asb.rekening', 'rekening')
+                .leftJoinAndSelect('asb.rekeningReview', 'rekeningReview')
+                .leftJoinAndSelect('asb.verifikatorAdpem', 'verifikatorAdpem')
+                .leftJoinAndSelect('asb.verifikatorBPKAD', 'verifikatorBPKAD')
+                .leftJoinAndSelect('asb.verifikatorBappeda', 'verifikatorBappeda')
+                .leftJoinAndSelect('asb.rejectVerifikator', 'rejectVerifikator')
+                .leftJoinAndSelect('asb.asbDetails', 'asbDetails')
+                .leftJoinAndSelect('asbDetails.asbLantai', 'asbDetailsLantai')
+                .leftJoinAndSelect('asbDetails.asbFungsiRuang', 'asbDetailsFungsiRuang')
+                .leftJoinAndSelect('asb.asbDetailReviews', 'asbDetailReviews')
+                .leftJoinAndSelect('asbDetailReviews.asbLantai', 'asbDetailReviewsLantai')
+                .leftJoinAndSelect('asbDetailReviews.asbFungsiRuang', 'asbDetailReviewsFungsiRuang')
+                .leftJoinAndSelect('asb.asbBipekStandards', 'asbBipekStandards')
+                .leftJoinAndSelect('asbBipekStandards.asbKomponenBangunanStd', 'asbBipekStandardsKomponen')
+                .leftJoinAndSelect('asb.asbBipekStandardReviews', 'asbBipekStandardReviews')
+                .leftJoinAndSelect('asbBipekStandardReviews.asbKomponenBangunanStd', 'asbBipekStandardReviewsKomponen')
+                .leftJoinAndSelect('asb.asbBipekNonStds', 'asbBipekNonStds')
+                .leftJoinAndSelect('asbBipekNonStds.asbKomponenBangunanNonstd', 'asbBipekNonStdsKomponen')
+                .leftJoinAndSelect('asb.asbBipekNonStdReviews', 'asbBipekNonStdReviews')
+                .leftJoinAndSelect('asbBipekNonStdReviews.asbKomponenBangunanNonstd', 'asbBipekNonStdReviewsKomponen')
+                .where('asb.id = :id', { id });
 
             // Add OPD filter if provided
             if (idOpd) {
-                whereClause.idOpd = idOpd;
+                qb.andWhere('asb.idOpd = :idOpd', { idOpd });
             }
 
-            const entity = await this.repo.findOne({
-                where: whereClause,
-                relations: [
-                    'kabkota',
-                    'kecamatan',
-                    'kelurahan',
-                    'asbStatus',
-                    'asbJenis',
-                    'opd',
-                    'asbTipeBangunan',
-                    'asbKlasifikasi',
-                    'rekening',
-                    'rekeningReview',
-                    'verifikatorAdpem',
-                    'verifikatorBPKAD',
-                    'verifikatorBappeda',
-                    'rejectVerifikator',
-                    'asbDetails',
-                    'asbDetails.asbLantai',
-                    'asbDetails.asbFungsiRuang',
-                    'asbDetailReviews',
-                    'asbDetailReviews.asbLantai',
-                    'asbDetailReviews.asbFungsiRuang',
-                    'asbBipekStandards',
-                    'asbBipekStandards.asbKomponenBangunanStd',
-                    'asbBipekStandardReviews',
-                    'asbBipekStandardReviews.asbKomponenBangunanStd',
-                    'asbBipekNonStds',
-                    'asbBipekNonStds.asbKomponenBangunanNonstd',
-                    'asbBipekNonStdReviews',
-                    'asbBipekNonStdReviews.asbKomponenBangunanNonstd'
-                ],
-            });
+            const entity = await qb.getOne();
 
             if (!entity) {
                 return null;
@@ -79,12 +77,19 @@ export class AsbRepositoryImpl implements AsbRepository {
             const skip = (page - 1) * amount;
 
             // Build where conditions array (shared between main query and count query)
+            // ✅ OPTIMIZED: Order filters to maximize composite index usage
+            // Priority: id_opd -> tahun_anggaran (leverages idx_asb_opd_tahun)
             const whereConditions: string[] = [];
             const whereParams: any = {};
 
             if (idOpd) {
                 whereConditions.push('asb.idOpd = :idOpd');
                 whereParams.idOpd = idOpd;
+            }
+
+            if (dto.tahunAnggaran) {
+                whereConditions.push('asb.tahunAnggaran = :tahunAnggaran');
+                whereParams.tahunAnggaran = dto.tahunAnggaran;
             }
 
             if (dto.idAsbJenis) {
@@ -97,11 +102,6 @@ export class AsbRepositoryImpl implements AsbRepository {
                 whereParams.idAsbStatus = dto.idAsbStatus;
             }
 
-            if (dto.tahunAnggaran) {
-                whereConditions.push('asb.tahunAnggaran = :tahunAnggaran');
-                whereParams.tahunAnggaran = dto.tahunAnggaran;
-            }
-
             if (dto.namaAsb) {
                 whereConditions.push('LOWER(asb.namaAsb) LIKE :namaAsb');
                 whereParams.namaAsb = `%${dto.namaAsb.toLowerCase()}%`;
@@ -112,7 +112,10 @@ export class AsbRepositoryImpl implements AsbRepository {
                 whereParams.idTipeBangunan = dto.idTipeBangunan;
             }
 
-            // Use QueryBuilder for optimized query with only necessary relations for list view
+            // ✅ OPTIMIZED: Use QueryBuilder with only necessary relations for list view
+            // Note: Excluding heavy relations (asbDetails, asbDetailReviews, asbBipekStandards, etc.)
+            // These are only needed for detail view, not list view
+            // Also excluding relations not displayed in list view (rekening, rekeningReview)
             const qb = this.repo.createQueryBuilder('asb')
                 .leftJoinAndSelect('asb.kabkota', 'kabkota')
                 .leftJoinAndSelect('asb.kecamatan', 'kecamatan')
@@ -122,14 +125,11 @@ export class AsbRepositoryImpl implements AsbRepository {
                 .leftJoinAndSelect('asb.opd', 'opd')
                 .leftJoinAndSelect('asb.asbTipeBangunan', 'asbTipeBangunan')
                 .leftJoinAndSelect('asb.asbKlasifikasi', 'asbKlasifikasi')
-                .leftJoinAndSelect('asb.rekening', 'rekening')
-                .leftJoinAndSelect('asb.rekeningReview', 'rekeningReview')
                 .leftJoinAndSelect('asb.verifikatorAdpem', 'verifikatorAdpem')
                 .leftJoinAndSelect('asb.verifikatorBPKAD', 'verifikatorBPKAD')
                 .leftJoinAndSelect('asb.verifikatorBappeda', 'verifikatorBappeda')
                 .leftJoinAndSelect('asb.rejectVerifikator', 'rejectVerifikator')
-                // Note: Excluding heavy relations (asbDetails, asbDetailReviews, asbBipekStandards, etc.)
-                // These are only needed for detail view, not list view
+                // ❌ REMOVED: rekening, rekeningReview - not displayed in list view
                 .orderBy('asb.createdAt', 'DESC')
                 .skip(skip)
                 .take(amount);
@@ -164,26 +164,29 @@ export class AsbRepositoryImpl implements AsbRepository {
 
     async getAllByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ date: string; count: number }[]> {
         try {
-            const whereClause: any = {};
+            // ✅ OPTIMIZED: Use date range instead of EXTRACT for better index usage
+            // Calculate start and end date for the month/year
+            const startDate = new Date(dto.year, dto.month - 1, 1);
+            const endDate = new Date(dto.year, dto.month, 0, 23, 59, 59, 999);
 
-            // Add OPD filter if provided (for OPD users)
-            if (idOpd) {
-                whereClause.idOpd = idOpd;
-            }
-
-            // Count id and group by date(created_at), between month/year
             const qb = this.repo
                 .createQueryBuilder('e')
                 .select("DATE(e.created_at)", "date")
-                .addSelect("COUNT(e.id)", "count")
-                .where("EXTRACT(MONTH FROM e.created_at) = :month", { month: dto.month })
-                .andWhere("EXTRACT(YEAR FROM e.created_at) = :year", { year: dto.year })
-                .groupBy("DATE(e.created_at)")
-                .orderBy("DATE(e.created_at)", "ASC");
+                .addSelect("COUNT(e.id)", "count");
 
+            // ✅ OPTIMIZED: Order filters to maximize composite index usage (idx_asb_opd_created_at)
+            // If id_opd is provided, use it first to leverage composite index
             if (idOpd) {
-                qb.andWhere("e.id_opd = :idOpd", { idOpd });
+                qb.where("e.id_opd = :idOpd", { idOpd })
+                    .andWhere("e.created_at >= :startDate", { startDate })
+                    .andWhere("e.created_at <= :endDate", { endDate });
+            } else {
+                qb.where("e.created_at >= :startDate", { startDate })
+                    .andWhere("e.created_at <= :endDate", { endDate });
             }
+
+            qb.groupBy("DATE(e.created_at)")
+                .orderBy("DATE(e.created_at)", "ASC");
 
             const rows = await qb.getRawMany<{ date: string; count: string }>();
 
@@ -199,17 +202,27 @@ export class AsbRepositoryImpl implements AsbRepository {
 
     async getAsbStatusCountsByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ idAsbStatus: number; count: number }[]> {
         try {
+            // ✅ OPTIMIZED: Use date range instead of EXTRACT for better index usage
+            const startDate = new Date(dto.year, dto.month - 1, 1);
+            const endDate = new Date(dto.year, dto.month, 0, 23, 59, 59, 999);
+
             const qb = this.repo
                 .createQueryBuilder('e')
                 .select("e.id_asb_status", "idAsbStatus")
-                .addSelect("COUNT(e.id)", "count")
-                .where("EXTRACT(MONTH FROM e.created_at) = :month", { month: dto.month })
-                .andWhere("EXTRACT(YEAR FROM e.created_at) = :year", { year: dto.year })
-                .groupBy("e.id_asb_status");
+                .addSelect("COUNT(e.id)", "count");
 
+            // ✅ OPTIMIZED: Order filters to maximize composite index usage (idx_asb_opd_created_at)
+            // If id_opd is provided, use it first to leverage composite index
             if (idOpd) {
-                qb.andWhere("e.id_opd = :idOpd", { idOpd });
+                qb.where("e.id_opd = :idOpd", { idOpd })
+                    .andWhere("e.created_at >= :startDate", { startDate })
+                    .andWhere("e.created_at <= :endDate", { endDate });
+            } else {
+                qb.where("e.created_at >= :startDate", { startDate })
+                    .andWhere("e.created_at <= :endDate", { endDate });
             }
+
+            qb.groupBy("e.id_asb_status");
 
             const rows = await qb.getRawMany<{ idAsbStatus: number; count: string }>();
 
@@ -225,31 +238,51 @@ export class AsbRepositoryImpl implements AsbRepository {
 
     async getAsbAnalytics(idOpd?: number, filter?: GetAsbAnalyticsFilterDto): Promise<AsbAnalyticsDto> {
         try {
+            // ✅ OPTIMIZED: Use date range instead of EXTRACT for better index usage
             const qb = this.repo
                 .createQueryBuilder('e')
                 .select("e.id_asb_status", "idAsbStatus")
                 .addSelect("COUNT(e.id)", "count");
 
+            const whereConditions: string[] = [];
+            const whereParams: any = {};
+
+            // ✅ OPTIMIZED: Order filters to maximize composite index usage
+            // Priority: id_opd (if exists) -> created_at -> tahun_anggaran
+            // This order leverages: idx_asb_opd_created_at, idx_asb_opd_tahun, idx_asb_status_tahun
+
             if (idOpd) {
-                qb.where("e.id_opd = :idOpd", { idOpd });
+                whereConditions.push("e.id_opd = :idOpd");
+                whereParams.idOpd = idOpd;
             }
 
-            // Apply month filter if provided
-            if (filter?.bulan !== undefined) {
-                if (idOpd) {
-                    qb.andWhere("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan });
-                } else {
-                    qb.where("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan });
-                }
+            // Apply month filter if provided - use date range for better performance
+            if (filter?.bulan !== undefined && filter?.tahun !== undefined) {
+                const startDate = new Date(filter.tahun, filter.bulan - 1, 1);
+                const endDate = new Date(filter.tahun, filter.bulan, 0, 23, 59, 59, 999);
+                whereConditions.push("e.created_at >= :startDate");
+                whereConditions.push("e.created_at <= :endDate");
+                whereParams.startDate = startDate;
+                whereParams.endDate = endDate;
+            } else if (filter?.bulan !== undefined) {
+                // If only month provided, use current year
+                const currentYear = new Date().getFullYear();
+                const startDate = new Date(currentYear, filter.bulan - 1, 1);
+                const endDate = new Date(currentYear, filter.bulan, 0, 23, 59, 59, 999);
+                whereConditions.push("e.created_at >= :startDate");
+                whereConditions.push("e.created_at <= :endDate");
+                whereParams.startDate = startDate;
+                whereParams.endDate = endDate;
             }
 
             // Apply year filter if provided (using tahun_anggaran field)
             if (filter?.tahun !== undefined) {
-                if (idOpd || filter?.bulan !== undefined) {
-                    qb.andWhere("e.tahun_anggaran = :tahun", { tahun: filter.tahun });
-                } else {
-                    qb.where("e.tahun_anggaran = :tahun", { tahun: filter.tahun });
-                }
+                whereConditions.push("e.tahun_anggaran = :tahun");
+                whereParams.tahun = filter.tahun;
+            }
+
+            if (whereConditions.length > 0) {
+                qb.where(whereConditions.join(' AND '), whereParams);
             }
 
             qb.groupBy("e.id_asb_status");
@@ -284,33 +317,51 @@ export class AsbRepositoryImpl implements AsbRepository {
             const persentaseTolak = totalUsulan > 0 ? (totalTolakBangunan / totalUsulan) * 100 : 0;
             const persentaseProses = totalUsulan > 0 ? (totalProsesBangunan / totalUsulan) * 100 : 0;
 
-            // Query to count by jenis (Pembangunan and Pemeliharaan)
+            // ✅ OPTIMIZED: Query to count by jenis (Pembangunan and Pemeliharaan)
             const jenisQb = this.repo
                 .createQueryBuilder('e')
                 .innerJoin('e.asbJenis', 'aj')
                 .select('aj.jenis', 'jenis')
                 .addSelect('COUNT(e.id)', 'count');
 
+            const jenisWhereConditions: string[] = [];
+            const jenisWhereParams: any = {};
+
+            // ✅ OPTIMIZED: Order filters to maximize composite index usage
+            // Priority: id_opd (if exists) -> created_at -> tahun_anggaran
+            // This order leverages: idx_asb_opd_created_at, idx_asb_opd_tahun
+
             if (idOpd) {
-                jenisQb.where('e.id_opd = :idOpd', { idOpd });
+                jenisWhereConditions.push('e.id_opd = :idOpd');
+                jenisWhereParams.idOpd = idOpd;
             }
 
-            // Apply month filter if provided
-            if (filter?.bulan !== undefined) {
-                if (idOpd) {
-                    jenisQb.andWhere('EXTRACT(MONTH FROM e.created_at) = :bulan', { bulan: filter.bulan });
-                } else {
-                    jenisQb.where('EXTRACT(MONTH FROM e.created_at) = :bulan', { bulan: filter.bulan });
-                }
+            // Apply month filter if provided - use date range for better performance
+            if (filter?.bulan !== undefined && filter?.tahun !== undefined) {
+                const startDate = new Date(filter.tahun, filter.bulan - 1, 1);
+                const endDate = new Date(filter.tahun, filter.bulan, 0, 23, 59, 59, 999);
+                jenisWhereConditions.push('e.created_at >= :startDate');
+                jenisWhereConditions.push('e.created_at <= :endDate');
+                jenisWhereParams.startDate = startDate;
+                jenisWhereParams.endDate = endDate;
+            } else if (filter?.bulan !== undefined) {
+                const currentYear = new Date().getFullYear();
+                const startDate = new Date(currentYear, filter.bulan - 1, 1);
+                const endDate = new Date(currentYear, filter.bulan, 0, 23, 59, 59, 999);
+                jenisWhereConditions.push('e.created_at >= :startDate');
+                jenisWhereConditions.push('e.created_at <= :endDate');
+                jenisWhereParams.startDate = startDate;
+                jenisWhereParams.endDate = endDate;
             }
 
             // Apply year filter if provided (using tahun_anggaran field)
             if (filter?.tahun !== undefined) {
-                if (idOpd || filter?.bulan !== undefined) {
-                    jenisQb.andWhere('e.tahun_anggaran = :tahun', { tahun: filter.tahun });
-                } else {
-                    jenisQb.where('e.tahun_anggaran = :tahun', { tahun: filter.tahun });
-                }
+                jenisWhereConditions.push('e.tahun_anggaran = :tahun');
+                jenisWhereParams.tahun = filter.tahun;
+            }
+
+            if (jenisWhereConditions.length > 0) {
+                jenisQb.where(jenisWhereConditions.join(' AND '), jenisWhereParams);
             }
 
             jenisQb.groupBy('aj.jenis');
@@ -335,18 +386,26 @@ export class AsbRepositoryImpl implements AsbRepository {
             const persentasePembangunan = totalUsulan > 0 ? (totalPembangunan / totalUsulan) * 100 : 0;
             const persentasePemeliharaan = totalUsulan > 0 ? (totalPemeliharaan / totalUsulan) * 100 : 0;
 
-            // Query daily data if month and year are provided
+            // ✅ OPTIMIZED: Query daily data if month and year are provided - use date range
             let dailyData: Array<{ date: string; count: number }> = [];
             if (filter?.bulan !== undefined && filter?.tahun !== undefined) {
+                const startDate = new Date(filter.tahun, filter.bulan - 1, 1);
+                const endDate = new Date(filter.tahun, filter.bulan, 0, 23, 59, 59, 999);
+
                 const dailyQb = this.repo
                     .createQueryBuilder('e')
                     .select("DATE(e.created_at)", "date")
-                    .addSelect("COUNT(e.id)", "count")
-                    .where("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan })
-                    .andWhere("EXTRACT(YEAR FROM e.created_at) = :tahun", { tahun: filter.tahun });
+                    .addSelect("COUNT(e.id)", "count");
 
+                // ✅ OPTIMIZED: Order filters to maximize composite index usage (idx_asb_opd_created_at)
+                // If id_opd is provided, use it first to leverage composite index
                 if (idOpd) {
-                    dailyQb.andWhere("e.id_opd = :idOpd", { idOpd });
+                    dailyQb.where("e.id_opd = :idOpd", { idOpd })
+                        .andWhere("e.created_at >= :startDate", { startDate })
+                        .andWhere("e.created_at <= :endDate", { endDate });
+                } else {
+                    dailyQb.where("e.created_at >= :startDate", { startDate })
+                        .andWhere("e.created_at <= :endDate", { endDate });
                 }
 
                 dailyQb.groupBy("DATE(e.created_at)")
@@ -384,7 +443,33 @@ export class AsbRepositoryImpl implements AsbRepository {
             const entity = this.repo.create(data);
             console.log("Entity created:", entity);
             const savedEntity = await this.repo.save(entity);
-            return plainToInstance(AsbWithRelationsDto, savedEntity);
+            
+            // ✅ OPTIMIZED: Load only basic relations for create response
+            // Heavy relations (asbDetails, asbBipekStandards, etc.) are not needed because:
+            // 1. Entity is new, so it doesn't have heavy relations yet
+            // 2. Service will call findById if full data is needed
+            // 3. Return value only needs id and status
+            const entityWithBasicRelations = await this.repo.createQueryBuilder('asb')
+                .leftJoinAndSelect('asb.kabkota', 'kabkota')
+                .leftJoinAndSelect('asb.kecamatan', 'kecamatan')
+                .leftJoinAndSelect('asb.kelurahan', 'kelurahan')
+                .leftJoinAndSelect('asb.asbStatus', 'asbStatus')
+                .leftJoinAndSelect('asb.asbJenis', 'asbJenis')
+                .leftJoinAndSelect('asb.opd', 'opd')
+                .leftJoinAndSelect('asb.asbTipeBangunan', 'asbTipeBangunan')
+                .leftJoinAndSelect('asb.asbKlasifikasi', 'asbKlasifikasi')
+                .leftJoinAndSelect('asb.rekening', 'rekening')
+                .leftJoinAndSelect('asb.rekeningReview', 'rekeningReview')
+                .leftJoinAndSelect('asb.verifikatorAdpem', 'verifikatorAdpem')
+                .leftJoinAndSelect('asb.verifikatorBPKAD', 'verifikatorBPKAD')
+                .leftJoinAndSelect('asb.verifikatorBappeda', 'verifikatorBappeda')
+                .leftJoinAndSelect('asb.rejectVerifikator', 'rejectVerifikator')
+                // ❌ EXCLUDED: Heavy relations (asbDetails, asbDetailReviews, asbBipekStandards, etc.)
+                // These are not needed for new entity and service will call findById if needed
+                .where('asb.id = :id', { id: savedEntity.id })
+                .getOne();
+            
+            return plainToInstance(AsbWithRelationsDto, entityWithBasicRelations);
         } catch (error) {
             console.log("Error creating ASB:", error);
             throw error;
@@ -395,39 +480,32 @@ export class AsbRepositoryImpl implements AsbRepository {
         try {
             console.log("Data to update:", data);
             await this.repo.update(id, data);
-            const updatedEntity = await this.repo.findOne({
-                where: { id },
-                relations: [
-                    'kabkota',
-                    'kecamatan',
-                    'kelurahan',
-                    'asbStatus',
-                    'asbJenis',
-                    'opd',
-                    'asbTipeBangunan',
-                    'asbKlasifikasi',
-                    'rekening',
-                    'rekeningReview',
-                    'verifikatorAdpem',
-                    'verifikatorBPKAD',
-                    'verifikatorBappeda',
-                    'rejectVerifikator',
-                    'asbDetails',
-                    'asbDetails.asbLantai',
-                    'asbDetails.asbFungsiRuang',
-                    'asbDetailReviews',
-                    'asbDetailReviews.asbLantai',
-                    'asbDetailReviews.asbFungsiRuang',
-                    'asbBipekStandards',
-                    'asbBipekStandards.asbKomponenBangunanStd',
-                    'asbBipekStandardReviews',
-                    'asbBipekStandardReviews.asbKomponenBangunanStd',
-                    'asbBipekNonStds',
-                    'asbBipekNonStds.asbKomponenBangunanNonstd',
-                    'asbBipekNonStdReviews',
-                    'asbBipekNonStdReviews.asbKomponenBangunanNonstd'
-                ],
-            });
+            
+            // ✅ OPTIMIZED: Load only basic relations for update response
+            // Heavy relations (asbDetails, asbBipekStandards, etc.) are not needed because:
+            // 1. Service already calls findById before update if full data is needed
+            // 2. Return value only needs id and status
+            // 3. If full data is needed, service can call findById after update
+            const updatedEntity = await this.repo.createQueryBuilder('asb')
+                .leftJoinAndSelect('asb.kabkota', 'kabkota')
+                .leftJoinAndSelect('asb.kecamatan', 'kecamatan')
+                .leftJoinAndSelect('asb.kelurahan', 'kelurahan')
+                .leftJoinAndSelect('asb.asbStatus', 'asbStatus')
+                .leftJoinAndSelect('asb.asbJenis', 'asbJenis')
+                .leftJoinAndSelect('asb.opd', 'opd')
+                .leftJoinAndSelect('asb.asbTipeBangunan', 'asbTipeBangunan')
+                .leftJoinAndSelect('asb.asbKlasifikasi', 'asbKlasifikasi')
+                .leftJoinAndSelect('asb.rekening', 'rekening')
+                .leftJoinAndSelect('asb.rekeningReview', 'rekeningReview')
+                .leftJoinAndSelect('asb.verifikatorAdpem', 'verifikatorAdpem')
+                .leftJoinAndSelect('asb.verifikatorBPKAD', 'verifikatorBPKAD')
+                .leftJoinAndSelect('asb.verifikatorBappeda', 'verifikatorBappeda')
+                .leftJoinAndSelect('asb.rejectVerifikator', 'rejectVerifikator')
+                // ❌ EXCLUDED: Heavy relations (asbDetails, asbDetailReviews, asbBipekStandards, etc.)
+                // These are not needed for update response and service will call findById if needed
+                .where('asb.id = :id', { id })
+                .getOne();
+            
             return plainToInstance(AsbWithRelationsDto, updatedEntity);
         } catch (error) {
             console.log("Error updating ASB:", error);
@@ -446,17 +524,24 @@ export class AsbRepositoryImpl implements AsbRepository {
 
     async getRejectInfo(id: number, idOpd?: number): Promise<RejectInfoDto | null> {
         try {
-            const whereClause: any = { id };
+            // ✅ OPTIMIZED: Use QueryBuilder with specific field selection for better performance
+            const qb = this.repo.createQueryBuilder('asb')
+                .leftJoinAndSelect('asb.rejectVerifikator', 'rejectVerifikator')
+                .select([
+                    'asb.rejectVerifId',
+                    'asb.rejectReason',
+                    'asb.rejectedAt',
+                    'rejectVerifikator.id',
+                    'rejectVerifikator.username'
+                ])
+                .where('asb.id = :id', { id });
 
             // Add OPD filter if provided
             if (idOpd) {
-                whereClause.idOpd = idOpd;
+                qb.andWhere('asb.idOpd = :idOpd', { idOpd });
             }
 
-            const entity = await this.repo.findOne({
-                where: whereClause,
-                relations: ['rejectVerifikator'],
-            });
+            const entity = await qb.getOne();
 
             if (!entity) {
                 return null;

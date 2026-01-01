@@ -47,7 +47,11 @@ export class AsbKomponenBangunanProsNonstdRepositoryImpl implements AsbKomponenB
 
     async findById(id: number): Promise<AsbKomponenBangunanProsNonstd | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id } });
+            const entity = await this.repo
+                .createQueryBuilder('asb_komponen_bangunan_pros_nonstd')
+                .select(['asb_komponen_bangunan_pros_nonstd.id', 'asb_komponen_bangunan_pros_nonstd.avgMin', 'asb_komponen_bangunan_pros_nonstd.avgMax', 'asb_komponen_bangunan_pros_nonstd.max', 'asb_komponen_bangunan_pros_nonstd.avg'])
+                .where('asb_komponen_bangunan_pros_nonstd.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;
@@ -56,16 +60,17 @@ export class AsbKomponenBangunanProsNonstdRepositoryImpl implements AsbKomponenB
 
     async findAll(pagination: GetAsbKomponenBangunanProsNonstdListDto): Promise<{ data: AsbKomponenBangunanProsNonstd[], total: number }> {
         try {
-            const findOptions: any = {
-                order: { id: 'DESC' }
-            };
+            const queryBuilder = this.repo
+                .createQueryBuilder('asb_komponen_bangunan_pros_nonstd')
+                .select(['asb_komponen_bangunan_pros_nonstd.id', 'asb_komponen_bangunan_pros_nonstd.avgMin', 'asb_komponen_bangunan_pros_nonstd.avgMax', 'asb_komponen_bangunan_pros_nonstd.max', 'asb_komponen_bangunan_pros_nonstd.avg'])
+                .orderBy('asb_komponen_bangunan_pros_nonstd.id', 'DESC');
 
             if (pagination.page !== undefined && pagination.amount !== undefined) {
-                findOptions.skip = (pagination.page - 1) * pagination.amount;
-                findOptions.take = pagination.amount;
+                const skip = (pagination.page - 1) * pagination.amount;
+                queryBuilder.skip(skip).take(pagination.amount);
             }
 
-            const [items, total] = await this.repo.findAndCount(findOptions);
+            const [items, total] = await queryBuilder.getManyAndCount();
             return { data: items, total };
         } catch (error) {
             throw error;
@@ -74,7 +79,11 @@ export class AsbKomponenBangunanProsNonstdRepositoryImpl implements AsbKomponenB
 
     async findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd | null> {
         try {
-            return await this.repo.findOne({ where: { idAsbKomponenBangunanNonstd: id } });
+            return await this.repo
+                .createQueryBuilder('asb_komponen_bangunan_pros_nonstd')
+                .select(['asb_komponen_bangunan_pros_nonstd.id', 'asb_komponen_bangunan_pros_nonstd.avgMin', 'asb_komponen_bangunan_pros_nonstd.avgMax', 'asb_komponen_bangunan_pros_nonstd.max', 'asb_komponen_bangunan_pros_nonstd.avg'])
+                .where('asb_komponen_bangunan_pros_nonstd.id_asb_komponen_bangunan_nonstd = :id', { id })
+                .getOne();
         } catch (error) {
             throw error;
         }

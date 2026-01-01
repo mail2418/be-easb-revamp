@@ -47,7 +47,11 @@ export class AsbKomponenBangunanProsStdRepositoryImpl implements AsbKomponenBang
 
     async findById(id: number): Promise<AsbKomponenBangunanProsStd | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id } });
+            const entity = await this.repo
+                .createQueryBuilder('asb_komponen_bangunan_pros_std')
+                .select(['asb_komponen_bangunan_pros_std.id', 'asb_komponen_bangunan_pros_std.avgMin', 'asb_komponen_bangunan_pros_std.avgMax', 'asb_komponen_bangunan_pros_std.max', 'asb_komponen_bangunan_pros_std.avg'])
+                .where('asb_komponen_bangunan_pros_std.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;
@@ -56,16 +60,17 @@ export class AsbKomponenBangunanProsStdRepositoryImpl implements AsbKomponenBang
 
     async findAll(pagination: GetAsbKomponenBangunanProsStdListDto): Promise<{ data: AsbKomponenBangunanProsStd[], total: number }> {
         try {
-            const findOptions: any = {
-                order: { id: 'DESC' }
-            };
+            const queryBuilder = this.repo
+                .createQueryBuilder('asb_komponen_bangunan_pros_std')
+                .select(['asb_komponen_bangunan_pros_std.id', 'asb_komponen_bangunan_pros_std.avgMin', 'asb_komponen_bangunan_pros_std.avgMax', 'asb_komponen_bangunan_pros_std.max', 'asb_komponen_bangunan_pros_std.avg'])
+                .orderBy('asb_komponen_bangunan_pros_std.id', 'DESC');
 
             if (pagination.page !== undefined && pagination.amount !== undefined) {
-                findOptions.skip = (pagination.page - 1) * pagination.amount;
-                findOptions.take = pagination.amount;
+                const skip = (pagination.page - 1) * pagination.amount;
+                queryBuilder.skip(skip).take(pagination.amount);
             }
 
-            const [items, total] = await this.repo.findAndCount(findOptions);
+            const [items, total] = await queryBuilder.getManyAndCount();
             return { data: items, total };
         } catch (error) {
             throw error;
@@ -74,7 +79,11 @@ export class AsbKomponenBangunanProsStdRepositoryImpl implements AsbKomponenBang
 
     async findByKomponenBangunanStdId(id: number): Promise<AsbKomponenBangunanProsStd | null> {
         try {
-            return await this.repo.findOne({ where: { idAsbKomponenBangunanStd: id } });
+            return await this.repo
+                .createQueryBuilder('asb_komponen_bangunan_pros_std')
+                .select(['asb_komponen_bangunan_pros_std.id', 'asb_komponen_bangunan_pros_std.avgMin', 'asb_komponen_bangunan_pros_std.avgMax', 'asb_komponen_bangunan_pros_std.max', 'asb_komponen_bangunan_pros_std.avg'])
+                .where('asb_komponen_bangunan_pros_std.id_asb_komponen_bangunan_std = :id', { id })
+                .getOne();
         } catch (error) {
             throw error;
         }

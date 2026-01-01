@@ -44,7 +44,50 @@ export class JalanSpesifikasiDesainReviewRepositoryImpl implements JalanSpesifik
 
     async findById(id: number): Promise<JalanSpesifikasiDesainReview | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id }, relations: ['spesifikasiDesain', 'usulanJalan', 'ruangLingkup', 'hspk'] });
+            const entity = await this.repo
+                .createQueryBuilder('jsd_review')
+                .select([
+                    'jsd_review.id',
+                    'jsd_review.id_spesifikasi_desain',
+                    'jsd_review.id_usulan_jalan',
+                    'jsd_review.id_ruang_lingkup',
+                    'jsd_review.id_hspk',
+                    'jsd_review.volume_review',
+                    'jsd_review.spasi_review',
+                    'jsd_review.tinggi_review',
+                    'jsd_review.harga_spec_review'
+                ])
+                .leftJoin('jsd_review.spesifikasiDesain', 'spesifikasi_desain')
+                .addSelect([
+                    'spesifikasi_desain.id',
+                    'spesifikasi_desain.id_usulan_jalan',
+                    'spesifikasi_desain.id_ruang_lingkup',
+                    'spesifikasi_desain.id_hspk',
+                    'spesifikasi_desain.volume',
+                    'spesifikasi_desain.spasi',
+                    'spesifikasi_desain.tinggi',
+                    'spesifikasi_desain.harga_spec'
+                ])
+                .leftJoin('jsd_review.usulanJalan', 'usulan_jalan')
+                .addSelect([
+                    'usulan_jalan.id',
+                    'usulan_jalan.nama_usulan'
+                ])
+                .leftJoin('jsd_review.ruangLingkup', 'ruang_lingkup')
+                .addSelect([
+                    'ruang_lingkup.id',
+                    'ruang_lingkup.deskripsi_ruang_lingkup'
+                ])
+                .leftJoin('jsd_review.hspk', 'hspk')
+                .addSelect([
+                    'hspk.id',
+                    'hspk.no_mata_pembayaran',
+                    'hspk.satuan',
+                    'hspk.harga_satuan',
+                    'hspk.uraian'
+                ])
+                .where('jsd_review.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;
@@ -53,17 +96,56 @@ export class JalanSpesifikasiDesainReviewRepositoryImpl implements JalanSpesifik
 
     async findAll(dto: GetJalanSpesifikasiDesainReviewDto): Promise<{ data: JalanSpesifikasiDesainReview[]; total: number; }> {
         try {
-            const findOptions: any = {
-                order: { id: "DESC" },
-                relations: ['spesifikasiDesain', 'usulanJalan', 'ruangLingkup', 'hspk']
-            };
+            const queryBuilder = this.repo
+                .createQueryBuilder('jsd_review')
+                .select([
+                    'jsd_review.id',
+                    'jsd_review.id_spesifikasi_desain',
+                    'jsd_review.id_usulan_jalan',
+                    'jsd_review.id_ruang_lingkup',
+                    'jsd_review.id_hspk',
+                    'jsd_review.volume_review',
+                    'jsd_review.spasi_review',
+                    'jsd_review.tinggi_review',
+                    'jsd_review.harga_spec_review'
+                ])
+                .leftJoin('jsd_review.spesifikasiDesain', 'spesifikasi_desain')
+                .addSelect([
+                    'spesifikasi_desain.id',
+                    'spesifikasi_desain.id_usulan_jalan',
+                    'spesifikasi_desain.id_ruang_lingkup',
+                    'spesifikasi_desain.id_hspk',
+                    'spesifikasi_desain.volume',
+                    'spesifikasi_desain.spasi',
+                    'spesifikasi_desain.tinggi',
+                    'spesifikasi_desain.harga_spec'
+                ])
+                .leftJoin('jsd_review.usulanJalan', 'usulan_jalan')
+                .addSelect([
+                    'usulan_jalan.id',
+                    'usulan_jalan.nama_usulan'
+                ])
+                .leftJoin('jsd_review.ruangLingkup', 'ruang_lingkup')
+                .addSelect([
+                    'ruang_lingkup.id',
+                    'ruang_lingkup.deskripsi_ruang_lingkup'
+                ])
+                .leftJoin('jsd_review.hspk', 'hspk')
+                .addSelect([
+                    'hspk.id',
+                    'hspk.no_mata_pembayaran',
+                    'hspk.satuan',
+                    'hspk.harga_satuan',
+                    'hspk.uraian'
+                ])
+                .orderBy('jsd_review.id', 'DESC');
 
             if (dto.page !== undefined && dto.amount !== undefined) {
-                findOptions.skip = (dto.page - 1) * dto.amount;
-                findOptions.take = dto.amount;
+                const skip = (dto.page - 1) * dto.amount;
+                queryBuilder.skip(skip).take(dto.amount);
             }
 
-            const [data, total] = await this.repo.findAndCount(findOptions);
+            const [data, total] = await queryBuilder.getManyAndCount();
 
             return { data, total };
         } catch (error) {
@@ -81,19 +163,57 @@ export class JalanSpesifikasiDesainReviewRepositoryImpl implements JalanSpesifik
 
     async findByUsulanJalan(idUsulanJalan: number, page?: number, amount?: number): Promise<[JalanSpesifikasiDesainReview[], number]> {
         try {
-            const queryOptions: any = {
-                where: { id_usulan_jalan: idUsulanJalan },
-                order: { id: 'DESC' },
-                relations: ['spesifikasiDesain', 'usulanJalan', 'ruangLingkup', 'hspk']
-            };
+            const queryBuilder = this.repo
+                .createQueryBuilder('jsd_review')
+                .select([
+                    'jsd_review.id',
+                    'jsd_review.id_spesifikasi_desain',
+                    'jsd_review.id_usulan_jalan',
+                    'jsd_review.id_ruang_lingkup',
+                    'jsd_review.id_hspk',
+                    'jsd_review.volume_review',
+                    'jsd_review.spasi_review',
+                    'jsd_review.tinggi_review',
+                    'jsd_review.harga_spec_review'
+                ])
+                .leftJoin('jsd_review.spesifikasiDesain', 'spesifikasi_desain')
+                .addSelect([
+                    'spesifikasi_desain.id',
+                    'spesifikasi_desain.id_usulan_jalan',
+                    'spesifikasi_desain.id_ruang_lingkup',
+                    'spesifikasi_desain.id_hspk',
+                    'spesifikasi_desain.volume',
+                    'spesifikasi_desain.spasi',
+                    'spesifikasi_desain.tinggi',
+                    'spesifikasi_desain.harga_spec'
+                ])
+                .leftJoin('jsd_review.usulanJalan', 'usulan_jalan')
+                .addSelect([
+                    'usulan_jalan.id',
+                    'usulan_jalan.nama_usulan'
+                ])
+                .leftJoin('jsd_review.ruangLingkup', 'ruang_lingkup')
+                .addSelect([
+                    'ruang_lingkup.id',
+                    'ruang_lingkup.deskripsi_ruang_lingkup'
+                ])
+                .leftJoin('jsd_review.hspk', 'hspk')
+                .addSelect([
+                    'hspk.id',
+                    'hspk.no_mata_pembayaran',
+                    'hspk.satuan',
+                    'hspk.harga_satuan',
+                    'hspk.uraian'
+                ])
+                .where('jsd_review.id_usulan_jalan = :idUsulanJalan', { idUsulanJalan })
+                .orderBy('jsd_review.id', 'DESC');
 
-            // Only apply pagination if both page and amount are provided
             if (page !== undefined && amount !== undefined) {
-                queryOptions.skip = (page - 1) * amount;
-                queryOptions.take = amount;
+                const skip = (page - 1) * amount;
+                queryBuilder.skip(skip).take(amount);
             }
 
-            const [entities, total] = await this.repo.findAndCount(queryOptions);
+            const [entities, total] = await queryBuilder.getManyAndCount();
             return [entities, total];
         } catch (error) {
             throw error;

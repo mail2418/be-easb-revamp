@@ -53,10 +53,27 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
 
     async findById(id: number): Promise<AsbJakon | null> {
         try {
-            const entity = await this.repo.findOne({
-                where: { id },
-                relations: ['asbTipeBangunan', 'asbJenis', 'asbKlasifikasi']
-            });
+            const entity = await this.repo
+                .createQueryBuilder('asb_jakon')
+                .select([
+                    'asb_jakon.id',
+                    'asb_jakon.id_asb_tipe_bangunan',
+                    'asb_jakon.id_asb_jenis',
+                    'asb_jakon.id_asb_klasifikasi',
+                    'asb_jakon.tahun',
+                    'asb_jakon.type',
+                    'asb_jakon.nama',
+                    'asb_jakon.spec',
+                    'asb_jakon.price_from',
+                    'asb_jakon.price_to',
+                    'asb_jakon.satuan',
+                    'asb_jakon.standard'
+                ])
+                .leftJoinAndSelect('asb_jakon.asbTipeBangunan', 'asb_tipe_bangunan')
+                .leftJoinAndSelect('asb_jakon.asbJenis', 'asb_jenis')
+                .leftJoinAndSelect('asb_jakon.asbKlasifikasi', 'asb_klasifikasi')
+                .where('asb_jakon.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;
@@ -67,12 +84,29 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
         try {
             const page = pagination.page ?? 1;
             const amount = pagination.amount ?? 10;
-            const [data, total] = await this.repo.findAndCount({
-                skip: (page - 1) * amount,
-                take: amount,
-                relations: ['asbTipeBangunan', 'asbJenis', 'asbKlasifikasi'],
-                order: { id: 'DESC' }
-            });
+            const queryBuilder = this.repo
+                .createQueryBuilder('asb_jakon')
+                .select([
+                    'asb_jakon.id',
+                    'asb_jakon.id_asb_tipe_bangunan',
+                    'asb_jakon.id_asb_jenis',
+                    'asb_jakon.id_asb_klasifikasi',
+                    'asb_jakon.tahun',
+                    'asb_jakon.type',
+                    'asb_jakon.nama',
+                    'asb_jakon.spec',
+                    'asb_jakon.price_from',
+                    'asb_jakon.price_to',
+                    'asb_jakon.satuan',
+                    'asb_jakon.standard'
+                ])
+                .leftJoinAndSelect('asb_jakon.asbTipeBangunan', 'asb_tipe_bangunan')
+                .leftJoinAndSelect('asb_jakon.asbJenis', 'asb_jenis')
+                .leftJoinAndSelect('asb_jakon.asbKlasifikasi', 'asb_klasifikasi')
+                .orderBy('asb_jakon.id', 'DESC')
+                .skip((page - 1) * amount)
+                .take(amount);
+            const [data, total] = await queryBuilder.getManyAndCount();
             return { data, total };
         } catch (error) {
             throw error;
@@ -126,9 +160,9 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
 
     async findByPriceRange(dto: GetJakonByPriceRangeDto): Promise<AsbJakon | null> {
         try {
-            // Try to find a record where total_biaya falls within the price range
             let entity = await this.repo
                 .createQueryBuilder('asb_jakon')
+                .select(['asb_jakon.id', 'asb_jakon.standard', 'asb_jakon.price_from', 'asb_jakon.price_to'])
                 .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
                     id_asb_klasifikasi: dto.id_asb_klasifikasi
                 })
@@ -149,11 +183,10 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
                 })
                 .getOne();
 
-            // If no record found in range, check if total_biaya is less than all price_from
-            // If so, get the record with the lowest price_from
             if (!entity) {
                 entity = await this.repo
                     .createQueryBuilder('asb_jakon')
+                    .select(['asb_jakon.id', 'asb_jakon.standard', 'asb_jakon.price_from', 'asb_jakon.price_to'])
                     .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
                         id_asb_klasifikasi: dto.id_asb_klasifikasi
                     })

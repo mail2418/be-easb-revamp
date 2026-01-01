@@ -39,7 +39,11 @@ export class KelurahanRepositoryImpl implements KelurahanRepository {
 
     async findById(id: number): Promise<Kelurahan | null> {
         try {
-            const kelurahan = await this.repo.findOne({ where: { id } });
+            const kelurahan = await this.repo
+                .createQueryBuilder('kelurahan')
+                .select(['kelurahan.id', 'kelurahan.nama_kelurahan', 'kelurahan.id_kecamatan'])
+                .where('kelurahan.id = :id', { id })
+                .getOne();
             return kelurahan || null;
         } catch (error) {
             throw error;

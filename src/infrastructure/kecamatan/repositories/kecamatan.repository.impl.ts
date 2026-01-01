@@ -40,7 +40,11 @@ export class KecamatanRepositoryImpl implements KecamatanRepository {
 
     async findById(id: number): Promise<Kecamatan | null> {
         try {
-            const kecamatan = await this.repo.findOne({ where: { id } });
+            const kecamatan = await this.repo
+                .createQueryBuilder('kecamatan')
+                .select(['kecamatan.id', 'kecamatan.nama_kecamatan', 'kecamatan.id_kabkota'])
+                .where('kecamatan.id = :id', { id })
+                .getOne();
             return kecamatan || null;
         } catch (error) {
             throw error;

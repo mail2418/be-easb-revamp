@@ -127,10 +127,30 @@ export class AsbDetailRepositoryImpl extends AsbDetailRepository {
 
     async getAsbDetailWithRelation(idAsb: number): Promise<AsbDetailWithRelationDto[]> {
         try {
-            const entities = await this.repository.find({
-                where: { idAsb },
-                relations: ['asbFungsiRuang', 'asbLantai'],
-            });
+            const entities = await this.repository
+                .createQueryBuilder('asb_detail')
+                .select([
+                    'asb_detail.id',
+                    'asb_detail.id_asb_lantai',
+                    'asb_detail.id_asb_fungsi_ruang',
+                    'asb_detail.asb_fungsi_ruang_koef',
+                    'asb_detail.lantai_koef',
+                    'asb_detail.luas'
+                ])
+                .leftJoin('asb_detail.asbLantai', 'asb_lantai')
+                .addSelect([
+                    'asb_lantai.id',
+                    'asb_lantai.lantai',
+                    'asb_lantai.koef'
+                ])
+                .leftJoin('asb_detail.asbFungsiRuang', 'asb_fungsi_ruang')
+                .addSelect([
+                    'asb_fungsi_ruang.id',
+                    'asb_fungsi_ruang.nama_fungsi_ruang',
+                    'asb_fungsi_ruang.koef'
+                ])
+                .where('asb_detail.id_asb = :idAsb', { idAsb })
+                .getMany();
             return entities.map((e) => plainToInstance(AsbDetailWithRelationDto, e));
         } catch (error) {
             throw error;

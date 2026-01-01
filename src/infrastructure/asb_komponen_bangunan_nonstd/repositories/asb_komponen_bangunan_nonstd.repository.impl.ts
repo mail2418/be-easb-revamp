@@ -47,7 +47,11 @@ export class AsbKomponenBangunanNonstdRepositoryImpl implements AsbKomponenBangu
 
     async findById(id: number): Promise<AsbKomponenBangunanNonstd | null> {
         try {
-            const entity = await this.repo.findOne({ where: { id } });
+            const entity = await this.repo
+                .createQueryBuilder('asb_komponen_bangunan_nonstd')
+                .select(['asb_komponen_bangunan_nonstd.id', 'asb_komponen_bangunan_nonstd.komponen'])
+                .where('asb_komponen_bangunan_nonstd.id = :id', { id })
+                .getOne();
             return entity || null;
         } catch (error) {
             throw error;
