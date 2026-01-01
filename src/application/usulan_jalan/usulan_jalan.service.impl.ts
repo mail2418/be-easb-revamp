@@ -216,13 +216,6 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found or access denied`);
             }
 
-            // Validate status flow: must be 1 (Input Informasi Usulan Jalan) before storeInformasi
-            if (existingUsulanJalan.idUsulanJalanStatus !== 1) {
-                throw new BadRequestException(
-                    `Usulan Jalan must be in status 1 (Input Informasi Usulan Jalan) before storing Informasi. Current status: ${existingUsulanJalan.idUsulanJalanStatus}`
-                );
-            }
-
             // Step 1: Always delete all JalanSpesifikasiDesain records for this Usulan Jalan to ensure clean state
             await this.jalanSpesifikasiDesainService.deleteByUsulanJalanId(dto.idUsulanJalan);
 

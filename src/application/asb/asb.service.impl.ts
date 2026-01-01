@@ -542,13 +542,6 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found or access denied`);
             }
 
-            // Validate status flow: must be 5 (STORE REKENING) before storeLantai
-            if (existingAsb.idAsbStatus !== 5) {
-                throw new BadRequestException(
-                    `ASB must be in status 5 (STORE REKENING) before storing Lantai. Current status: ${existingAsb.idAsbStatus}`
-                );
-            }
-
             // Step 1: Always delete all AsbDetail records for this ASB (by id_asb) to ensure clean state
             await this.asbDetailService.deleteByAsbId(dto.id_asb);
 
@@ -632,14 +625,7 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Validate status flow: must be 2 (STORE LANTAI) before storeBps
-            if (asb.idAsbStatus !== 2) {
-                throw new BadRequestException(
-                    `ASB must be in status 2 (STORE LANTAI) before storing BPS. Current status: ${asb.idAsbStatus}`
-                );
-            }
-
-            // 3. Always delete all AsbBipekStandard records for this ASB (by id_asb) to ensure clean state
+            // 2. Always delete all AsbBipekStandard records for this ASB (by id_asb) to ensure clean state
             await this.asbBipekStandardService.deleteByAsbId(dto.id_asb);
 
             // 2.1. Validate input arrays length match
@@ -696,14 +682,7 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Validate status flow: must be 3 (STORE BPS) before storeBpns
-            if (asb.idAsbStatus !== 3) {
-                throw new BadRequestException(
-                    `ASB must be in status 3 (STORE BPS) before storing BPNS. Current status: ${asb.idAsbStatus}`
-                );
-            }
-
-            // 3. Always delete all AsbBipekNonStd records for this ASB (by id_asb) to ensure clean state
+            // 2. Always delete all AsbBipekNonStd records for this ASB (by id_asb) to ensure clean state
             await this.asbBipekNonStdService.deleteByAsbId(dto.id_asb);
 
             // 2.1. Validate ifnput arrays length match
@@ -827,14 +806,7 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Validate status flow: must be 1 (STORE INDEX) before storeRekening
-            if (asb.idAsbStatus !== 1) {
-                throw new BadRequestException(
-                    `ASB must be in status 1 (STORE INDEX) before storing Rekening. Current status: ${asb.idAsbStatus}`
-                );
-            }
-
-            // 3. Update Rekening &  ASB status to 5
+            // 2. Update Rekening &  ASB status to 5
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 5,
                 idRekening: dto.id_rekening
@@ -857,14 +829,7 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Validate status flow: must be 4 (STORE BPNS) before storeVerif
-            if (asb.idAsbStatus !== 4) {
-                throw new BadRequestException(
-                    `ASB must be in status 4 (STORE BPNS) before submitting for verification. Current status: ${asb.idAsbStatus}`
-                );
-            }
-
-            // 3. Update ASB status to 6
+            // 2. Update ASB status to 6
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 6
             });
