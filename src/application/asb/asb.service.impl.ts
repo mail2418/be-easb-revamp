@@ -545,7 +545,7 @@ export class AsbServiceImpl implements AsbService {
             // Validate status flow: must be 5 (STORE REKENING) before storeLantai
             if (existingAsb.idAsbStatus !== 5) {
                 throw new BadRequestException(
-                    `ASB must be in status 1 (STORE INDEX) before storing Lantai. Current status: ${existingAsb.idAsbStatus}`
+                    `ASB must be in status 5 (STORE REKENING) before storing Lantai. Current status: ${existingAsb.idAsbStatus}`
                 );
             }
 
