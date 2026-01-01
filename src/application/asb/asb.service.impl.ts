@@ -542,10 +542,10 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found or access denied`);
             }
 
-            // Validate status flow: must be 1 (STORE INDEX) before storeLantai
-            if (existingAsb.idAsbStatus !== 1) {
+            // Validate status flow: must be 5 (STORE REKENING) before storeLantai
+            if (existingAsb.idAsbStatus !== 5) {
                 throw new BadRequestException(
-                    `ASB must be in status 1 (STORE INDEX) before storing Lantai. Current status: ${existingAsb.idAsbStatus}`
+                    `ASB must be in status 5 (STORE REKENING) before storing Lantai. Current status: ${existingAsb.idAsbStatus}`
                 );
             }
 
@@ -827,10 +827,10 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Validate status flow: must be 2 (STORE LANTAI) before storeRekening
-            if (asb.idAsbStatus !== 2) {
+            // 2. Validate status flow: must be 1 (STORE INDEX) before storeRekening
+            if (asb.idAsbStatus !== 1) {
                 throw new BadRequestException(
-                    `ASB must be in status 2 (STORE LANTAI) before storing Rekening. Current status: ${asb.idAsbStatus}`
+                    `ASB must be in status 1 (STORE INDEX) before storing Rekening. Current status: ${asb.idAsbStatus}`
                 );
             }
 
