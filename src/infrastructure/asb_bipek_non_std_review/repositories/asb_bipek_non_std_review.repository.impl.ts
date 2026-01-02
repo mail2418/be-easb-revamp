@@ -9,6 +9,7 @@ import { CreateAsbBipekNonStdReviewDto } from '../../../application/asb_bipek_no
 import { UpdateAsbBipekNonStdReviewDto } from '../../../application/asb_bipek_non_std_review/dto/update_asb_bipek_non_std_review.dto';
 import { GetAsbBipekNonStdReviewByAsbDto } from 'src/presentation/asb_bipek_non_std_review/dto/get_asb_bipek_non_std_review_by_asb.dto';
 import { BpnsReviewWithRelationsDto } from 'src/application/asb_bipek_non_std/dto/bpns_review_with_relations.dto';
+import { CalculationMethod } from 'src/domain/asb_bipek_standard/calculation_method.enum';
 
 @Injectable()
 export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepository {
@@ -131,20 +132,16 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
                 .createQueryBuilder('asb_bipek_non_std_review')
                 .select([
                     'asb_bipek_non_std_review.id',
-                    'asb_bipek_non_std_review.id_asb_bipek_non_std',
-                    'asb_bipek_non_std_review.id_asb_komponen_bangunan_nonstd',
+                    'asb_bipek_non_std_review.idAsbBipekNonStd',
+                    'asb_bipek_non_std_review.idAsbKomponenBangunanNonstd',
                     'asb_bipek_non_std_review.files',
-                    'asb_bipek_non_std_review.bobot_input',
-                    'asb_bipek_non_std_review.calculation_method',
-                    'asb_bipek_non_std_review.jumlah_bobot',
-                    'asb_bipek_non_std_review.rincian_harga'
+                    'asb_bipek_non_std_review.bobotInput',
+                    'asb_bipek_non_std_review.calculationMethod',
+                    'asb_bipek_non_std_review.jumlahBobot',
+                    'asb_bipek_non_std_review.rincianHarga'
                 ])
-                .leftJoin('asb_bipek_non_std_review.asbKomponenBangunanNonstd', 'asb_komponen_bangunan_nonstd')
-                .addSelect([
-                    'asb_komponen_bangunan_nonstd.id',
-                    'asb_komponen_bangunan_nonstd.komponen'
-                ])
-                .where('asb_bipek_non_std_review.id_asb = :idAsb', { idAsb: dto.idAsb })
+                .leftJoinAndSelect('asb_bipek_non_std_review.asbKomponenBangunanNonstd', 'asb_komponen_bangunan_nonstd')
+                .where('asb_bipek_non_std_review.idAsb = :idAsb', { idAsb: dto.idAsb })
                 .orderBy('asb_bipek_non_std_review.id', 'DESC');
 
             if (dto.page !== undefined && dto.amount !== undefined) {
@@ -153,7 +150,24 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
             }
 
             const [entities, total] = await queryBuilder.getManyAndCount();
-            const domainEntities = entities.map((e) => plainToInstance(BpnsReviewWithRelationsDto, e));
+            const domainEntities = entities.map((e) => {
+                const dto = new BpnsReviewWithRelationsDto();
+                dto.id = e.id;
+                dto.idAsbBipekNonStd = e.idAsbBipekNonStd ?? 0;
+                dto.idAsbKomponenBangunanNonstd = e.idAsbKomponenBangunanNonstd ?? 0;
+                dto.files = e.files;
+                dto.bobotInput = e.bobotInput || 0;
+                dto.calculationMethod = e.calculationMethod as CalculationMethod;
+                dto.jumlahBobot = e.jumlahBobot || 0;
+                dto.rincianHarga = e.rincianHarga || 0;
+                if (e.asbKomponenBangunanNonstd) {
+                    dto.asbKomponenBangunanNonstd = {
+                        id: e.asbKomponenBangunanNonstd.id,
+                        komponen: e.asbKomponenBangunanNonstd.komponen
+                    };
+                }
+                return dto;
+            });
             return [domainEntities, total];
         } catch (error) {
             throw error;

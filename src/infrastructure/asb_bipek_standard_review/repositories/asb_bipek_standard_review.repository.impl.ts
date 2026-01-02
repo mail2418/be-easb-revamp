@@ -9,6 +9,7 @@ import { CreateAsbBipekStandardReviewDto } from '../../../application/asb_bipek_
 import { UpdateAsbBipekStandardReviewDto } from '../../../application/asb_bipek_standard_review/dto/update_asb_bipek_standard_review.dto';
 import { BpsReviewWithRelationsDto } from 'src/application/asb_bipek_standard_review/dto/bps_review_with_relations.dto';
 import { GetAsbBipekStandardReviewByAsbDto } from 'src/presentation/asb_bipek_standard_review/dto/get_asb_bipek_standard_review_by_asb.dto';
+import { CalculationMethod } from 'src/domain/asb_bipek_standard/calculation_method.enum';
 
 @Injectable()
 export class AsbBipekStandardReviewRepositoryImpl extends AsbBipekStandardReviewRepository {
@@ -135,20 +136,16 @@ export class AsbBipekStandardReviewRepositoryImpl extends AsbBipekStandardReview
                 .createQueryBuilder('asb_bipek_standard_review')
                 .select([
                     'asb_bipek_standard_review.id',
-                    'asb_bipek_standard_review.id_asb_bipek_standard',
-                    'asb_bipek_standard_review.id_asb_komponen_bangunan_std',
+                    'asb_bipek_standard_review.idAsbBipekStandard',
+                    'asb_bipek_standard_review.idAsbKomponenBangunanStd',
                     'asb_bipek_standard_review.files',
-                    'asb_bipek_standard_review.bobot_input',
-                    'asb_bipek_standard_review.calculation_method',
-                    'asb_bipek_standard_review.jumlah_bobot',
-                    'asb_bipek_standard_review.rincian_harga'
+                    'asb_bipek_standard_review.bobotInput',
+                    'asb_bipek_standard_review.calculationMethod',
+                    'asb_bipek_standard_review.jumlahBobot',
+                    'asb_bipek_standard_review.rincianHarga'
                 ])
-                .leftJoin('asb_bipek_standard_review.asbKomponenBangunanStd', 'asb_komponen_bangunan_std')
-                .addSelect([
-                    'asb_komponen_bangunan_std.id',
-                    'asb_komponen_bangunan_std.komponen'
-                ])
-                .where('asb_bipek_standard_review.id_asb = :idAsb', { idAsb: dto.idAsb })
+                .leftJoinAndSelect('asb_bipek_standard_review.asbKomponenBangunanStd', 'asb_komponen_bangunan_std')
+                .where('asb_bipek_standard_review.idAsb = :idAsb', { idAsb: dto.idAsb })
                 .orderBy('asb_bipek_standard_review.id', 'DESC');
 
             if (dto.page !== undefined && dto.amount !== undefined) {
@@ -157,7 +154,24 @@ export class AsbBipekStandardReviewRepositoryImpl extends AsbBipekStandardReview
             }
 
             const [entities, total] = await queryBuilder.getManyAndCount();
-            const domainEntities = entities.map((e) => plainToInstance(BpsReviewWithRelationsDto, e));
+            const domainEntities = entities.map((e) => {
+                const dto = new BpsReviewWithRelationsDto();
+                dto.id = e.id;
+                dto.idAsbBipekStandard = e.idAsbBipekStandard ?? 0;
+                dto.idAsbKomponenBangunanStd = e.idAsbKomponenBangunanStd ?? 0;
+                dto.files = e.files;
+                dto.bobotInput = e.bobotInput || 0;
+                dto.calculationMethod = e.calculationMethod as CalculationMethod;
+                dto.jumlahBobot = e.jumlahBobot || 0;
+                dto.rincianHarga = e.rincianHarga || 0;
+                if (e.asbKomponenBangunanStd) {
+                    dto.asbKomponenBangunanStd = {
+                        id: e.asbKomponenBangunanStd.id,
+                        komponen: e.asbKomponenBangunanStd.komponen
+                    };
+                }
+                return dto;
+            });
             return [domainEntities, total];
         } catch (error) {
             throw error;

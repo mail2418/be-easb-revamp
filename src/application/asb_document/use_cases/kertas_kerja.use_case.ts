@@ -486,7 +486,7 @@ export class KertasKerjaUseCase {
                   <tr>
                     <th class="text-center" style="width:8%">No.</th>
                     <th class="text-center">Komponen Non Standar</th>
-                    <th class="text-center" style="width:12%">Used</th>
+                    <th class="text-center" style="width:12%">Bobot</th>
                     <th class="text-center" style="width:22%">Rincian Harga</th>
                   </tr>
                 </thead>
