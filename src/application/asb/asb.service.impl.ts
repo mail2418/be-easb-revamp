@@ -1106,6 +1106,8 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
             const asbBipekNonstdIds = asbBipekNonstd.data.map((asbBipekNonstd) => asbBipekNonstd.id);
+            console.log("dto:", dto);
+            console.log("asbBipekNonstdIds:", asbBipekNonstdIds);
 
             // 6. Calculate BPNS Review
             if (!asb.totalLantai) {
@@ -1131,6 +1133,7 @@ export class AsbServiceImpl implements AsbService {
 
             // 7. Calculate Total Biaya Pembangunan using latest nominalBps (from ASB, could be from review or original)
             const totalBiayaPembangunan = Number(BPNSReview) + Number(asb.nominalBps || 0);
+            console.log("totalBiayaPembangunan:", totalBiayaPembangunan);
 
             // Set Jakon prices
             if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !totalBiayaPembangunan) {

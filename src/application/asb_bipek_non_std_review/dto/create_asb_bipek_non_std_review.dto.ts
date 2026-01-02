@@ -4,7 +4,8 @@ import { CalculationMethod } from '../../../domain/asb_bipek_non_std_review/calc
 
 export class CreateAsbBipekNonStdReviewDto {
     @IsInt()
-    idAsbBipekNonStd: number;
+    @IsOptional()
+    idAsbBipekNonStd?: number | null;
 
     @IsInt()
     idAsbKomponenBangunanNonstd: number;

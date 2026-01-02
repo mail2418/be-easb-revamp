@@ -72,7 +72,7 @@ export class AsbJakonController {
     }
 
     @Post('bulk')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
     @UseInterceptors(FileInterceptor('file'))
     async createBulk(@Body() dto: CreateBulkAsbJakonDto, @UploadedFile() file: Express.Multer.File): Promise<ResponseDto> {
         try {
@@ -89,7 +89,7 @@ export class AsbJakonController {
     }
 
     @Get('template')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
     async downloadTemplate(@Res({ passthrough: true }) res: Response): Promise<StreamableFile> {
         try {
             const { buffer, filename } = await this.service.downloadTemplate();

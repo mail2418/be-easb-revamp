@@ -1,64 +1,68 @@
-import { IsNumber, IsOptional, IsEnum, IsString, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsEnum, IsString, IsNotEmpty, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { AsbJakonType } from '../../../domain/asb_jakon/asb_jakon_type.enum';
 
 export class UpdateAsbJakonDto {
     @IsNumber()
     @IsNotEmpty()
+    @Min(1)
     @Transform(({ value }) => parseInt(value, 10))
     id!: number;
 
     @IsNumber()
-    @IsOptional()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseInt(value, 10) : undefined)
-    idAsbTipeBangunan?: number;
+    @IsNotEmpty()
+    @Min(1)
+    @Transform(({ value }) => parseInt(value, 10))
+    idAsbTipeBangunan!: number;
 
     @IsNumber()
-    @IsOptional()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseInt(value, 10) : undefined)
-    idAsbJenis?: number;
+    @IsNotEmpty()
+    @Min(1)
+    @Transform(({ value }) => parseInt(value, 10))
+    idAsbJenis!: number;
 
     @IsNumber()
-    @IsOptional()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseInt(value, 10) : undefined)
-    idAsbKlasifikasi?: number;
+    @IsNotEmpty()
+    @Min(1)
+    @Transform(({ value }) => parseInt(value, 10))
+    idAsbKlasifikasi!: number;
 
     @IsNumber()
-    @IsOptional()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseInt(value, 10) : undefined)
-    tahun?: number;
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
+    tahun!: number;
 
     @IsEnum(AsbJakonType)
-    @IsOptional()
-    type?: AsbJakonType;
+    @IsNotEmpty()
+    type!: AsbJakonType;
 
     @IsString()
-    @IsOptional()
+    @IsNotEmpty()
     @Transform(({ value }) => value?.trim())
-    nama?: string;
+    nama!: string;
 
     @IsString()
-    @IsOptional()
+    @IsNotEmpty()
     @Transform(({ value }) => value?.trim())
-    spec?: string;
+    spec!: string;
 
     @IsNumber()
-    @IsOptional()
+    @IsNotEmpty()
     @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
-    priceFrom?: number;
+    priceFrom!: number;
 
     @IsNumber()
-    @IsOptional()
+    @IsNotEmpty()
     @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
-    priceTo?: number;
+    priceTo!: number;
 
     @IsString()
-    @IsOptional()
+    @IsNotEmpty()
     @Transform(({ value }) => value?.trim())
-    satuan?: string;
+    satuan!: string;
 
     @IsNumber()
-    @IsOptional()
+    @IsNotEmpty()
     @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
-    standard?: number;
+    standard!: number;
 }

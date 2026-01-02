@@ -18,8 +18,8 @@ export class AsbBipekNonStdReviewOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: 'id_asb_bipek_non_std', type: 'int' })
-    idAsbBipekNonStd: number;
+    @Column({ name: 'id_asb_bipek_non_std', type: 'int', nullable: true })
+    idAsbBipekNonStd: number | null;
 
     @Column({
         name: 'id_asb_komponen_bangunan_nonstd',

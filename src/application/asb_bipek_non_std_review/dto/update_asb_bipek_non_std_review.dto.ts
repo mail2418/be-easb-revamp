@@ -11,7 +11,7 @@ export class UpdateAsbBipekNonStdReviewDto {
 
     @IsInt()
     @IsOptional()
-    idAsbBipekNonStd?: number;
+    idAsbBipekNonStd?: number | null;
 
     @IsInt()
     @IsOptional()
