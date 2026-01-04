@@ -10,11 +10,6 @@ export class UpdateJalanSpesifikasiDesainReviewDto {
     @IsOptional()
     @IsNumber()
     @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
-    id_spesifikasi_desain?: number;
-
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     id_usulan_jalan?: number;
 
     @IsOptional()

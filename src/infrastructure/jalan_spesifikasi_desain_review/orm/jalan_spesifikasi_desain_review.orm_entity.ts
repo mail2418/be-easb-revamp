@@ -1,5 +1,4 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { JalanSpesifikasiDesainOrmEntity } from "../../jalan_spesifikasi_desain/orm/jalan_spesifikasi_desain.orm_entity";
 import { UsulanJalanOrmEntity } from "../../usulan_jalan/orm/usulan_jalan.orm_entity";
 import { JalanSaluranRuangLingkupOrmEntity } from "../../jalan_saluran_ruang_lingkup/orm/jalan_saluran_ruang_lingkup.orm_entity";
 import { HspkOrmEntity } from "../../hspk/orm/hspk.orm_entity";
@@ -8,9 +7,6 @@ import { HspkOrmEntity } from "../../hspk/orm/hspk.orm_entity";
 export class JalanSpesifikasiDesainReviewOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;
-
-    @Column({ name: 'id_spesifikasi_desain', type: 'int' })
-    id_spesifikasi_desain!: number;
 
     @Column({ name: 'id_usulan_jalan', type: 'int' })
     id_usulan_jalan!: number;
@@ -41,10 +37,6 @@ export class JalanSpesifikasiDesainReviewOrmEntity {
 
     @DeleteDateColumn({ name: "deleted_at", type: "timestamptz", nullable: true })
     deletedAt?: Date;
-
-    @ManyToOne(() => JalanSpesifikasiDesainOrmEntity)
-    @JoinColumn({ name: 'id_spesifikasi_desain' })
-    spesifikasiDesain!: JalanSpesifikasiDesainOrmEntity;
 
     @ManyToOne(() => UsulanJalanOrmEntity)
     @JoinColumn({ name: 'id_usulan_jalan' })

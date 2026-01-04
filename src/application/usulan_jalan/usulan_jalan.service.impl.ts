@@ -22,7 +22,6 @@ import { VerifyIndexUsulanJalanDto } from '../../presentation/usulan_jalan/dto/v
 import { VerifyBpkadUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_bpkad_usulan_jalan.dto';
 import { CreateJalanSpesifikasiDesainDto } from '../../presentation/jalan_spesifikasi_desain/dto/create_jalan_spesifikasi_desain.dto';
 import { CreateJalanSpesifikasiDesainReviewDto } from '../../presentation/jalan_spesifikasi_desain_review/dto/create_jalan_spesifikasi_desain_review.dto';
-import { GetJalanSpesifikasiDesainDto } from '../../presentation/jalan_spesifikasi_desain/dto/get_jalan_spesifikasi_desain.dto';
 import { GenerateUraianUsulanJalanUseCase } from './use_cases/generate_uraian_usulan_jalan.use_case';
 import { GenerateSpesifikasiUsulanJalanUseCase } from './use_cases/generate_spesifikasi_usulan_jalan.use_case';
 
@@ -436,67 +435,36 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 throw new BadRequestException(`Usulan Jalan must be in status 5 (Verifikasi Informasi Usulan Jalan) to verify informasi`);
             }
 
-            // Step 1: Always delete all JalanSpesifikasiDesainReview records for this Usulan Jalan to ensure clean state
             await this.jalanSpesifikasiDesainReviewService.deleteByUsulanJalanId(dto.idUsulanJalan);
 
-            // Step 2: Get all existing JalanSpesifikasiDesain records for this Usulan Jalan
-            const getSpesifikasiDto = new GetJalanSpesifikasiDesainDto();
-            getSpesifikasiDto.id_usulan_jalan = dto.idUsulanJalan;
-            const existingSpesifikasi = await this.jalanSpesifikasiDesainService.findAll(getSpesifikasiDto);
-
-            // Create a map of (id_ruang_lingkup, id_hspk) -> id_spesifikasi_desain
-            const spesifikasiMap = new Map<string, number>();
-            for (const spec of existingSpesifikasi.data) {
-                const key = `${spec.id_ruang_lingkup}_${spec.id_hspk}`;
-                spesifikasiMap.set(key, spec.id);
-            }
-
-            // Validate that idJalanJenisPerkerasan is set (required for generating uraian)
-            // idJalanJenisPerkerasan should already be set in verifyIndex
             if (!usulanJalan.idJalanJenisPerkerasan) {
                 throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in verifyIndex first');
             }
 
-            // Get jenis perkerasan from existing relation for generating uraian
             if (!usulanJalan.jalanJenisPerkerasan) {
                 throw new NotFoundException('JalanJenisPerkerasan relation not found');
             }
             const jenisPerkerasan = usulanJalan.jalanJenisPerkerasan.jenis;
             const idJalanJenisPerkerasanToUse = usulanJalan.idJalanJenisPerkerasan;
 
-            // Step 3: Create JalanSpesifikasiDesainReview records for each ruang lingkup and hspk
-            // Collect all tinggi_review values for MIN/MAX calculation and calculate total harga
             const tinggiReviewValues: number[] = [];
             let totalHargaReview = 0;
-            // Use lebar from review if provided, otherwise use existing lebar
             const lebarReview = dto.lebar !== undefined ? dto.lebar : (usulanJalan.lebar ?? 0);
             for (const ruangLingkup of dto.data_ruang_lingkup) {
                 for (const hspk of ruangLingkup.data_hspk) {
-                    const key = `${ruangLingkup.id}_${hspk.id_hspk}`;
-                    const idSpesifikasiDesain = spesifikasiMap.get(key);
-
-                    if (!idSpesifikasiDesain) {
-                        throw new NotFoundException(
-                            `JalanSpesifikasiDesain not found for id_ruang_lingkup=${ruangLingkup.id} and id_hspk=${hspk.id_hspk}`
-                        );
-                    }
-
                     const createReviewDto = new CreateJalanSpesifikasiDesainReviewDto();
-                    createReviewDto.id_spesifikasi_desain = idSpesifikasiDesain;
                     createReviewDto.id_usulan_jalan = dto.idUsulanJalan;
                     createReviewDto.id_ruang_lingkup = ruangLingkup.id;
                     createReviewDto.id_hspk = hspk.id_hspk;
                     createReviewDto.spasi_review = hspk.spasi_review;
                     createReviewDto.tinggi_review = hspk.tinggi_review;
 
-                    // volume_review and harga_spec_review will be calculated in the service layer
                     const createdReview = await this.jalanSpesifikasiDesainReviewService.create(createReviewDto, lebarReview);
                     tinggiReviewValues.push(hspk.tinggi_review);
                     totalHargaReview += createdReview.harga_spec_review;
                 }
             }
 
-            // Apply PPN if is_include_ppn is true
             if (usulanJalan.isIncludePpn) {
                 const persentasePpn = await this.ppnGlobalService.getLatestPersentasePPn();
                 if (persentasePpn !== null) {
@@ -504,19 +472,11 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 }
             }
 
-            // Step 4: Generate uraian, spesifikasi, satuan, and deskripsiDesain automatically based on review data
             const uraian = await this.generateUraianUsulanJalanUseCase.execute(jenisPerkerasan, lebarReview);
-            
             const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(tinggiReviewValues, idJalanJenisPerkerasanToUse);
-
-            // Satuan is always "m^1"
             const satuan = 'm^1';
-
-            // deskripsiDesain is always empty string
             const deskripsiDesain = '';
 
-            // Step 5: Update Usulan Jalan with review information and status to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)
-            // Note: idRekeningReview can only be updated by BPKAD in verifyBpkad endpoint
             const updateData: any = {
                 idUsulanJalanStatus: 6,
                 uraian,

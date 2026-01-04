@@ -48,7 +48,6 @@ export class JalanSpesifikasiDesainReviewRepositoryImpl implements JalanSpesifik
                 .createQueryBuilder('jsd_review')
                 .select([
                     'jsd_review.id',
-                    'jsd_review.id_spesifikasi_desain',
                     'jsd_review.id_usulan_jalan',
                     'jsd_review.id_ruang_lingkup',
                     'jsd_review.id_hspk',
@@ -56,17 +55,6 @@ export class JalanSpesifikasiDesainReviewRepositoryImpl implements JalanSpesifik
                     'jsd_review.spasi_review',
                     'jsd_review.tinggi_review',
                     'jsd_review.harga_spec_review'
-                ])
-                .leftJoin('jsd_review.spesifikasiDesain', 'spesifikasi_desain')
-                .addSelect([
-                    'spesifikasi_desain.id',
-                    'spesifikasi_desain.id_usulan_jalan',
-                    'spesifikasi_desain.id_ruang_lingkup',
-                    'spesifikasi_desain.id_hspk',
-                    'spesifikasi_desain.volume',
-                    'spesifikasi_desain.spasi',
-                    'spesifikasi_desain.tinggi',
-                    'spesifikasi_desain.harga_spec'
                 ])
                 .leftJoin('jsd_review.usulanJalan', 'usulan_jalan')
                 .addSelect([
@@ -100,7 +88,6 @@ export class JalanSpesifikasiDesainReviewRepositoryImpl implements JalanSpesifik
                 .createQueryBuilder('jsd_review')
                 .select([
                     'jsd_review.id',
-                    'jsd_review.id_spesifikasi_desain',
                     'jsd_review.id_usulan_jalan',
                     'jsd_review.id_ruang_lingkup',
                     'jsd_review.id_hspk',
@@ -108,17 +95,6 @@ export class JalanSpesifikasiDesainReviewRepositoryImpl implements JalanSpesifik
                     'jsd_review.spasi_review',
                     'jsd_review.tinggi_review',
                     'jsd_review.harga_spec_review'
-                ])
-                .leftJoin('jsd_review.spesifikasiDesain', 'spesifikasi_desain')
-                .addSelect([
-                    'spesifikasi_desain.id',
-                    'spesifikasi_desain.id_usulan_jalan',
-                    'spesifikasi_desain.id_ruang_lingkup',
-                    'spesifikasi_desain.id_hspk',
-                    'spesifikasi_desain.volume',
-                    'spesifikasi_desain.spasi',
-                    'spesifikasi_desain.tinggi',
-                    'spesifikasi_desain.harga_spec'
                 ])
                 .leftJoin('jsd_review.usulanJalan', 'usulan_jalan')
                 .addSelect([
@@ -167,7 +143,6 @@ export class JalanSpesifikasiDesainReviewRepositoryImpl implements JalanSpesifik
                 .createQueryBuilder('jsd_review')
                 .select([
                     'jsd_review.id',
-                    'jsd_review.id_spesifikasi_desain',
                     'jsd_review.id_usulan_jalan',
                     'jsd_review.id_ruang_lingkup',
                     'jsd_review.id_hspk',
@@ -175,17 +150,6 @@ export class JalanSpesifikasiDesainReviewRepositoryImpl implements JalanSpesifik
                     'jsd_review.spasi_review',
                     'jsd_review.tinggi_review',
                     'jsd_review.harga_spec_review'
-                ])
-                .leftJoin('jsd_review.spesifikasiDesain', 'spesifikasi_desain')
-                .addSelect([
-                    'spesifikasi_desain.id',
-                    'spesifikasi_desain.id_usulan_jalan',
-                    'spesifikasi_desain.id_ruang_lingkup',
-                    'spesifikasi_desain.id_hspk',
-                    'spesifikasi_desain.volume',
-                    'spesifikasi_desain.spasi',
-                    'spesifikasi_desain.tinggi',
-                    'spesifikasi_desain.harga_spec'
                 ])
                 .leftJoin('jsd_review.usulanJalan', 'usulan_jalan')
                 .addSelect([
