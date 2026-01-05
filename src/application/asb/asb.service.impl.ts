@@ -935,6 +935,74 @@ export class AsbServiceImpl implements AsbService {
             shstDto.tahun = asb.tahunAnggaran ?? 0;
             const nominalShstReview = await this.shstService.getNominal(shstDto);
 
+            // Recalculate BPS and BPNS with new floor data
+            let newNominalBps = asb.nominalBps || 0;
+            let newBobotTotalBps = asb.bobotTotalBps || 0;
+            let newNominalBpns = asb.nominalBpns || 0;
+            let newBobotTotalBpns = asb.bobotTotalBpns || 0;
+
+            // Get existing BPS component data if available
+            const getAsbBipekStandardByAsbDto = {
+                idAsb: dto.id_asb
+            };
+            const asbBipekStandard = await this.asbBipekStandardService.getByAsb(getAsbBipekStandardByAsbDto);
+            
+            if (asbBipekStandard && asbBipekStandard.data.length > 0) {
+                // Extract komponenIds and bobotInputs from existing BPS data
+                const komponenStdIds = asbBipekStandard.data.map(item => item.idAsbKomponenBangunanStd).filter(id => id !== null) as number[];
+                const bobotStdInputs = asbBipekStandard.data.map(item => item.bobotInput).filter(input => input !== null) as number[];
+
+                if (komponenStdIds.length > 0 && bobotStdInputs.length > 0) {
+                    // Recalculate BPS using old component data with new floor data
+                    const [BPSRecalculated, jumlahBobotBps] = await this.calculateBobotBPSUseCase.execute(
+                        dto.id_asb,
+                        komponenStdIds,
+                        bobotStdInputs,
+                        nominalShstReview,
+                        asb.totalLantai,
+                        koefLantaiTotalReview,
+                        koefFungsiRuangTotalReview,
+                        totalLuasLantaiReview
+                    );
+
+                    newNominalBps = BPSRecalculated;
+                    newBobotTotalBps = jumlahBobotBps;
+                }
+            }
+
+            // Get existing BPNS component data if available
+            const getAsbBipekNonstdByAsbDto = {
+                idAsb: dto.id_asb
+            };
+            const asbBipekNonstd = await this.asbBipekNonStdService.getByAsb(getAsbBipekNonstdByAsbDto);
+            
+            if (asbBipekNonstd && asbBipekNonstd.data.length > 0) {
+                // Extract komponenIds and bobotInputs from existing BPNS data
+                const komponenNonstdIds = asbBipekNonstd.data.map(item => item.idAsbKomponenBangunanNonstd).filter(id => id !== null) as number[];
+                const bobotNonstdInputs = asbBipekNonstd.data.map(item => item.bobotInput).filter(input => input !== null) as number[];
+
+                if (komponenNonstdIds.length > 0 && bobotNonstdInputs.length > 0) {
+                    // Recalculate BPNS using old component data with new floor data
+                    const [BPNSRecalculated, jumlahBobotBpns] = await this.calculateBobotBPNSUseCase.execute(
+                        dto.id_asb,
+                        komponenNonstdIds,
+                        bobotNonstdInputs,
+                        asb.totalLantai,
+                        nominalShstReview,
+                        koefLantaiTotalReview,
+                        koefFungsiRuangTotalReview,
+                        totalLuasLantaiReview,
+                        newBobotTotalBps
+                    );
+
+                    newNominalBpns = BPNSRecalculated;
+                    newBobotTotalBpns = jumlahBobotBpns;
+                }
+            }
+
+            // Calculate Total Biaya Pembangunan
+            const totalBiayaPembangunan = Number(newNominalBps) + Number(newNominalBpns);
+
             // 5. Update ASB status to 9
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 9,
@@ -942,7 +1010,12 @@ export class AsbServiceImpl implements AsbService {
                 idAsbKlasifikasi: idAsbKlasifikasiReview,
                 shst: nominalShstReview,
                 koefisienLantaiTotal: koefLantaiTotalReview,
-                koefisienFungsiRuangTotal: koefFungsiRuangTotalReview
+                koefisienFungsiRuangTotal: koefFungsiRuangTotalReview,
+                nominalBps: newNominalBps,
+                bobotTotalBps: newBobotTotalBps,
+                nominalBpns: newNominalBpns,
+                bobotTotalBpns: newBobotTotalBpns,
+                totalBiayaPembangunan: totalBiayaPembangunan
             });
 
             return {
