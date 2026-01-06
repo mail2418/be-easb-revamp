@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "smkk-global-collection-001",
+		"name": "SMKK Global Module",
+		"description": "API collection for SMKK Global (SMKK Percentage) module - Management of SMKK (Standar Mutu Konstruksi dan Keamanan) percentage values by month and year",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All SMKK Global (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/smkk-global?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["smkk-global"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all SMKK Global with optional pagination.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"SmkkGlobal list retrieved successfully\",\n  \"data\": {\n    \"data\": [\n      {\n        \"id\": 1,\n        \"bulan\": 1,\n        \"tahun\": 2024,\n        \"persentase_smkk\": 15.5,\n        \"createdAt\": \"...\",\n        \"updatedAt\": \"...\"\n      }\n    ],\n    \"page\": 1,\n    \"amount\": 10,\n    \"total\": 12,\n    \"totalPages\": 2\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get SMKK Global by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/smkk-global/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["smkk-global", "1"]
+						},
+						"description": "Get single SMKK Global by ID.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"SmkkGlobal retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"bulan\": 1,\n    \"tahun\": 2024,\n    \"persentase_smkk\": 15.5,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read endpoints accessible by ADMIN and SUPERADMIN"
+		},
+		{
+			"name": "CRUD Endpoints (ADMIN, SUPERADMIN)",
+			"item": [
+				{
+					"name": "Create SMKK Global",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bulan\": 1,\n  \"tahun\": 2024,\n  \"persentase_smkk\": 15.5\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/smkk-global",
+							"host": ["{{baseUrl}}"],
+							"path": ["smkk-global"]
+						},
+						"description": "Create new SMKK Global entry.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Body**:\n```json\n{\n  \"bulan\": number,           // Required - Month (1-12)\n  \"tahun\": number,           // Required - Year (>=2000)\n  \"persentase_smkk\": number  // Required - SMKK percentage (0-100)\n}\n```\n\n**SMKK (Standar Mutu Konstruksi dan Keamanan)**\n- Standard percentage for construction quality and safety\n- Typically ranges from 10% to 20%\n- Used in road construction cost calculations\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"SmkkGlobal created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"bulan\": 1,\n    \"tahun\": 2024,\n    \"persentase_smkk\": 15.5,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Update SMKK Global",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"bulan\": 1,\n  \"tahun\": 2024,\n  \"persentase_smkk\": 16.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/smkk-global",
+							"host": ["{{baseUrl}}"],
+							"path": ["smkk-global"]
+						},
+						"description": "Update existing SMKK Global.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Body**:\n```json\n{\n  \"id\": number,              // Required - ID to update\n  \"bulan\": number,          // Optional - Month (1-12)\n  \"tahun\": number,          // Optional - Year (>=2000)\n  \"persentase_smkk\": number // Optional - SMKK percentage (0-100)\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"SmkkGlobal updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"bulan\": 1,\n    \"tahun\": 2024,\n    \"persentase_smkk\": 16.0,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete SMKK Global",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/smkk-global/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["smkk-global", "1"]
+						},
+						"description": "Delete SMKK Global by ID.\n\n**Roles**: ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"SmkkGlobal deleted successfully\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update, Delete operations - Accessible by ADMIN and SUPERADMIN"
+		}
+	]
+}
+

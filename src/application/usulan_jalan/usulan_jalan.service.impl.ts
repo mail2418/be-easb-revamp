@@ -24,6 +24,12 @@ import { CreateJalanSpesifikasiDesainDto } from '../../presentation/jalan_spesif
 import { CreateJalanSpesifikasiDesainReviewDto } from '../../presentation/jalan_spesifikasi_desain_review/dto/create_jalan_spesifikasi_desain_review.dto';
 import { GenerateUraianUsulanJalanUseCase } from './use_cases/generate_uraian_usulan_jalan.use_case';
 import { GenerateSpesifikasiUsulanJalanUseCase } from './use_cases/generate_spesifikasi_usulan_jalan.use_case';
+import { CalculateBiayaSmkkUseCase } from './use_cases/calculate_biaya_smkk.use_case';
+import { JalanSaluranSmkkService } from '../../domain/jalan_saluran_smkk/jalan_saluran_smkk.service';
+import { JalanSaluranSpesifikasiSmkkService } from '../../domain/jalan_saluran_spesifikasi_smkk/jalan_saluran_spesifikasi_smkk.service';
+import { JalanSaluranSpesifikasiSmkkReviewService } from '../../domain/jalan_saluran_spesifikasi_smkk_review/jalan_saluran_spesifikasi_smkk_review.service';
+import { CreateJalanSaluranSpesifikasiSmkkDto } from '../../presentation/jalan_saluran_spesifikasi_smkk/dto/create_jalan_saluran_spesifikasi_smkk.dto';
+import { CreateJalanSaluranSpesifikasiSmkkReviewDto } from '../../presentation/jalan_saluran_spesifikasi_smkk_review/dto/create_jalan_saluran_spesifikasi_smkk_review.dto';
 
 @Injectable()
 export class UsulanJalanServiceImpl implements UsulanJalanService {
@@ -35,6 +41,10 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         private readonly ppnGlobalService: PpnGlobalService,
         private readonly generateUraianUsulanJalanUseCase: GenerateUraianUsulanJalanUseCase,
         private readonly generateSpesifikasiUsulanJalanUseCase: GenerateSpesifikasiUsulanJalanUseCase,
+        private readonly calculateBiayaSmkkUseCase: CalculateBiayaSmkkUseCase,
+        private readonly jalanSaluranSmkkService: JalanSaluranSmkkService,
+        private readonly jalanSaluranSpesifikasiSmkkService: JalanSaluranSpesifikasiSmkkService,
+        private readonly jalanSaluranSpesifikasiSmkkReviewService: JalanSaluranSpesifikasiSmkkReviewService,
     ) { }
 
     async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanWithRelationsDto | null> {
@@ -217,6 +227,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
             // Step 1: Always delete all JalanSpesifikasiDesain records for this Usulan Jalan to ensure clean state
             await this.jalanSpesifikasiDesainService.deleteByUsulanJalanId(dto.idUsulanJalan);
+            await this.jalanSaluranSpesifikasiSmkkService.deleteByUsulanJalanId(dto.idUsulanJalan);
 
             // Validate that idJalanJenisPerkerasan is set (required for generating uraian)
             if (!existingUsulanJalan.idJalanJenisPerkerasan) {
@@ -270,6 +281,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             // deskripsiDesain is always empty string
             const deskripsiDesain = '';
 
+            // Calculate biaya_smkk = totalHarga * latest SMKK Global persentase
+            const biayaSmkk = await this.calculateBiayaSmkkUseCase.execute(totalHarga);
+
             // Step 4: Update Usulan Jalan with new information and status 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
             const updatedUsulanJalan = await this.repository.update(dto.idUsulanJalan, {
                 uraian,
@@ -278,9 +292,58 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 deskripsiDesain,
                 lebar: dto.lebar,
                 totalHarga,
+                biayaSmkk,
                 idRekening: dto.idRekening,
                 idUsulanJalanStatus: 2, // Input Ruang Lingkup dan Spesifikasi Jalan
             });
+
+            console.log('updatedUsulanJalan', updatedUsulanJalan);
+            console.log('dto.data_smkk', dto.data_smkk);
+
+            // Step 5: Create JalanSaluranSpesifikasiSmkk records if data_smkk is provided
+            if (dto.data_smkk && dto.data_smkk.length > 0) {
+                console.log('dto.data_smkk', dto.data_smkk);
+                for (const smkk of dto.data_smkk) {
+                    // Get jalan_saluran_smkk to get pengali, harga_satuan, and id_jenis_usulan
+                    const komponenSmkk = await this.jalanSaluranSmkkService.findById(smkk.id_smkk);
+                    if (!komponenSmkk) {
+                        throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+                    }
+
+                    if (!komponenSmkk.ruangLingkup) {
+                        throw new NotFoundException(`RuangLingkup for JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+                    }
+
+                    if (!komponenSmkk.pengali) {
+                        throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`);
+                    }
+
+                    // Calculate harga_spec = biaya_smkk * komponen_smkk.pengali
+                    const hargaSpec = biayaSmkk! * komponenSmkk.pengali;
+
+                    console.log('hargaSpec', hargaSpec);
+
+                    // Calculate jumlah_barang = ROUNDDOWN(harga_spec / komponen_smkk.harga_satuan)
+                    if (!komponenSmkk.harga_satuan || komponenSmkk.harga_satuan === 0) {
+                        throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no harga_satuan or harga_satuan is zero`);
+                    }
+                    const jumlahBarang = Math.floor(hargaSpec / komponenSmkk.harga_satuan);
+
+                    console.log('jumlahBarang', jumlahBarang);
+
+                    const createSpesifikasiSmkkDto: CreateJalanSaluranSpesifikasiSmkkDto = {
+                        id_jenis_usulan: komponenSmkk.ruangLingkup.id_jenis_usulan,
+                        id_usulan_jalan: dto.idUsulanJalan,
+                        id_jalan_saluran_smkk: smkk.id_smkk,
+                        harga_spec: hargaSpec,
+                        jumlah_barang: jumlahBarang,
+                    };
+
+                    console.log('createSpesifikasiSmkkDto', createSpesifikasiSmkkDto);
+
+                    await this.jalanSaluranSpesifikasiSmkkService.create(createSpesifikasiSmkkDto);
+                }
+            }
 
             return {
                 id: updatedUsulanJalan.id,
@@ -477,6 +540,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const satuan = 'm^1';
             const deskripsiDesain = '';
 
+            // Calculate biaya_smkk = totalHargaReview * latest SMKK Global persentase
+            const biayaSmkk = await this.calculateBiayaSmkkUseCase.execute(totalHargaReview);
+
             const updateData: any = {
                 idUsulanJalanStatus: 6,
                 uraian,
@@ -484,6 +550,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 satuan,
                 deskripsiDesain,
                 totalHarga: totalHargaReview,
+                biayaSmkk,
             };
 
             if (dto.lebar !== undefined) {
@@ -491,6 +558,44 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             }
 
             const updated = await this.repository.update(dto.idUsulanJalan, updateData);
+
+            // Create JalanSaluranSpesifikasiSmkkReview records if data_smkk is provided
+            if (dto.data_smkk && dto.data_smkk.length > 0) {
+                for (const smkk of dto.data_smkk) {
+                    // Get jalan_saluran_smkk to get pengali, harga_satuan, and id_jenis_usulan
+                    const komponenSmkk = await this.jalanSaluranSmkkService.findById(smkk.id_smkk);
+                    if (!komponenSmkk) {
+                        throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+                    }
+
+                    if (!komponenSmkk.ruangLingkup) {
+                        throw new NotFoundException(`RuangLingkup for JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+                    }
+
+                    if (!komponenSmkk.pengali) {
+                        throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`);
+                    }
+
+                    // Calculate harga_spec = biaya_smkk * komponen_smkk.pengali
+                    const hargaSpec = biayaSmkk! * komponenSmkk.pengali;
+
+                    // Calculate jumlah_barang = ROUNDDOWN(harga_spec / komponen_smkk.harga_satuan)
+                    if (!komponenSmkk.harga_satuan || komponenSmkk.harga_satuan === 0) {
+                        throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no harga_satuan or harga_satuan is zero`);
+                    }
+                    const jumlahBarang = Math.floor(hargaSpec / komponenSmkk.harga_satuan);
+
+                    const createSpesifikasiSmkkReviewDto: CreateJalanSaluranSpesifikasiSmkkReviewDto = {
+                        id_jenis_usulan: komponenSmkk.ruangLingkup.id_jenis_usulan,
+                        id_usulan_jalan: dto.idUsulanJalan,
+                        id_jalan_saluran_smkk: smkk.id_smkk,
+                        harga_spec: hargaSpec,
+                        jumlah_barang: jumlahBarang,
+                    };
+
+                    await this.jalanSaluranSpesifikasiSmkkReviewService.create(createSpesifikasiSmkkReviewDto);
+                }
+            }
 
             return {
                 id: updated.id,

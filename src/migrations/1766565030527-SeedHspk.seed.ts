@@ -526,20 +526,6 @@ export class SeedHspk1766565030527 implements MigrationInterface {
         { id_ruang_lingkup: 11, no_mata_pembayaran: '10.2.(3)', uraian: 'Pemeliharaan Jembatan …… bentang ….. m', satuan: 'LS', harga_satuan: null },
         { id_ruang_lingkup: 11, no_mata_pembayaran: '10.2.(4)', uraian: 'Pemeliharaan Jembatan …… bentang ….. m', satuan: 'LS', harga_satuan: null },
         { id_ruang_lingkup: 11, no_mata_pembayaran: '10.2. (…..)', uraian: 'Pemeliharaan Jembatan …… bentang ….. m', satuan: 'LS', harga_satuan: null },
-        { id_ruang_lingkup: 1, no_mata_pembayaran: 'Custom 1', uraian: 'Urugan Pasir + Pemadatan Tanah', satuan: 'm3', harga_satuan: null },
-        { id_ruang_lingkup: 1, no_mata_pembayaran: 'A.1.5.1.11', uraian: 'Urugan 1 m3 Pasir Urug', satuan: 'm3', harga_satuan: null },
-        { id_ruang_lingkup: 1, no_mata_pembayaran: 'A.1.5.1.10', uraian: 'Pemadatan tanah 1 m3 tanah per 20 cm (manual)', satuan: 'm3', harga_satuan: null },
-        { id_ruang_lingkup: 1, no_mata_pembayaran: 'A.4.7.1.16', uraian: 'Pengecatan 1 m2 permukaan baja dengan menie besi', satuan: 'm2', harga_satuan: null },
-        { id_ruang_lingkup: 1, no_mata_pembayaran: 'SSH.1', uraian: 'Helm Safety', satuan: 'Buah', harga_satuan: null },
-        { id_ruang_lingkup: 1, no_mata_pembayaran: 'SSH.2', uraian: 'Rompi Safety', satuan: 'Buah', harga_satuan: null },
-        { id_ruang_lingkup: 1, no_mata_pembayaran: 'SSH.3', uraian: 'Sepatu Safety', satuan: 'Pasang', harga_satuan: null },
-        { id_ruang_lingkup: 12, no_mata_pembayaran: 'Custom 1', uraian: 'Urugan Pasir + Pemadatan Tanah', satuan: 'm3', harga_satuan: null },
-        { id_ruang_lingkup: 12, no_mata_pembayaran: 'A.1.5.1.11', uraian: 'Urugan 1 m3 Pasir Urug', satuan: 'm3', harga_satuan: null },
-        { id_ruang_lingkup: 12, no_mata_pembayaran: 'A.1.5.1.10', uraian: 'Pemadatan tanah 1 m3 tanah per 20 cm (manual)', satuan: 'm3', harga_satuan: null },
-        { id_ruang_lingkup: 12, no_mata_pembayaran: 'A.4.7.1.16', uraian: 'Pengecatan 1 m2 permukaan baja dengan menie besi', satuan: 'm2', harga_satuan: null },
-        { id_ruang_lingkup: 12, no_mata_pembayaran: 'SSH.1', uraian: 'Helm Safety', satuan: 'Buah', harga_satuan: null },
-        { id_ruang_lingkup: 12, no_mata_pembayaran: 'SSH.2', uraian: 'Rompi Safety', satuan: 'Buah', harga_satuan: null },
-        { id_ruang_lingkup: 12, no_mata_pembayaran: 'SSH.3', uraian: 'Sepatu Safety', satuan: 'Pasang', harga_satuan: null },
     ];
 
     public async up(queryRunner: QueryRunner): Promise<void> {

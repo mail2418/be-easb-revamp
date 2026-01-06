@@ -44,10 +44,11 @@ import { UsulanJalanStatusModule } from './presentation/usulan_jalan_status/usul
 import { UsulanJalanModule } from './presentation/usulan_jalan/usulan_jalan.module';
 import { JalanJenisPemeliharaanModule } from './presentation/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.module';
 import { PpnGlobalModule } from './presentation/ppn_global/ppn_global.module';
-import { JalanSmkkModule } from './presentation/jalan_smkk/jalan_smkk.module';
+import { SmkkGlobalModule } from './presentation/smkk_global/smkk_global.module';
 import { JalanKebijakanModule } from './presentation/jalan_kebijakan/jalan_kebijakan.module';
 import { JenisUsulanModule } from './presentation/jenis_usulan/jenis_usulan.module';
 import { JalanSaluranRuangLingkupModule } from './presentation/jalan_saluran_ruang_lingkup/jalan_saluran_ruang_lingkup.module';
+import { JalanSaluranSmkkModule } from './presentation/jalan_saluran_smkk/jalan_saluran_smkk.module';
 import { HspkModule } from './presentation/hspk/hspk.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -132,10 +133,11 @@ import { DataSourceOptions } from 'typeorm';
         UsulanJalanModule,
         JalanJenisPemeliharaanModule,
         PpnGlobalModule,
-        JalanSmkkModule,
+        SmkkGlobalModule,
         JalanKebijakanModule,
         JenisUsulanModule,
         JalanSaluranRuangLingkupModule,
+        JalanSaluranSmkkModule,
         HspkModule,
         // other modules...
     ],

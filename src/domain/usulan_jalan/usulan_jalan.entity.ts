@@ -54,6 +54,7 @@ export class UsulanJalan {
     deskripsiDesain!: string | null;
     lebar!: number | null;
     totalHarga!: number | null;
+    biayaSmkk!: number | null;
 
     // Relations - Required
     opd?: Opd;
