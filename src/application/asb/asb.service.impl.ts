@@ -1291,57 +1291,10 @@ export class AsbServiceImpl implements AsbService {
             const totalBiayaPembangunan = Number(BPNSReview) + Number(asb.nominalBps || 0);
             console.log("totalBiayaPembangunan:", totalBiayaPembangunan);
 
-            // Set Jakon prices
-            if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !totalBiayaPembangunan) {
-                throw new Error("ASB is missing required classification or location data for Jakon lookup");
-            }
 
-            const perencanaanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.PERENCANAAN,
-                total_biaya_pembangunan: totalBiayaPembangunan
-            });
-
-            if (!perencanaanKonstruksi) {
-                throw new Error("ASB is missing required perencanaanKonstruksi data for Jakon lookup");
-            }
-
-            const nominalPerencanaanKonstruksi = perencanaanKonstruksi.standard;
-
-            const pengawasanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.PENGAWASAN,
-                total_biaya_pembangunan: totalBiayaPembangunan
-            });
-
-            if (!pengawasanKonstruksi) {
-                throw new Error("ASB is missing required pengawasanKonstruksi data for Jakon lookup");
-            }
-
-            const nominalPengawasanKonstruksi = pengawasanKonstruksi.standard;
-
-            if (!asb.totalLantai || !asb.jumlahKontraktor) {
-                throw new Error("ASB is missing required totalLantai or jumlahKontraktor data for Jakon lookup");
-            }
-
-            const managementKonstruksi = (asb.totalLantai <= 4 && asb.jumlahKontraktor <= 2) ? 0 : await this.asbJakonService.getJakonByPriceRange({
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.MANAGEMENT,
-                total_biaya_pembangunan: totalBiayaPembangunan
-            });
-
-            let nominalManagementKonstruksi = 0;
-            if (managementKonstruksi === null || managementKonstruksi === 0) {
-                nominalManagementKonstruksi = 0;
-            } else {
-                nominalManagementKonstruksi = managementKonstruksi.standard;
-            }
+            const nominalPerencanaanKonstruksi = asb.perencanaanKonstruksi ?? 0;
+            const nominalPengawasanKonstruksi = asb.pengawasanKonstruksi ?? 0;
+            const nominalManagementKonstruksi = asb.managementKonstruksi ?? 0;
 
             const rekapitulasiBiayaKonstruksi = Number(totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi);
 
@@ -1455,11 +1408,21 @@ export class AsbServiceImpl implements AsbService {
                 );
             }
 
-            // 2. Update ASB data pekerjaan and status to 13
+            // 2. Recalculate rekapitulasiBiayaKonstruksi after updating Jakon values
+            const totalBiayaPembangunan = asb.totalBiayaPembangunan ?? 0;
+            const rekapitulasiBiayaKonstruksi = Number(totalBiayaPembangunan) + 
+                Number(dto.perencanaan_konstruksi ?? 0) + 
+                Number(dto.pengawasan_konstruksi ?? 0) + 
+                Number(dto.management_konstruksi ?? 0);
+            const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
+
+            // 3. Update ASB data pekerjaan, rekapitulasi, and status to 13
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 perencanaanKonstruksi: dto.perencanaan_konstruksi,
                 pengawasanKonstruksi: dto.pengawasan_konstruksi,
                 managementKonstruksi: dto.management_konstruksi,
+                rekapitulasiBiayaKonstruksi: rekapitulasiBiayaKonstruksi,
+                rekapitulasiBiayaKonstruksiRounded: rekapitulasiBiayaKonstruksiRounded,
                 idVerifikatorAdpem: Number(userId),
                 verifiedAdpemAt: new Date(),
                 idAsbStatus: 13

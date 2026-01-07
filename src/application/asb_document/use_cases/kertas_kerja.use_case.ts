@@ -164,12 +164,14 @@ export class KertasKerjaUseCase {
             `;
         }).join('');
 
-        const totalBiayaKonstruksi = sumBps + sumBpns;
+        const totalBiayaKonstruksiFromReview = sumBps + sumBpns;
+        const totalBiayaKonstruksi = totalBiayaKonstruksiFromReview;
 
-        // Jakon calculations (using values from dataAsb if available, otherwise 0)
         const jakonPerencanaan = dataAsb.perencanaanKonstruksi ?? 0;
         const jakonPengawasan = dataAsb.pengawasanKonstruksi ?? 0;
         const jakonManagement = dataAsb.managementKonstruksi ?? 0;
+
+        const calculatedRekapitulasi = Number(totalBiayaKonstruksi) + Number(jakonPerencanaan) + Number(jakonPengawasan) + Number(jakonManagement);
 
         // Helper to safely access nested properties
         const getOpd = (d: any) => d.opd?.opd ?? '';
@@ -517,7 +519,7 @@ export class KertasKerjaUseCase {
         <tr><td></td><td></td><td class="text-left" colspan="3">- Biaya Pekerjaan Non Standar</td><td class="text-right">${number_format(sumBpns)}</td></tr>
         <tr class="highlight-row"><td></td><td></td>
           <td class="text-left font-weight-bold" colspan="3">- Biaya Konstruksi ${tipe_bangunan} ${getKlasifikasi(dataAsb)}</td>
-          <td class="text-right font-weight-bold">${number_format(totalBiayaKonstruksi)}</td>
+          <td class="text-right font-weight-bold">${number_format(totalBiayaKonstruksiFromReview)}</td>
         </tr>
         <tr><td></td><td></td><td class="text-left" colspan="4"><i>*Bobot Non Standar maks. 150% Bobot Standar</i></td></tr>
       </tbody>
@@ -544,8 +546,8 @@ export class KertasKerjaUseCase {
         <tr><td></td><td>b.</td><td class="text-left" colspan="3">Biaya Perencanaan Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(jakonPerencanaan)}</td></tr>
         <tr><td></td><td>c.</td><td class="text-left" colspan="3">Biaya Pengawasan Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(jakonPengawasan)}</td></tr>
         <tr><td></td><td>d.</td><td class="text-left" colspan="3">Biaya Manajemen Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(jakonManagement)}</td></tr>
-        <tr class="highlight-row"><td class="text-right" colspan="5">Total</td><td class="text-right font-weight-bold num">Rp${number_format(dataAsb.rekapitulasiBiayaKonstruksi || 0)}</td></tr>
-        <tr><td class="text-right" colspan="5"><i><b>Dibulatkan</b></i></td><td class="text-right font-weight-bold num">Rp${number_format(dataAsb.rekapitulasiBiayaKonstruksiRounded || 0)}</td></tr>
+        <tr class="highlight-row"><td class="text-right" colspan="5">Total</td><td class="text-right font-weight-bold num">Rp${number_format(dataAsb.rekapitulasiBiayaKonstruksi ?? calculatedRekapitulasi)}</td></tr>
+        <tr><td class="text-right" colspan="5"><i><b>Dibulatkan</b></i></td><td class="text-right font-weight-bold num">Rp${number_format(dataAsb.rekapitulasiBiayaKonstruksiRounded ?? Math.round(calculatedRekapitulasi / 100) * 100)}</td></tr>
         <tr><td colspan="6" class="terbilang-label"><b>Terbilang:</b></td></tr>
         <tr><td colspan="6" class="terbilang-text">${terbilang(dataAsb.rekapitulasiBiayaKonstruksiRounded || 0)} Rupiah</td></tr>
       </tbody>
