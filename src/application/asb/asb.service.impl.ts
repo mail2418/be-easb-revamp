@@ -1003,6 +1003,66 @@ export class AsbServiceImpl implements AsbService {
             // Calculate Total Biaya Pembangunan
             const totalBiayaPembangunan = Number(newNominalBps) + Number(newNominalBpns);
 
+            // Calculate Jakon prices for rekapitulasi
+            let nominalPerencanaanKonstruksi = asb.perencanaanKonstruksi ?? 0;
+            let nominalPengawasanKonstruksi = asb.pengawasanKonstruksi ?? 0;
+            let nominalManagementKonstruksi = asb.managementKonstruksi ?? 0;
+
+            // Get Jakon prices if available (using new klasifikasi from review)
+            if (idAsbKlasifikasiReview && asb.idAsbTipeBangunan && asb.idAsbJenis && totalBiayaPembangunan) {
+                try {
+                    const perencanaanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
+                        id_asb_klasifikasi: idAsbKlasifikasiReview,
+                        id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                        id_asb_jenis: asb.idAsbJenis,
+                        type: AsbJakonType.PERENCANAAN,
+                        total_biaya_pembangunan: totalBiayaPembangunan
+                    });
+                    if (perencanaanKonstruksi) {
+                        nominalPerencanaanKonstruksi = perencanaanKonstruksi.standard;
+                    }
+
+                    const pengawasanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
+                        id_asb_klasifikasi: idAsbKlasifikasiReview,
+                        id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                        id_asb_jenis: asb.idAsbJenis,
+                        type: AsbJakonType.PENGAWASAN,
+                        total_biaya_pembangunan: totalBiayaPembangunan
+                    });
+                    if (pengawasanKonstruksi) {
+                        nominalPengawasanKonstruksi = pengawasanKonstruksi.standard;
+                    }
+
+                    if (asb.totalLantai && asb.jumlahKontraktor) {
+                        const managementKonstruksi = (asb.totalLantai <= 4 && asb.jumlahKontraktor <= 2) 
+                            ? null 
+                            : await this.asbJakonService.getJakonByPriceRange({
+                                id_asb_klasifikasi: idAsbKlasifikasiReview,
+                                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                                id_asb_jenis: asb.idAsbJenis,
+                                type: AsbJakonType.MANAGEMENT,
+                                total_biaya_pembangunan: totalBiayaPembangunan
+                            });
+                        if (managementKonstruksi) {
+                            nominalManagementKonstruksi = managementKonstruksi.standard;
+                        } else {
+                            nominalManagementKonstruksi = 0;
+                        }
+                    }
+                } catch (error) {
+                    // If Jakon lookup fails, use existing values
+                    console.log("Jakon lookup failed in verifyLantai, using existing values:", error);
+                }
+            }
+
+            // Calculate rekapitulasiBiayaKonstruksi
+            const rekapitulasiBiayaKonstruksi = Number(totalBiayaPembangunan) + 
+                Number(nominalPerencanaanKonstruksi) + 
+                Number(nominalPengawasanKonstruksi) + 
+                Number(nominalManagementKonstruksi);
+
+            const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
+
             // 5. Update ASB status to 9
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 9,
@@ -1015,7 +1075,12 @@ export class AsbServiceImpl implements AsbService {
                 bobotTotalBps: newBobotTotalBps,
                 nominalBpns: newNominalBpns,
                 bobotTotalBpns: newBobotTotalBpns,
-                totalBiayaPembangunan: totalBiayaPembangunan
+                totalBiayaPembangunan: totalBiayaPembangunan,
+                perencanaanKonstruksi: nominalPerencanaanKonstruksi,
+                pengawasanKonstruksi: nominalPengawasanKonstruksi,
+                managementKonstruksi: nominalManagementKonstruksi,
+                rekapitulasiBiayaKonstruksi: rekapitulasiBiayaKonstruksi,
+                rekapitulasiBiayaKonstruksiRounded: rekapitulasiBiayaKonstruksiRounded
             });
 
             return {
@@ -1099,6 +1164,19 @@ export class AsbServiceImpl implements AsbService {
             // 7. Calculate Total Biaya Pembangunan using latest nominalBpns (from ASB, could be from review or original)
             const totalBiayaPembangunan = Number(BPSReview) + Number(asb.nominalBpns ?? 0);
 
+            // Use existing Jakon values from ASB (no need to recalculate as verifyBps doesn't affect Jakon prices)
+            const nominalPerencanaanKonstruksi = asb.perencanaanKonstruksi ?? 0;
+            const nominalPengawasanKonstruksi = asb.pengawasanKonstruksi ?? 0;
+            const nominalManagementKonstruksi = asb.managementKonstruksi ?? 0;
+
+            // Calculate rekapitulasiBiayaKonstruksi
+            const rekapitulasiBiayaKonstruksi = Number(totalBiayaPembangunan) + 
+                Number(nominalPerencanaanKonstruksi) + 
+                Number(nominalPengawasanKonstruksi) + 
+                Number(nominalManagementKonstruksi);
+
+            const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
+
             // 8. Re-read ASB data before update to prevent race condition
             const asbBeforeUpdate = await this.findById(dto.id_asb, userIdOpd, userRoles);
             if (!asbBeforeUpdate) {
@@ -1117,7 +1195,12 @@ export class AsbServiceImpl implements AsbService {
                 idAsbStatus: 10,
                 nominalBps: BPSReview,
                 bobotTotalBps: jumlahBobot,
-                totalBiayaPembangunan: totalBiayaPembangunan
+                totalBiayaPembangunan: totalBiayaPembangunan,
+                perencanaanKonstruksi: nominalPerencanaanKonstruksi,
+                pengawasanKonstruksi: nominalPengawasanKonstruksi,
+                managementKonstruksi: nominalManagementKonstruksi,
+                rekapitulasiBiayaKonstruksi: rekapitulasiBiayaKonstruksi,
+                rekapitulasiBiayaKonstruksiRounded: rekapitulasiBiayaKonstruksiRounded
             });
 
             return {
