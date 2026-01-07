@@ -77,6 +77,9 @@ import { DataSourceOptions } from 'typeorm';
                         synchronize: false,
                         migrationsRun: false,
                         migrations: [__dirname + '/migrations/*{.js,.ts}'],
+                        extra: {
+                            options: '-c timezone=Asia/Jakarta'
+                        },
                     };
                 }
 
@@ -88,6 +91,9 @@ import { DataSourceOptions } from 'typeorm';
                     synchronize: false, // always false in production
                     migrationsRun: false,
                     migrations: [__dirname + '/migrations/*{.js,.ts}'],
+                    extra: {
+                        options: '-c timezone=Asia/Jakarta'
+                    },
                 };
             },
             inject: [ConfigService],

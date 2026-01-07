@@ -24,4 +24,8 @@ export default new DataSource({
     // Tidak pakai synchronize di CLI; migrasi yang handle
     synchronize: false,
     logging: ['error', 'warn'],
+    
+    extra: {
+        options: '-c timezone=Asia/Jakarta'
+    },
 });

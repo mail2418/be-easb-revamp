@@ -9,12 +9,20 @@ export class HandleJakonFileUseCase {
    */
   generateFilename(file: Express.Multer.File, tahun: number): string {
     const now = new Date();
-    const timestamp = 
-      now.getFullYear() +
-      String(now.getMonth() + 1).padStart(2, '0') +
-      String(now.getDate()).padStart(2, '0') +
-      String(now.getHours()).padStart(2, '0') +
-      String(now.getMinutes()).padStart(2, '0');
+    
+    const yearFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jakarta', year: 'numeric' });
+    const monthFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jakarta', month: '2-digit' });
+    const dayFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jakarta', day: '2-digit' });
+    const hourFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jakarta', hour: '2-digit', hour12: false });
+    const minuteFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jakarta', minute: '2-digit' });
+    
+    const year = yearFormatter.format(now);
+    const month = monthFormatter.format(now).padStart(2, '0');
+    const day = dayFormatter.format(now).padStart(2, '0');
+    const hour = hourFormatter.format(now).padStart(2, '0');
+    const minute = minuteFormatter.format(now).padStart(2, '0');
+    
+    const timestamp = `${year}${month}${day}${hour}${minute}`;
 
     const originalExtension = file.originalname.split('.').pop() || 'xlsx';
     
