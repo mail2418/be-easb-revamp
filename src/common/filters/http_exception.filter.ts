@@ -25,11 +25,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
             console.log('=======================');
         }
 
-        res.status(status).json({
+        const responseBody = {
             status: status >= 400 ? 'error' : 'success',
             responseCode: status,
             message: Array.isArray(message) ? message.join(', ') : message,
             data: null,
-        });
+        };
+        (res.locals as any).responseDto = responseBody;
+        res.status(status).json(responseBody);
     }
 }
