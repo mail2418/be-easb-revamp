@@ -129,8 +129,7 @@ export class ParseExcelShstUseCase {
             }
 
             if (errors.length > 0) {
-                // Log errors but don't fail if we have at least some valid rows
-                console.warn(`Some rows had errors: ${errors.join('; ')}`);
+                // Some rows had errors but we have at least some valid rows
             }
 
             return parsedRows;

@@ -16,85 +16,61 @@ export class AsbKomponenBangunanStdRepositoryImpl implements AsbKomponenBangunan
     ) { }
 
     async create(data: CreateAsbKomponenBangunanStdDto): Promise<AsbKomponenBangunanStd> {
-        try {
-            const entity = plainToInstance(AsbKomponenBangunanStdOrmEntity, data);
-            const saved = await this.repo.save(entity);
-            return saved;
-        } catch (error) {
-            throw error;
-        }
+        const entity = plainToInstance(AsbKomponenBangunanStdOrmEntity, data);
+        const saved = await this.repo.save(entity);
+        return saved;
     }
 
     async update(id: number, data: Partial<AsbKomponenBangunanStd>): Promise<AsbKomponenBangunanStd> {
-        try {
-            await this.repo.update(id, data);
-            const updated = await this.repo.findOne({ where: { id } });
-            return updated!;
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.update(id, data);
+        const updated = await this.repo.findOne({ where: { id } });
+        return updated!;
     }
 
     async delete(id: number): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(id)
-                .then(() => true)
-                .catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<AsbKomponenBangunanStd | null> {
-        try {
-            const entity = await this.repo
-                .createQueryBuilder('asb_komponen_bangunan_std')
-                .select(['asb_komponen_bangunan_std.id', 'asb_komponen_bangunan_std.komponen'])
-                .where('asb_komponen_bangunan_std.id = :id', { id })
-                .getOne();
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo
+            .createQueryBuilder('asb_komponen_bangunan_std')
+            .select(['asb_komponen_bangunan_std.id', 'asb_komponen_bangunan_std.komponen'])
+            .where('asb_komponen_bangunan_std.id = :id', { id })
+            .getOne();
+        return entity || null;
     }
 
     async findByKomponen(komponen: string): Promise<AsbKomponenBangunanStd | null> {
-        try {
-            const entity = await this.repo.findOne({
-                where: { komponen: ILike(`%${komponen}%`) }
-            });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo.findOne({
+            where: { komponen: ILike(`%${komponen}%`) }
+        });
+        return entity || null;
     }
 
     async findAll(pagination: GetAsbKomponenBangunanStdsDto): Promise<{ data: AsbKomponenBangunanStd[], total: number }> {
-        try {
-            const where: any = {};
+        const where: any = {};
 
-            if (pagination.id_asb_jenis !== undefined) {
-                where.idAsbJenis = pagination.id_asb_jenis;
-            }
-
-            if (pagination.id_asb_tipe_bangunan !== undefined) {
-                where.idAsbTipeBangunan = pagination.id_asb_tipe_bangunan;
-            }
-
-            const findOptions: any = {
-                where: Object.keys(where).length > 0 ? where : undefined,
-                order: { id: 'DESC' }
-            };
-
-            if (pagination.page !== undefined && pagination.amount !== undefined) {
-                findOptions.skip = (pagination.page - 1) * pagination.amount;
-                findOptions.take = pagination.amount;
-            }
-
-            const [items, total] = await this.repo.findAndCount(findOptions);
-            return { data: items, total };
-        } catch (error) {
-            throw error;
+        if (pagination.id_asb_jenis !== undefined) {
+            where.idAsbJenis = pagination.id_asb_jenis;
         }
+
+        if (pagination.id_asb_tipe_bangunan !== undefined) {
+            where.idAsbTipeBangunan = pagination.id_asb_tipe_bangunan;
+        }
+
+        const findOptions: any = {
+            where: Object.keys(where).length > 0 ? where : undefined,
+            order: { id: 'DESC' }
+        };
+
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            findOptions.skip = (pagination.page - 1) * pagination.amount;
+            findOptions.take = pagination.amount;
+        }
+
+        const [items, total] = await this.repo.findAndCount(findOptions);
+        return { data: items, total };
     }
 }

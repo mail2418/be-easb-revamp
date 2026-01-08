@@ -15,88 +15,64 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
     constructor(@InjectRepository(AsbLantaiOrmEntity) private readonly repo: Repository<AsbLantaiOrmEntity>) { }
 
     async create(dto: CreateAsbLantaiDto): Promise<AsbLantai> {
-        try {
-            const ormEntity = this.repo.create({
-                lantai: dto.lantai,
-                type: dto.type,
-                koef: dto.koef,
-                idSatuan: dto.id_satuan,
-            });
-            const newEntity = await this.repo.save(ormEntity);
-            return newEntity;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = this.repo.create({
+            lantai: dto.lantai,
+            type: dto.type,
+            koef: dto.koef,
+            idSatuan: dto.id_satuan,
+        });
+        const newEntity = await this.repo.save(ormEntity);
+        return newEntity;
     }
 
     async update(dto: UpdateAsbLantaiDto): Promise<AsbLantai> {
-        try {
-            const updateData: Partial<AsbLantaiOrmEntity> = {
-                lantai: dto.lantai,
-                type: dto.type,
-                koef: dto.koef,
-                idSatuan: dto.id_satuan,
-            };
-            await this.repo.update(dto.id, updateData);
-            const updatedEntity = await this.repo.findOne({ where: { id: dto.id } });
-            return updatedEntity!;
-        } catch (error) {
-            throw error;
-        }
+        const updateData: Partial<AsbLantaiOrmEntity> = {
+            lantai: dto.lantai,
+            type: dto.type,
+            koef: dto.koef,
+            idSatuan: dto.id_satuan,
+        };
+        await this.repo.update(dto.id, updateData);
+        const updatedEntity = await this.repo.findOne({ where: { id: dto.id } });
+        return updatedEntity!;
     }
 
     async delete(id: number): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(id).then(() => true).catch(() => false);
     }
 
     async findById(id: number): Promise<AsbLantai | null> {
-        try {
-            const entity = await this.repo
-                .createQueryBuilder('asb_lantai')
-                .select(['asb_lantai.id', 'asb_lantai.lantai', 'asb_lantai.koef'])
-                .where('asb_lantai.id = :id', { id })
-                .getOne();
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo
+            .createQueryBuilder('asb_lantai')
+            .select(['asb_lantai.id', 'asb_lantai.lantai', 'asb_lantai.koef'])
+            .where('asb_lantai.id = :id', { id })
+            .getOne();
+        return entity || null;
     }
 
     async findAll(pagination: GetAsbLantaisDto): Promise<AsbLantaiPaginationResultDto> {
-        try {
-            const findOptions: any = {
-                order: { id: 'DESC' }
-            };
+        const findOptions: any = {
+            order: { id: 'DESC' }
+        };
 
-            if (pagination.page !== undefined && pagination.amount !== undefined) {
-                findOptions.skip = (pagination.page - 1) * pagination.amount;
-                findOptions.take = pagination.amount;
-            }
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            findOptions.skip = (pagination.page - 1) * pagination.amount;
+            findOptions.take = pagination.amount;
+        }
 
-            const [data, total] = await this.repo.findAndCount(findOptions);
+        const [data, total] = await this.repo.findAndCount(findOptions);
 
-            return {
-                data,
-                total,
-                page: pagination.page ?? 1,
-                limit: pagination.amount ?? total,
-                totalPages: pagination.amount ? Math.ceil(total / pagination.amount) : 1
-            }
-        } catch (error) {
-            throw error;
+        return {
+            data,
+            total,
+            page: pagination.page ?? 1,
+            limit: pagination.amount ?? total,
+            totalPages: pagination.amount ? Math.ceil(total / pagination.amount) : 1
         }
     }
 
     async findByLantai(lantai: string): Promise<AsbLantai | null> {
-        try {
-            const entity = await this.repo.findOne({ where: { lantai } });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo.findOne({ where: { lantai } });
+        return entity || null;
     }
 }

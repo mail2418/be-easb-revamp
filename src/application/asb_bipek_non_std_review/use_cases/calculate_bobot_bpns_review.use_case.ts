@@ -66,7 +66,6 @@ export class CalculateBobotBPNSReviewUseCase {
                     }
 
                     jumlahBobot += (bobotInputs[i] / 100) * bobotAcuan;
-                    console.log("jumlahBobot:", jumlahBobot);
                 }
             }
         }

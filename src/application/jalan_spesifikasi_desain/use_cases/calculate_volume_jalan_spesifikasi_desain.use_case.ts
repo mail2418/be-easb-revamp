@@ -21,11 +21,6 @@ export class CalculateVolumeJalanSpesifikasiDesainUseCase {
         const satuan = hspk.satuan;
         let volume = 0;
 
-        console.log('satuan', satuan);
-        console.log('lebar', lebar);
-        console.log('tinggi', tinggi);
-        console.log('spasi', spasi);
-
         // Calculate volume based on satuan
         if (satuan === 'Ton') {
             volume = (lebar * tinggi / 1000) * 2;

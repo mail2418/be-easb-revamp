@@ -22,155 +22,118 @@ export class ShstRepositoryImpl extends ShstRepository {
     }
 
     async create(dto: CreateShstDto): Promise<Shst> {
-        try {
-            const ormEntity = plainToInstance(ShstOrmEntity, dto);
-            const newEntity = await this.repo.save(ormEntity);
-            return newEntity;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = plainToInstance(ShstOrmEntity, dto);
+        const newEntity = await this.repo.save(ormEntity);
+        return newEntity;
     }
 
     async bulkCreate(dtos: BulkCreateShstDto[]): Promise<Shst[]> {
-        try {
-            // Convert DTOs to ORM entities
-            const ormEntities = dtos.map(dto => plainToInstance(ShstOrmEntity, dto));
-
-            // TypeORM's save() method handles bulk insert automatically
-            // It will use a transaction internally and perform bulk insert for better performance
-            const savedEntities = await this.repo.save(ormEntities);
-            
-            return savedEntities;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntities = dtos.map(dto => plainToInstance(ShstOrmEntity, dto));
+        const savedEntities = await this.repo.save(ormEntities);
+        return savedEntities;
     }
 
     async delete(dto: DeleteShstDto): Promise<boolean> {
-        try {
-            return await this.repo.delete(dto.id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.delete(dto.id).then(() => true).catch(() => false);
     }
 
     async updateNominal(dto: UpdateNominalShstDto): Promise<Shst> {
-        try {
-            const { id, nominal } = dto;
-            await this.repo.update(id, { nominal });
-            const updatedEntity = await this.repo.findOne({ where: { id } });
-            return updatedEntity!;
-        } catch (error) {
-            throw error;
-        }
+        const { id, nominal } = dto;
+        await this.repo.update(id, { nominal });
+        const updatedEntity = await this.repo.findOne({ where: { id } });
+        return updatedEntity!;
     }
 
     async findAll(dto: GetShstDto): Promise<{ data: Shst[]; total: number }> {
-        try {
-            const queryBuilder = this.repo
-                .createQueryBuilder("shst")
-                .select([
-                    'shst.id',
-                    'shst.tahun',
-                    'shst.id_asb_tipe_bangunan',
-                    'shst.id_asb_klasifikasi',
-                    'shst.id_kabkota',
-                    'shst.nominal',
-                    'shst.file'
-                ])
-                .leftJoinAndSelect("shst.asbTipeBangunan", "asbTipeBangunan")
-                .leftJoinAndSelect("shst.asbKlasifikasi", "asbKlasifikasi")
-                .leftJoinAndSelect("shst.kabkota", "kabkota");
+        const queryBuilder = this.repo
+            .createQueryBuilder("shst")
+            .select([
+                'shst.id',
+                'shst.tahun',
+                'shst.id_asb_tipe_bangunan',
+                'shst.id_asb_klasifikasi',
+                'shst.id_kabkota',
+                'shst.nominal',
+                'shst.file'
+            ])
+            .leftJoinAndSelect("shst.asbTipeBangunan", "asbTipeBangunan")
+            .leftJoinAndSelect("shst.asbKlasifikasi", "asbKlasifikasi")
+            .leftJoinAndSelect("shst.kabkota", "kabkota");
 
-            if (dto.tahun) {
-                queryBuilder.andWhere("shst.tahun = :tahun", { tahun: dto.tahun });
-            }
-            if (dto.id_asb_tipe_bangunan) {
-                queryBuilder.andWhere("shst.id_asb_tipe_bangunan = :id_asb_tipe_bangunan", {
-                    id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
-                });
-            }
-            if (dto.id_asb_klasifikasi) {
-                queryBuilder.andWhere("shst.id_asb_klasifikasi = :id_asb_klasifikasi", {
-                    id_asb_klasifikasi: dto.id_asb_klasifikasi
-                });
-            }
-            if (dto.id_kabkota) {
-                queryBuilder.andWhere("shst.id_kabkota = :id_kabkota", { id_kabkota: dto.id_kabkota });
-            }
-
-            if (dto.page !== undefined && dto.amount !== undefined) {
-                const skip = (dto.page - 1) * dto.amount;
-                queryBuilder.skip(skip).take(dto.amount);
-            }
-
-            queryBuilder.orderBy("shst.id", "DESC");
-
-            const [data, total] = await queryBuilder.getManyAndCount();
-
-            return { data, total };
-        } catch (error) {
-            throw error;
+        if (dto.tahun) {
+            queryBuilder.andWhere("shst.tahun = :tahun", { tahun: dto.tahun });
         }
+        if (dto.id_asb_tipe_bangunan) {
+            queryBuilder.andWhere("shst.id_asb_tipe_bangunan = :id_asb_tipe_bangunan", {
+                id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+            });
+        }
+        if (dto.id_asb_klasifikasi) {
+            queryBuilder.andWhere("shst.id_asb_klasifikasi = :id_asb_klasifikasi", {
+                id_asb_klasifikasi: dto.id_asb_klasifikasi
+            });
+        }
+        if (dto.id_kabkota) {
+            queryBuilder.andWhere("shst.id_kabkota = :id_kabkota", { id_kabkota: dto.id_kabkota });
+        }
+
+        if (dto.page !== undefined && dto.amount !== undefined) {
+            const skip = (dto.page - 1) * dto.amount;
+            queryBuilder.skip(skip).take(dto.amount);
+        }
+
+        queryBuilder.orderBy("shst.id", "DESC");
+
+        const [data, total] = await queryBuilder.getManyAndCount();
+
+        return { data, total };
     }
 
     async findById(id: number): Promise<Shst | null> {
-        try {
-            const entity = await this.repo
-                .createQueryBuilder('shst')
-                .select([
-                    'shst.id',
-                    'shst.tahun',
-                    'shst.id_asb_tipe_bangunan',
-                    'shst.id_asb_klasifikasi',
-                    'shst.id_kabkota',
-                    'shst.nominal',
-                    'shst.file'
-                ])
-                .leftJoinAndSelect('shst.asbTipeBangunan', 'asb_tipe_bangunan')
-                .leftJoinAndSelect('shst.asbKlasifikasi', 'asb_klasifikasi')
-                .leftJoinAndSelect('shst.kabkota', 'kabkota')
-                .where('shst.id = :id', { id })
-                .getOne();
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo
+            .createQueryBuilder('shst')
+            .select([
+                'shst.id',
+                'shst.tahun',
+                'shst.id_asb_tipe_bangunan',
+                'shst.id_asb_klasifikasi',
+                'shst.id_kabkota',
+                'shst.nominal',
+                'shst.file'
+            ])
+            .leftJoinAndSelect('shst.asbTipeBangunan', 'asb_tipe_bangunan')
+            .leftJoinAndSelect('shst.asbKlasifikasi', 'asb_klasifikasi')
+            .leftJoinAndSelect('shst.kabkota', 'kabkota')
+            .where('shst.id = :id', { id })
+            .getOne();
+        return entity || null;
     }
 
     async findFileById(id: number): Promise<string | null> {
-        try {
-            const entity = await this.repo.findOne({ where: { id }, select: ["file"] });
-            return entity?.file || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo.findOne({ where: { id }, select: ["file"] });
+        return entity?.file || null;
     }
 
     async getNominal(dto: GetShstNominalDto): Promise<number> {
-        try {
-            const entity = await this.repo
-                .createQueryBuilder('shst')
-                .select(['shst.id', 'shst.nominal'])
-                .where('shst.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
-                    id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
-                })
-                .andWhere('shst.id_asb_klasifikasi = :id_asb_klasifikasi', {
-                    id_asb_klasifikasi: dto.id_asb_klasifikasi
-                })
-                .andWhere('shst.id_kabkota = :id_kabkota', {
-                    id_kabkota: dto.id_kabkota
-                })
-                .orderBy('shst.id', 'DESC')
-                .getOne();
+        const entity = await this.repo
+            .createQueryBuilder('shst')
+            .select(['shst.id', 'shst.nominal'])
+            .where('shst.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
+                id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+            })
+            .andWhere('shst.id_asb_klasifikasi = :id_asb_klasifikasi', {
+                id_asb_klasifikasi: dto.id_asb_klasifikasi
+            })
+            .andWhere('shst.id_kabkota = :id_kabkota', {
+                id_kabkota: dto.id_kabkota
+            })
+            .orderBy('shst.id', 'DESC')
+            .getOne();
 
-            if (!entity) {
-                throw new NotFoundException(`SHST record not found`);
-            }
-
-            return entity.nominal;
-        } catch (error) {
-            throw error;
+        if (!entity) {
+            throw new NotFoundException(`SHST record not found`);
         }
+
+        return entity.nominal;
     }
 }

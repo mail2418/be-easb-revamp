@@ -13,100 +13,60 @@ export class KabKotaRepositoryImpl implements KabKotaRepository {
     constructor(@InjectRepository(KabKotaOrmEntity) private readonly repo: Repository<KabKotaOrmEntity>) {}
 
     async create(kabkota: CreateKabKotaDto): Promise<KabKota> {
-        try {
-            const kabkotaOrm = plainToInstance(KabKotaOrmEntity, kabkota);
-            const newKabKota = await this.repo.save(kabkotaOrm);
-            return newKabKota;
-        } catch (error) {
-            console.error('Error creating kabkota:', error);
-            throw error;
-        }
+        const kabkotaOrm = plainToInstance(KabKotaOrmEntity, kabkota);
+        const newKabKota = await this.repo.save(kabkotaOrm);
+        return newKabKota;
     }
 
     async update(id: number, data: Partial<KabKota>): Promise<KabKota> {
-        try {
-            await this.repo.update(id, data);
-            const updatedKabKota = await this.repo.findOne({ where: { id } });
-            return updatedKabKota!;
-        } catch (error) {
-            console.error('Error updating kabkota:', error);
-            throw error;
-        }
+        await this.repo.update(id, data);
+        const updatedKabKota = await this.repo.findOne({ where: { id } });
+        return updatedKabKota!;
     }
 
     async delete(id: number): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(id) .then(() => true).catch(() => false);
-        } catch (error) {
-            console.error('Error deleting kabkota:', error);
-            throw error;
-        }
+        return await this.repo.softDelete(id) .then(() => true).catch(() => false);
     }
 
     async findById(id: number): Promise<KabKota | null> {
-        try {
-            const kabkota = await this.repo
-                .createQueryBuilder('kabkota')
-                .select(['kabkota.id', 'kabkota.nama', 'kabkota.id_provinsi'])
-                .where('kabkota.id = :id', { id })
-                .getOne();
-            return kabkota || null;
-        } catch (error) {
-            console.error('Error finding kabkota by id:', error);
-            throw error;
-        }
+        const kabkota = await this.repo
+            .createQueryBuilder('kabkota')
+            .select(['kabkota.id', 'kabkota.nama', 'kabkota.id_provinsi'])
+            .where('kabkota.id = :id', { id })
+            .getOne();
+        return kabkota || null;
     }
 
     async findByKode(kode: string): Promise<KabKota | null> {
-        try {
-            const kabkota = await this.repo.findOne({ where: { kode } });
-            return kabkota || null;
-        } catch (error) {
-            console.error('Error finding kabkota by kode:', error);
-            throw error;
-        }
+        const kabkota = await this.repo.findOne({ where: { kode } });
+        return kabkota || null;
     }
 
     async findByNama(nama: string): Promise<KabKota | null> {
-        try {
-            const kabkota = await this.repo.findOne({ where: { nama } });
-            return kabkota || null;
-        } catch (error) {
-            console.error('Error finding kabkota by nama:', error);
-            throw error;
-        }
+        const kabkota = await this.repo.findOne({ where: { nama } });
+        return kabkota || null;
     }
 
     async findByProvinceId(provinceId: number): Promise<KabKota[]> {
-        try {
-            const kabkotas = await this.repo.find({
-                where: { provinceId },
-                order: { nama: 'ASC' }
-            });
-            return kabkotas;
-        } catch (error) {
-            console.error('Error finding kabkotas by province:', error);
-            throw error;
-        }
+        const kabkotas = await this.repo.find({
+            where: { provinceId },
+            order: { nama: 'ASC' }
+        });
+        return kabkotas;
     }
 
     async findAll(pagination: GetKabKotasDto): Promise<{ data: KabKota[], total: number }> {
-        try {
-            const findOptions: any = {
-                order: { id: 'DESC' }
-            };
+        const findOptions: any = {
+            order: { id: 'DESC' }
+        };
 
-            if (pagination.page !== undefined && pagination.amount !== undefined) {
-                findOptions.skip = (pagination.page - 1) * pagination.amount;
-                findOptions.take = pagination.amount;
-            }
-
-            const [kabkotas, total] = await this.repo.findAndCount(findOptions);
-
-            return { data: kabkotas, total };
-        } catch (error) {
-            console.error('Error fetching kabkotas:', error);
-            throw error;
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            findOptions.skip = (pagination.page - 1) * pagination.amount;
+            findOptions.take = pagination.amount;
         }
+
+        const [kabkotas, total] = await this.repo.findAndCount(findOptions);
+
+        return { data: kabkotas, total };
     }
 }

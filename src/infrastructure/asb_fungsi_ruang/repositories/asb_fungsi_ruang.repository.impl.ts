@@ -13,68 +13,44 @@ export class AsbFungsiRuangRepositoryImpl implements AsbFungsiRuangRepository {
     constructor(@InjectRepository(AsbFungsiRuangOrmEntity) private readonly repo: Repository<AsbFungsiRuangOrmEntity>) {}
 
     async create(asbFungsiRuang: CreateAsbFungsiRuangDto): Promise<AsbFungsiRuang> {
-        try {
-            const ormEntity = plainToInstance(AsbFungsiRuangOrmEntity, asbFungsiRuang);
-            const newEntity = await this.repo.save(ormEntity);
-            return newEntity;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = plainToInstance(AsbFungsiRuangOrmEntity, asbFungsiRuang);
+        const newEntity = await this.repo.save(ormEntity);
+        return newEntity;
     }
 
     async update(id: number, asbFungsiRuang: Partial<AsbFungsiRuang>): Promise<AsbFungsiRuang> {
-        try {
-            await this.repo.update(id, asbFungsiRuang);
-            const updatedEntity = await this.repo.findOne({ where: { id } });
-            return updatedEntity!;
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.update(id, asbFungsiRuang);
+        const updatedEntity = await this.repo.findOne({ where: { id } });
+        return updatedEntity!;
     }
     
     async delete(id: number): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(id).then(() => true).catch(() => false);
     }
 
     async findById(id: number): Promise<AsbFungsiRuang | null> {
-        try {
-            const entity = await this.repo
-                .createQueryBuilder('asb_fungsi_ruang')
-                .select(['asb_fungsi_ruang.id', 'asb_fungsi_ruang.nama_fungsi_ruang', 'asb_fungsi_ruang.koef'])
-                .where('asb_fungsi_ruang.id = :id', { id })
-                .getOne();
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo
+            .createQueryBuilder('asb_fungsi_ruang')
+            .select(['asb_fungsi_ruang.id', 'asb_fungsi_ruang.nama_fungsi_ruang', 'asb_fungsi_ruang.koef'])
+            .where('asb_fungsi_ruang.id = :id', { id })
+            .getOne();
+        return entity || null;
     }
 
     async findAll(pagination: GetAsbFungsiRuangsDto): Promise<{ data: AsbFungsiRuang[]; total: number }> {
-        try {
-            const page = pagination.page ?? 1;
-            const amount = pagination.amount ?? 10;
-            const [data, total] = await this.repo.findAndCount({
-                skip: (page - 1) * amount,
-                take: amount,
-                order: { id: 'DESC' }
-            });
+        const page = pagination.page ?? 1;
+        const amount = pagination.amount ?? 10;
+        const [data, total] = await this.repo.findAndCount({
+            skip: (page - 1) * amount,
+            take: amount,
+            order: { id: 'DESC' }
+        });
 
-            return { data, total };
-        } catch (error) {
-            throw error;
-        }
+        return { data, total };
     }
 
     async findByNama(nama: string): Promise<AsbFungsiRuang | null> {
-        try {
-            const entity = await this.repo.findOne({ where: { nama_fungsi_ruang: nama } });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo.findOne({ where: { nama_fungsi_ruang: nama } });
+        return entity || null;
     }
 }

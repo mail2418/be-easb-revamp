@@ -34,152 +34,108 @@ export class AsbJakonServiceImpl implements AsbJakonService {
     ) { }
 
     async create(dto: CreateAsbJakonDto): Promise<AsbJakon> {
-        try {
-            this.validatePriceRange.execute(dto.priceFrom, dto.priceTo);
-            return this.repository.create(dto);
-        } catch (error) {
-            throw error;
-        }
+        this.validatePriceRange.execute(dto.priceFrom, dto.priceTo);
+        return this.repository.create(dto);
     }
 
     async update(dto: UpdateAsbJakonDto): Promise<AsbJakon> {
-        try {
-            const existing = await this.repository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`AsbJakon with id ${dto.id} not found`);
-            }
-            const priceFrom = dto.priceFrom !== undefined ? dto.priceFrom : existing.priceFrom;
-            const priceTo = dto.priceTo !== undefined ? dto.priceTo : existing.priceTo;
-            this.validatePriceRange.execute(priceFrom, priceTo);
-            const updateData: Partial<AsbJakon> = {
-                idAsbTipeBangunan: dto.idAsbTipeBangunan,
-                idAsbJenis: dto.idAsbJenis,
-                idAsbKlasifikasi: dto.idAsbKlasifikasi,
-                tahun: dto.tahun,
-                type: dto.type,
-                nama: dto.nama,
-                spec: dto.spec,
-                priceFrom: dto.priceFrom,
-                priceTo: dto.priceTo,
-                satuan: dto.satuan,
-                standard: dto.standard,
-            };
-            // remove undefined
-            Object.keys(updateData).forEach(k => {
-                if (updateData[k as keyof typeof updateData] === undefined) {
-                    delete updateData[k as keyof typeof updateData];
-                }
-            });
-            return this.repository.update(dto.id, updateData);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`AsbJakon with id ${dto.id} not found`);
         }
+        const priceFrom = dto.priceFrom !== undefined ? dto.priceFrom : existing.priceFrom;
+        const priceTo = dto.priceTo !== undefined ? dto.priceTo : existing.priceTo;
+        this.validatePriceRange.execute(priceFrom, priceTo);
+        const updateData: Partial<AsbJakon> = {
+            idAsbTipeBangunan: dto.idAsbTipeBangunan,
+            idAsbJenis: dto.idAsbJenis,
+            idAsbKlasifikasi: dto.idAsbKlasifikasi,
+            tahun: dto.tahun,
+            type: dto.type,
+            nama: dto.nama,
+            spec: dto.spec,
+            priceFrom: dto.priceFrom,
+            priceTo: dto.priceTo,
+            satuan: dto.satuan,
+            standard: dto.standard,
+        };
+        // remove undefined
+        Object.keys(updateData).forEach(k => {
+            if (updateData[k as keyof typeof updateData] === undefined) {
+                delete updateData[k as keyof typeof updateData];
+            }
+        });
+        return this.repository.update(dto.id, updateData);
     }
 
     async delete(dto: DeleteAsbJakonDto): Promise<boolean> {
-        try {
-            const existing = await this.repository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`AsbJakon with id ${dto.id} not found`);
-            }
-            return this.repository.delete(dto.id);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`AsbJakon with id ${dto.id} not found`);
         }
+        return this.repository.delete(dto.id);
     }
 
     async getAll(pagination: GetAsbJakonListDto): Promise<any> {
-        try {
-            const page = pagination.page ?? 1;
-            const amount = pagination.amount ?? 10;
-            const paginationData = { page, amount };
-            const result = await this.repository.findAll(paginationData);
-            return {
-                data: result.data,
-                total: result.total,
-                page,
-                amount,
-                totalPages: Math.ceil(result.total / amount),
-            };
-        } catch (error) {
-            throw error;
-        }
+        const page = pagination.page ?? 1;
+        const amount = pagination.amount ?? 10;
+        const paginationData = { page, amount };
+        const result = await this.repository.findAll(paginationData);
+        return {
+            data: result.data,
+            total: result.total,
+            page,
+            amount,
+            totalPages: Math.ceil(result.total / amount),
+        };
     }
 
     async getDetail(dto: GetAsbJakonDetailDto): Promise<AsbJakonWithRelationsDto> {
-        try {
-            const entity = await this.repository.findById(dto.id);
-            if (!entity) {
-                throw new NotFoundException(`AsbJakon with id ${dto.id} not found`);
-            }
-            return entity as AsbJakonWithRelationsDto;
-        } catch (error) {
-            throw error;
+        const entity = await this.repository.findById(dto.id);
+        if (!entity) {
+            throw new NotFoundException(`AsbJakon with id ${dto.id} not found`);
         }
+        return entity as AsbJakonWithRelationsDto;
     }
 
     async findByAsbJenisId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]> {
-        try {
-            if (!dto.idAsbJenis) {
-                throw new BadRequestException('idAsbJenis is required');
-            }
-            return await this.repository.findByAsbJenisId(dto.idAsbJenis);
-        } catch (error) {
-            throw error;
+        if (!dto.idAsbJenis) {
+            throw new BadRequestException('idAsbJenis is required');
         }
+        return await this.repository.findByAsbJenisId(dto.idAsbJenis);
     }
 
     async findByAsbTipeBangunanId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]> {
-        try {
-            if (!dto.idAsbTipeBangunan) {
-                throw new BadRequestException('idAsbTipeBangunan is required');
-            }
-            return await this.repository.findByAsbTipeBangunanId(dto.idAsbTipeBangunan);
-        } catch (error) {
-            throw error;
+        if (!dto.idAsbTipeBangunan) {
+            throw new BadRequestException('idAsbTipeBangunan is required');
         }
+        return await this.repository.findByAsbTipeBangunanId(dto.idAsbTipeBangunan);
     }
 
     async findByAsbKlasifikasiId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]> {
-        try {
-            if (!dto.idAsbKlasifikasi) {
-                throw new BadRequestException('idAsbKlasifikasi is required');
-            }
-            return await this.repository.findByAsbKlasifikasiId(dto.idAsbKlasifikasi);
-        } catch (error) {
-            throw error;
+        if (!dto.idAsbKlasifikasi) {
+            throw new BadRequestException('idAsbKlasifikasi is required');
         }
+        return await this.repository.findByAsbKlasifikasiId(dto.idAsbKlasifikasi);
     }
 
     async findByTahun(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]> {
-        try {
-            if (!dto.tahun) {
-                throw new BadRequestException('tahun is required');
-            }
-            return await this.repository.findByTahun(dto.tahun);
-        } catch (error) {
-            throw error;
+        if (!dto.tahun) {
+            throw new BadRequestException('tahun is required');
         }
+        return await this.repository.findByTahun(dto.tahun);
     }
 
     async findByType(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]> {
-        try {
-            if (!dto.type) {
-                throw new BadRequestException('type is required');
-            }
-            return await this.repository.findByType(dto.type);
-        } catch (error) {
-            throw error;
+        if (!dto.type) {
+            throw new BadRequestException('type is required');
         }
+        return await this.repository.findByType(dto.type);
     }
 
     async getJakonByPriceRange(dto: GetJakonByPriceRangeDto): Promise<AsbJakon | null> {
-        try {
-            const jakon = await this.repository.findByPriceRange(dto);
-            return jakon;
-        } catch (error) {
-            throw error;
-        }
+        const jakon = await this.repository.findByPriceRange(dto);
+        return jakon;
     }
 
     async createBulk(dto: CreateBulkAsbJakonDto, file: Express.Multer.File): Promise<CreateBulkAsbJakonResultDto> {
@@ -226,22 +182,15 @@ export class AsbJakonServiceImpl implements AsbJakonService {
             result.created = createdJakons.length;
             result.data = createdJakons;
             return result;
-        } catch (error) {
-            throw error;
-        }
     }
 
     async downloadTemplate(): Promise<{ buffer: Buffer; filename: string }> {
-        try {
-            const buffer = await this.generateExcelTemplateUseCase.execute();
-            const filename = `Jakon_Template_${new Date().getFullYear()}.xlsx`;
-            
-            return {
-                buffer,
-                filename,
-            };
-        } catch (error) {
-            throw error;
-        }
+        const buffer = await this.generateExcelTemplateUseCase.execute();
+        const filename = `Jakon_Template_${new Date().getFullYear()}.xlsx`;
+        
+        return {
+            buffer,
+            filename,
+        };
     }
 }

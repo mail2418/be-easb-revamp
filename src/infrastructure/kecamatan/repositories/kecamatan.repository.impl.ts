@@ -11,84 +11,60 @@ export class KecamatanRepositoryImpl implements KecamatanRepository {
     constructor(@InjectRepository(KecamatanOrmEntity) private readonly repo: Repository<KecamatanOrmEntity>) { }
 
     async create(kecamatan: Partial<Kecamatan>): Promise<Kecamatan> {
-        try {
-            const kecamatanOrm = this.repo.create(kecamatan);
-            const newKecamatan = await this.repo.save(kecamatanOrm);
-            return newKecamatan;
-        } catch (error) {
-            throw error;
-        }
+        const kecamatanOrm = this.repo.create(kecamatan);
+        const newKecamatan = await this.repo.save(kecamatanOrm);
+        return newKecamatan;
     }
 
     async update(id: number, kecamatan: Partial<Kecamatan>): Promise<Kecamatan> {
-        try {
-            await this.repo.update(id, kecamatan);
-            const updatedKecamatan = await this.repo.findOne({ where: { id } });
-            return updatedKecamatan!;
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.update(id, kecamatan);
+        const updatedKecamatan = await this.repo.findOne({ where: { id } });
+        return updatedKecamatan!;
     }
 
     async delete(id: number): Promise<void> {
-        try {
-            await this.repo.softDelete(id);
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.softDelete(id);
     }
 
     async findById(id: number): Promise<Kecamatan | null> {
-        try {
-            const kecamatan = await this.repo
-                .createQueryBuilder('kecamatan')
-                .select(['kecamatan.id', 'kecamatan.nama_kecamatan', 'kecamatan.id_kabkota'])
-                .where('kecamatan.id = :id', { id })
-                .getOne();
-            return kecamatan || null;
-        } catch (error) {
-            throw error;
-        }
+        const kecamatan = await this.repo
+            .createQueryBuilder('kecamatan')
+            .select(['kecamatan.id', 'kecamatan.nama_kecamatan', 'kecamatan.id_kabkota'])
+            .where('kecamatan.id = :id', { id })
+            .getOne();
+        return kecamatan || null;
     }
 
     async findAll(page: number | undefined, amount: number | undefined, filter?: any): Promise<{ data: Kecamatan[]; total: number }> {
-        try {
-            const queryBuilder = this.repo.createQueryBuilder('kecamatan');
+        const queryBuilder = this.repo.createQueryBuilder('kecamatan');
 
-            if (filter?.idKabkota) {
-                queryBuilder.andWhere('kecamatan.id_kabkota = :idKabkota', { idKabkota: filter.idKabkota });
-            }
-
-            if (filter?.search) {
-                queryBuilder.andWhere(
-                    '(kecamatan.nama_kecamatan ILIKE :search OR kecamatan.kode_kecamatan ILIKE :search)',
-                    { search: `%${filter.search}%` }
-                );
-            }
-
-            if (page !== undefined && amount !== undefined) {
-                queryBuilder.skip((page - 1) * amount).take(amount);
-            }
-
-            const [data, total] = await queryBuilder
-                .orderBy('kecamatan.nama_kecamatan', 'ASC')
-                .getManyAndCount();
-
-            return { data, total };
-        } catch (error) {
-            throw error;
+        if (filter?.idKabkota) {
+            queryBuilder.andWhere('kecamatan.id_kabkota = :idKabkota', { idKabkota: filter.idKabkota });
         }
+
+        if (filter?.search) {
+            queryBuilder.andWhere(
+                '(kecamatan.nama_kecamatan ILIKE :search OR kecamatan.kode_kecamatan ILIKE :search)',
+                { search: `%${filter.search}%` }
+            );
+        }
+
+        if (page !== undefined && amount !== undefined) {
+            queryBuilder.skip((page - 1) * amount).take(amount);
+        }
+
+        const [data, total] = await queryBuilder
+            .orderBy('kecamatan.nama_kecamatan', 'ASC')
+            .getManyAndCount();
+
+        return { data, total };
     }
 
     async findByKabkotaId(idKabkota: number): Promise<Kecamatan[]> {
-        try {
-            const kecamatans = await this.repo.find({
-                where: { idKabkota },
-                order: { namaKecamatan: 'ASC' }
-            });
-            return kecamatans;
-        } catch (error) {
-            throw error;
-        }
+        const kecamatans = await this.repo.find({
+            where: { idKabkota },
+            order: { namaKecamatan: 'ASC' }
+        });
+        return kecamatans;
     }
 }

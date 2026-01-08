@@ -50,8 +50,7 @@ export class HandleJakonFileUseCase {
         await fs.promises.unlink(fullPath);
       }
     } catch (error) {
-      // Log error but don't throw - file cleanup failure shouldn't break the deletion
-      console.warn(`Failed to delete file ${filePath}:`, error.message);
+      // File cleanup failure shouldn't break the deletion
     }
   }
 }

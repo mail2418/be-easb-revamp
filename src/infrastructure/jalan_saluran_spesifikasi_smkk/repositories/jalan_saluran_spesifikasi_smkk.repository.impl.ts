@@ -12,48 +12,36 @@ export class JalanSaluranSpesifikasiSmkkRepositoryImpl implements JalanSaluranSp
     constructor(@InjectRepository(JalanSaluranSpesifikasiSmkkOrmEntity) private readonly repo: Repository<JalanSaluranSpesifikasiSmkkOrmEntity>) { }
 
     async create(dto: CreateJalanSaluranSpesifikasiSmkkDto): Promise<JalanSaluranSpesifikasiSmkk> {
-        try {
-            const ormEntity = plainToInstance(JalanSaluranSpesifikasiSmkkOrmEntity, dto);
-            const newEntity = await this.repo.save(ormEntity);
-            return newEntity;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = plainToInstance(JalanSaluranSpesifikasiSmkkOrmEntity, dto);
+        const newEntity = await this.repo.save(ormEntity);
+        return newEntity;
     }
 
     async deleteByUsulanJalanId(idUsulanJalan: number): Promise<void> {
-        try {
-            await this.repo.softDelete({ id_usulan_jalan: idUsulanJalan });
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.softDelete({ id_usulan_jalan: idUsulanJalan });
     }
 
     async findByUsulanJalan(idUsulanJalan: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkk[], number]> {
-        try {
-            const queryBuilder = this.repo
-                .createQueryBuilder('jsss')
-                .select([
-                    'jsss.id',
-                    'jsss.id_jenis_usulan',
-                    'jsss.id_usulan_jalan',
-                    'jsss.id_jalan_saluran_smkk',
-                    'jsss.harga_spec',
-                    'jsss.jumlah_barang'
-                ])
-                .where('jsss.id_usulan_jalan = :idUsulanJalan', { idUsulanJalan })
-                .orderBy('jsss.id', 'DESC');
+        const queryBuilder = this.repo
+            .createQueryBuilder('jsss')
+            .select([
+                'jsss.id',
+                'jsss.id_jenis_usulan',
+                'jsss.id_usulan_jalan',
+                'jsss.id_jalan_saluran_smkk',
+                'jsss.harga_spec',
+                'jsss.jumlah_barang'
+            ])
+            .where('jsss.id_usulan_jalan = :idUsulanJalan', { idUsulanJalan })
+            .orderBy('jsss.id', 'DESC');
 
-            if (page !== undefined && amount !== undefined) {
-                const skip = (page - 1) * amount;
-                queryBuilder.skip(skip).take(amount);
-            }
-
-            const [entities, total] = await queryBuilder.getManyAndCount();
-            return [entities, total];
-        } catch (error) {
-            throw error;
+        if (page !== undefined && amount !== undefined) {
+            const skip = (page - 1) * amount;
+            queryBuilder.skip(skip).take(amount);
         }
+
+        const [entities, total] = await queryBuilder.getManyAndCount();
+        return [entities, total];
     }
 }
 

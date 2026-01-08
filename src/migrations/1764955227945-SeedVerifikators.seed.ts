@@ -45,7 +45,6 @@ export class SeedVerifikators1764955227945 implements MigrationInterface {
                 if (checkUser && checkUser.length > 0) {
                     userId = checkUser[0].id;
                 } else {
-                    console.error(`Failed to retrieve ID for user ${data.username}`);
                     continue;
                 }
             }

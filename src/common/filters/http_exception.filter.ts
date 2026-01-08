@@ -14,17 +14,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 ? (exception.getResponse() as any)?.message ?? exception.message
                 : 'Internal Server Error';
 
-        // Log validation errors for debugging
-        if (status === 400 && exception instanceof HttpException) {
-            console.log('=== VALIDATION ERROR ===');
-            console.log('Path:', req.url);
-            console.log('Method:', req.method);
-            console.log('Content-Type:', req.headers['content-type']);
-            console.log('Request Body:', JSON.stringify(req.body, null, 2));
-            console.log('Validation Message:', message);
-            console.log('=======================');
-        }
-
         const responseBody = {
             status: status >= 400 ? 'error' : 'success',
             responseCode: status,

@@ -116,7 +116,6 @@ export class KertasKerjaUseCase {
         // Calculate totals for BPS
         let sumBps = 0;
         let jbobotKoef = 0;
-        console.log("dataBps: ", dataBps);
         const bpsRows = dataBps.map((row, i) => {
             const bobot = row.asb.bobot_input ?? 0;
             const jumlahBobot = row.asb.jumlah_bobot ?? 0;

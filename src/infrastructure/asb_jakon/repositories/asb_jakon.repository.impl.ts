@@ -22,145 +22,128 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
     ) { }
 
     async create(dto: CreateAsbJakonDto): Promise<AsbJakon> {
-        try {
-            const entity = this.repo.create(dto);
-            const saved = await this.repo.save(entity);
-            return saved;
-        } catch (error) {
-            throw error;
-        }
+        const entity = this.repo.create(dto);
+        const saved = await this.repo.save(entity);
+        return saved;
     }
 
     async update(id: number, dto: UpdateAsbJakonDto): Promise<AsbJakon> {
-        try {
-            await this.repo.update(id, dto);
-            const updated = await this.repo.findOneBy({ id });
-            return updated!;
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.update(id, dto);
+        const updated = await this.repo.findOneBy({ id });
+        return updated!;
     }
 
     async delete(id: number): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(id)
-                .then(() => true)
-                .catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<AsbJakon | null> {
-        try {
-            const entity = await this.repo
-                .createQueryBuilder('asb_jakon')
-                .select([
-                    'asb_jakon.id',
-                    'asb_jakon.id_asb_tipe_bangunan',
-                    'asb_jakon.id_asb_jenis',
-                    'asb_jakon.id_asb_klasifikasi',
-                    'asb_jakon.tahun',
-                    'asb_jakon.type',
-                    'asb_jakon.nama',
-                    'asb_jakon.spec',
-                    'asb_jakon.price_from',
-                    'asb_jakon.price_to',
-                    'asb_jakon.satuan',
-                    'asb_jakon.standard'
-                ])
-                .leftJoinAndSelect('asb_jakon.asbTipeBangunan', 'asb_tipe_bangunan')
-                .leftJoinAndSelect('asb_jakon.asbJenis', 'asb_jenis')
-                .leftJoinAndSelect('asb_jakon.asbKlasifikasi', 'asb_klasifikasi')
-                .where('asb_jakon.id = :id', { id })
-                .getOne();
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo
+            .createQueryBuilder('asb_jakon')
+            .select([
+                'asb_jakon.id',
+                'asb_jakon.id_asb_tipe_bangunan',
+                'asb_jakon.id_asb_jenis',
+                'asb_jakon.id_asb_klasifikasi',
+                'asb_jakon.tahun',
+                'asb_jakon.type',
+                'asb_jakon.nama',
+                'asb_jakon.spec',
+                'asb_jakon.price_from',
+                'asb_jakon.price_to',
+                'asb_jakon.satuan',
+                'asb_jakon.standard'
+            ])
+            .leftJoinAndSelect('asb_jakon.asbTipeBangunan', 'asb_tipe_bangunan')
+            .leftJoinAndSelect('asb_jakon.asbJenis', 'asb_jenis')
+            .leftJoinAndSelect('asb_jakon.asbKlasifikasi', 'asb_klasifikasi')
+            .where('asb_jakon.id = :id', { id })
+            .getOne();
+        return entity || null;
     }
 
     async findAll(pagination: GetAsbJakonListDto): Promise<{ data: AsbJakon[]; total: number }> {
-        try {
-            const page = pagination.page ?? 1;
-            const amount = pagination.amount ?? 10;
-            const queryBuilder = this.repo
-                .createQueryBuilder('asb_jakon')
-                .select([
-                    'asb_jakon.id',
-                    'asb_jakon.id_asb_tipe_bangunan',
-                    'asb_jakon.id_asb_jenis',
-                    'asb_jakon.id_asb_klasifikasi',
-                    'asb_jakon.tahun',
-                    'asb_jakon.type',
-                    'asb_jakon.nama',
-                    'asb_jakon.spec',
-                    'asb_jakon.price_from',
-                    'asb_jakon.price_to',
-                    'asb_jakon.satuan',
-                    'asb_jakon.standard'
-                ])
-                .leftJoinAndSelect('asb_jakon.asbTipeBangunan', 'asb_tipe_bangunan')
-                .leftJoinAndSelect('asb_jakon.asbJenis', 'asb_jenis')
-                .leftJoinAndSelect('asb_jakon.asbKlasifikasi', 'asb_klasifikasi')
-                .orderBy('asb_jakon.id', 'DESC')
-                .skip((page - 1) * amount)
-                .take(amount);
-            const [data, total] = await queryBuilder.getManyAndCount();
-            return { data, total };
-        } catch (error) {
-            throw error;
-        }
+        const page = pagination.page ?? 1;
+        const amount = pagination.amount ?? 10;
+        const queryBuilder = this.repo
+            .createQueryBuilder('asb_jakon')
+            .select([
+                'asb_jakon.id',
+                'asb_jakon.id_asb_tipe_bangunan',
+                'asb_jakon.id_asb_jenis',
+                'asb_jakon.id_asb_klasifikasi',
+                'asb_jakon.tahun',
+                'asb_jakon.type',
+                'asb_jakon.nama',
+                'asb_jakon.spec',
+                'asb_jakon.price_from',
+                'asb_jakon.price_to',
+                'asb_jakon.satuan',
+                'asb_jakon.standard'
+            ])
+            .leftJoinAndSelect('asb_jakon.asbTipeBangunan', 'asb_tipe_bangunan')
+            .leftJoinAndSelect('asb_jakon.asbJenis', 'asb_jenis')
+            .leftJoinAndSelect('asb_jakon.asbKlasifikasi', 'asb_klasifikasi')
+            .orderBy('asb_jakon.id', 'DESC')
+            .skip((page - 1) * amount)
+            .take(amount);
+        const [data, total] = await queryBuilder.getManyAndCount();
+        return { data, total };
     }
 
     async findByAsbJenisId(id: number): Promise<AsbJakon[]> {
-        try {
-            const data = await this.repo.find({ where: { idAsbJenis: id } });
-            return data;
-        } catch (error) {
-            throw error;
-        }
+        const data = await this.repo.find({ where: { idAsbJenis: id } });
+        return data;
     }
 
     async findByAsbTipeBangunanId(id: number): Promise<AsbJakon[]> {
-        try {
-            const data = await this.repo.find({ where: { idAsbTipeBangunan: id } });
-            return data || null;
-        } catch (error) {
-            throw error;
-        }
+        const data = await this.repo.find({ where: { idAsbTipeBangunan: id } });
+        return data || null;
     }
 
     async findByAsbKlasifikasiId(id: number): Promise<AsbJakon[]> {
-        try {
-            const data = await this.repo.find({ where: { idAsbKlasifikasi: id } });
-            return data || null;
-        } catch (error) {
-            throw error;
-        }
+        const data = await this.repo.find({ where: { idAsbKlasifikasi: id } });
+        return data || null;
     }
 
     async findByTahun(tahun: number): Promise<AsbJakon[]> {
-        try {
-            const data = await this.repo.find({ where: { tahun } });
-            return data || null;
-        } catch (error) {
-            throw error;
-        }
+        const data = await this.repo.find({ where: { tahun } });
+        return data || null;
     }
 
     async findByType(type: AsbJakonType): Promise<AsbJakon[]> {
-        try {
-            const data = await this.repo.find({ where: { type } });
-            return data || null;
-        } catch (error) {
-            throw error;
-        }
+        const data = await this.repo.find({ where: { type } });
+        return data || null;
     }
 
     async findByPriceRange(dto: GetJakonByPriceRangeDto): Promise<AsbJakon | null> {
-        try {
-            let entity = await this.repo
+        let entity = await this.repo
+            .createQueryBuilder('asb_jakon')
+            .select(['asb_jakon.id', 'asb_jakon.standard', 'asb_jakon.price_from', 'asb_jakon.price_to'])
+            .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
+                id_asb_klasifikasi: dto.id_asb_klasifikasi
+            })
+            .andWhere('asb_jakon.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
+                id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+            })
+            .andWhere('asb_jakon.id_asb_jenis = :id_asb_jenis', {
+                id_asb_jenis: dto.id_asb_jenis
+            })
+            .andWhere('asb_jakon.type = :type', {
+                type: dto.type
+            })
+            .andWhere('asb_jakon.price_from <= :total_biaya', {
+                total_biaya: dto.total_biaya_pembangunan
+            })
+            .andWhere('asb_jakon.price_to > :total_biaya', {
+                total_biaya: dto.total_biaya_pembangunan
+            })
+            .getOne();
+
+        if (!entity) {
+            entity = await this.repo
                 .createQueryBuilder('asb_jakon')
                 .select(['asb_jakon.id', 'asb_jakon.standard', 'asb_jakon.price_from', 'asb_jakon.price_to'])
                 .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
@@ -175,52 +158,16 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
                 .andWhere('asb_jakon.type = :type', {
                     type: dto.type
                 })
-                .andWhere('asb_jakon.price_from <= :total_biaya', {
-                    total_biaya: dto.total_biaya_pembangunan
-                })
-                .andWhere('asb_jakon.price_to > :total_biaya', {
-                    total_biaya: dto.total_biaya_pembangunan
-                })
+                .orderBy('asb_jakon.price_from', 'ASC')
                 .getOne();
-
-            if (!entity) {
-                entity = await this.repo
-                    .createQueryBuilder('asb_jakon')
-                    .select(['asb_jakon.id', 'asb_jakon.standard', 'asb_jakon.price_from', 'asb_jakon.price_to'])
-                    .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
-                        id_asb_klasifikasi: dto.id_asb_klasifikasi
-                    })
-                    .andWhere('asb_jakon.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
-                        id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
-                    })
-                    .andWhere('asb_jakon.id_asb_jenis = :id_asb_jenis', {
-                        id_asb_jenis: dto.id_asb_jenis
-                    })
-                    .andWhere('asb_jakon.type = :type', {
-                        type: dto.type
-                    })
-                    .orderBy('asb_jakon.price_from', 'ASC')
-                    .getOne();
-            }
-
-            return entity || null;
-        } catch (error) {
-            throw error;
         }
+
+        return entity || null;
     }
 
     async bulkCreate(dtos: BulkCreateAsbJakonDto[]): Promise<AsbJakon[]> {
-        try {
-            // Convert DTOs to ORM entities
-            const ormEntities = dtos.map(dto => plainToInstance(AsbJakonOrmEntity, dto));
-
-            // TypeORM's save() method handles bulk insert automatically
-            // It will use a transaction internally and perform bulk insert for better performance
-            const savedEntities = await this.repo.save(ormEntities);
-            
-            return savedEntities;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntities = dtos.map(dto => plainToInstance(AsbJakonOrmEntity, dto));
+        const savedEntities = await this.repo.save(ormEntities);
+        return savedEntities;
     }
 }

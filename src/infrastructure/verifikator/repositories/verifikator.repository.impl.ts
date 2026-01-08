@@ -13,58 +13,38 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
     ) { }
 
     async create(verifikator: Verifikator): Promise<Verifikator> {
-        try {
-            const entity = this.repo.create(verifikator);
-            return await this.repo.save(entity);
-        } catch (error) {
-            throw error;
-        }
+        const entity = this.repo.create(verifikator);
+        return await this.repo.save(entity);
     }
 
     async update(id: number, verifikator: Partial<Verifikator>): Promise<Verifikator> {
-        try {
-            await this.repo.update(id, verifikator);
-            const updated = await this.findById(id);
-            if (!updated) {
-                throw new NotFoundException('Verifikator not found');
-            }
-            return updated;
-        } catch (error) {
-            throw error;
+        await this.repo.update(id, verifikator);
+        const updated = await this.findById(id);
+        if (!updated) {
+            throw new NotFoundException('Verifikator not found');
         }
+        return updated;
     }
 
     async delete(id: number): Promise<boolean> {
-        try {
-            const result = await this.repo.softDelete(id);
-            return result.affected ? result.affected > 0 : false;
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.repo.softDelete(id);
+        return result.affected ? result.affected > 0 : false;
     }
 
     async findById(id: number): Promise<Verifikator | null> {
-        try {
-            const entity = await this.repo.findOne({
-                where: { id },
-                relations: ['user']
-            });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo.findOne({
+            where: { id },
+            relations: ['user']
+        });
+        return entity || null;
     }
 
     async findByUserId(userId: number): Promise<Verifikator | null> {
-        try {
-            const entity = await this.repo.findOne({
-                where: { idUser: userId },
-                relations: ['user']
-            });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo.findOne({
+            where: { idUser: userId },
+            relations: ['user']
+        });
+        return entity || null;
     }
 
     async findAll(page?: number, amount?: number): Promise<{ data: Verifikator[]; total: number }> {
@@ -85,14 +65,10 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
 
 
     async checkVerifikatorType(userId: number): Promise<string | null> {
-        try {
-            const result = await this.repo.findOne({
-                where: { idUser: userId },
-                select: ['jenisVerifikator']
-            });
-            return result ? result.jenisVerifikator : null;
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.repo.findOne({
+            where: { idUser: userId },
+            select: ['jenisVerifikator']
+        });
+        return result ? result.jenisVerifikator : null;
     }
 }

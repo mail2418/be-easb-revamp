@@ -13,74 +13,43 @@ export class ProvinceRepositoryImpl implements ProvinceRepository {
     constructor(@InjectRepository(ProvinceOrmEntity) private readonly repo: Repository<ProvinceOrmEntity>) {}
 
     async create(province: CreateProvinceDto): Promise<Province> {
-        try {
-            const provinceOrm = plainToInstance(ProvinceOrmEntity, province);
-            const newProvince = await this.repo.save(provinceOrm);
-            return newProvince;
-        } catch (error) {
-            throw error;
-        }
+        const provinceOrm = plainToInstance(ProvinceOrmEntity, province);
+        const newProvince = await this.repo.save(provinceOrm);
+        return newProvince;
     }
 
     async update(id: number, data: Partial<Province>): Promise<Province> {
-        try {
-            await this.repo.update(id, data);
-            const updatedProvince = await this.repo.findOne({ where: { id } });
-            return updatedProvince!;
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.update(id, data);
+        const updatedProvince = await this.repo.findOne({ where: { id } });
+        return updatedProvince!;
     }
 
     async delete(id: number): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(id) .then(() => true).catch(() => false);
-            
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(id) .then(() => true).catch(() => false);
     }
 
     async findById(id: number): Promise<Province | null> {
-        try {
-            const province = await this.repo.findOne({ where: { id } });
-            return province || null;
-        } catch (error) {
-            throw error;
-        }
+        const province = await this.repo.findOne({ where: { id } });
+        return province || null;
     }
 
     async findByKode(kode: string): Promise<Province | null> {
-        try {
-            const province = await this.repo.findOne({ where: { kode } }).catch((error) => {
-                console.error('Error finding province by kode:', error);
-                throw error;
-            });
-            return province || null;
-        } catch (error) {
-            throw error;
-        }
+        const province = await this.repo.findOne({ where: { kode } });
+        return province || null;
     }
 
     async findAll(pagination: GetProvincesDto): Promise<{ data: Province[], total: number }> {
-        try {
-            const findOptions: any = {
-                order: { id: 'DESC' }
-            };
+        const findOptions: any = {
+            order: { id: 'DESC' }
+        };
 
-            if (pagination.page !== undefined && pagination.amount !== undefined) {
-                findOptions.skip = (pagination.page - 1) * pagination.amount;
-                findOptions.take = pagination.amount;
-            }
-
-            const [provinces, total] = await this.repo.findAndCount(findOptions).catch((error) => {
-                console.error('Error fetching provinces:', error);
-                throw error;
-            });
-
-            return { data: provinces, total };
-        } catch (error) {
-            throw error;
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            findOptions.skip = (pagination.page - 1) * pagination.amount;
+            findOptions.take = pagination.amount;
         }
+
+        const [provinces, total] = await this.repo.findAndCount(findOptions);
+
+        return { data: provinces, total };
     }
 }

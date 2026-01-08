@@ -14,75 +14,51 @@ export class RekeningRepositoryImpl implements RekeningRepository {
     constructor(@InjectRepository(RekeningOrmEntity) private readonly repo: Repository<RekeningOrmEntity>) {}
 
     async create(rekening: CreateRekeningDto): Promise<Rekening> {
-        try {
-            const ormEntity = plainToInstance(RekeningOrmEntity, rekening);
-            const newEntity = await this.repo.save(ormEntity);
-            return newEntity;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = plainToInstance(RekeningOrmEntity, rekening);
+        const newEntity = await this.repo.save(ormEntity);
+        return newEntity;
     }
 
     async update(id: number, rekening: Partial<Rekening>): Promise<Rekening> {
-        try {
-            await this.repo.update(id, rekening);
-            const updatedEntity = await this.repo.findOne({ where: { id } });
-            return updatedEntity!;
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.update(id, rekening);
+        const updatedEntity = await this.repo.findOne({ where: { id } });
+        return updatedEntity!;
     }
     
     async delete(id: number): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(id).then(() => true).catch(() => false);
     }
 
     async findById(id: number): Promise<Rekening | null> {
-        try {
-            const entity = await this.repo
-                .createQueryBuilder('rekening')
-                .select(['rekening.id', 'rekening.rekening_kode', 'rekening.rekening'])
-                .where('rekening.id = :id', { id })
-                .getOne();
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo
+            .createQueryBuilder('rekening')
+            .select(['rekening.id', 'rekening.rekening_kode', 'rekening.rekening'])
+            .where('rekening.id = :id', { id })
+            .getOne();
+        return entity || null;
     }
 
     async findByKode(rekeningKode: string): Promise<Rekening | null> {
-        try {
-            const entity = await this.repo
-                .createQueryBuilder('rekening')
-                .select(['rekening.id', 'rekening.rekening_kode', 'rekening.rekening'])
-                .where('rekening.rekening_kode LIKE :rekeningKode', { rekeningKode: `%${rekeningKode}%` })
-                .getOne();
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo
+            .createQueryBuilder('rekening')
+            .select(['rekening.id', 'rekening.rekening_kode', 'rekening.rekening'])
+            .where('rekening.rekening_kode LIKE :rekeningKode', { rekeningKode: `%${rekeningKode}%` })
+            .getOne();
+        return entity || null;
     }
 
     async findAll(pagination: GetRekeningsDto): Promise<{ data: Rekening[]; total: number }> {
-        try {
-            const findOptions: any = {
-                order: { id: 'DESC' }
-            };
+        const findOptions: any = {
+            order: { id: 'DESC' }
+        };
 
-            if (pagination.page !== undefined && pagination.amount !== undefined) {
-                findOptions.skip = (pagination.page - 1) * pagination.amount;
-                findOptions.take = pagination.amount;
-            }
-
-            const [data, total] = await this.repo.findAndCount(findOptions);
-
-            return { data, total };
-        } catch (error) {
-            throw error;
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            findOptions.skip = (pagination.page - 1) * pagination.amount;
+            findOptions.take = pagination.amount;
         }
+
+        const [data, total] = await this.repo.findAndCount(findOptions);
+
+        return { data, total };
     }
 }

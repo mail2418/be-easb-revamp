@@ -53,7 +53,6 @@ export class ParseExcelDataUseCase {
         if (!jsonData || jsonData.length === 0) {
             throw new BadRequestException('Excel file contains no data rows');
         }
-        console.log("Test", jsonData);
 
         const parsedRows: ParsedShstRow[] = [];
         const errors: string[] = [];
@@ -65,7 +64,6 @@ export class ParseExcelDataUseCase {
             const rowNumber = i + 2; // +2 because row 1 is header, and array is 0-indexed
 
             try {
-                console.log(row);
                 // Skip header row (if tipe_bangunan equals "tipe_bangunan", it's likely the header)
                 if (row.tipe_bangunan && String(row.tipe_bangunan).trim().toLowerCase() === 'tipe_bangunan') {
                     continue; // Skip header row
