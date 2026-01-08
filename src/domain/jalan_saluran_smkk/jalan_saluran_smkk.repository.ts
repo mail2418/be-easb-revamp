@@ -9,5 +9,6 @@ export abstract class JalanSaluranSmkkRepository {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<JalanSaluranSmkk | null>;
     abstract findAll(dto: GetJalanSaluranSmkkDto): Promise<{ data: JalanSaluranSmkk[]; total: number }>;
+    abstract findByJenisUsulan(idJenisUsulan: number): Promise<JalanSaluranSmkk[]>;
 }
 

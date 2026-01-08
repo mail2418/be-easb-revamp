@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "jalan-saluran-smkk-module-api-collection",
 		"name": "EASB - Jalan Saluran SMKK Module API",
-		"description": "API collection for Jalan Saluran SMKK Module - managing SMKK (Standar Mutu Konstruksi dan Keamanan) data for jalan and saluran projects. SMKK contains safety equipment and materials pricing information linked to ruang lingkup (scope of work).",
+		"description": "API collection for Jalan Saluran SMKK Module - managing SMKK (Standar Mutu Konstruksi dan Keamanan) data for jalan and saluran projects. SMKK contains safety equipment and materials pricing information linked to jenis usulan (proposal type: 2=Jalan, 3=Saluran).",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"auth": {
@@ -51,7 +51,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id_ruang_lingkup\": 1,\n  \"no_mata_pembayaran\": \"SSH.1\",\n  \"satuan\": \"Buah\",\n  \"harga_satuan\": 0,\n  \"uraian\": \"Helm Safety\",\n  \"pengali\": 0.3\n}"
+							"raw": "{\n  \"id_jenis_usulan\": 2,\n  \"no_mata_pembayaran\": \"SSH.1\",\n  \"satuan\": \"Buah\",\n  \"harga_satuan\": 0,\n  \"uraian\": \"Helm Safety\",\n  \"pengali\": 0.3\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/{{api_prefix}}/jalan-saluran-smkk",
@@ -63,7 +63,7 @@
 								"jalan-saluran-smkk"
 							]
 						},
-						"description": "Create a new Jalan Saluran SMKK entry. Requires ADMIN or SUPERADMIN role.\n\n**Fields:**\n- `id_ruang_lingkup` (number, required): ID of the ruang lingkup (scope of work)\n- `no_mata_pembayaran` (string, required): Payment code/number\n- `satuan` (string, required): Unit of measurement (e.g., Buah, Pasang, etc.)\n- `harga_satuan` (number, optional): Unit price (can be null or 0)\n- `uraian` (string, required): Description of the SMKK item\n- `pengali` (number, required): Multiplier factor for cost calculation\n\n**Note:** The combination of `id_ruang_lingkup`, `no_mata_pembayaran`, and `uraian` must be unique."
+						"description": "Create a new Jalan Saluran SMKK entry. Requires ADMIN or SUPERADMIN role.\n\n**Fields:**\n- `id_jenis_usulan` (number, required): ID of jenis usulan (2=Jalan, 3=Saluran)\n- `no_mata_pembayaran` (string, required): Payment code/number\n- `satuan` (string, required): Unit of measurement (e.g., Buah, Pasang, etc.)\n- `harga_satuan` (number, optional): Unit price (can be null or 0)\n- `uraian` (string, required): Description of the SMKK item\n- `pengali` (number, required): Multiplier factor for cost calculation\n\n**Note:** The combination of `id_jenis_usulan`, `no_mata_pembayaran`, and `uraian` must be unique."
 					},
 					"response": []
 				},
@@ -79,7 +79,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": 1,\n  \"id_ruang_lingkup\": 1,\n  \"no_mata_pembayaran\": \"SSH.1\",\n  \"satuan\": \"Buah\",\n  \"harga_satuan\": 50000,\n  \"uraian\": \"Helm Safety\",\n  \"pengali\": 0.3\n}"
+							"raw": "{\n  \"id\": 1,\n  \"id_jenis_usulan\": 2,\n  \"no_mata_pembayaran\": \"SSH.1\",\n  \"satuan\": \"Buah\",\n  \"harga_satuan\": 50000,\n  \"uraian\": \"Helm Safety\",\n  \"pengali\": 0.3\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/{{api_prefix}}/jalan-saluran-smkk",
@@ -91,7 +91,7 @@
 								"jalan-saluran-smkk"
 							]
 						},
-						"description": "Update an existing Jalan Saluran SMKK entry. All fields except `id` are optional. Requires ADMIN or SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the SMKK entry to update\n- `id_ruang_lingkup` (number, optional): New ruang lingkup ID\n- `no_mata_pembayaran` (string, optional): New payment code\n- `satuan` (string, optional): New unit of measurement\n- `harga_satuan` (number, optional): New unit price (can be null or 0)\n- `uraian` (string, optional): New description\n- `pengali` (number, optional): New multiplier factor"
+						"description": "Update an existing Jalan Saluran SMKK entry. All fields except `id` are optional. Requires ADMIN or SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the SMKK entry to update\n- `id_jenis_usulan` (number, optional): New jenis usulan ID (2=Jalan, 3=Saluran)\n- `no_mata_pembayaran` (string, optional): New payment code\n- `satuan` (string, optional): New unit of measurement\n- `harga_satuan` (number, optional): New unit price (can be null or 0)\n- `uraian` (string, optional): New description\n- `pengali` (number, optional): New multiplier factor"
 					},
 					"response": []
 				},
@@ -167,7 +167,7 @@
 								}
 							]
 						},
-						"description": "Get paginated list of all Jalan Saluran SMKK entries. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role.\n\n**Query Parameters:**\n- `page` (number, optional): Page number\n- `amount` (number, optional): Items per page\n\n**Response includes:**\n- `data`: Array of SMKK objects with related ruang lingkup information\n- Pagination metadata (total, page, limit, totalPages)"
+						"description": "Get paginated list of all Jalan Saluran SMKK entries. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role.\n\n**Query Parameters:**\n- `page` (number, optional): Page number\n- `amount` (number, optional): Items per page\n\n**Response includes:**\n- `data`: Array of SMKK objects with id_jenis_usulan information\n- Pagination metadata (total, page, limit, totalPages)"
 					},
 					"response": []
 				},
@@ -199,7 +199,40 @@
 								}
 							]
 						},
-						"description": "Get detailed information for a specific Jalan Saluran SMKK entry by ID. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role.\n\n**Path Parameters:**\n- `id` (number, required): ID of the SMKK entry\n\n**Returns:** Complete SMKK object with all fields including related ruang lingkup information"
+						"description": "Get detailed information for a specific Jalan Saluran SMKK entry by ID. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role.\n\n**Path Parameters:**\n- `id` (number, required): ID of the SMKK entry\n\n**Returns:** Complete SMKK object with all fields including id_jenis_usulan"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Jalan Saluran SMKK By Jenis Usulan",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/jalan-saluran-smkk/jenis-usulan/:idJenisUsulan",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_prefix}}",
+								"jalan-saluran-smkk",
+								"jenis-usulan",
+								":idJenisUsulan"
+							],
+							"variable": [
+								{
+									"key": "idJenisUsulan",
+									"value": "2",
+									"description": "ID of jenis usulan (2=Jalan, 3=Saluran)"
+								}
+							]
+						},
+						"description": "Get all Jalan Saluran SMKK entries filtered by jenis usulan. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role.\n\n**Path Parameters:**\n- `idJenisUsulan` (number, required): ID of jenis usulan (2=Jalan, 3=Saluran)\n\n**Returns:** Array of SMKK objects filtered by jenis usulan, ordered by ID ASC"
 					},
 					"response": []
 				}

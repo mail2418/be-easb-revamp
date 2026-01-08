@@ -17,33 +17,25 @@ export class JalanSaluranSmkkController {
     @Post()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
     async create(@Body() dto: CreateJalanSaluranSmkkDto): Promise<ResponseDto> {
-        try {
-            const result = await this.service.create(dto);
-            return {
-                status: "success",
-                responseCode: HttpStatus.CREATED,
-                message: "JalanSaluranSmkk created successfully",
-                data: result
-            };
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.service.create(dto);
+        return {
+            status: "success",
+            responseCode: HttpStatus.CREATED,
+            message: "JalanSaluranSmkk created successfully",
+            data: result
+        };
     }
 
     @Put()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
     async update(@Body() dto: UpdateJalanSaluranSmkkDto): Promise<ResponseDto> {
-        try {
-            const result = await this.service.update(dto);
-            return {
-                status: "success",
-                responseCode: HttpStatus.OK,
-                message: "JalanSaluranSmkk updated successfully",
-                data: result
-            };
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.service.update(dto);
+        return {
+            status: "success",
+            responseCode: HttpStatus.OK,
+            message: "JalanSaluranSmkk updated successfully",
+            data: result
+        };
     }
 
     @Delete(':id')
@@ -59,6 +51,18 @@ export class JalanSaluranSmkkController {
         } catch (error) {
             throw error;
         }
+    }
+
+    @Get('jenis-usulan/:idJenisUsulan')
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async findByJenisUsulan(@Param('idJenisUsulan') idJenisUsulan: string): Promise<ResponseDto> {
+        const result = await this.service.findByJenisUsulan(Number(idJenisUsulan));
+        return {
+            status: "success",
+            responseCode: HttpStatus.OK,
+            message: "JalanSaluranSmkk by jenis usulan retrieved successfully",
+            data: result
+        };
     }
 
     @Get(':id')
@@ -80,17 +84,13 @@ export class JalanSaluranSmkkController {
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async findAll(@Query() dto: GetJalanSaluranSmkkDto): Promise<ResponseDto> {
-        try {
-            const result = await this.service.findAll(dto);
-            return {
-                status: "success",
-                responseCode: HttpStatus.OK,
-                message: "JalanSaluranSmkk list retrieved successfully",
-                data: result
-            };
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.service.findAll(dto);
+        return {
+            status: "success",
+            responseCode: HttpStatus.OK,
+            message: "JalanSaluranSmkk list retrieved successfully",
+            data: result
+        };
     }
 }
 

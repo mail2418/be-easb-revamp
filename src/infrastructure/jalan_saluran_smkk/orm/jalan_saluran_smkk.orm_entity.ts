@@ -1,13 +1,13 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { JalanSaluranRuangLingkupOrmEntity } from "../../jalan_saluran_ruang_lingkup/orm/jalan_saluran_ruang_lingkup.orm_entity";
+import { JenisUsulanOrmEntity } from "../../jenis_usulan/orm/jenis_usulan.orm_entity";
 
 @Entity('jalan_saluran_smkk')
 export class JalanSaluranSmkkOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ name: 'id_ruang_lingkup', type: 'int' })
-    id_ruang_lingkup!: number;
+    @Column({ name: 'id_jenis_usulan', type: 'int' })
+    id_jenis_usulan!: number;
 
     @Column({ name: 'no_mata_pembayaran', type: 'varchar', length: 255 })
     no_mata_pembayaran!: string;
@@ -33,8 +33,8 @@ export class JalanSaluranSmkkOrmEntity {
     @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt?: Date | null;
 
-    @ManyToOne(() => JalanSaluranRuangLingkupOrmEntity)
-    @JoinColumn({ name: 'id_ruang_lingkup', referencedColumnName: 'id' })
-    ruangLingkup!: JalanSaluranRuangLingkupOrmEntity;
+    @ManyToOne(() => JenisUsulanOrmEntity)
+    @JoinColumn({ name: 'id_jenis_usulan' })
+    jenisUsulan!: JenisUsulanOrmEntity;
 }
 

@@ -5,7 +5,7 @@ export class CreateJalanSaluranSmkkDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    id_ruang_lingkup!: number;
+    id_jenis_usulan!: number;
 
     @IsNotEmpty()
     @IsString()

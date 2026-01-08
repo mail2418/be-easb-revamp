@@ -10,5 +10,6 @@ export abstract class JalanSaluranSmkkService {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<JalanSaluranSmkk | null>;
     abstract findAll(dto: GetJalanSaluranSmkkDto): Promise<JalanSaluranSmkkPaginationResultDto>;
+    abstract findByJenisUsulan(idJenisUsulan: number): Promise<JalanSaluranSmkk[]>;
 }
 

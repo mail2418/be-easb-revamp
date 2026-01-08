@@ -47,5 +47,9 @@ export class JalanSaluranSmkkServiceImpl implements JalanSaluranSmkkService {
             totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
         };
     }
+
+    async findByJenisUsulan(idJenisUsulan: number): Promise<JalanSaluranSmkk[]> {
+        return await this.repository.findByJenisUsulan(idJenisUsulan);
+    }
 }
 
