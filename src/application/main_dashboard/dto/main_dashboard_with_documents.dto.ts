@@ -5,6 +5,7 @@ export class MainDashboardDto {
     idAsbStatus: number;
     namaUsulan: string;
     rejectInfo: string | null;
+    tahunAnggaran: number | null;
     createdAt: Date;
 }
 

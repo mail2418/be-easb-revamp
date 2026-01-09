@@ -25,6 +25,9 @@ export class MainDashboardOrmEntity {
     @Column({ name: 'reject_info', type: 'text', nullable: true })
     rejectInfo: string | null;
 
+    @Column({ name: 'tahun_anggaran', type: 'int', nullable: true })
+    tahunAnggaran: number | null;
+
     @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
 }

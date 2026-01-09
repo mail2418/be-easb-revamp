@@ -15,6 +15,7 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
 
     async findAll(
         search: string | undefined,
+        tahunAnggaran: number | undefined,
         page: number,
         limit: number,
     ): Promise<{ data: MainDashboard[]; total: number }> {
@@ -26,31 +27,41 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
             .skip(skip)
             .take(limit);
 
-        // Apply search filter if provided
-        if (search) {
-            qb.where('LOWER(main_dashboard.namaUsulan) LIKE :search', {
-                search: `%${search.toLowerCase()}%`,
-            });
-        }
+            const whereConditions: string[] = [];
+            const whereParams: any = {};
 
-        // Get total count
-        const totalQb = this.repo.createQueryBuilder('main_dashboard');
-        if (search) {
-            totalQb.where('LOWER(main_dashboard.namaUsulan) LIKE :search', {
-                search: `%${search.toLowerCase()}%`,
-            });
-        }
+            // Apply search filter if provided
+            if (search) {
+                whereConditions.push('LOWER(main_dashboard.namaUsulan) LIKE :search');
+                whereParams.search = `%${search.toLowerCase()}%`;
+            }
 
-        const [entities, total] = await Promise.all([
-            qb.getMany(),
-            totalQb.getCount(),
-        ]);
+            // Apply tahunAnggaran filter if provided
+            if (tahunAnggaran !== undefined) {
+                whereConditions.push('main_dashboard.tahunAnggaran = :tahunAnggaran');
+                whereParams.tahunAnggaran = tahunAnggaran;
+            }
 
-        const data = entities.map((entity) =>
-            plainToInstance(MainDashboard, entity),
-        );
+            if (whereConditions.length > 0) {
+                qb.where(whereConditions.join(' AND '), whereParams);
+            }
 
-        return { data, total };
+            // Get total count
+            const totalQb = this.repo.createQueryBuilder('main_dashboard');
+            if (whereConditions.length > 0) {
+                totalQb.where(whereConditions.join(' AND '), whereParams);
+            }
+
+            const [entities, total] = await Promise.all([
+                qb.getMany(),
+                totalQb.getCount(),
+            ]);
+
+            const data = entities.map((entity) =>
+                plainToInstance(MainDashboard, entity),
+            );
+
+            return { data, total };
     }
 }
 

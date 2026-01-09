@@ -5,6 +5,7 @@ export class MainDashboard {
     idAsbStatus: number;
     namaUsulan: string;
     rejectInfo: string | null;
+    tahunAnggaran: number | null;
     createdAt: Date;
 }
 

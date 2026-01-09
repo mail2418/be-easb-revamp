@@ -16,11 +16,12 @@ export class MainDashboardServiceImpl implements MainDashboardService {
         const page = dto.page ?? 1;
         const limit = dto.limit ?? 10;
 
-        const { data, total } = await this.repository.findAll(
-            dto.search,
-            page,
-            limit,
-        );
+            const { data, total } = await this.repository.findAll(
+                dto.search,
+                dto.tahunAnggaran,
+                page,
+                limit,
+            );
 
         const dataDto: MainDashboardDto[] = data.map((item) =>
             plainToInstance(MainDashboardDto, item),

@@ -9,6 +9,12 @@ export class GetMainDashboardDto {
     @IsOptional()
     @Type(() => Number)
     @IsInt()
+    @Min(2000)
+    tahunAnggaran?: number;
+
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
     @Min(1)
     page?: number;
 
