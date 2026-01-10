@@ -14,58 +14,38 @@ export class JalanSaluranSmkkServiceImpl implements JalanSaluranSmkkService {
     ) { }
 
     async create(dto: CreateJalanSaluranSmkkDto): Promise<JalanSaluranSmkk> {
-        try {
-            return await this.repository.create(dto);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repository.create(dto);
     }
 
     async update(dto: UpdateJalanSaluranSmkkDto): Promise<JalanSaluranSmkk> {
-        try {
-            const existing = await this.repository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`JalanSaluranSmkk with ID ${dto.id} not found`);
-            }
-            return await this.repository.update(dto);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`JalanSaluranSmkk with ID ${dto.id} not found`);
         }
+        return await this.repository.update(dto);
     }
 
     async delete(id: number): Promise<boolean> {
-        try {
-            const exists = await this.repository.findById(id);
-            if (!exists) {
-                throw new NotFoundException(`JalanSaluranSmkk with ID ${id} not found`);
-            }
-            return await this.repository.delete(id);
-        } catch (error) {
-            throw error;
+        const exists = await this.repository.findById(id);
+        if (!exists) {
+            throw new NotFoundException(`JalanSaluranSmkk with ID ${id} not found`);
         }
+        return await this.repository.delete(id);
     }
 
     async findById(id: number): Promise<JalanSaluranSmkk | null> {
-        try {
-            return await this.repository.findById(id);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repository.findById(id);
     }
 
     async findAll(dto: GetJalanSaluranSmkkDto): Promise<JalanSaluranSmkkPaginationResultDto> {
-        try {
-            const result = await this.repository.findAll(dto);
-            return {
-                data: result.data,
-                total: result.total,
-                page: dto.page ?? 1,
-                limit: dto.amount ?? result.total,
-                totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
-            };
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.repository.findAll(dto);
+        return {
+            data: result.data,
+            total: result.total,
+            page: dto.page ?? 1,
+            limit: dto.amount ?? result.total,
+            totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
+        };
     }
 }
 

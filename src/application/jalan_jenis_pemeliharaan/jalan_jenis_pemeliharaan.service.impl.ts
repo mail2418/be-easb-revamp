@@ -14,91 +14,63 @@ export class JalanJenisPemeliharaanServiceImpl implements JalanJenisPemeliharaan
     ) { }
 
     async create(dto: CreateJalanJenisPemeliharaanDto): Promise<JalanJenisPemeliharaan> {
-        try {
-            // Check if combination of tingkat_pemeliharaan and jenis_pemeliharaan already exists
-            const existing = await this.jalanJenisPemeliharaanRepository.findByTingkatPemeliharaan(dto.tingkat_pemeliharaan);
-            if (existing && existing.jenis_pemeliharaan === dto.jenis_pemeliharaan) {
-                throw new ConflictException(`JalanJenisPemeliharaan with tingkat_pemeliharaan ${dto.tingkat_pemeliharaan} and jenis_pemeliharaan ${dto.jenis_pemeliharaan} already exists`);
-            }
-            return await this.jalanJenisPemeliharaanRepository.create(dto);
-        } catch (error) {
-            throw error;
+        // Check if combination of tingkat_pemeliharaan and jenis_pemeliharaan already exists
+        const existing = await this.jalanJenisPemeliharaanRepository.findByTingkatPemeliharaan(dto.tingkat_pemeliharaan);
+        if (existing && existing.jenis_pemeliharaan === dto.jenis_pemeliharaan) {
+            throw new ConflictException(`JalanJenisPemeliharaan with tingkat_pemeliharaan ${dto.tingkat_pemeliharaan} and jenis_pemeliharaan ${dto.jenis_pemeliharaan} already exists`);
         }
+        return await this.jalanJenisPemeliharaanRepository.create(dto);
     }
 
     async update(dto: UpdateJalanJenisPemeliharaanDto): Promise<JalanJenisPemeliharaan> {
-        try {
-            const existing = await this.jalanJenisPemeliharaanRepository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`JalanJenisPemeliharaan with id ${dto.id} not found`);
-            }
+        const existing = await this.jalanJenisPemeliharaanRepository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`JalanJenisPemeliharaan with id ${dto.id} not found`);
+        }
 
-            // Check if combination of tingkat_pemeliharaan and jenis_pemeliharaan already exists
-            if (dto.tingkat_pemeliharaan || dto.jenis_pemeliharaan) {
-                const checkTingkat = dto.tingkat_pemeliharaan || existing.tingkat_pemeliharaan;
-                const checkJenis = dto.jenis_pemeliharaan || existing.jenis_pemeliharaan;
-                
-                if (checkTingkat !== existing.tingkat_pemeliharaan || checkJenis !== existing.jenis_pemeliharaan) {
-                    const duplicate = await this.jalanJenisPemeliharaanRepository.findByTingkatPemeliharaan(checkTingkat);
-                    if (duplicate && duplicate.id !== dto.id && duplicate.jenis_pemeliharaan === checkJenis) {
-                        throw new ConflictException(`JalanJenisPemeliharaan with tingkat_pemeliharaan ${checkTingkat} and jenis_pemeliharaan ${checkJenis} already exists`);
-                    }
+        // Check if combination of tingkat_pemeliharaan and jenis_pemeliharaan already exists
+        if (dto.tingkat_pemeliharaan || dto.jenis_pemeliharaan) {
+            const checkTingkat = dto.tingkat_pemeliharaan || existing.tingkat_pemeliharaan;
+            const checkJenis = dto.jenis_pemeliharaan || existing.jenis_pemeliharaan;
+            
+            if (checkTingkat !== existing.tingkat_pemeliharaan || checkJenis !== existing.jenis_pemeliharaan) {
+                const duplicate = await this.jalanJenisPemeliharaanRepository.findByTingkatPemeliharaan(checkTingkat);
+                if (duplicate && duplicate.id !== dto.id && duplicate.jenis_pemeliharaan === checkJenis) {
+                    throw new ConflictException(`JalanJenisPemeliharaan with tingkat_pemeliharaan ${checkTingkat} and jenis_pemeliharaan ${checkJenis} already exists`);
                 }
             }
-            return await this.jalanJenisPemeliharaanRepository.update(dto);
-        } catch (error) {
-            throw error;
         }
+        return await this.jalanJenisPemeliharaanRepository.update(dto);
     }
 
     async delete(id: number): Promise<boolean> {
-        try {
-            const existing = await this.jalanJenisPemeliharaanRepository.findById(id);
-            if (!existing) {
-                throw new NotFoundException(`JalanJenisPemeliharaan with id ${id} not found`);
-            }
-            return await this.jalanJenisPemeliharaanRepository.delete(id);
-        } catch (error) {
-            throw error;
+        const existing = await this.jalanJenisPemeliharaanRepository.findById(id);
+        if (!existing) {
+            throw new NotFoundException(`JalanJenisPemeliharaan with id ${id} not found`);
         }
+        return await this.jalanJenisPemeliharaanRepository.delete(id);
     }
 
     async findById(id: number): Promise<JalanJenisPemeliharaan | null> {
-        try {
-            return await this.jalanJenisPemeliharaanRepository.findById(id);
-        } catch (error) {
-            throw error;
-        }
+        return await this.jalanJenisPemeliharaanRepository.findById(id);
     }
 
     async findAll(dto: GetJalanJenisPemeliharaanDto): Promise<JalanJenisPemeliharaanPaginationResultDto> {
-        try {
-            const result = await this.jalanJenisPemeliharaanRepository.findAll(dto);
-            return {
-                data: result.data,
-                total: result.total,
-                page: dto.page ?? 1,
-                limit: dto.amount ?? result.total,
-                totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
-            };
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.jalanJenisPemeliharaanRepository.findAll(dto);
+        return {
+            data: result.data,
+            total: result.total,
+            page: dto.page ?? 1,
+            limit: dto.amount ?? result.total,
+            totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
+        };
     }
 
     async findByTingkatPemeliharaan(tingkat_pemeliharaan: string): Promise<JalanJenisPemeliharaan | null> {
-        try {
-            return await this.jalanJenisPemeliharaanRepository.findByTingkatPemeliharaan(tingkat_pemeliharaan);
-        } catch (error) {
-            throw error;
-        }
+        return await this.jalanJenisPemeliharaanRepository.findByTingkatPemeliharaan(tingkat_pemeliharaan);
     }
 
     async findByJenisPemeliharaan(jenis_pemeliharaan: string): Promise<JalanJenisPemeliharaan[]> {
-        try {
-            return await this.jalanJenisPemeliharaanRepository.findByJenisPemeliharaan(jenis_pemeliharaan);
-        } catch (error) {
-            throw error;
-        }
+        return await this.jalanJenisPemeliharaanRepository.findByJenisPemeliharaan(jenis_pemeliharaan);
     }
 }

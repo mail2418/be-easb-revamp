@@ -12,39 +12,27 @@ export class JalanSaluranSpesifikasiSmkkReviewServiceImpl implements JalanSalura
     ) { }
 
     async create(dto: CreateJalanSaluranSpesifikasiSmkkReviewDto): Promise<JalanSaluranSpesifikasiSmkkReview> {
-        try {
-            return await this.repository.create(dto);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repository.create(dto);
     }
 
     async deleteByUsulanJalanId(idUsulanJalan: number): Promise<void> {
-        try {
-            await this.repository.deleteByUsulanJalanId(idUsulanJalan);
-        } catch (error) {
-            throw error;
-        }
+        await this.repository.deleteByUsulanJalanId(idUsulanJalan);
     }
 
     async getByUsulanJalan(dto: GetJalanSaluranSpesifikasiSmkkReviewByUsulanJalanDto): Promise<{ data: JalanSaluranSpesifikasiSmkkReview[]; total: number; page: number; amount: number; totalPages: number }> {
-        try {
-            const [data, total] = await this.repository.findByUsulanJalan(dto.idUsulanJalan, dto.page, dto.amount);
-            
-            // If pagination is not provided, return all data with page=1, amount=total
-            const page = dto.page ?? 1;
-            const amount = dto.amount ?? total;
-            
-            return {
-                data,
-                total,
-                page,
-                amount,
-                totalPages: amount > 0 ? Math.ceil(total / amount) : 1
-            };
-        } catch (error) {
-            throw error;
-        }
+        const [data, total] = await this.repository.findByUsulanJalan(dto.idUsulanJalan, dto.page, dto.amount);
+        
+        // If pagination is not provided, return all data with page=1, amount=total
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? total;
+        
+        return {
+            data,
+            total,
+            page,
+            amount,
+            totalPages: amount > 0 ? Math.ceil(total / amount) : 1
+        };
     }
 }
 

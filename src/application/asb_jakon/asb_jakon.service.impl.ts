@@ -139,8 +139,7 @@ export class AsbJakonServiceImpl implements AsbJakonService {
     }
 
     async createBulk(dto: CreateBulkAsbJakonDto, file: Express.Multer.File): Promise<CreateBulkAsbJakonResultDto> {
-        try {
-            // 1. Validate Excel file (type, size, extension)
+        // 1. Validate Excel file (type, size, extension)
             this.validateExcelFileUseCase.execute(file);
 
             // 2. Read Excel file and validate headers

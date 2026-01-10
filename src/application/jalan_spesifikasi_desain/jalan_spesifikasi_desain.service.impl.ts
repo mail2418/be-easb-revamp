@@ -21,126 +21,98 @@ export class JalanSpesifikasiDesainServiceImpl implements JalanSpesifikasiDesain
     ) { }
 
     async create(dto: CreateJalanSpesifikasiDesainDto, lebar?: number): Promise<JalanSpesifikasiDesain> {
-        try {
-            // Get lebar from usulan_jalan if not provided
-            let lebarValue = lebar;
-            if (lebarValue === undefined) {
-                const usulanJalan = await this.usulanJalanRepository.findById(dto.id_usulan_jalan);
-                if (!usulanJalan) {
-                    throw new NotFoundException(`Usulan Jalan with id ${dto.id_usulan_jalan} not found`);
-                }
-                if (!usulanJalan.lebar) {
-                    throw new NotFoundException(`Usulan Jalan with id ${dto.id_usulan_jalan} has no lebar`);
-                }
-                lebarValue = usulanJalan.lebar;
+        // Get lebar from usulan_jalan if not provided
+        let lebarValue = lebar;
+        if (lebarValue === undefined) {
+            const usulanJalan = await this.usulanJalanRepository.findById(dto.id_usulan_jalan);
+            if (!usulanJalan) {
+                throw new NotFoundException(`Usulan Jalan with id ${dto.id_usulan_jalan} not found`);
             }
-
-            // Get HSPK to get harga_satuan and satuan
-            const hspk = await this.hspkService.findById(dto.id_hspk);
-            if (!hspk) {
-                throw new NotFoundException(`HSPK with id ${dto.id_hspk} not found`);
+            if (!usulanJalan.lebar) {
+                throw new NotFoundException(`Usulan Jalan with id ${dto.id_usulan_jalan} has no lebar`);
             }
-
-            if (!hspk.harga_satuan) {
-                throw new NotFoundException(`HSPK with id ${dto.id_hspk} has no harga_satuan`);
-            }
-
-            // Calculate volume based on satuan from HSPK
-            const volume = await this.calculateVolumeUseCase.execute(
-                dto.id_hspk,
-                lebarValue,
-                dto.tinggi,
-                dto.spasi,
-            );
-
-            // Calculate harga_spec = harga_satuan * volume
-            const harga_spec = hspk.harga_satuan * volume;
-
-            // Add calculated fields to DTO
-            const dtoWithCalculations = {
-                ...dto,
-                volume,
-                harga_spec,
-            };
-
-            return await this.jalanSpesifikasiDesainRepository.create(dtoWithCalculations);
-        } catch (error) {
-            throw error;
+            lebarValue = usulanJalan.lebar;
         }
+
+        // Get HSPK to get harga_satuan and satuan
+        const hspk = await this.hspkService.findById(dto.id_hspk);
+        if (!hspk) {
+            throw new NotFoundException(`HSPK with id ${dto.id_hspk} not found`);
+        }
+
+        if (!hspk.harga_satuan) {
+            throw new NotFoundException(`HSPK with id ${dto.id_hspk} has no harga_satuan`);
+        }
+
+        // Calculate volume based on satuan from HSPK
+        const volume = await this.calculateVolumeUseCase.execute(
+            dto.id_hspk,
+            lebarValue,
+            dto.tinggi,
+            dto.spasi,
+        );
+
+        // Calculate harga_spec = harga_satuan * volume
+        const harga_spec = hspk.harga_satuan * volume;
+
+        // Add calculated fields to DTO
+        const dtoWithCalculations = {
+            ...dto,
+            volume,
+            harga_spec,
+        };
+
+        return await this.jalanSpesifikasiDesainRepository.create(dtoWithCalculations);
     }
 
     async update(dto: UpdateJalanSpesifikasiDesainDto): Promise<JalanSpesifikasiDesain> {
-        try {
-            const existing = await this.jalanSpesifikasiDesainRepository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`JalanSpesifikasiDesain with id ${dto.id} not found`);
-            }
-            return await this.jalanSpesifikasiDesainRepository.update(dto);
-        } catch (error) {
-            throw error;
+        const existing = await this.jalanSpesifikasiDesainRepository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`JalanSpesifikasiDesain with id ${dto.id} not found`);
         }
+        return await this.jalanSpesifikasiDesainRepository.update(dto);
     }
 
     async delete(id: number): Promise<boolean> {
-        try {
-            const existing = await this.jalanSpesifikasiDesainRepository.findById(id);
-            if (!existing) {
-                throw new NotFoundException(`JalanSpesifikasiDesain with id ${id} not found`);
-            }
-            return await this.jalanSpesifikasiDesainRepository.delete(id);
-        } catch (error) {
-            throw error;
+        const existing = await this.jalanSpesifikasiDesainRepository.findById(id);
+        if (!existing) {
+            throw new NotFoundException(`JalanSpesifikasiDesain with id ${id} not found`);
         }
+        return await this.jalanSpesifikasiDesainRepository.delete(id);
     }
 
     async findById(id: number): Promise<JalanSpesifikasiDesain | null> {
-        try {
-            return await this.jalanSpesifikasiDesainRepository.findById(id);
-        } catch (error) {
-            throw error;
-        }
+        return await this.jalanSpesifikasiDesainRepository.findById(id);
     }
 
     async findAll(dto: GetJalanSpesifikasiDesainDto): Promise<JalanSpesifikasiDesainPaginationResultDto> {
-        try {
-            const result = await this.jalanSpesifikasiDesainRepository.findAll(dto);
-            return {
-                data: result.data,
-                total: result.total,
-                page: dto.page ?? 1,
-                limit: dto.amount ?? result.total,
-                totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
-            };
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.jalanSpesifikasiDesainRepository.findAll(dto);
+        return {
+            data: result.data,
+            total: result.total,
+            page: dto.page ?? 1,
+            limit: dto.amount ?? result.total,
+            totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
+        };
     }
 
     async deleteByUsulanJalanId(idUsulanJalan: number): Promise<void> {
-        try {
-            await this.jalanSpesifikasiDesainRepository.deleteByUsulanJalanId(idUsulanJalan);
-        } catch (error) {
-            throw error;
-        }
+        await this.jalanSpesifikasiDesainRepository.deleteByUsulanJalanId(idUsulanJalan);
     }
 
     async getByUsulanJalan(dto: GetJalanSpesifikasiDesainByUsulanJalanDto): Promise<{ data: JalanSpesifikasiDesain[]; total: number; page: number; amount: number; totalPages: number }> {
-        try {
-            const [data, total] = await this.jalanSpesifikasiDesainRepository.findByUsulanJalan(dto.idUsulanJalan, dto.page, dto.amount);
-            
-            // If pagination is not provided, return all data with page=1, amount=total
-            const page = dto.page ?? 1;
-            const amount = dto.amount ?? total;
-            
-            return {
-                data,
-                total,
-                page,
-                amount,
-                totalPages: amount > 0 ? Math.ceil(total / amount) : 1
-            };
-        } catch (error) {
-            throw error;
-        }
+        const [data, total] = await this.jalanSpesifikasiDesainRepository.findByUsulanJalan(dto.idUsulanJalan, dto.page, dto.amount);
+        
+        // If pagination is not provided, return all data with page=1, amount=total
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? total;
+        
+        return {
+            data,
+            total,
+            page,
+            amount,
+            totalPages: amount > 0 ? Math.ceil(total / amount) : 1
+        };
     }
 }

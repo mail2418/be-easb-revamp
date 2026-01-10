@@ -22,92 +22,72 @@ export class StandardKlasifikasiServiceImpl extends StandardKlasifikasiService {
     }
 
     async create(dto: CreateStandardKlasifikasiDto): Promise<StandardKlasifikasi> {
-        try {
-            // Validate foreign keys
-            const asbKlasifikasi = await this.asbKlasifikasiRepository.findById(dto.id_asb_klasifikasi);
-            if (!asbKlasifikasi) {
-                throw new BadRequestException(`ASB Klasifikasi with id ${dto.id_asb_klasifikasi} not found`);
-            }
-
-            const kabkota = await this.kabkotaRepository.findById(dto.id_kabkota);
-            if (!kabkota) {
-                throw new BadRequestException(`KabKota with id ${dto.id_kabkota} not found`);
-            }
-
-            const standardKlasifikasi = await this.standardKlasifikasiRepository.create(dto);
-            return standardKlasifikasi;
-        } catch (error) {
-            throw error;
+        // Validate foreign keys
+        const asbKlasifikasi = await this.asbKlasifikasiRepository.findById(dto.id_asb_klasifikasi);
+        if (!asbKlasifikasi) {
+            throw new BadRequestException(`ASB Klasifikasi with id ${dto.id_asb_klasifikasi} not found`);
         }
+
+        const kabkota = await this.kabkotaRepository.findById(dto.id_kabkota);
+        if (!kabkota) {
+            throw new BadRequestException(`KabKota with id ${dto.id_kabkota} not found`);
+        }
+
+        const standardKlasifikasi = await this.standardKlasifikasiRepository.create(dto);
+        return standardKlasifikasi;
     }
 
     async update(dto: UpdateStandardKlasifikasiDto): Promise<StandardKlasifikasi> {
-        try {
-            // Check if standard klasifikasi exists
-            const existing = await this.standardKlasifikasiRepository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`Standard Klasifikasi with id ${dto.id} not found`);
-            }
-
-            // Validate foreign keys
-            const asbKlasifikasi = await this.asbKlasifikasiRepository.findById(dto.id_asb_klasifikasi);
-            if (!asbKlasifikasi) {
-                throw new BadRequestException(`ASB Klasifikasi with id ${dto.id_asb_klasifikasi} not found`);
-            }
-
-            const kabkota = await this.kabkotaRepository.findById(dto.id_kabkota);
-            if (!kabkota) {
-                throw new BadRequestException(`KabKota with id ${dto.id_kabkota} not found`);
-            }
-
-            const updatedStandardKlasifikasi = await this.standardKlasifikasiRepository.update(dto);
-            return updatedStandardKlasifikasi;
-        } catch (error) {
-            throw error;
+        // Check if standard klasifikasi exists
+        const existing = await this.standardKlasifikasiRepository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`Standard Klasifikasi with id ${dto.id} not found`);
         }
+
+        // Validate foreign keys
+        const asbKlasifikasi = await this.asbKlasifikasiRepository.findById(dto.id_asb_klasifikasi);
+        if (!asbKlasifikasi) {
+            throw new BadRequestException(`ASB Klasifikasi with id ${dto.id_asb_klasifikasi} not found`);
+        }
+
+        const kabkota = await this.kabkotaRepository.findById(dto.id_kabkota);
+        if (!kabkota) {
+            throw new BadRequestException(`KabKota with id ${dto.id_kabkota} not found`);
+        }
+
+        const updatedStandardKlasifikasi = await this.standardKlasifikasiRepository.update(dto);
+        return updatedStandardKlasifikasi;
     }
 
     async delete(dto: DeleteStandardKlasifikasiDto): Promise<boolean> {
-        try {
-            // Check if standard klasifikasi exists
-            const existing = await this.standardKlasifikasiRepository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`Standard Klasifikasi with id ${dto.id} not found`);
-            }
-
-            return await this.standardKlasifikasiRepository.delete(dto);
-        } catch (error) {
-            throw error;
+        // Check if standard klasifikasi exists
+        const existing = await this.standardKlasifikasiRepository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`Standard Klasifikasi with id ${dto.id} not found`);
         }
+
+        return await this.standardKlasifikasiRepository.delete(dto);
     }
 
     async findAll(dto: GetStandardKlasifikasisDto): Promise<StandardKlasifikasisPaginationResultDto> {
-        try {
-            const page = dto.page ?? 1;
-            const amount = dto.amount ?? 10;
-            const paginationData = { page, amount };
-            const result = await this.standardKlasifikasiRepository.findAll(paginationData);
-            return {
-                data: result.data,
-                total: result.total,
-                page,
-                amount,
-                totalPages: Math.ceil(result.total / amount)
-            };
-        } catch (error) {
-            throw error;
-        }
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? 10;
+        const paginationData = { page, amount };
+        const result = await this.standardKlasifikasiRepository.findAll(paginationData);
+        return {
+            data: result.data,
+            total: result.total,
+            page,
+            amount,
+            totalPages: Math.ceil(result.total / amount)
+        };
     }
 
     async findById(dto: GetStandardKlasifikasiDetailDto): Promise<StandardKlasifikasi> {
-        try {
-            const standardKlasifikasi = await this.standardKlasifikasiRepository.findById(dto.id);
-            if (!standardKlasifikasi) {
-                throw new NotFoundException(`Standard Klasifikasi with id ${dto.id} not found`);
-            }
-            return standardKlasifikasi;
-        } catch (error) {
-            throw error;
+        const standardKlasifikasi = await this.standardKlasifikasiRepository.findById(dto.id);
+        if (!standardKlasifikasi) {
+            throw new NotFoundException(`Standard Klasifikasi with id ${dto.id} not found`);
         }
+        return standardKlasifikasi;
     }
 }

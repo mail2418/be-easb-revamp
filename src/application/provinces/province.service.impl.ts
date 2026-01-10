@@ -15,110 +15,82 @@ export class ProvinceServiceImpl implements ProvinceService {
     constructor(private readonly provinceRepository: ProvinceRepository) {}
 
     async create(province: CreateProvinceDto): Promise<Province> {
-        try {
-            // Check if kode already exists
-            const existingProvince = await this.provinceRepository.findByKode(province.kode);
-            if (existingProvince) {
-                throw new ConflictException(`Province with kode ${province.kode} already exists`);
-            }
-
-            const newProvince = await this.provinceRepository.create(province);
-            return newProvince;
-        } catch (error) {
-            throw error;
+        // Check if kode already exists
+        const existingProvince = await this.provinceRepository.findByKode(province.kode);
+        if (existingProvince) {
+            throw new ConflictException(`Province with kode ${province.kode} already exists`);
         }
+
+        const newProvince = await this.provinceRepository.create(province);
+        return newProvince;
     }
 
     async updateProvince(province: UpdateProvinceDto): Promise<Province> {
-        try {
-            // Check if province exists
-            const existingProvince = await this.provinceRepository.findById(province.id);
-            if (!existingProvince) {
-                throw new NotFoundException(`Province with id ${province.id} not found`);
-            }
-
-            // Check if kode is being changed and already exists
-            if (province.kode && province.kode !== existingProvince.kode) {
-                const kodeExists = await this.provinceRepository.findByKode(province.kode);
-                if (kodeExists) {
-                    throw new ConflictException(`Province with kode ${province.kode} already exists`);
-                }
-            }
-            const updateData: Partial<Province> = {
-                kode: province.kode,
-                nama: province.nama,
-                isActive: province.isActive,
-            };
-
-            // Remove undefined values
-            Object.keys(updateData).forEach(key => {
-                if (updateData[key as keyof typeof updateData] === undefined) {
-                    delete updateData[key as keyof typeof updateData];
-                }
-            });
-
-            const updatedProvince = await this.provinceRepository.update(province.id, updateData);
-            return updatedProvince;
-        } catch (error) {
-            throw error;
+        // Check if province exists
+        const existingProvince = await this.provinceRepository.findById(province.id);
+        if (!existingProvince) {
+            throw new NotFoundException(`Province with id ${province.id} not found`);
         }
+
+        // Check if kode is being changed and already exists
+        if (province.kode && province.kode !== existingProvince.kode) {
+            const kodeExists = await this.provinceRepository.findByKode(province.kode);
+            if (kodeExists) {
+                throw new ConflictException(`Province with kode ${province.kode} already exists`);
+            }
+        }
+        const updateData: Partial<Province> = {
+            kode: province.kode,
+            nama: province.nama,
+            isActive: province.isActive,
+        };
+
+        // Remove undefined values
+        Object.keys(updateData).forEach(key => {
+            if (updateData[key as keyof typeof updateData] === undefined) {
+                delete updateData[key as keyof typeof updateData];
+            }
+        });
+
+        const updatedProvince = await this.provinceRepository.update(province.id, updateData);
+        return updatedProvince;
     }
 
     async deleteProvince(province: DeleteProvinceDto): Promise<boolean> {
-        try {
-            // Check if province exists
-            const existingProvince = await this.provinceRepository.findById(province.id);
-            if (!existingProvince) {
-                throw new NotFoundException(`Province with id ${province.id} not found`);
-            }
-
-            const deleted = await this.provinceRepository.delete(province.id);
-            return deleted;
-        } catch (error) {
-            throw error;
+        // Check if province exists
+        const existingProvince = await this.provinceRepository.findById(province.id);
+        if (!existingProvince) {
+            throw new NotFoundException(`Province with id ${province.id} not found`);
         }
+
+        const deleted = await this.provinceRepository.delete(province.id);
+        return deleted;
     }
 
     async getProvinces(pagination: GetProvincesDto): Promise<ProvincesPaginationResult> {
-        try {
-            const result = await this.provinceRepository.findAll(pagination);
-            return {
-                provinces: result.data,
-                total: result.total,
-                page: pagination.page ?? 1,
-                amount: pagination.amount ?? result.total,
-                totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1
-            };
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.provinceRepository.findAll(pagination);
+        return {
+            provinces: result.data,
+            total: result.total,
+            page: pagination.page ?? 1,
+            amount: pagination.amount ?? result.total,
+            totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1
+        };
     }
 
     async getProvinceDetail(province: GetProvinceDetailDto): Promise<Province> {
-        try {
-            const existingProvince = await this.provinceRepository.findById(province.id);
-            if (!existingProvince) {
-                throw new NotFoundException(`Province with id ${province.id} not found`);
-            }
-            return existingProvince;
-        } catch (error) {
-            throw error;
+        const existingProvince = await this.provinceRepository.findById(province.id);
+        if (!existingProvince) {
+            throw new NotFoundException(`Province with id ${province.id} not found`);
         }
+        return existingProvince;
     }
 
     async findByKode(kode: string): Promise<Province | null> {
-        try {
-            return await this.provinceRepository.findByKode(kode);
-        } catch (error) {
-            throw error;
-        }
+        return await this.provinceRepository.findByKode(kode);
     }
 
     async findById(id: number): Promise<Province | null> {
-        try {
-            return await this.provinceRepository.findById(id);
-        } catch (error) {
-            throw error;
-        }
+        return await this.provinceRepository.findById(id);
     }
 }

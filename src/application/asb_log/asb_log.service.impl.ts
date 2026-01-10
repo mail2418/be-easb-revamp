@@ -10,23 +10,15 @@ export class AsbLogServiceImpl extends AsbLogService {
     }
 
     async logUserActivity(message: string, idUser: number): Promise<AsbLog> {
-        try {
-            return await this.repository.create(message, idUser);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repository.create(message, idUser);
     }
 
     async findById(id: number): Promise<AsbLog> {
-        try {
-            const log = await this.repository.findById(id);
-            if (!log) {
-                throw new NotFoundException(`Log with id ${id} not found`);
-            }
-            return log;
-        } catch (error) {
-            throw error;
+        const log = await this.repository.findById(id);
+        if (!log) {
+            throw new NotFoundException(`Log with id ${id} not found`);
         }
+        return log;
     }
 
     async getUserLogs(
@@ -34,16 +26,12 @@ export class AsbLogServiceImpl extends AsbLogService {
         page: number,
         amount: number,
     ): Promise<{ data: AsbLog[]; total: number }> {
-        try {
-            const [data, total] = await this.repository.findByUser(
-                idUser,
-                page,
-                amount,
-            );
-            return { data, total };
-        } catch (error) {
-            throw error;
-        }
+        const [data, total] = await this.repository.findByUser(
+            idUser,
+            page,
+            amount,
+        );
+        return { data, total };
     }
 
     async getAsbLogs(
@@ -51,35 +39,23 @@ export class AsbLogServiceImpl extends AsbLogService {
         page: number,
         amount: number,
     ): Promise<{ data: AsbLog[]; total: number }> {
-        try {
-            const [data, total] = await this.repository.findByAsb(
-                idAsb,
-                page,
-                amount,
-            );
-            return { data, total };
-        } catch (error) {
-            throw error;
-        }
+        const [data, total] = await this.repository.findByAsb(
+            idAsb,
+            page,
+            amount,
+        );
+        return { data, total };
     }
 
     async getAllLogs(
         page: number,
         amount: number,
     ): Promise<{ data: AsbLog[]; total: number }> {
-        try {
-            const [data, total] = await this.repository.findAll(page, amount);
-            return { data, total };
-        } catch (error) {
-            throw error;
-        }
+        const [data, total] = await this.repository.findAll(page, amount);
+        return { data, total };
     }
 
     async getRecentLogs(limit: number): Promise<AsbLog[]> {
-        try {
-            return await this.repository.findRecent(limit);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repository.findRecent(limit);
     }
 }

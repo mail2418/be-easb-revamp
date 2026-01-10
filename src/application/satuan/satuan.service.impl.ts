@@ -14,113 +14,85 @@ export class SatuanServiceImpl implements SatuanService {
     constructor(private readonly satuanRepository: SatuanRepository) {}
 
     async create(satuan: CreateSatuanDto): Promise<Satuan> {
-        try {
-            // Check if satuan already exists
-            const existingSatuan = await this.satuanRepository.findBySatuan(satuan.satuan);
-            if (existingSatuan) {
-                throw new ConflictException(`Satuan with name ${satuan.satuan} already exists`);
-            }
-
-            const newSatuan = await this.satuanRepository.create(satuan);
-            return newSatuan;
-        } catch (error) {
-            throw error;
+        // Check if satuan already exists
+        const existingSatuan = await this.satuanRepository.findBySatuan(satuan.satuan);
+        if (existingSatuan) {
+            throw new ConflictException(`Satuan with name ${satuan.satuan} already exists`);
         }
+
+        const newSatuan = await this.satuanRepository.create(satuan);
+        return newSatuan;
     }
 
     async updateSatuan(satuan: UpdateSatuanDto): Promise<Satuan> {
-        try {
-            // Check if satuan exists
-            const existingSatuan = await this.satuanRepository.findById(satuan.id);
-            if (!existingSatuan) {
-                throw new NotFoundException(`Satuan with id ${satuan.id} not found`);
-            }
-
-            // Check if satuan name is being changed and already exists
-            if (satuan.satuan && satuan.satuan !== existingSatuan.satuan) {
-                const satuanExists = await this.satuanRepository.findBySatuan(satuan.satuan);
-                if (satuanExists) {
-                    throw new ConflictException(`Satuan with name ${satuan.satuan} already exists`);
-                }
-            }
-
-            const updateData: Partial<Satuan> = {
-                satuan: satuan.satuan,
-                isActive: satuan.isActive,
-            };
-
-            // Remove undefined values
-            Object.keys(updateData).forEach(key => {
-                if (updateData[key as keyof typeof updateData] === undefined) {
-                    delete updateData[key as keyof typeof updateData];
-                }
-            });
-
-            const updatedSatuan = await this.satuanRepository.update(satuan.id, updateData);
-            return updatedSatuan;
-        } catch (error) {
-            throw error;
+        // Check if satuan exists
+        const existingSatuan = await this.satuanRepository.findById(satuan.id);
+        if (!existingSatuan) {
+            throw new NotFoundException(`Satuan with id ${satuan.id} not found`);
         }
+
+        // Check if satuan name is being changed and already exists
+        if (satuan.satuan && satuan.satuan !== existingSatuan.satuan) {
+            const satuanExists = await this.satuanRepository.findBySatuan(satuan.satuan);
+            if (satuanExists) {
+                throw new ConflictException(`Satuan with name ${satuan.satuan} already exists`);
+            }
+        }
+
+        const updateData: Partial<Satuan> = {
+            satuan: satuan.satuan,
+            isActive: satuan.isActive,
+        };
+
+        // Remove undefined values
+        Object.keys(updateData).forEach(key => {
+            if (updateData[key as keyof typeof updateData] === undefined) {
+                delete updateData[key as keyof typeof updateData];
+            }
+        });
+
+        const updatedSatuan = await this.satuanRepository.update(satuan.id, updateData);
+        return updatedSatuan;
     }
 
     async deleteSatuan(satuan: DeleteSatuanDto): Promise<boolean> {
-        try {
-            // Check if satuan exists
-            const existingSatuan = await this.satuanRepository.findById(satuan.id);
-            if (!existingSatuan) {
-                throw new NotFoundException(`Satuan with id ${satuan.id} not found`);
-            }
-
-            const deleted = await this.satuanRepository.delete(satuan.id);
-            return deleted;
-        } catch (error) {
-            throw error;
+        // Check if satuan exists
+        const existingSatuan = await this.satuanRepository.findById(satuan.id);
+        if (!existingSatuan) {
+            throw new NotFoundException(`Satuan with id ${satuan.id} not found`);
         }
+
+        const deleted = await this.satuanRepository.delete(satuan.id);
+        return deleted;
     }
 
     async getSatuans(pagination: GetSatuansDto): Promise<SatuansPaginationResult> {
-        try {
-            const page = pagination.page ?? 1;
-            const amount = pagination.amount ?? 10;
-            const paginationData = { page, amount };
-            const result = await this.satuanRepository.findAll(paginationData);
-            return {
-                satuans: result.data,
-                total: result.total,
-                page,
-                amount,
-                totalPages: Math.ceil(result.total / amount)
-            };
-        } catch (error) {
-            throw error;
-        }
+        const page = pagination.page ?? 1;
+        const amount = pagination.amount ?? 10;
+        const paginationData = { page, amount };
+        const result = await this.satuanRepository.findAll(paginationData);
+        return {
+            satuans: result.data,
+            total: result.total,
+            page,
+            amount,
+            totalPages: Math.ceil(result.total / amount)
+        };
     }
 
     async getSatuanDetail(satuan: GetSatuanDetailDto): Promise<Satuan> {
-        try {
-            const existingSatuan = await this.satuanRepository.findById(satuan.id);
-            if (!existingSatuan) {
-                throw new NotFoundException(`Satuan with id ${satuan.id} not found`);
-            }
-            return existingSatuan;
-        } catch (error) {
-            throw error;
+        const existingSatuan = await this.satuanRepository.findById(satuan.id);
+        if (!existingSatuan) {
+            throw new NotFoundException(`Satuan with id ${satuan.id} not found`);
         }
+        return existingSatuan;
     }
 
     async findBySatuan(satuan: string): Promise<Satuan | null> {
-        try {
-            return await this.satuanRepository.findBySatuan(satuan);
-        } catch (error) {
-            throw error;
-        }
+        return await this.satuanRepository.findBySatuan(satuan);
     }
 
     async findById(id: number): Promise<Satuan | null> {
-        try {
-            return await this.satuanRepository.findById(id);
-        } catch (error) {
-            throw error;
-        }
+        return await this.satuanRepository.findById(id);
     }
 }

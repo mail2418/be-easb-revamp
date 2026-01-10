@@ -14,85 +14,61 @@ export class OpdServiceImpl implements OpdService {
     constructor(private readonly opdRepository: OpdRepository) {}
 
     async createOpd(dto: CreateOpdDto): Promise<Opd> {
-        try {
-            // Check if opd with the same name already exists
-            const existingOpd = await this.opdRepository.findById(dto.id_user);
-            
-            if (existingOpd) {
-                throw new ConflictException(`OPD with id_user ${dto.id_user} already exists`);
-            }
-
-            const newOpd = await this.opdRepository.create(dto);
-            return newOpd;
-        } catch (error) {
-            throw error;
+        // Check if opd with the same name already exists
+        const existingOpd = await this.opdRepository.findById(dto.id_user);
+        
+        if (existingOpd) {
+            throw new ConflictException(`OPD with id_user ${dto.id_user} already exists`);
         }
+
+        const newOpd = await this.opdRepository.create(dto);
+        return newOpd;
     }
 
     async updateOpd(dto: UpdateOpdDto): Promise<Opd> {
-        try {
-            // Check if opd exists
-            const existingOpd = await this.opdRepository.findById(dto.id);
-            if (!existingOpd) {
-                throw new NotFoundException(`OPD with id ${dto.id} not found`);
-            }
-                
-            if (existingOpd) {
-                throw new ConflictException(`OPD with id_user ${dto.id_user} already exists`);
-            }
-
-            const updatedOpd = await this.opdRepository.update(dto);
-            return updatedOpd;
-        } catch (error) {
-            throw error;
+        // Check if opd exists
+        const existingOpd = await this.opdRepository.findById(dto.id);
+        if (!existingOpd) {
+            throw new NotFoundException(`OPD with id ${dto.id} not found`);
         }
+            
+        if (existingOpd) {
+            throw new ConflictException(`OPD with id_user ${dto.id_user} already exists`);
+        }
+
+        const updatedOpd = await this.opdRepository.update(dto);
+        return updatedOpd;
     }
 
     async deleteOpd(dto: DeleteOpdDto): Promise<boolean> {
-        try {
-            // Check if opd exists
-            const existingOpd = await this.opdRepository.findById(dto.id);
-            if (!existingOpd) {
-                throw new NotFoundException(`OPD with id ${dto.id} not found`);
-            }
-
-            return await this.opdRepository.delete(dto);
-        } catch (error) {
-            throw error;
+        // Check if opd exists
+        const existingOpd = await this.opdRepository.findById(dto.id);
+        if (!existingOpd) {
+            throw new NotFoundException(`OPD with id ${dto.id} not found`);
         }
+
+        return await this.opdRepository.delete(dto);
     }
 
     async getOpdById(dto: GetOpdDetailDto): Promise<Opd | null> {
-        try {
-            return await this.opdRepository.findById(dto.id);
-        } catch (error) {
-            throw error;
-        }
+        return await this.opdRepository.findById(dto.id);
     }
 
     async getOpds(dto: GetOpdsDto): Promise<OpdsPaginationResultDto> {
-        try {
-            const opds = await this.opdRepository.findAll(dto);
-            const page = dto.page ?? 1;
-            const amount = dto.amount ?? opds.total;
+        const opds = await this.opdRepository.findAll(dto);
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? opds.total;
 
-            return {
-                data: opds.data,
-                total: opds.total,
-                page,
-                amount,
-                totalPages: amount > 0 ? Math.ceil(opds.total / amount) : 0
-            };
-        } catch (error) {
-            throw error;
-        }
+        return {
+            data: opds.data,
+            total: opds.total,
+            page,
+            amount,
+            totalPages: amount > 0 ? Math.ceil(opds.total / amount) : 0
+        };
     }
 
     async getOpdByUser(id_user: number): Promise<Opd | null> {
-        try {
-            return await this.opdRepository.getOpdByUser(id_user);
-        } catch (error) {
-            throw error;
-        }
+        return await this.opdRepository.getOpdByUser(id_user);
     }
 }

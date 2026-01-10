@@ -34,157 +34,121 @@ export class ShstServiceImpl extends ShstService {
     }
 
     async create(dto: CreateShstDto, file: Express.Multer.File): Promise<CreateShstResultDto> {
-        try {
-            // 1. Validate Excel file (type, size, extension)
-            this.validateExcelFileUseCase.execute(file);
+        // 1. Validate Excel file (type, size, extension)
+        this.validateExcelFileUseCase.execute(file);
 
-            // 2. Read Excel file and validate headers
-            const workbook = XLSX.read(file.buffer, { type: 'buffer' });
-            this.validateExcelHeadersUseCase.execute(workbook);
+        // 2. Read Excel file and validate headers
+        const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+        this.validateExcelHeadersUseCase.execute(workbook);
 
-            // 3. Parse Excel data and lookup IDs
-            const parsedData = await this.parseExcelDataUseCase.execute(file);
+        // 3. Parse Excel data and lookup IDs
+        const parsedData = await this.parseExcelDataUseCase.execute(file);
 
-            // 4. Generate filename with format: YYYYMMDDHHmm-{nama_kabkota}-shst{tahun}.{ext}
-            const generatedFilename = this.handleFileUseCase.generateFilename(
-                file,
-                parsedData.namaKabkota,
-                dto.tahun
-            );
+        // 4. Generate filename with format: YYYYMMDDHHmm-{nama_kabkota}-shst{tahun}.{ext}
+        const generatedFilename = this.handleFileUseCase.generateFilename(
+            file,
+            parsedData.namaKabkota,
+            dto.tahun
+        );
 
-            // 5. Save file using use case
-            const filePath = await this.handleFileUseCase.saveFile(file, generatedFilename);
+        // 5. Save file using use case
+        const filePath = await this.handleFileUseCase.saveFile(file, generatedFilename);
 
-            // 6. Prepare bulk create DTOs
-            const bulkCreateDtos: BulkCreateShstDto[] = parsedData.rows.map(row => ({
-                tahun: dto.tahun,
-                file: filePath,
-                id_asb_tipe_bangunan: row.id_asb_tipe_bangunan,
-                id_asb_klasifikasi: row.id_asb_klasifikasi,
-                id_kabkota: row.id_kabkota,
-                nominal: row.nominal,
-            }));
+        // 6. Prepare bulk create DTOs
+        const bulkCreateDtos: BulkCreateShstDto[] = parsedData.rows.map(row => ({
+            tahun: dto.tahun,
+            file: filePath,
+            id_asb_tipe_bangunan: row.id_asb_tipe_bangunan,
+            id_asb_klasifikasi: row.id_asb_klasifikasi,
+            id_kabkota: row.id_kabkota,
+            nominal: row.nominal,
+        }));
 
-            // 7. Bulk insert with transaction
-            const createdShsts = await this.shstRepository.bulkCreate(bulkCreateDtos);
+        // 7. Bulk insert with transaction
+        const createdShsts = await this.shstRepository.bulkCreate(bulkCreateDtos);
 
-            const result = new CreateShstResultDto();
-            result.created = createdShsts.length;
-            result.data = createdShsts;
-            return result;
-        } catch (error) {
-            throw error;
-        }
+        const result = new CreateShstResultDto();
+        result.created = createdShsts.length;
+        result.data = createdShsts;
+        return result;
     }
 
     async delete(dto: GetShstDetailDto): Promise<boolean> {
-        try {
-            // Check if shst exists
-            const existingShst = await this.shstRepository.findById(dto.id);
-            if (!existingShst) {
-                throw new NotFoundException(`Shst with id ${dto.id} not found`);
-            }
-
-            // Delete associated file using use case
-            if (existingShst.file) {
-                await this.handleFileUseCase.deleteFile(existingShst.file);
-            }
-
-            const deleteShstDto = { id: dto.id };
-            return await this.shstRepository.delete(deleteShstDto);
-        } catch (error) {
-            throw error;
+        // Check if shst exists
+        const existingShst = await this.shstRepository.findById(dto.id);
+        if (!existingShst) {
+            throw new NotFoundException(`Shst with id ${dto.id} not found`);
         }
+
+        // Delete associated file using use case
+        if (existingShst.file) {
+            await this.handleFileUseCase.deleteFile(existingShst.file);
+        }
+
+        const deleteShstDto = { id: dto.id };
+        return await this.shstRepository.delete(deleteShstDto);
     }
 
     async updateNominal(dto: UpdateNominalShstDto): Promise<Shst> {
-        try {
-            // Check if shst exists
-            const existingShst = await this.shstRepository.findById(dto.id);
-            if (!existingShst) {
-                throw new NotFoundException(`Shst with id ${dto.id} not found`);
-            }
-
-            const updatedShst = await this.shstRepository.updateNominal(dto);
-            return updatedShst;
-        } catch (error) {
-            throw error;
+        // Check if shst exists
+        const existingShst = await this.shstRepository.findById(dto.id);
+        if (!existingShst) {
+            throw new NotFoundException(`Shst with id ${dto.id} not found`);
         }
+
+        const updatedShst = await this.shstRepository.updateNominal(dto);
+        return updatedShst;
     }
 
     async findAll(dto: GetShstDto): Promise<ShstsPaginationResultDto> {
-        try {
-            const result = await this.shstRepository.findAll(dto);
-            const page = dto.page ?? 1;
-            const amount = dto.amount ?? result.total;
-            return {
-                data: result.data,
-                total: result.total,
-                page,
-                amount,
-                totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
-            };
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.shstRepository.findAll(dto);
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? result.total;
+        return {
+            data: result.data,
+            total: result.total,
+            page,
+            amount,
+            totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
+        };
     }
 
     async findById(dto: GetShstDetailDto): Promise<ShstWithRelationsDto> {
-        try {
-            const shst = await this.shstRepository.findById(dto.id);
-            if (!shst) {
-                throw new NotFoundException(`Shst with id ${dto.id} not found`);
-            }
-            return shst as ShstWithRelationsDto;
-        } catch (error) {
-            throw error;
+        const shst = await this.shstRepository.findById(dto.id);
+        if (!shst) {
+            throw new NotFoundException(`Shst with id ${dto.id} not found`);
         }
+        return shst as ShstWithRelationsDto;
     }
 
     async getFilePath(dto: GetShstFileDto): Promise<string> {
-        try {
-            const filePath = await this.shstRepository.findFileById(dto.id);
-            if (!filePath) {
-                throw new NotFoundException(`File for Shst with id ${dto.id} not found`);
-            }
-            return filePath;
-        } catch (error) {
-            throw error;
+        const filePath = await this.shstRepository.findFileById(dto.id);
+        if (!filePath) {
+            throw new NotFoundException(`File for Shst with id ${dto.id} not found`);
         }
+        return filePath;
     }
 
     async downloadFile(dto: GetShstFileDto): Promise<{ filePath: string; downloadUrl: string }> {
-        try {
-            const filePath = await this.getFilePath(dto);
+        const filePath = await this.getFilePath(dto);
 
-            return {
-                filePath,
-                downloadUrl: `/public${filePath}`
-            };
-        } catch (error) {
-            throw error;
-        }
+        return {
+            filePath,
+            downloadUrl: `/public${filePath}`
+        };
     }
 
     async downloadTemplate(): Promise<{ buffer: Buffer; filename: string }> {
-        try {
-            const buffer = await this.generateExcelTemplateUseCase.execute();
-            const filename = `SHST_Template_${new Date().getFullYear()}.xlsx`;
-            
-            return {
-                buffer,
-                filename,
-            };
-        } catch (error) {
-            throw error;
-        }
+        const buffer = await this.generateExcelTemplateUseCase.execute();
+        const filename = `SHST_Template_${new Date().getFullYear()}.xlsx`;
+        
+        return {
+            buffer,
+            filename,
+        };
     }
 
     async getNominal(dto: GetShstNominalDto): Promise<number> {
-        try {
-            return await this.shstRepository.getNominal(dto);
-        } catch (error) {
-            throw error;
-        }
+        return await this.shstRepository.getNominal(dto);
     }
 }

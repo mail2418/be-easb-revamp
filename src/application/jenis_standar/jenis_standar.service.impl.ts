@@ -12,83 +12,59 @@ export class JenisStandarServiceImpl implements JenisStandarService {
   constructor(private readonly jenisStandarRepository: JenisStandarRepository) {}
 
   async create(dto: CreateJenisStandarDto): Promise<JenisStandar> {
-    try {
-      const existingJenisStandar = await this.jenisStandarRepository.findByJenis(dto.jenis);
-      if (existingJenisStandar) {
-        throw new ConflictException(`JenisStandar with jenis ${dto.jenis} already exists`);
-      }
-
-      const newJenisStandar = await this.jenisStandarRepository.create(dto);
-      return newJenisStandar;
-    } catch (error) {
-      throw error;
+    const existingJenisStandar = await this.jenisStandarRepository.findByJenis(dto.jenis);
+    if (existingJenisStandar) {
+      throw new ConflictException(`JenisStandar with jenis ${dto.jenis} already exists`);
     }
+
+    const newJenisStandar = await this.jenisStandarRepository.create(dto);
+    return newJenisStandar;
   }
 
   async update(dto: UpdateJenisStandarDto): Promise<JenisStandar> {
-    try {
-      const existingJenisStandar = await this.jenisStandarRepository.findById(dto.id);
-      if (!existingJenisStandar) {
-        throw new NotFoundException(`JenisStandar with id ${dto.id} not found`);
-      }
-
-      if (dto.jenis && dto.jenis !== existingJenisStandar.jenis) {
-        const duplicateJenisStandar = await this.jenisStandarRepository.findByJenis(dto.jenis);
-        if (duplicateJenisStandar) {
-          throw new ConflictException(`JenisStandar with jenis ${dto.jenis} already exists`);
-        }
-      }
-
-      const updatedJenisStandar = await this.jenisStandarRepository.update(dto);
-      return updatedJenisStandar;
-    } catch (error) {
-      throw error;
+    const existingJenisStandar = await this.jenisStandarRepository.findById(dto.id);
+    if (!existingJenisStandar) {
+      throw new NotFoundException(`JenisStandar with id ${dto.id} not found`);
     }
+
+    if (dto.jenis && dto.jenis !== existingJenisStandar.jenis) {
+      const duplicateJenisStandar = await this.jenisStandarRepository.findByJenis(dto.jenis);
+      if (duplicateJenisStandar) {
+        throw new ConflictException(`JenisStandar with jenis ${dto.jenis} already exists`);
+      }
+    }
+
+    const updatedJenisStandar = await this.jenisStandarRepository.update(dto);
+    return updatedJenisStandar;
   }
 
   async delete(id: number): Promise<boolean> {
-    try {
-      const existingJenisStandar = await this.jenisStandarRepository.findById(id);
-      if (!existingJenisStandar) {
-        throw new NotFoundException(`JenisStandar with id ${id} not found`);
-      }
-
-      return await this.jenisStandarRepository.delete(id);
-    } catch (error) {
-      throw error;
+    const existingJenisStandar = await this.jenisStandarRepository.findById(id);
+    if (!existingJenisStandar) {
+      throw new NotFoundException(`JenisStandar with id ${id} not found`);
     }
+
+    return await this.jenisStandarRepository.delete(id);
   }
 
   async findById(id: number): Promise<JenisStandar | null> {
-    try {
-      return await this.jenisStandarRepository.findById(id);
-    } catch (error) {
-      throw error;
-    }
+    return await this.jenisStandarRepository.findById(id);
   }
 
   async findByJenis(jenis: string): Promise<JenisStandar | null> {
-    try {
-      return await this.jenisStandarRepository.findByJenis(jenis);
-    } catch (error) {
-      throw error;
-    }
+    return await this.jenisStandarRepository.findByJenis(jenis);
   }
 
   async findAll(pagination: GetJenisStandarDto): Promise<JenisStandarPaginationResult> {
-    try {
-      const result = await this.jenisStandarRepository.findAll(pagination);
-      const page = pagination.page ?? 1;
-      const amount = pagination.amount ?? result.total;
-      return {
-        jenis_standars: result.data,
-        total: result.total,
-        page,
-        amount,
-        totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
-      };
-    } catch (error) {
-      throw error;
-    }
+    const result = await this.jenisStandarRepository.findAll(pagination);
+    const page = pagination.page ?? 1;
+    const amount = pagination.amount ?? result.total;
+    return {
+      jenis_standars: result.data,
+      total: result.total,
+      page,
+      amount,
+      totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
+    };
   }
 }
