@@ -6,5 +6,10 @@ export class DataSmkkDto {
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
     id_smkk!: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseFloat(value))
+    jumlah!: number;
 }
 

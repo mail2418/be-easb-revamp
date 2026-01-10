@@ -26,5 +26,10 @@ export class CreateJalanSaluranSpesifikasiSmkkDto {
     @IsNumber()
     @Transform(({ value }) => parseFloat(value))
     jumlah_barang!: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseFloat(value))
+    harga_satuan!: number;
 }
 

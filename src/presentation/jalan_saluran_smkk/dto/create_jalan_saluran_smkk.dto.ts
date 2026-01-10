@@ -15,11 +15,6 @@ export class CreateJalanSaluranSmkkDto {
     @IsString()
     satuan!: string;
 
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => value ? parseFloat(value) : null)
-    harga_satuan?: number | null;
-
     @IsNotEmpty()
     @IsString()
     uraian!: string;

@@ -23,6 +23,9 @@ export class JalanSaluranSpesifikasiSmkkReviewOrmEntity {
     @Column({ name: 'jumlah_barang', type: 'decimal', precision: 15, scale: 2 })
     jumlah_barang!: number;
 
+    @Column({ name: 'harga_satuan', type: 'decimal', precision: 15, scale: 2 })
+    harga_satuan!: number;
+
     @CreateDateColumn({ name: "created_at", type: "timestamp" })
     createdAt!: Date;
 

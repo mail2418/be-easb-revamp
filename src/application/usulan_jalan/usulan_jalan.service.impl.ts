@@ -279,43 +279,54 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         });
 
             // Step 5: Create JalanSaluranSpesifikasiSmkk records if data_smkk is provided
-        if (dto.data_smkk && dto.data_smkk.length > 0) {
-            console.log('dto.data_smkk', dto.data_smkk);
-            for (const smkk of dto.data_smkk) {
-                // Get jalan_saluran_smkk to get pengali, harga_satuan, and id_jenis_usulan
-                const komponenSmkk = await this.jalanSaluranSmkkService.findById(smkk.id_smkk);
-                if (!komponenSmkk) {
-                    throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+            if (dto.data_smkk && dto.data_smkk.length > 0) {
+                for (const smkk of dto.data_smkk) {
+                    // Get jalan_saluran_smkk to get pengali and id_jenis_usulan
+                    const komponenSmkk = await this.jalanSaluranSmkkService.findById(smkk.id_smkk);
+                    if (!komponenSmkk) {
+                        throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+                    }
+
+                    if (!komponenSmkk.id_jenis_usulan) {
+                        throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no id_jenis_usulan`);
+                    }
+
+                    if (!komponenSmkk.pengali) {
+                        throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`);
+                    }
+
+                    // Validate jumlah from DTO
+                    if (!smkk.jumlah || smkk.jumlah <= 0) {
+                        throw new BadRequestException(`Jumlah must be provided and greater than 0 for SMKK with id ${smkk.id_smkk}`);
+                    }
+
+                    // Calculate harga_spec = biaya_smkk * komponen_smkk.pengali
+                    const hargaSpec = biayaSmkk! * komponenSmkk.pengali;
+
+                    console.log('hargaSpec', hargaSpec);
+
+                    // jumlah_barang is now taken from DTO
+                    const jumlahBarang = smkk.jumlah;
+
+                    console.log('jumlahBarang', jumlahBarang);
+
+                    // Calculate harga_satuan = harga_spec / jumlah_barang
+                    const hargaSatuan = hargaSpec / jumlahBarang;
+
+                    console.log('hargaSatuan', hargaSatuan);
+
+                    const createSpesifikasiSmkkDto: CreateJalanSaluranSpesifikasiSmkkDto = {
+                        id_jenis_usulan: komponenSmkk.id_jenis_usulan,
+                        id_usulan_jalan: dto.idUsulanJalan,
+                        id_jalan_saluran_smkk: smkk.id_smkk,
+                        harga_spec: hargaSpec,
+                        jumlah_barang: jumlahBarang,
+                        harga_satuan: hargaSatuan,
+                    };
+
+                    await this.jalanSaluranSpesifikasiSmkkService.create(createSpesifikasiSmkkDto);
                 }
-
-                if (!komponenSmkk.id_jenis_usulan) {
-                    throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no id_jenis_usulan`);
-                }
-
-                if (!komponenSmkk.pengali) {
-                    throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`);
-                }
-
-                // Calculate harga_spec = biaya_smkk * komponen_smkk.pengali
-                const hargaSpec = biayaSmkk! * komponenSmkk.pengali;
-
-                // Calculate jumlah_barang = ROUNDDOWN(harga_spec / komponen_smkk.harga_satuan)
-                if (!komponenSmkk.harga_satuan || komponenSmkk.harga_satuan === 0) {
-                    throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no harga_satuan or harga_satuan is zero`);
-                }
-                const jumlahBarang = Math.floor(hargaSpec / komponenSmkk.harga_satuan);
-
-                const createSpesifikasiSmkkDto: CreateJalanSaluranSpesifikasiSmkkDto = {
-                    id_jenis_usulan: komponenSmkk.id_jenis_usulan,
-                    id_usulan_jalan: dto.idUsulanJalan,
-                    id_jalan_saluran_smkk: smkk.id_smkk,
-                    harga_spec: hargaSpec,
-                    jumlah_barang: jumlahBarang,
-                };
-
-                await this.jalanSaluranSpesifikasiSmkkService.create(createSpesifikasiSmkkDto);
             }
-        }
 
         return {
             id: updatedUsulanJalan.id,
@@ -517,7 +528,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         // Create JalanSaluranSpesifikasiSmkkReview records if data_smkk is provided
         if (dto.data_smkk && dto.data_smkk.length > 0) {
             for (const smkk of dto.data_smkk) {
-                // Get jalan_saluran_smkk to get pengali, harga_satuan, and id_jenis_usulan
+                // Get jalan_saluran_smkk to get pengali and id_jenis_usulan
                 const komponenSmkk = await this.jalanSaluranSmkkService.findById(smkk.id_smkk);
                 if (!komponenSmkk) {
                     throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
@@ -531,14 +542,19 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                     throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`);
                 }
 
+                // Validate jumlah from DTO
+                if (!smkk.jumlah || smkk.jumlah <= 0) {
+                    throw new BadRequestException(`Jumlah must be provided and greater than 0 for SMKK with id ${smkk.id_smkk}`);
+                }
+
                 // Calculate harga_spec = biaya_smkk * komponen_smkk.pengali
                 const hargaSpec = biayaSmkk! * komponenSmkk.pengali;
 
-                // Calculate jumlah_barang = ROUNDDOWN(harga_spec / komponen_smkk.harga_satuan)
-                if (!komponenSmkk.harga_satuan || komponenSmkk.harga_satuan === 0) {
-                    throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no harga_satuan or harga_satuan is zero`);
-                }
-                const jumlahBarang = Math.floor(hargaSpec / komponenSmkk.harga_satuan);
+                // jumlah_barang is now taken from DTO
+                const jumlahBarang = smkk.jumlah;
+
+                // Calculate harga_satuan = harga_spec / jumlah_barang
+                const hargaSatuan = hargaSpec / jumlahBarang;
 
                 const createSpesifikasiSmkkReviewDto: CreateJalanSaluranSpesifikasiSmkkReviewDto = {
                     id_jenis_usulan: komponenSmkk.id_jenis_usulan,
@@ -546,6 +562,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                     id_jalan_saluran_smkk: smkk.id_smkk,
                     harga_spec: hargaSpec,
                     jumlah_barang: jumlahBarang,
+                    harga_satuan: hargaSatuan,
                 };
 
                 await this.jalanSaluranSpesifikasiSmkkReviewService.create(createSpesifikasiSmkkReviewDto);

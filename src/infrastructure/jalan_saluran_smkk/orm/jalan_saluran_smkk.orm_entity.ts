@@ -15,9 +15,6 @@ export class JalanSaluranSmkkOrmEntity {
     @Column({ name: 'satuan', type: 'varchar', length: 255 })
     satuan!: string;
 
-    @Column({ name: 'harga_satuan', type: 'decimal', precision: 15, scale: 2, nullable: true })
-    harga_satuan!: number | null;
-
     @Column({ name: 'uraian', type: 'text' })
     uraian!: string;
 

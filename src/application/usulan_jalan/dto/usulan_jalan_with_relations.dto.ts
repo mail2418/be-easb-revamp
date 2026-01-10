@@ -175,6 +175,7 @@ export class UsulanJalanWithRelationsDto {
         id_jalan_saluran_smkk: number;
         harga_spec: number;
         jumlah_barang: number;
+        harga_satuan: number;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
@@ -184,16 +185,11 @@ export class UsulanJalanWithRelationsDto {
         } | null;
         jalanSaluranSmkk?: {
             id: number;
-            id_ruang_lingkup: number;
+            id_jenis_usulan: number;
             no_mata_pembayaran: string;
             satuan: string;
-            harga_satuan: number | null;
             uraian: string;
             pengali: number;
-            ruangLingkup?: {
-                id: number;
-                deskripsi_ruang_lingkup: string;
-            } | null;
         } | null;
     }>;
 
@@ -204,6 +200,7 @@ export class UsulanJalanWithRelationsDto {
         id_jalan_saluran_smkk: number;
         harga_spec: number;
         jumlah_barang: number;
+        harga_satuan: number;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
@@ -213,16 +210,11 @@ export class UsulanJalanWithRelationsDto {
         } | null;
         jalanSaluranSmkk?: {
             id: number;
-            id_ruang_lingkup: number;
+            id_jenis_usulan: number;
             no_mata_pembayaran: string;
             satuan: string;
-            harga_satuan: number | null;
             uraian: string;
             pengali: number;
-            ruangLingkup?: {
-                id: number;
-                deskripsi_ruang_lingkup: string;
-            } | null;
         } | null;
     }>;
 }
