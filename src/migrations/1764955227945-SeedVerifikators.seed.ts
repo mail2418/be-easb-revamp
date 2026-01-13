@@ -5,7 +5,15 @@ export class SeedVerifikators1764955227945 implements MigrationInterface {
     name = 'SeedVerifikators1764955227945';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        const passwordHash = await bcrypt.hash('12345678', 10);
+        // Validate required environment variable
+        const seedPassword = process.env.SEED_DEFAULT_PASSWORD;
+        
+        if (!seedPassword) {
+            throw new Error('SEED_DEFAULT_PASSWORD environment variable is required for seeding verifikator users');
+        }
+
+        const SALT_ROUNDS = 12; // Industry standard (10 minimum, 12 recommended)
+        const passwordHash = await bcrypt.hash(seedPassword, SALT_ROUNDS);
 
         const verifikatorsData = [
             { username: 'VerifikatorAdbang1', type: 'ADBANG' },

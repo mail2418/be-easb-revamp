@@ -5,8 +5,15 @@ export class SeedOpdUsersAndOpds1764854537616 implements MigrationInterface {
     name = 'SeedOpdUsersAndOpds1764854537616';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        // Hash password "12345678"
-        const hashedPassword = await bcrypt.hash('12345678', 10);
+        // Validate required environment variable
+        const seedPassword = process.env.SEED_DEFAULT_PASSWORD;
+        
+        if (!seedPassword) {
+            throw new Error('SEED_DEFAULT_PASSWORD environment variable is required for seeding OPD users');
+        }
+
+        const SALT_ROUNDS = 12;
+        const hashedPassword = await bcrypt.hash(seedPassword, SALT_ROUNDS);
 
         // Data OPD dengan username, OPD lengkap, dan alias
         const opdData = [
