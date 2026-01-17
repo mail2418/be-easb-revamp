@@ -51,9 +51,10 @@ import { JalanSaluranRuangLingkupModule } from './presentation/jalan_saluran_rua
 import { JalanSaluranSmkkModule } from './presentation/jalan_saluran_smkk/jalan_saluran_smkk.module';
 import { HspkModule } from './presentation/hspk/hspk.module';
 
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
 import { DataSourceOptions } from 'typeorm';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 // import module lain sesuai kebutuhan
 
@@ -145,10 +146,25 @@ import { DataSourceOptions } from 'typeorm';
         JalanSaluranRuangLingkupModule,
         JalanSaluranSmkkModule,
         HspkModule,
-        // other modules...
+        ThrottlerModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => [
+                {
+                    ttl: config.get<number>('throttler.ttl', 60000), 
+                    limit: config.get<number>('throttler.limit', 100), 
+                },
+            ],
+        }),
     ],
     providers: [
-        { provide: APP_INTERCEPTOR, useClass: ResponseCaptureInterceptor },
+        { 
+            provide: APP_INTERCEPTOR, 
+            useClass: ResponseCaptureInterceptor 
+        },
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
     ],
 })
 export class AppModule { }

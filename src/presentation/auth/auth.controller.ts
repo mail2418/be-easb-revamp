@@ -8,12 +8,19 @@ import { RefreshJwtAuthGuard } from 'src/common/guards/jwt_refresh.guard';
 import { Role } from 'src/domain/user/user_role.enum';
 import { Roles, ROLES_KEY } from 'src/common/decorators/roles.decorator';
 import { RevokeAllDto } from './dto/revoke_all.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Public()
+    @Throttle({
+        default: {
+            ttl: parseInt(process.env.RATE_AUTH_TIME_LIMIT ?? '60000', 10),
+            limit: parseInt(process.env.RATE_AUTH_REQ_LIMIT ?? '5', 10),
+        },
+    })
     @Post('login')
     async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
         const user = await this.authService.validateUser(dto);
@@ -39,6 +46,12 @@ export class AuthController {
     }
 
     @Public()
+    @Throttle({
+        default: {
+            ttl: parseInt(process.env.RATE_AUTH_TIME_LIMIT ?? '60000', 10),
+            limit: parseInt(process.env.RATE_AUTH_REQ_LIMIT ?? '5', 10),
+        },
+    })
     @UseGuards(RefreshJwtAuthGuard)
     @Post('refresh')
     async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
