@@ -68,14 +68,33 @@ async function bootstrap() {
         }),
     );
 
+    const corsConfig = config.get('cors');
+    const allowedOrigins = corsConfig.origins
+        .split(',')
+        .map((origin: string) => origin.trim())
+        .filter((origin: string) => origin.length > 0);
+
     app.enableCors({
-        origin: [
-            'http://localhost:3000'
-        ],
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+        origin: (origin, callback) => {
+            if (!origin) {
+                return callback(null, true);
+            }
+
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                Logger.warn(`CORS: Blocked request from origin: ${origin}`);
+                callback(new Error(`Not allowed by CORS. Origin: ${origin}`));
+            }
+        },
+        credentials: corsConfig.credentials,
+        methods: corsConfig.methods,
+        allowedHeaders: corsConfig.allowedHeaders,
+        exposedHeaders: corsConfig.exposedHeaders,
+        maxAge: corsConfig.maxAge,
     });
+
+    Logger.log(`CORS configured with ${allowedOrigins.length} allowed origin(s): ${allowedOrigins.join(', ')}`);
 
     // Global serialization (untuk @Exclude, @Expose)
     const reflector = app.get(Reflector);
