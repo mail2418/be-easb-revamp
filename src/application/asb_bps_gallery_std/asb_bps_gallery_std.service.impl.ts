@@ -32,7 +32,7 @@ export class AsbBpsGalleryStdServiceImpl extends AsbBpsGalleryStdService {
         dto: CreateAsbBpsGalleryStdDto,
         file: Express.Multer.File,
     ): Promise<AsbBpsGalleryStd> {
-        this.validateFileUpload.execute(file);
+        await this.validateFileUpload.execute(file);
         const filepath = this.saveFile.execute(file);
         return await this.repository.create(dto, filepath);
     }
@@ -52,7 +52,7 @@ export class AsbBpsGalleryStdServiceImpl extends AsbBpsGalleryStdService {
         let filepath: string | undefined = undefined;
 
         if (file) {
-            this.validateFileUpload.execute(file);
+            await this.validateFileUpload.execute(file);
             this.deleteFile.execute(existing.filename);
             filepath = this.saveFile.execute(file);
         }
