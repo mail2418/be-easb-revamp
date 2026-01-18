@@ -98,7 +98,7 @@ Local Storage (public/)
 
 ## 🔍 DETAILED FINDINGS
 
-### FINDING #1: Hardcoded Passwords in Migration Files
+### FINDING #1: Hardcoded Passwords in Migration Files ✅ **FIXED**
 **Severity:** 🔴 **CRITICAL**  
 **Likelihood:** High  
 **Impact:** High  
@@ -107,6 +107,7 @@ Local Storage (public/)
 - `src/migrations/1764955227945-SeedVerifikators.seed.ts:8`
 - `src/migrations/1764854537616-SeedOpdUsersAndOpds.seed.ts:9`
 - `src/migrations/1762602188283-SeedUsers.seed.ts:12-40`
+**Status:** ✅ **FIXED** - All passwords now use environment variables (`SEED_DEFAULT_PASSWORD` and `SUPERADMIN_DEFAULT_PASSWORD`)
 
 **Description:**
 Password hardcoded dalam migration files:
@@ -141,12 +142,13 @@ if (!process.env.SEED_DEFAULT_PASSWORD) {
 
 ---
 
-### FINDING #2: Missing Rate Limiting
+### FINDING #2: Missing Rate Limiting ✅ **FIXED**
 **Severity:** 🔴 **HIGH**  
 **Likelihood:** High  
 **Impact:** High  
 **Category:** Security Headers, CORS, CSRF, Rate Limit (F)  
 **Location:** `src/main.ts`, `src/presentation/auth/auth.controller.ts`
+**Status:** ✅ **FIXED** - Global rate limiting implemented with ThrottlerModule. Auth endpoints have stricter limits (5 requests/min).
 
 **Description:**
 Tidak ada rate limiting pada authentication endpoints (`/auth/login`, `/auth/refresh`). Package `@nestjs/throttler` sudah terinstall tetapi tidak dikonfigurasi.
@@ -193,12 +195,13 @@ export class AuthController {
 
 ---
 
-### FINDING #3: Missing Helmet Security Headers
+### FINDING #3: Missing Helmet Security Headers ✅ **FIXED**
 **Severity:** 🔴 **HIGH**  
 **Likelihood:** Medium  
 **Impact:** High  
 **Category:** Security Headers (F)  
 **Location:** `src/main.ts`
+**Status:** ✅ **FIXED** - Helmet middleware implemented with comprehensive security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, etc.)
 
 **Description:**
 Package `helmet` sudah terinstall tetapi tidak digunakan. Aplikasi tidak mengatur security headers seperti:
@@ -634,26 +637,29 @@ export class HttpExceptionFilter implements ExceptionFilter {
 ## 🎯 TOP 10 FIX FIRST (Prioritized)
 
 ### Priority 1 (Critical - Fix Immediately)
-1. **Hardcoded Passwords** (Finding #1)
+1. **Hardcoded Passwords** (Finding #1) ✅ **FIXED**
    - **Effort:** 1 hour
    - **Impact:** Prevents default credential attacks
    - **Action:** Update migration files, use env vars
+   - **Status:** ✅ Completed - All migration files updated to use environment variables
 
 2. **Vulnerable Dependencies** (Finding #4)
    - **Effort:** 2 hours
    - **Impact:** Prevents RCE, DoS, Prototype Pollution
    - **Action:** Run `npm audit fix`, update packages
 
-3. **Missing Rate Limiting** (Finding #2)
+3. **Missing Rate Limiting** (Finding #2) ✅ **FIXED**
    - **Effort:** 1 hour
    - **Impact:** Prevents brute-force attacks
    - **Action:** Configure ThrottlerModule
+   - **Status:** ✅ Completed - Global rate limiting implemented with stricter limits for auth endpoints
 
 ### Priority 2 (High - Fix This Week)
-4. **Missing Helmet** (Finding #3)
+4. **Missing Helmet** (Finding #3) ✅ **FIXED**
    - **Effort:** 30 minutes
    - **Impact:** Prevents XSS, clickjacking
    - **Action:** Add helmet middleware
+   - **Status:** ✅ Completed - Helmet middleware added with comprehensive security headers
 
 5. **File Upload Validation** (Finding #8)
    - **Effort:** 3 hours
@@ -769,11 +775,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
 ## 🛡️ HARDENING ROADMAP
 
 ### Quick Wins (1-3 Days)
-- ✅ Fix hardcoded passwords
-- ✅ Add rate limiting
-- ✅ Add Helmet headers
-- ✅ Update vulnerable dependencies
-- ✅ Fix password hashing salt rounds
+- ✅ Fix hardcoded passwords **COMPLETED**
+- ✅ Add rate limiting **COMPLETED**
+- ✅ Add Helmet headers **COMPLETED**
+- ⏳ Update vulnerable dependencies
+- ⏳ Fix password hashing salt rounds
 
 ### Medium Term (1-2 Weeks)
 - ✅ Enhance file upload validation (magic numbers)
@@ -847,12 +853,14 @@ npm audit --audit-level=moderate
 | Logging | ✅ DONE | 1 | Sensitive data logging |
 | Dependencies | ✅ DONE | 9 | Vulnerable packages found |
 | Configuration | ✅ DONE | 2 | CORS, secrets |
-| Security Headers | ✅ DONE | 1 | Missing Helmet |
+| Security Headers | ✅ DONE | 0 | Helmet implemented ✅ |
 
 **Total Coverage:** 100% ✅  
 **Total Findings:** 20 issues  
-**Critical:** 1  
-**High:** 4  
+**Fixed:** 3 issues (Finding #1 ✅, #2 ✅, #3 ✅)  
+**Remaining:** 17 issues  
+**Critical:** 0 (1 fixed)  
+**High:** 1 (3 fixed)  
 **Medium:** 4  
 **Low:** 2  
 

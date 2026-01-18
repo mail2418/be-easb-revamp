@@ -6,14 +6,58 @@ import { LoggerMiddleware } from './common/middleware/request_logger.middleware'
 import { CorrelationIdMiddleware } from './common/middleware/correlation_id.middleware';
 import { HttpExceptionFilter } from './common/filters/http_exception.filter';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
         logger: ['log', 'error', 'warn'],
     });
-    app.use(cookieParser());
-
+    
     const config = app.get(ConfigService);
+    const isProduction = config.get('NODE_ENV') === 'production';
+
+    app.use(
+        helmet({
+            contentSecurityPolicy: {
+                directives: {
+                    defaultSrc: ["'self'"],
+                    scriptSrc: ["'self'"],
+                    styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles (needed for some frameworks)
+                    imgSrc: ["'self'", 'data:', 'https:'], // Allow data URIs and HTTPS images
+                    fontSrc: ["'self'", 'data:'],
+                    connectSrc: ["'self'"], // API calls
+                    frameSrc: ["'none'"], // No iframes allowed
+                    frameAncestors: ["'none'"], // Prevent embedding in iframes
+                    objectSrc: ["'none'"], // No <object>, <embed>, <applet>
+                    baseUri: ["'self'"],
+                    formAction: ["'self'"],
+                    upgradeInsecureRequests: isProduction ? [] : null, // Upgrade HTTP to HTTPS in production
+                },
+            },
+            crossOriginEmbedderPolicy: false,
+            crossOriginOpenerPolicy: { policy: 'same-origin' },
+            crossOriginResourcePolicy: { policy: 'same-origin' },
+            dnsPrefetchControl: true,
+            frameguard: { action: 'deny' },
+            hidePoweredBy: true,
+            hsts: isProduction
+                ? {
+                      maxAge: 31536000, // 1 year
+                      includeSubDomains: true,
+                      preload: true,
+                  }
+                : false,
+            ieNoOpen: true,
+            noSniff: true,
+            originAgentCluster: true,
+            referrerPolicy: {
+                policy: 'no-referrer',
+            },
+            xssFilter: true,
+        }),
+    );
+
+    app.use(cookieParser());
 
     // Global validation
     app.useGlobalPipes(
