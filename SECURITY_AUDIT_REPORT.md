@@ -297,12 +297,13 @@ npm audit
 
 ---
 
-### FINDING #5: Password Hashing Without Explicit Salt Rounds
+### FINDING #5: Password Hashing Without Explicit Salt Rounds ✅ **FIXED**
 **Severity:** 🟡 **MEDIUM**  
 **Likelihood:** Low  
 **Impact:** Medium  
 **Category:** Authentication & Session (B)  
 **Location:** `src/application/user/user.service.impl.ts:35,65`
+**Status:** ✅ **FIXED** - All bcrypt.hashSync() calls now use explicit SALT_ROUNDS = 12 constant
 
 **Description:**
 `bcrypt.hashSync()` dipanggil tanpa parameter salt rounds. Default bcryptjs adalah 10, tetapi tidak eksplisit, membuat code kurang jelas dan berpotensi inconsistent.
@@ -666,10 +667,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
    - **Impact:** Prevents malicious file uploads
    - **Action:** Add magic number validation
 
-6. **Password Hashing** (Finding #5)
+6. **Password Hashing** (Finding #5) ✅ **FIXED**
    - **Effort:** 15 minutes
    - **Impact:** Ensures consistent strong hashing
    - **Action:** Add explicit salt rounds
+   - **Status:** ✅ Completed - All bcrypt.hashSync() calls now use explicit SALT_ROUNDS = 12
 
 ### Priority 3 (Medium - Fix This Month)
 7. **Logging Sensitive Data** (Finding #7)
@@ -779,7 +781,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 - ✅ Add rate limiting **COMPLETED**
 - ✅ Add Helmet headers **COMPLETED**
 - ⏳ Update vulnerable dependencies
-- ⏳ Fix password hashing salt rounds
+- ✅ Fix password hashing salt rounds **COMPLETED**
 
 ### Medium Term (1-2 Weeks)
 - ✅ Enhance file upload validation (magic numbers)
@@ -857,11 +859,11 @@ npm audit --audit-level=moderate
 
 **Total Coverage:** 100% ✅  
 **Total Findings:** 20 issues  
-**Fixed:** 3 issues (Finding #1 ✅, #2 ✅, #3 ✅)  
-**Remaining:** 17 issues  
+**Fixed:** 4 issues (Finding #1 ✅, #2 ✅, #3 ✅, #5 ✅)  
+**Remaining:** 16 issues  
 **Critical:** 0 (1 fixed)  
 **High:** 1 (3 fixed)  
-**Medium:** 4  
+**Medium:** 3 (1 fixed)  
 **Low:** 2  
 
 ---
