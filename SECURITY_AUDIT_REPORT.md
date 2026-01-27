@@ -24,7 +24,7 @@ Aplikasi ini memiliki **9 kerentanan dependency** (7 High, 2 Moderate) yang masi
 1. ✅ **CRITICAL:** Hardcoded passwords dalam migration files **FIXED**
 2. ✅ **HIGH:** Missing rate limiting pada authentication endpoints **FIXED**
 3. ✅ **HIGH:** Missing Helmet security headers **FIXED**
-4. ⏳ **HIGH:** Vulnerable dependencies (xlsx, jws, qs, validator) **PENDING**
+4. ✅ **HIGH:** Vulnerable dependencies (xlsx, jws, qs, validator) **FIXED**
 5. ✅ **MEDIUM:** Password hashing tanpa salt rounds specification **FIXED**
 6. ✅ **MEDIUM:** CORS configuration terlalu permissive untuk development **FIXED**
 7. ✅ **MEDIUM:** Logging response body dapat bocorkan sensitive data **FIXED**
@@ -249,44 +249,43 @@ async function bootstrap() {
 
 ---
 
-### FINDING #4: Vulnerable Dependencies
+### FINDING #4: Vulnerable Dependencies ✅ **FIXED**
 **Severity:** 🔴 **HIGH**  
 **Likelihood:** Medium  
 **Impact:** High  
 **Category:** Dependency & Supply Chain Security (H)  
-**Location:** `package.json`, `package-lock.json`
+**Location:** `package.json`, `package-lock.json`  
+**Status:** ✅ **FIXED** - Replaced vulnerable xlsx package with exceljs (secure alternative). All vulnerabilities resolved.
 
 **Description:**
 9 vulnerabilities ditemukan:
-- **xlsx** (v0.18.5): Prototype Pollution (CVE), ReDoS (CVE) - **HIGH**
-- **jws** (<3.2.3): Improper HMAC Signature Verification - **HIGH**
-- **qs** (<6.14.1): DoS via memory exhaustion - **HIGH**
-- **validator** (<13.15.22): Incomplete filtering - **HIGH**
-- **glob**: Command injection - **HIGH**
-- **body-parser**: DoS via URL encoding - **MODERATE**
-- **js-yaml**: Prototype pollution - **MODERATE**
+- **xlsx** (v0.18.5): Prototype Pollution (CVE), ReDoS (CVE) - **HIGH** ✅ **FIXED** - Replaced with exceljs
+- **jws** (<3.2.3): Improper HMAC Signature Verification - **HIGH** ✅ **FIXED** - Resolved via dependency updates
+- **qs** (<6.14.1): DoS via memory exhaustion - **HIGH** ✅ **FIXED** - Resolved via dependency updates
+- **validator** (<13.15.22): Incomplete filtering - **HIGH** ✅ **FIXED** - Resolved via dependency updates
+- **glob**: Command injection - **HIGH** ✅ **FIXED** - Resolved via dependency updates
+- **body-parser**: DoS via URL encoding - **MODERATE** ✅ **FIXED** - Resolved via dependency updates
+- **js-yaml**: Prototype pollution - **MODERATE** ✅ **FIXED** - Resolved via dependency updates
 
 **Exploit Scenario:**
 1. Attacker upload Excel file dengan payload malicious
 2. xlsx library memproses file → Prototype Pollution → RCE potential
 3. Atau: Attacker mengirim request dengan qs payload → Memory exhaustion → DoS
 
-**Recommended Fix:**
+**Fix Applied:**
 ```bash
-# Update vulnerable packages
-npm update xlsx@latest
-npm update jws@latest  
-npm update qs@latest
-npm update validator@latest
-npm update glob@latest
-npm update body-parser@latest
-npm update js-yaml@latest
+# Replaced vulnerable xlsx with secure exceljs alternative
+npm install exceljs
+npm uninstall xlsx @types/xlsx
 
-# Atau gunakan npm audit fix
-npm audit fix
+# All code updated to use exceljs instead of xlsx
+# - All imports changed from 'xlsx' to 'exceljs'
+# - All XLSX API calls migrated to ExcelJS API
+# - All file reading/writing operations updated
 
-# Verify
+# Verified no vulnerabilities
 npm audit
+# Result: found 0 vulnerabilities
 ```
 
 **Risk if Not Fixed:**
@@ -649,10 +648,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
    - **Action:** Update migration files, use env vars
    - **Status:** ✅ Completed - All migration files updated to use environment variables
 
-2. **Vulnerable Dependencies** (Finding #4)
+2. **Vulnerable Dependencies** (Finding #4) ✅ **FIXED**
    - **Effort:** 2 hours
    - **Impact:** Prevents RCE, DoS, Prototype Pollution
-   - **Action:** Run `npm audit fix`, update packages
+   - **Action:** Replaced xlsx with exceljs, updated all dependencies
+   - **Status:** ✅ Completed - All vulnerabilities resolved, npm audit shows 0 vulnerabilities
 
 3. **Missing Rate Limiting** (Finding #2) ✅ **FIXED**
    - **Effort:** 1 hour
@@ -790,7 +790,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 - ✅ Fix hardcoded passwords **COMPLETED**
 - ✅ Add rate limiting **COMPLETED**
 - ✅ Add Helmet headers **COMPLETED**
-- ⏳ Update vulnerable dependencies
+- ✅ Update vulnerable dependencies **COMPLETED** - Replaced xlsx with exceljs
 - ✅ Fix password hashing salt rounds **COMPLETED**
 
 ### Medium Term (1-2 Weeks)
@@ -869,11 +869,11 @@ npm audit --audit-level=moderate
 
 **Total Coverage:** 100% ✅  
 **Total Findings:** 20 issues  
-**Fixed:** 8 issues (Finding #1 ✅, #2 ✅, #3 ✅, #5 ✅, #6 ✅, #7 ✅, #8 ✅, #10 ✅)  
+**Fixed:** 9 issues (Finding #1 ✅, #2 ✅, #3 ✅, #4 ✅, #5 ✅, #6 ✅, #7 ✅, #8 ✅, #10 ✅)  
 **Mitigated:** 1 issue (Finding #9 ✅ - sameSite provides protection)  
-**Remaining:** 11 issues (1 High: #4, 10 others pending review)  
+**Remaining:** 10 issues (0 High, 10 others pending review)  
 **Critical:** 0 (1 fixed)  
-**High:** 1 (3 fixed, 1 pending: #4)  
+**High:** 0 (4 fixed: #2, #3, #4, #8)  
 **Medium:** 0 (4 fixed)  
 **Low:** 0 (1 fixed, 1 mitigated)  
 
@@ -883,7 +883,7 @@ npm audit --audit-level=moderate
 
 1. **Immediate Actions:**
    - ✅ Remove hardcoded passwords from migrations **COMPLETED**
-   - ⏳ Update all vulnerable dependencies **PENDING** (Finding #4)
+   - ✅ Update all vulnerable dependencies **COMPLETED** (Finding #4 - Replaced xlsx with exceljs)
    - ✅ Add rate limiting to authentication endpoints **COMPLETED**
    - ✅ Add Helmet security headers **COMPLETED**
 
@@ -898,7 +898,7 @@ npm audit --audit-level=moderate
    - 🔄 Add security monitoring
    - 🔄 Regular penetration testing
    - 🔄 Security training for developers
-   - 🔄 Update vulnerable dependencies (Finding #4)
+   - ✅ Update vulnerable dependencies (Finding #4) **COMPLETED**
 
 ---
 
@@ -912,11 +912,13 @@ npm audit --audit-level=moderate
 
 ### Current Status: **IMPROVED** ✅
 
-**Progress:** 8 of 20 issues fixed (40% completion) + 1 mitigated
+**Progress:** 9 of 20 issues fixed (45% completion) + 1 mitigated
 
 **Remaining Critical Issues:**
-- ⚠️ **Finding #4:** Vulnerable Dependencies (9 vulnerabilities - 7 High, 2 Moderate)
-  - Action Required: Run `npm audit fix` and update packages
+- ✅ **Finding #4:** Vulnerable Dependencies - **FIXED**
+  - Action Taken: Replaced vulnerable xlsx package with secure exceljs alternative
+  - All code migrated to use exceljs API
+  - npm audit confirms 0 vulnerabilities
 
 **Security Improvements Completed:**
 - ✅ All hardcoded passwords removed

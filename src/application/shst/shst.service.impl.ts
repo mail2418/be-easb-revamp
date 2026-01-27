@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import { Injectable, NotFoundException } from "@nestjs/common";
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { ShstService } from "../../domain/shst/shst.service";
 import { ShstRepository } from "../../domain/shst/shst.repository";
 import { BulkCreateShstDto } from "./dto/bulk_create_shst.dto";
@@ -38,7 +38,8 @@ export class ShstServiceImpl extends ShstService {
         this.validateExcelFileUseCase.execute(file);
 
         // 2. Read Excel file and validate headers
-        const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(file.buffer as any);
         this.validateExcelHeadersUseCase.execute(workbook);
 
         // 3. Parse Excel data and lookup IDs
