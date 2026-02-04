@@ -25,19 +25,19 @@ export class AsbBpsGalleryStdOrmEntity {
     @Column({ type: 'text' })
     filename: string;
 
-    @Column({ name: 'jumlah_bobot', type: 'double precision', nullable: true })
+    @Column({ name: 'jumlah_bobot', type: 'float', nullable: true })
     jumlahBobot: number | null;
 
-    @Column({ name: 'rincian_harga', type: 'double precision', nullable: true })
+    @Column({ name: 'rincian_harga', type: 'float', nullable: true })
     rincianHarga: number | null;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt: Date;
 
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt: Date | null;
 
     @ManyToOne(

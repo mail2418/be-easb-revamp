@@ -16,8 +16,8 @@ export class AsbLogOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: 'id_user', type: 'int' })
-    idUser: number;
+    @Column({ name: 'id_user', type: 'int', nullable: true })
+    idUser: number | null;
 
     @Column({ name: 'id_asb', type: 'int', nullable: true })
     idAsb: number | null;
@@ -25,13 +25,13 @@ export class AsbLogOrmEntity {
     @Column({ type: 'text' })
     log: string;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt: Date;
 
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt: Date | null;
 
     @ManyToOne(() => UserOrmEntity, { onDelete: 'SET NULL' })

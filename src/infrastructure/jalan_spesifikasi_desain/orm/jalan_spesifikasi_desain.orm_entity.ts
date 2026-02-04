@@ -17,25 +17,25 @@ export class JalanSpesifikasiDesainOrmEntity {
     @Column({ name: 'id_hspk', type: 'int' })
     id_hspk!: number;
 
-    @Column({ name: 'volume', type: 'double precision' })
+    @Column({ name: 'volume', type: 'float' })
     volume!: number;
 
-    @Column({ name: 'spasi', type: 'double precision' })
+    @Column({ name: 'spasi', type: 'float' })
     spasi!: number;
 
-    @Column({ name: 'tinggi', type: 'double precision' })
+    @Column({ name: 'tinggi', type: 'float' })
     tinggi!: number;
 
-    @Column({ name: 'harga_spec', type: 'double precision' })
+    @Column({ name: 'harga_spec', type: 'float' })
     harga_spec!: number;
 
-    @CreateDateColumn({ name: "created_at", type: "timestamptz" })
+    @CreateDateColumn({ name: "created_at", type: "timestamp" })
     createdAt!: Date;
 
-    @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
+    @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
     updatedAt!: Date;
 
-    @DeleteDateColumn({ name: "deleted_at", type: "timestamptz", nullable: true })
+    @DeleteDateColumn({ name: "deleted_at", type: "timestamp", nullable: true })
     deletedAt?: Date;
 
     @ManyToOne(() => UsulanJalanOrmEntity)

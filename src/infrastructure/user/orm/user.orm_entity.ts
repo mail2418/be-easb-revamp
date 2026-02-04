@@ -12,18 +12,18 @@ export class UserOrmEntity {
   @Column({ name: 'password_hash', length: 255 })
   passwordHash!: string;
   
-  @Column('text', { array: true, default: () => "'{}'" })
+  @Column({ type: 'simple-json', default: '[]' })
   roles!: Role[];
 
   @Column({ name: 'refresh_token_version', type: 'int', default: 0 })
   refreshTokenVersion!: number;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt!: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt!: Date | null;
 }

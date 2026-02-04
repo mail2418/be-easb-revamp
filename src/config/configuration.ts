@@ -1,6 +1,7 @@
 export default () => ({
     port: parseInt(process.env.PORT ?? '3000', 10),
     db: {
+        type: (process.env.DB_TYPE || 'postgres') as 'postgres' | 'mysql',
         url: process.env.DB_URL,
         isRender: process.env.NODE_ENV === 'production' && process.env.DB_URL?.includes('render'),
     },

@@ -11,16 +11,16 @@ export class SmkkGlobalOrmEntity {
     @Column({ name: 'tahun', type: 'int' })
     tahun!: number;
 
-    @Column({ name: 'persentase_smkk', type: 'double precision' })
+    @Column({ name: 'persentase_smkk', type: 'float' })
     persentase_smkk!: number;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt!: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt!: Date;
 
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt?: Date | null;
 }
 

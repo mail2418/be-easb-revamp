@@ -9,28 +9,28 @@ export class AsbKomponenBangunanProsNonstdOrmEntity {
     @Column({ name: 'id_asb_komponen_bangunan_nonstd', type: 'integer' })
     idAsbKomponenBangunanNonstd!: number;
 
-    @Column({ type: 'double precision' })
+    @Column({ type: 'float' })
     min!: number;
 
-    @Column({ name: 'avg_min', type: 'double precision', nullable: true })
+    @Column({ name: 'avg_min', type: 'float', nullable: true })
     avgMin?: number;
 
-    @Column({ type: 'double precision' })
+    @Column({ type: 'float' })
     avg!: number;
 
-    @Column({ name: 'avg_max', type: 'double precision', nullable: true })
+    @Column({ name: 'avg_max', type: 'float', nullable: true })
     avgMax?: number;
 
-    @Column({ type: 'double precision' })
+    @Column({ type: 'float' })
     max!: number;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt!: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt!: Date;
 
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt?: Date;
 
     @ManyToOne(() => AsbKomponenBangunanNonstdOrmEntity)

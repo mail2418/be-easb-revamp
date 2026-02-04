@@ -30,12 +30,12 @@ export class StandardKlasifikasiOrmEntity {
     @JoinColumn({ name: "id_kabkota" })
     kabkota?: KabKotaOrmEntity;
 
-    @CreateDateColumn({ type: "timestamptz" })
+    @CreateDateColumn({ type: "timestamp" })
     created_at!: Date;
 
-    @UpdateDateColumn({ type: "timestamptz" })
+    @UpdateDateColumn({ type: "timestamp" })
     updated_at!: Date;
 
-    @DeleteDateColumn({ type: "timestamptz", nullable: true })
+    @DeleteDateColumn({ type: "timestamp", nullable: true })
     deleted_at?: Date;
 }

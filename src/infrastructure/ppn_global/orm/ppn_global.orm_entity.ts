@@ -11,15 +11,15 @@ export class PpnGlobalOrmEntity {
     @Column({ name: 'tahun', type: 'int' })
     tahun!: number;
 
-    @Column({ name: 'persentase_ppn', type: 'double precision' })
+    @Column({ name: 'persentase_ppn', type: 'float' })
     persentase_ppn!: number;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt!: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt!: Date;
 
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt?: Date | null;
 }

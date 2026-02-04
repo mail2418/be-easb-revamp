@@ -55,6 +55,7 @@ import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
 import { DataSourceOptions } from 'typeorm';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 // import module lain sesuai kebutuhan
 
@@ -67,31 +68,41 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
         }),
         TypeOrmModule.forRootAsync({
             useFactory: (config: ConfigService): DataSourceOptions => {
+                const dbType = config.get<'postgres' | 'mysql'>('db.type') || 'postgres';
                 const url = config.get<string | undefined>('db.url');
 
-                // If DB_URL is set (production) → use connection string
-                if (url) {
+                if (!url) {
+                    throw new Error('Database URL not configured. Set DB_URL in .env');
+                }
+
+                // Common configuration for both databases
+                const commonConfig = {
+                    url,
+                    entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.js,.ts}'],
+                    synchronize: false,
+                    migrationsRun: false,
+                    namingStrategy: new SnakeNamingStrategy(),
+                    logging: ['error', 'warn'] as ('error' | 'warn')[],
+                };
+
+                // MySQL Configuration
+                if (dbType === 'mysql') {
                     return {
-                        type: 'postgres',
-                        url,
-                        entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.js,.ts}'],
-                        synchronize: false,
-                        migrationsRun: false,
-                        migrations: [__dirname + '/migrations/*{.js,.ts}'],
-                        extra: {
-                            options: '-c timezone=Asia/Jakarta'
-                        },
+                        ...commonConfig,
+                        type: 'mysql',
+                        migrations: [__dirname + '/migrations/mysql/*{.js,.ts}'],
+                        timezone: '+07:00', // Asia/Jakarta
+                        charset: 'utf8mb4',
                     };
                 }
 
-                // Otherwise (development) → use host/port/etc
+                // PostgreSQL Configuration (default)
+                const isRender = config.get<boolean>('db.isRender');
                 return {
+                    ...commonConfig,
                     type: 'postgres',
-                    url: config.get('db.url'),
-                    entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.ts,.js}'],
-                    synchronize: false, // always false in production
-                    migrationsRun: false,
-                    migrations: [__dirname + '/migrations/*{.js,.ts}'],
+                    ssl: isRender ? { rejectUnauthorized: false } : false,
+                    migrations: [__dirname + '/migrations/postgres/*{.js,.ts}'],
                     extra: {
                         options: '-c timezone=Asia/Jakarta'
                     },

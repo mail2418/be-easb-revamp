@@ -12,13 +12,13 @@ export class JalanSaluranRuangLingkupOrmEntity {
     @Column({ name: 'deskripsi_ruang_lingkup', type: 'varchar', length: 255 })
     deskripsi_ruang_lingkup!: string;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt!: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt!: Date;
 
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt?: Date | null;
 
     @ManyToOne(() => JenisUsulanOrmEntity)

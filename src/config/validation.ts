@@ -4,7 +4,12 @@ export const validationSchema = Joi.object({
     NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
     PORT: Joi.number().default(3000),
 
+    // Database Configuration
+    DB_TYPE: Joi.string().valid('postgres', 'mysql').default('postgres'),
     DB_URL: Joi.string().required(),
+    // Optional: PostgreSQL and MySQL specific URLs
+    DB_URL_POSTGRES: Joi.string().optional(),
+    DB_URL_MYSQL: Joi.string().optional(),
 
     JWT_ACCESS_SECRET: Joi.string().required(),
     JWT_REFRESH_SECRET: Joi.string().required(),
