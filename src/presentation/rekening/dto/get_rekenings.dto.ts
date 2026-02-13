@@ -13,4 +13,9 @@ export class GetRekeningsDto {
   @Min(1)
   @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
   amount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  id_jenis_usulan?: number;
 }

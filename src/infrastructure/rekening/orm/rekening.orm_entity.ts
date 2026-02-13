@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { JenisUsulanOrmEntity } from '../../jenis_usulan/orm/jenis_usulan.orm_entity';
 
 @Entity('rekenings')
 export class RekeningOrmEntity {
@@ -17,6 +18,9 @@ export class RekeningOrmEntity {
     @Column({ name: 'tahun', type: 'int' })
     tahun: number;
 
+    @Column({ name: 'id_jenis_usulan', type: 'int', nullable: true })
+    idJenisUsulan: number | null;
+
     @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt!: Date;
 
@@ -25,4 +29,8 @@ export class RekeningOrmEntity {
 
     @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt?: Date;
+
+    @ManyToOne(() => JenisUsulanOrmEntity, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'id_jenis_usulan' })
+    jenisUsulan?: JenisUsulanOrmEntity | null;
 }
