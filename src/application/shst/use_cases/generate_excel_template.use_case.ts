@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { AsbTipeBangunanService } from '../../../domain/asb_tipe_bangunan/asb_tipe_bangunan.service';
 import { AsbKlasifikasiService } from '../../../domain/asb_klasifikasi/asb_klasifikasi.service';
 import { KabKotaService } from '../../../domain/kabkota/kabkota.service';
@@ -17,7 +17,7 @@ export class GenerateExcelTemplateUseCase {
 
     async execute(): Promise<Buffer> {
         // Create workbook
-        const workbook = XLSX.utils.book_new();
+        const workbook = new ExcelJS.Workbook();
 
         // Fetch data from services (real-time) - no pagination needed, get all
         const [tipeBangunanList, klasifikasiList, kabkotaList] = await Promise.all([
@@ -40,37 +40,33 @@ export class GenerateExcelTemplateUseCase {
         });
 
         // Create SOP worksheet
-        const sopWorksheet = this.createSOPWorksheet(
+        const sopWorksheet = workbook.addWorksheet('SOP');
+        this.createSOPWorksheet(
+            sopWorksheet,
             tipeBangunanList.data,
             klasifikasiByTipeBangunan,
             kabkotaValues,
         );
 
         // Create data upload worksheet with headers
-        const dataWorksheet = this.createDataWorksheet(
+        const dataWorksheet = workbook.addWorksheet(SHST_DATA_SHEET_NAME);
+        this.createDataWorksheet(
+            dataWorksheet,
             tipeBangunanValues,
             kabkotaValues,
         );
 
-        // Add worksheets to workbook (SOP first, then data)
-        XLSX.utils.book_append_sheet(workbook, sopWorksheet, 'SOP');
-        XLSX.utils.book_append_sheet(workbook, dataWorksheet, SHST_DATA_SHEET_NAME);
-
         // Generate buffer
-        const buffer = XLSX.write(workbook, {
-            type: 'buffer',
-            bookType: 'xlsx',
-            cellStyles: true,
-        });
-
-        return buffer;
+        const buffer = await workbook.xlsx.writeBuffer();
+        return Buffer.from(buffer);
     }
 
     private createSOPWorksheet(
+        worksheet: ExcelJS.Worksheet,
         tipeBangunanList: Array<{ id: number; tipe_bangunan: string }>,
         klasifikasiByTipeBangunan: Map<number, string[]>,
         kabkotaValues: string[],
-    ): XLSX.WorkSheet {
+    ): void {
         const sopData: any[][] = [];
 
         // Title
@@ -165,41 +161,54 @@ export class GenerateExcelTemplateUseCase {
         sopData.push(['- Untuk nominal, gunakan angka tanpa titik atau koma (contoh: 5000000)']);
         sopData.push(['- Jika data tidak ditemukan di daftar, hubungi administrator']);
 
-        // Create worksheet
-        const worksheet = XLSX.utils.aoa_to_sheet(sopData);
+        // Add data to worksheet
+        sopData.forEach((row, rowIndex) => {
+            const worksheetRow = worksheet.getRow(rowIndex + 1);
+            row.forEach((cellValue, colIndex) => {
+                const cell = worksheetRow.getCell(colIndex + 1);
+                cell.value = cellValue;
+            });
+        });
 
         // Set column widths
-        worksheet['!cols'] = [
-            { wch: 15 }, // Column A
-            { wch: 40 }, // Column B
-            { wch: 20 }, // Column C
-            { wch: 50 }, // Column D
-        ];
+        worksheet.getColumn(1).width = 15; // Column A
+        worksheet.getColumn(2).width = 40; // Column B
+        worksheet.getColumn(3).width = 20; // Column C
+        worksheet.getColumn(4).width = 50; // Column D
 
         // Style title rows
-        const titleStyle = {
-            font: { bold: true, sz: 14, color: { rgb: '000000' } },
-            alignment: { horizontal: 'center', vertical: 'center' },
-        };
-        if (worksheet['A1']) worksheet['A1'].s = titleStyle;
-        if (worksheet['A2']) worksheet['A2'].s = titleStyle;
+        const titleRow1 = worksheet.getRow(1);
+        const titleRow2 = worksheet.getRow(2);
+        titleRow1.font = { bold: true, size: 14, color: { argb: 'FF000000' } };
+        titleRow1.alignment = { horizontal: 'center', vertical: 'middle' };
+        titleRow2.font = { bold: true, size: 14, color: { argb: 'FF000000' } };
+        titleRow2.alignment = { horizontal: 'center', vertical: 'middle' };
 
         // Style section headers
         const sectionStyle = {
-            font: { bold: true, sz: 12, color: { rgb: '000000' } },
-            fill: { fgColor: { rgb: 'D9E1F2' } },
+            font: { bold: true, size: 12, color: { argb: 'FF000000' } },
+            fill: {
+                type: 'pattern' as const,
+                pattern: 'solid' as const,
+                fgColor: { argb: 'FFD9E1F2' }
+            },
         };
         const sectionRows = [4, 13, 15]; // Row numbers for section headers
-        sectionRows.forEach(row => {
-            const cell = XLSX.utils.encode_cell({ r: row - 1, c: 0 });
-            if (worksheet[cell]) worksheet[cell].s = sectionStyle;
+        sectionRows.forEach(rowNum => {
+            const cell = worksheet.getCell(rowNum, 1);
+            cell.font = sectionStyle.font;
+            cell.fill = sectionStyle.fill;
         });
 
         // Style table headers
         const headerStyle = {
-            font: { bold: true, color: { rgb: 'FFFFFF' } },
-            fill: { fgColor: { rgb: '4472C4' } },
-            alignment: { horizontal: 'center', vertical: 'center' },
+            font: { bold: true, color: { argb: 'FFFFFFFF' } },
+            fill: {
+                type: 'pattern' as const,
+                pattern: 'solid' as const,
+                fgColor: { argb: 'FF4472C4' }
+            },
+            alignment: { horizontal: 'center' as const, vertical: 'middle' as const },
         };
         // Calculate header rows dynamically
         let currentRow = 15 + 2 + tipeBangunanList.length;
@@ -211,56 +220,42 @@ export class GenerateExcelTemplateUseCase {
             }
         });
         const headerRows = [13, 15, klasifikasiSectionStart, currentRow];
-        headerRows.forEach(row => {
+        headerRows.forEach(rowNum => {
             ['A', 'B'].forEach(col => {
-                const cell = col + row;
-                if (worksheet[cell]) worksheet[cell].s = headerStyle;
+                const cell = worksheet.getCell(`${col}${rowNum}`);
+                cell.font = headerStyle.font;
+                cell.fill = headerStyle.fill;
+                cell.alignment = headerStyle.alignment;
             });
         });
-
-        return worksheet;
     }
 
     private createDataWorksheet(
+        worksheet: ExcelJS.Worksheet,
         tipeBangunanValues: string[],
         kabkotaValues: string[],
-    ): XLSX.WorkSheet {
+    ): void {
         // Define headers
         const headers = ['tipe_bangunan', 'klasifikasi', 'kabkota', 'nominal'];
 
-        // Create worksheet data with header only
-        const worksheetData = [headers];
-
-        // Create worksheet
-        const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+        // Add header row
+        const headerRow = worksheet.getRow(1);
+        headers.forEach((header, index) => {
+            const cell = headerRow.getCell(index + 1);
+            cell.value = header;
+            cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF4472C4' }
+            };
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        });
 
         // Set column widths
-        worksheet['!cols'] = [
-            { wch: 25 }, // tipe_bangunan
-            { wch: 20 }, // klasifikasi
-            { wch: 25 }, // kabkota
-            { wch: 18 }, // nominal
-        ];
-
-        // Style header row
-        const headerStyle = {
-            font: { bold: true, color: { rgb: 'FFFFFF' } },
-            fill: { fgColor: { rgb: '4472C4' } },
-            alignment: { horizontal: 'center', vertical: 'center' },
-        };
-
-        const headerRange = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
-        for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
-            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
-            if (!worksheet[cellAddress]) continue;
-            worksheet[cellAddress].s = headerStyle;
-        }
-
-        // Note: Excel data validation cannot be set directly via xlsx library
-        // Users will need to manually set data validation in Excel or we can add instructions
-        // For now, we'll add a note in the worksheet
-        // The actual validation will be done server-side when parsing
-
-        return worksheet;
+        worksheet.getColumn(1).width = 25; // tipe_bangunan
+        worksheet.getColumn(2).width = 20; // klasifikasi
+        worksheet.getColumn(3).width = 25; // kabkota
+        worksheet.getColumn(4).width = 18; // nominal
     }
 }

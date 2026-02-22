@@ -18,4 +18,17 @@ export default () => ({
             limit: parseInt(process.env.RATE_AUTH_LIMIT ?? '5', 10),
         },
     },
+    cors: {
+        origins: process.env.CORS_ORIGINS ?? 'http://localhost:3000',        
+        credentials: process.env.CORS_CREDENTIALS !== 'false',
+        methods: process.env.CORS_METHODS?.split(',') ?? ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+        allowedHeaders: process.env.CORS_ALLOWED_HEADERS?.split(',') ?? [
+            'Content-Type',
+            'Authorization',
+            'X-Requested-With',
+            'X-Correlation-Id',
+        ],
+        exposedHeaders: process.env.CORS_EXPOSED_HEADERS?.split(',') ?? ['X-Correlation-Id'],
+        maxAge: parseInt(process.env.CORS_MAX_AGE ?? '86400', 10),
+    },
 });

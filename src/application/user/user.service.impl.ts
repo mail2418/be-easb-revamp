@@ -18,6 +18,7 @@ import { Role } from 'src/domain/user/user_role.enum';
 @Injectable()
 export class UserServiceImpl implements UserService {
     private readonly validateUserUseCase: ValidateUserUseCase;
+    private readonly SALT_ROUNDS = 12;
 
     constructor(private readonly userRepo: UserRepository) {
         this.validateUserUseCase = new ValidateUserUseCase(userRepo);
@@ -32,7 +33,7 @@ export class UserServiceImpl implements UserService {
             }
 
             // hash password
-            userDto.password = bcrypt.hashSync(userDto.password);
+            userDto.password = bcrypt.hashSync(userDto.password, this.SALT_ROUNDS);
 
             // create user
             const newUser = await this.userRepo.create(userDto);
@@ -62,7 +63,7 @@ export class UserServiceImpl implements UserService {
             }
 
             // hash password
-            userDto.password = bcrypt.hashSync(userDto.password);
+            userDto.password = bcrypt.hashSync(userDto.password, this.SALT_ROUNDS);
 
             // create user
             const newUser = await this.userRepo.create(userDto);
@@ -134,7 +135,7 @@ export class UserServiceImpl implements UserService {
 
             // hash password jika ada
             if (userDto.password) {
-                updateData.password = bcrypt.hashSync(userDto.password);
+                updateData.password = bcrypt.hashSync(userDto.password, this.SALT_ROUNDS);
             }
 
             // update user via repository
@@ -181,7 +182,7 @@ export class UserServiceImpl implements UserService {
 
             // hash password jika ada
             if (userDto.password) {
-                updateData.password = bcrypt.hashSync(userDto.password);
+                updateData.password = bcrypt.hashSync(userDto.password, this.SALT_ROUNDS);
             }
 
             // update user via repository

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { JAKON_DATA_SHEET_NAME } from './generate_excel_template.use_case'; // Import locked sheet name
 
 @Injectable()
@@ -18,25 +18,27 @@ export class ValidateExcelHeadersUseCase {
     ];
     private readonly REQUIRED_HEADERS_COUNT = 10;
 
-    execute(workbook: XLSX.WorkBook): void {
+    execute(workbook: ExcelJS.Workbook): void {
         // Validate locked sheet name
-        if (!workbook.SheetNames.includes(JAKON_DATA_SHEET_NAME)) {
+        const worksheet = workbook.getWorksheet(JAKON_DATA_SHEET_NAME);
+        
+        if (!worksheet) {
             throw new BadRequestException(
                 `Sheet "${JAKON_DATA_SHEET_NAME}" tidak ditemukan. Pastikan nama sheet adalah "${JAKON_DATA_SHEET_NAME}" dan tidak diubah.`
             );
         }
-
-        const worksheet = workbook.Sheets[JAKON_DATA_SHEET_NAME]; // Use the locked sheet name
         
-        // Convert to JSON to get headers
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        // Get headers from first row
+        const headers: string[] = [];
+        const firstRow = worksheet.getRow(1);
         
-        if (!jsonData || jsonData.length === 0) {
+        if (!firstRow || firstRow.cellCount === 0) {
             throw new BadRequestException('Excel file is empty');
         }
-
-        // Get headers from first row
-        const headers = jsonData[0] as string[];
+        
+        firstRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+            headers[colNumber - 1] = String(cell.value ?? '').trim();
+        });
         
         if (!headers || headers.length === 0) {
             throw new BadRequestException('Excel file must have headers in the first row');

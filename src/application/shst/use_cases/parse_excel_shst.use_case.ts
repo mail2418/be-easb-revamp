@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Express } from 'express';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { AsbTipeBangunanRepository } from '../../../domain/asb_tipe_bangunan/asb_tipe_bangunan.repository';
 import { AsbKlasifikasiRepository } from '../../../domain/asb_klasifikasi/asb_klasifikasi.repository';
 import { KabKotaRepository } from '../../../domain/kabkota/kabkota.repository';
@@ -23,16 +23,23 @@ export class ParseExcelShstUseCase {
 
     async execute(file: Express.Multer.File, tahun: number): Promise<ParsedShstRow[]> {
         try {
-            const workbook = XLSX.read(file.buffer, { type: 'buffer' });
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(file.buffer as any);
+            const worksheet = workbook.worksheets[0];
             
-            // Convert to JSON with header row
-            const data = XLSX.utils.sheet_to_json(worksheet, { 
-                header: 1, 
-                defval: null,
-                raw: false // Convert all values to strings first
-            }) as any[];
+            if (!worksheet) {
+                throw new BadRequestException('Excel file must contain at least one worksheet');
+            }
+            
+            // Convert worksheet to array of arrays
+            const data: any[][] = [];
+            worksheet.eachRow((row, rowNumber) => {
+                const rowData: any[] = [];
+                row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                    rowData[colNumber - 1] = cell.value ?? null;
+                });
+                data.push(rowData);
+            });
 
             if (data.length < 2) {
                 throw new BadRequestException('Excel file must contain at least a header row and one data row');

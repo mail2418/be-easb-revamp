@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { Express } from 'express';
 import { AsbTipeBangunanRepository } from '../../../domain/asb_tipe_bangunan/asb_tipe_bangunan.repository';
 import { AsbJenisRepository } from '../../../domain/asb_jenis/asb_jenis.repository';
@@ -30,22 +30,20 @@ export class ParseExcelDataUseCase {
 
     async execute(file: Express.Multer.File): Promise<ParsedJakonRow[]> {
         // Read Excel file
-        const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(file.buffer as any);
         
         // Only read from the locked sheet name
-        if (!workbook.SheetNames.includes(JAKON_DATA_SHEET_NAME)) {
+        const worksheet = workbook.getWorksheet(JAKON_DATA_SHEET_NAME);
+        
+        if (!worksheet) {
             throw new BadRequestException(
                 `Sheet "${JAKON_DATA_SHEET_NAME}" tidak ditemukan. Pastikan nama sheet adalah "${JAKON_DATA_SHEET_NAME}" dan tidak diubah.`
             );
         }
-        
-        const worksheet = workbook.Sheets[JAKON_DATA_SHEET_NAME];
 
         // Convert to JSON with header row (same approach as SHST)
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
-            header: ['tipe_bangunan', 'jenis usulan asb', 'klasifikasi', 'type', 'nama', 'spec', 'priceFrom', 'priceTo', 'satuan', 'standard'],
-            defval: null,
-        }) as Array<{
+        const jsonData: Array<{
             tipe_bangunan?: string;
             'jenis usulan asb'?: string;
             klasifikasi?: string;
@@ -56,7 +54,30 @@ export class ParseExcelDataUseCase {
             priceTo?: number | string;
             satuan?: string;
             standard?: number | string;
-        }>;
+        }> = [];
+        
+        const headers: string[] = [];
+        let isFirstRow = true;
+        
+        worksheet.eachRow((row, rowNumber) => {
+            if (isFirstRow) {
+                // Get headers from first row
+                row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                    headers[colNumber - 1] = String(cell.value ?? '').trim();
+                });
+                isFirstRow = false;
+            } else {
+                // Get data from subsequent rows
+                const rowData: any = {};
+                row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                    const headerName = headers[colNumber - 1];
+                    if (headerName) {
+                        rowData[headerName] = cell.value ?? null;
+                    }
+                });
+                jsonData.push(rowData);
+            }
+        });
 
         if (!jsonData || jsonData.length === 0) {
             throw new BadRequestException('Excel file contains no data rows');

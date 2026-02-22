@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { AsbTipeBangunanService } from '../../../domain/asb_tipe_bangunan/asb_tipe_bangunan.service';
 import { AsbKlasifikasiService } from '../../../domain/asb_klasifikasi/asb_klasifikasi.service';
 import { AsbJenisService } from '../../../domain/asb_jenis/asb_jenis.service';
@@ -18,7 +18,7 @@ export class GenerateExcelTemplateUseCase {
 
     async execute(): Promise<Buffer> {
         // Create workbook
-        const workbook = XLSX.utils.book_new();
+        const workbook = new ExcelJS.Workbook();
 
         // Fetch data from services (real-time) - no pagination needed, get all
         const [tipeBangunanList, klasifikasiList, jenisList] = await Promise.all([
@@ -42,7 +42,9 @@ export class GenerateExcelTemplateUseCase {
         });
 
         // Create SOP worksheet
-        const sopWorksheet = this.createSOPWorksheet(
+        const sopWorksheet = workbook.addWorksheet('SOP');
+        this.createSOPWorksheet(
+            sopWorksheet,
             tipeBangunanList.data,
             klasifikasiByTipeBangunan,
             jenisValues,
@@ -50,32 +52,26 @@ export class GenerateExcelTemplateUseCase {
         );
 
         // Create data upload worksheet with headers
-        const dataWorksheet = this.createDataWorksheet(
+        const dataWorksheet = workbook.addWorksheet(JAKON_DATA_SHEET_NAME);
+        this.createDataWorksheet(
+            dataWorksheet,
             tipeBangunanValues,
             jenisValues,
             typeValues,
         );
 
-        // Add worksheets to workbook (SOP first, then data)
-        XLSX.utils.book_append_sheet(workbook, sopWorksheet, 'SOP');
-        XLSX.utils.book_append_sheet(workbook, dataWorksheet, JAKON_DATA_SHEET_NAME);
-
         // Generate buffer
-        const buffer = XLSX.write(workbook, {
-            type: 'buffer',
-            bookType: 'xlsx',
-            cellStyles: true,
-        });
-
-        return buffer;
+        const buffer = await workbook.xlsx.writeBuffer();
+        return Buffer.from(buffer);
     }
 
     private createSOPWorksheet(
+        worksheet: ExcelJS.Worksheet,
         tipeBangunanList: Array<{ id: number; tipe_bangunan: string }>,
         klasifikasiByTipeBangunan: Map<number, string[]>,
         jenisValues: string[],
         typeValues: string[],
-    ): XLSX.WorkSheet {
+    ): void {
         const sopData: any[][] = [];
 
         // Title
@@ -218,42 +214,55 @@ export class GenerateExcelTemplateUseCase {
         sopData.push(['- Pastikan priceTo >= priceFrom']);
         sopData.push(['- Jika data tidak ditemukan di daftar (untuk kolom dengan dropdown), hubungi administrator']);
 
-        // Create worksheet
-        const worksheet = XLSX.utils.aoa_to_sheet(sopData);
+        // Add data to worksheet
+        sopData.forEach((row, rowIndex) => {
+            const worksheetRow = worksheet.getRow(rowIndex + 1);
+            row.forEach((cellValue, colIndex) => {
+                const cell = worksheetRow.getCell(colIndex + 1);
+                cell.value = cellValue;
+            });
+        });
 
         // Set column widths
-        worksheet['!cols'] = [
-            { wch: 20 }, // Column A
-            { wch: 40 }, // Column B
-            { wch: 20 }, // Column C
-            { wch: 50 }, // Column D
-        ];
+        worksheet.getColumn(1).width = 20; // Column A
+        worksheet.getColumn(2).width = 40; // Column B
+        worksheet.getColumn(3).width = 20; // Column C
+        worksheet.getColumn(4).width = 50; // Column D
 
         // Style title rows
-        const titleStyle = {
-            font: { bold: true, sz: 14, color: { rgb: '000000' } },
-            alignment: { horizontal: 'center', vertical: 'center' },
-        };
-        if (worksheet['A1']) worksheet['A1'].s = titleStyle;
-        if (worksheet['A2']) worksheet['A2'].s = titleStyle;
+        const titleRow1 = worksheet.getRow(1);
+        const titleRow2 = worksheet.getRow(2);
+        titleRow1.font = { bold: true, size: 14, color: { argb: 'FF000000' } };
+        titleRow1.alignment = { horizontal: 'center' as const, vertical: 'middle' as const };
+        titleRow2.font = { bold: true, size: 14, color: { argb: 'FF000000' } };
+        titleRow2.alignment = { horizontal: 'center' as const, vertical: 'middle' as const };
 
         // Style section headers
         const sectionStyle = {
-            font: { bold: true, sz: 12, color: { rgb: '000000' } },
-            fill: { fgColor: { rgb: 'D9E1F2' } },
+            font: { bold: true, size: 12, color: { argb: 'FF000000' } },
+            fill: {
+                type: 'pattern' as const,
+                pattern: 'solid' as const,
+                fgColor: { argb: 'FFD9E1F2' }
+            },
         };
         // Calculate section rows dynamically
         const sectionRows = [4, 15, 17]; // Row numbers for section headers (LANGKAH-LANGKAH, DESKRIPSI KOLOM, DAFTAR NILAI)
-        sectionRows.forEach(row => {
-            const cell = XLSX.utils.encode_cell({ r: row - 1, c: 0 });
-            if (worksheet[cell]) worksheet[cell].s = sectionStyle;
+        sectionRows.forEach(rowNum => {
+            const cell = worksheet.getCell(rowNum, 1);
+            cell.font = sectionStyle.font;
+            cell.fill = sectionStyle.fill;
         });
 
         // Style table headers
         const headerStyle = {
-            font: { bold: true, color: { rgb: 'FFFFFF' } },
-            fill: { fgColor: { rgb: '4472C4' } },
-            alignment: { horizontal: 'center', vertical: 'center' },
+            font: { bold: true, color: { argb: 'FFFFFFFF' } },
+            fill: {
+                type: 'pattern' as const,
+                pattern: 'solid' as const,
+                fgColor: { argb: 'FF4472C4' }
+            },
+            alignment: { horizontal: 'center' as const, vertical: 'middle' as const },
         };
         // Calculate header rows dynamically
         let currentRow = 17 + 2 + tipeBangunanList.length + 2 + jenisValues.length;
@@ -266,21 +275,22 @@ export class GenerateExcelTemplateUseCase {
         });
         const typeSectionStart = currentRow;
         const headerRows = [15, 17 + 2 + tipeBangunanList.length, klasifikasiSectionStart, typeSectionStart];
-        headerRows.forEach(row => {
+        headerRows.forEach(rowNum => {
             ['A', 'B'].forEach(col => {
-                const cell = col + row;
-                if (worksheet[cell]) worksheet[cell].s = headerStyle;
+                const cell = worksheet.getCell(`${col}${rowNum}`);
+                cell.font = headerStyle.font;
+                cell.fill = headerStyle.fill;
+                cell.alignment = headerStyle.alignment;
             });
         });
-
-        return worksheet;
     }
 
     private createDataWorksheet(
+        worksheet: ExcelJS.Worksheet,
         tipeBangunanValues: string[],
         jenisValues: string[],
         typeValues: string[],
-    ): XLSX.WorkSheet {
+    ): void {
         // Define headers
         const headers = [
             'tipe_bangunan',
@@ -295,40 +305,30 @@ export class GenerateExcelTemplateUseCase {
             'standard',
         ];
 
-        // Create worksheet data with header only
-        const worksheetData = [headers];
-
-        // Create worksheet
-        const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+        // Add header row
+        const headerRow = worksheet.getRow(1);
+        headers.forEach((header, index) => {
+            const cell = headerRow.getCell(index + 1);
+            cell.value = header;
+            cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF4472C4' }
+            };
+            cell.alignment = { horizontal: 'center' as const, vertical: 'middle' as const };
+        });
 
         // Set column widths
-        worksheet['!cols'] = [
-            { wch: 20 }, // tipe_bangunan
-            { wch: 20 }, // jenis usulan asb
-            { wch: 15 }, // klasifikasi
-            { wch: 15 }, // type
-            { wch: 30 }, // nama
-            { wch: 30 }, // spec
-            { wch: 15 }, // priceFrom
-            { wch: 15 }, // priceTo
-            { wch: 12 }, // satuan
-            { wch: 15 }, // standard
-        ];
-
-        // Style header row
-        const headerStyle = {
-            font: { bold: true, color: { rgb: 'FFFFFF' } },
-            fill: { fgColor: { rgb: '4472C4' } },
-            alignment: { horizontal: 'center', vertical: 'center' },
-        };
-
-        const headerRange = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
-        for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
-            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
-            if (!worksheet[cellAddress]) continue;
-            worksheet[cellAddress].s = headerStyle;
-        }
-
-        return worksheet;
+        worksheet.getColumn(1).width = 20; // tipe_bangunan
+        worksheet.getColumn(2).width = 20; // jenis usulan asb
+        worksheet.getColumn(3).width = 15; // klasifikasi
+        worksheet.getColumn(4).width = 15; // type
+        worksheet.getColumn(5).width = 30; // nama
+        worksheet.getColumn(6).width = 30; // spec
+        worksheet.getColumn(7).width = 15; // priceFrom
+        worksheet.getColumn(8).width = 15; // priceTo
+        worksheet.getColumn(9).width = 12; // satuan
+        worksheet.getColumn(10).width = 15; // standard
     }
 }

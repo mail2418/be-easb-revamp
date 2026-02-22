@@ -32,7 +32,7 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
         dto: CreateAsbBpsGalleryNonstdDto,
         file: Express.Multer.File,
     ): Promise<AsbBpsGalleryNonstd> {
-        this.validateFileUpload.execute(file);
+        await this.validateFileUpload.execute(file);
         const filepath = this.saveFile.execute(file);
         return await this.repository.create(dto, filepath);
     }
@@ -52,7 +52,7 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
         let filepath: string | undefined = undefined;
 
         if (file) {
-            this.validateFileUpload.execute(file);
+            await this.validateFileUpload.execute(file);
             this.deleteFile.execute(existing.filename);
             filepath = this.saveFile.execute(file);
         }
