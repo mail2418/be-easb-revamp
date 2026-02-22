@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateRekeningDto {
@@ -19,4 +19,9 @@ export class CreateRekeningDto {
   @IsNumber()
   @Transform(({ value }) => parseInt(value, 10))
   tahun!: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => value ? parseInt(value, 10) : null)
+  id_jenis_usulan?: number | null;
 }

@@ -36,25 +36,25 @@ export class AsbJakonOrmEntity {
     @Column({ type: 'varchar', length: 255 })
     spec!: string;
 
-    @Column({ name: 'price_from', type: 'double precision' })
+    @Column({ name: 'price_from', type: 'float' })
     priceFrom!: number;
 
-    @Column({ name: 'price_to', type: 'double precision' })
+    @Column({ name: 'price_to', type: 'float' })
     priceTo!: number;
 
     @Column({ type: 'varchar', length: 50 })
     satuan!: string;
 
-    @Column({ type: 'double precision' })
+    @Column({ type: 'float' })
     standard!: number;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt!: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt!: Date;
 
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt?: Date;
 
     @ManyToOne(() => AsbTipeBangunanOrmEntity)

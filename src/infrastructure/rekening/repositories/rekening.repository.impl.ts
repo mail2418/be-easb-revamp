@@ -14,14 +14,34 @@ export class RekeningRepositoryImpl implements RekeningRepository {
     constructor(@InjectRepository(RekeningOrmEntity) private readonly repo: Repository<RekeningOrmEntity>) {}
 
     async create(rekening: CreateRekeningDto): Promise<Rekening> {
-        const ormEntity = plainToInstance(RekeningOrmEntity, rekening);
+        const ormEntity = plainToInstance(RekeningOrmEntity, {
+            ...rekening,
+            idJenisUsulan: rekening.id_jenis_usulan ?? null,
+        });
         const newEntity = await this.repo.save(ormEntity);
-        return newEntity;
+        // Reload with relation
+        const entityWithRelation = await this.repo
+            .createQueryBuilder('rekening')
+            .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan')
+            .where('rekening.id = :id', { id: newEntity.id })
+            .getOne();
+        return entityWithRelation!;
     }
 
-    async update(id: number, rekening: Partial<Rekening>): Promise<Rekening> {
-        await this.repo.update(id, rekening);
-        const updatedEntity = await this.repo.findOne({ where: { id } });
+    async update(id: number, rekening: UpdateRekeningDto): Promise<Rekening> {
+        const updateData: Partial<RekeningOrmEntity> = {
+            rekening_kode: rekening.rekening_kode,
+            rekening_uraian: rekening.rekening_uraian,
+            bulan: rekening.bulan,
+            tahun: rekening.tahun,
+            idJenisUsulan: rekening.id_jenis_usulan ?? null,
+        };
+        await this.repo.update(id, updateData);
+        const updatedEntity = await this.repo
+            .createQueryBuilder('rekening')
+            .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan')
+            .where('rekening.id = :id', { id })
+            .getOne();
         return updatedEntity!;
     }
     
@@ -32,7 +52,7 @@ export class RekeningRepositoryImpl implements RekeningRepository {
     async findById(id: number): Promise<Rekening | null> {
         const entity = await this.repo
             .createQueryBuilder('rekening')
-            .select(['rekening.id', 'rekening.rekening_kode', 'rekening.rekening'])
+            .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan')
             .where('rekening.id = :id', { id })
             .getOne();
         return entity || null;
@@ -41,23 +61,34 @@ export class RekeningRepositoryImpl implements RekeningRepository {
     async findByKode(rekeningKode: string): Promise<Rekening | null> {
         const entity = await this.repo
             .createQueryBuilder('rekening')
-            .select(['rekening.id', 'rekening.rekening_kode', 'rekening.rekening'])
+            .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan')
             .where('rekening.rekening_kode LIKE :rekeningKode', { rekeningKode: `%${rekeningKode}%` })
             .getOne();
         return entity || null;
     }
 
     async findAll(pagination: GetRekeningsDto): Promise<{ data: Rekening[]; total: number }> {
-        const findOptions: any = {
-            order: { id: 'DESC' }
-        };
+        const queryBuilder = this.repo
+            .createQueryBuilder('rekening')
+            .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan');
 
-        if (pagination.page !== undefined && pagination.amount !== undefined) {
-            findOptions.skip = (pagination.page - 1) * pagination.amount;
-            findOptions.take = pagination.amount;
+        // Filter by id_jenis_usulan if provided
+        if (pagination.id_jenis_usulan !== undefined) {
+            queryBuilder.where('rekening.id_jenis_usulan = :id_jenis_usulan', { 
+                id_jenis_usulan: pagination.id_jenis_usulan 
+            });
         }
 
-        const [data, total] = await this.repo.findAndCount(findOptions);
+        // Order by id DESC
+        queryBuilder.orderBy('rekening.id', 'DESC');
+
+        // Apply pagination
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            queryBuilder.skip((pagination.page - 1) * pagination.amount);
+            queryBuilder.take(pagination.amount);
+        }
+
+        const [data, total] = await queryBuilder.getManyAndCount();
 
         return { data, total };
     }

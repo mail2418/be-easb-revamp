@@ -4,4 +4,5 @@ export class Rekening {
   rekening_uraian!: string;
   bulan!: number;
   tahun!: number;
+  id_jenis_usulan?: number | null;
 }

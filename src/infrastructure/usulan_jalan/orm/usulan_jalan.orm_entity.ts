@@ -80,16 +80,16 @@ export class UsulanJalanOrmEntity {
     rejectReason!: string | null;
 
     // Verifikator Review At
-    @Column({ name: 'verifikator_adbang_review_at', type: 'timestamptz', nullable: true })
+    @Column({ name: 'verifikator_adbang_review_at', type: 'timestamp', nullable: true })
     verifikatorAdbangReviewAt!: Date | null;
 
-    @Column({ name: 'verifikator_bpkad_review_at', type: 'timestamptz', nullable: true })
+    @Column({ name: 'verifikator_bpkad_review_at', type: 'timestamp', nullable: true })
     verifikatorBpkadReviewAt!: Date | null;
 
-    @Column({ name: 'verifikator_bappeda_review_at', type: 'timestamptz', nullable: true })
+    @Column({ name: 'verifikator_bappeda_review_at', type: 'timestamp', nullable: true })
     verifikatorBappedaReviewAt!: Date | null;
 
-    @Column({ name: 'reject_verifikator_review_at', type: 'timestamptz', nullable: true })
+    @Column({ name: 'reject_verifikator_review_at', type: 'timestamp', nullable: true })
     rejectVerifikatorReviewAt!: Date | null;
 
     // Core fields
@@ -117,7 +117,7 @@ export class UsulanJalanOrmEntity {
     @Column({ name: 'deskripsi_desain', type: 'text', nullable: true })
     deskripsiDesain!: string | null;
 
-    @Column({ name: 'lebar', type: 'double precision', nullable: true })
+    @Column({ name: 'lebar', type: 'float', nullable: true })
     lebar!: number | null;
 
     @Column({ name: 'total_harga', type: 'decimal', precision: 15, scale: 2, nullable: true })
@@ -127,13 +127,13 @@ export class UsulanJalanOrmEntity {
     biayaSmkk!: number | null;
 
     // Timestamps
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt!: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt!: Date;
 
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt!: Date | null;
 
     // Relationships - Required FKs (CASCADE)

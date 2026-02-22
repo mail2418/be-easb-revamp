@@ -53,15 +53,15 @@ export class AsbBipekNonStdReviewOrmEntity {
     @Column({ name: 'rincian_harga', type: 'float', nullable: true })
     rincianHarga: number | null;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt: Date;
 
     @DeleteDateColumn({
         name: 'deleted_at',
-        type: 'timestamptz',
+        type: 'timestamp',
         nullable: true,
     })
     deletedAt: Date | null;

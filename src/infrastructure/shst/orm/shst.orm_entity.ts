@@ -20,7 +20,7 @@ export class ShstOrmEntity {
   @Column()
   id_kabkota!: number;
 
-  @Column("double precision")
+  @Column("float")
   nominal!: number;
 
   @Column()

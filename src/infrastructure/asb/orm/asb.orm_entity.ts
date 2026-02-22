@@ -94,16 +94,16 @@ export class AsbOrmEntity {
     @Column({ name: 'luas_tanah', type: 'int', nullable: true })
     luasTanah: number | null;
 
-    @Column({ name: 'verified_adpem_at', type: 'timestamptz', nullable: true })
+    @Column({ name: 'verified_adpem_at', type: 'timestamp', nullable: true })
     verifiedAdpemAt: Date | null;
 
-    @Column({ name: 'verified_bpkad_at', type: 'timestamptz', nullable: true })
+    @Column({ name: 'verified_bpkad_at', type: 'timestamp', nullable: true })
     verifiedBpkadAt: Date | null;
 
-    @Column({ name: 'verified_bappeda_at', type: 'timestamptz', nullable: true })
+    @Column({ name: 'verified_bappeda_at', type: 'timestamp', nullable: true })
     verifiedBappedaAt: Date | null;
 
-    @Column({ name: 'rejected_at', type: 'timestamptz', nullable: true })
+    @Column({ name: 'rejected_at', type: 'timestamp', nullable: true })
     rejectedAt: Date | null;
 
     @Column({ name: 'reject_reason', type: 'text', nullable: true })
@@ -222,15 +222,15 @@ export class AsbOrmEntity {
     rekapitulasiBiayaKonstruksiRounded: number | null;
 
     // Timestamps
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt: Date;
 
     @DeleteDateColumn({
         name: 'deleted_at',
-        type: 'timestamptz',
+        type: 'timestamp',
         nullable: true,
     })
     deletedAt: Date | null;
