@@ -135,6 +135,33 @@ export class AsbOrmEntity {
     managementKonstruksi: number | null;
 
     @Column({
+        name: 'penyesuaian_perencanaan_konstruksi',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        nullable: true,
+    })
+    penyesuaianPerencanaanKonstruksi: number | null;
+
+    @Column({
+        name: 'penyesuaian_pengawasan_konstruksi',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        nullable: true,
+    })
+    penyesuaianPengawasanKonstruksi: number | null;
+
+    @Column({
+        name: 'penyesuaian_management_konstruksi',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        nullable: true,
+    })
+    penyesuaianManagementKonstruksi: number | null;
+
+    @Column({
         name: 'pengelolaan_kegiatan',
         type: 'float',
         nullable: true,

@@ -20,6 +20,7 @@ import { VerifyBpnsDto } from './dto/verify_bpns.dto';
 import { VerifyRekeningDto } from './dto/verify_rekening.dto';
 import { UserContext } from '../../common/types/user-context.type';
 import { StoreVerifDto } from './dto/store_verif.dto';
+import { StorePenyesuaianDto } from './dto/store_penyesuaian.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
 import { GetAsbAnalyticsFilterDto } from 'src/application/asb/dto/get_asb_analytics_filter.dto';
 import { VerifyBpsDto } from './dto/verify_bps.dto';
@@ -551,6 +552,56 @@ export class AsbController {
                 status: 'success',
                 responseCode: HttpStatus.OK,
                 message: 'ASB verif stored successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Put('store-penyesuaian')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    async storePenyesuaian(
+        @Body() dto: StorePenyesuaianDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.storePenyesuaian(dto, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB penyesuaian stored successfully',
                 data: result,
             };
         } catch (error) {

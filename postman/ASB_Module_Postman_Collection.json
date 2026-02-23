@@ -313,6 +313,29 @@
 					"response": []
 				},
 				{
+					"name": "Store Penyesuaian",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1,\n  \"penyesuaian_perencanaan_konstruksi\": 0,\n  \"penyesuaian_pengawasan_konstruksi\": 0,\n  \"penyesuaian_management_konstruksi\": 0\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/store-penyesuaian",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "store-penyesuaian"]
+						},
+						"description": "Store penyesuaian konstruksi (perencanaan, pengawasan, management). Updates rekapitulasi_biaya_konstruksi and rekapitulasi_biaya_konstruksi_rounded from total_biaya_pembangunan + penyesuaian values. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
 					"name": "Verify Lantai",
 					"request": {
 						"method": "PUT",

@@ -21,6 +21,7 @@ import { CalculateBobotBPSUseCase } from '../asb_bipek_standard/use_cases/calcul
 import { CalculateBobotBPNSUseCase } from '../asb_bipek_non_std/use_cases/calculate_bobot_bpns.use_case';
 import { GetShstNominalDto } from '../shst/dto/get_shst_nominal.dto';
 import { StoreVerifDto } from 'src/presentation/asb/dto/store_verif.dto';
+import { StorePenyesuaianDto } from 'src/presentation/asb/dto/store_penyesuaian.dto';
 import { VerifyLantaiDto } from 'src/presentation/asb/dto/verify_lantai.dto';
 import { AsbDetailReviewService } from 'src/domain/asb_detail_review/asb_detail_review.service';
 import { CreateAsbDetailReviewDto } from '../asb_detail_review/dto/create_asb_detail_review.dto';
@@ -782,6 +783,33 @@ export class AsbServiceImpl implements AsbService {
         // 2. Update ASB status to 6
         const updatedAsb = await this.repository.update(dto.id_asb, {
             idAsbStatus: 6
+        });
+
+        return {
+            id: updatedAsb.id,
+            status: updatedAsb.asbStatus
+        };
+    }
+
+    async storePenyesuaian(dto: StorePenyesuaianDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
+        if (!asb) {
+            throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+        }
+
+        const totalBiayaPembangunan = Number(asb.totalBiayaPembangunan ?? 0);
+        const rekapitulasiBiayaKonstruksi = totalBiayaPembangunan
+            + Number(dto.penyesuaian_perencanaan_konstruksi)
+            + Number(dto.penyesuaian_pengawasan_konstruksi)
+            + Number(dto.penyesuaian_management_konstruksi);
+        const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
+
+        const updatedAsb = await this.repository.update(dto.id_asb, {
+            penyesuaianPerencanaanKonstruksi: dto.penyesuaian_perencanaan_konstruksi,
+            penyesuaianPengawasanKonstruksi: dto.penyesuaian_pengawasan_konstruksi,
+            penyesuaianManagementKonstruksi: dto.penyesuaian_management_konstruksi,
+            rekapitulasiBiayaKonstruksi,
+            rekapitulasiBiayaKonstruksiRounded,
         });
 
         return {
