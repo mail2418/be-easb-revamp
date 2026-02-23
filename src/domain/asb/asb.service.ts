@@ -10,6 +10,7 @@ import { StoreBpsDto } from 'src/presentation/asb/dto/store_bps.dto';
 import { StoreBpnsDto } from 'src/presentation/asb/dto/store_bpns.dto';
 import { StoreRekeningDto } from 'src/presentation/asb/dto/store_rekening.dto';
 import { StoreVerifDto } from 'src/presentation/asb/dto/store_verif.dto';
+import { StorePenyesuaianDto } from 'src/presentation/asb/dto/store_penyesuaian.dto';
 import { VerifyLantaiDto } from 'src/presentation/asb/dto/verify_lantai.dto';
 import { VerifyBpnsDto } from 'src/presentation/asb/dto/verify_bpns.dto';
 import { VerifyRekeningDto } from 'src/presentation/asb/dto/verify_rekening.dto';
@@ -34,6 +35,7 @@ export abstract class AsbService {
     abstract storeBpns(dto: StoreBpnsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract storeRekening(dto: StoreRekeningDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract storeVerif(dto: StoreVerifDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract storePenyesuaian(dto: StorePenyesuaianDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyLantai(dto: VerifyLantaiDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyBps(dto: VerifyBpsDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyBpns(dto: VerifyBpnsDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;

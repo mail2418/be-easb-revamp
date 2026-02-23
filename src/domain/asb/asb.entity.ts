@@ -51,6 +51,9 @@ export class Asb {
     perencanaanKonstruksi: number | null;
     pengawasanKonstruksi: number | null;
     managementKonstruksi: number | null;
+    penyesuaianPerencanaanKonstruksi: number | null;
+    penyesuaianPengawasanKonstruksi: number | null;
+    penyesuaianManagementKonstruksi: number | null;
     pengelolaanKegiatan: number | null;
     luasTotalBangunan: number | null;
     koefisienLantaiTotal: number | null;
