@@ -50,6 +50,7 @@ import { JenisUsulanModule } from './presentation/jenis_usulan/jenis_usulan.modu
 import { JalanSaluranRuangLingkupModule } from './presentation/jalan_saluran_ruang_lingkup/jalan_saluran_ruang_lingkup.module';
 import { JalanSaluranSmkkModule } from './presentation/jalan_saluran_smkk/jalan_saluran_smkk.module';
 import { HspkModule } from './presentation/hspk/hspk.module';
+import { MainDashboardModule } from './presentation/main_dashboard/main_dashboard.module';
 
 import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -157,6 +158,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
         JalanSaluranRuangLingkupModule,
         JalanSaluranSmkkModule,
         HspkModule,
+        MainDashboardModule,
         ThrottlerModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (config: ConfigService) => [
@@ -166,6 +168,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
                 },
             ],
         }),
+        // other modules...
     ],
     providers: [
         { 
