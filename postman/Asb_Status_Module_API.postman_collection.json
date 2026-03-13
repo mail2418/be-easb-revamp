@@ -1,0 +1,197 @@
+{
+	"info": {
+		"_postman_id": "asb-status-module-api-collection",
+		"name": "EASB - ASB Status Module API",
+		"description": "API collection for ASB Status Module - managing ASB Status data.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ASB Status Management (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create ASB Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						},
+						"description": "Create a new ASB Status entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `status` (string, required): Status name/description"
+					},
+					"response": []
+				},
+				{
+					"name": "Update ASB Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"status\": \"Inactive\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						},
+						"description": "Update an existing ASB Status. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the ASB Status to update\n- `status` (string, required): Status name/description"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ASB Status",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						},
+						"description": "Delete an ASB Status entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the ASB Status to delete"
+					},
+					"response": []
+				}
+			],
+			"description": "Management operations for ASB Status"
+		},
+		{
+			"name": "ASB Status Queries",
+			"item": [
+				{
+					"name": "Get ASB Statuses (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						},
+						"description": "Get paginated list of ASB Status entries.\n\n**Request Body:**\n- `page` (number, required): Page number (minimum 1)\n- `amount` (number, required): Items per page (minimum 1)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get ASB Status Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-status/detail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-status",
+								"detail"
+							]
+						},
+						"description": "Get detailed information for a specific ASB Status entry.\n\n**Request Body:**\n- `id` (number, required): ID of the ASB Status (minimum 1)"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving ASB Status information"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		}
+	]
+}

@@ -2,47 +2,47 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import bcrypt from 'bcryptjs';
 
 export class SeedUsers1762602188283 implements MigrationInterface {
-  name = 'SeedUsers1762602188283';
+    name = 'SeedUsers1762602188283';
 
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `INSERT INTO "users" ("username","password_hash","roles")
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(
+            `INSERT INTO "users" ("username","password_hash","roles")
        VALUES ($1, $2, $3)
        ON CONFLICT ("username") DO NOTHING`,
-        ['superadmin', await bcrypt.hash('SuperAdminPass123!', 10), ['superadmin','admin','verifikator','opd','guest']]
-    );
+            ['superadmin', await bcrypt.hash('SuperAdminPass123!', 10), ['superadmin', 'admin', 'verifikator', 'opd', 'guest']]
+        );
 
-    await queryRunner.query(
-        `INSERT INTO "users" ("username","password_hash","roles")
+        await queryRunner.query(
+            `INSERT INTO "users" ("username","password_hash","roles")
             VALUES ($1, $2, $3)
             ON CONFLICT ("username") DO NOTHING`,
-        ['admin', await bcrypt.hash('AdminPass123!', 10), ['admin']]
-    );
+            ['admin', await bcrypt.hash('AdminPass123!', 10), ['admin']]
+        );
 
-    await queryRunner.query(
-        `INSERT INTO "users" ("username","password_hash","roles")
+        await queryRunner.query(
+            `INSERT INTO "users" ("username","password_hash","roles")
             VALUES ($1, $2, $3)
             ON CONFLICT ("username") DO NOTHING`,
-        ['verifikator', await bcrypt.hash('UserPass123!', 10), ['verifikator']]
-    );
+            ['verifikator', await bcrypt.hash('UserPass123!', 10), ['verifikator']]
+        );
 
-    await queryRunner.query(
-        `INSERT INTO "users" ("username","password_hash","roles")
+        await queryRunner.query(
+            `INSERT INTO "users" ("username","password_hash","roles")
             VALUES ($1, $2, $3)
             ON CONFLICT ("username") DO NOTHING`,
-        ['opd', await bcrypt.hash('AuditorPass123!', 10), ['opd']]
-    );
+            ['opd', await bcrypt.hash('AuditorPass123!', 10), ['opd']]
+        );
 
-    await queryRunner.query(
-        `INSERT INTO "users" ("username","password_hash","roles")
+        await queryRunner.query(
+            `INSERT INTO "users" ("username","password_hash","roles")
             VALUES ($1, $2, $3)
             ON CONFLICT ("username") DO NOTHING`,
-        ['guest', await bcrypt.hash('GuestPass123!', 10), ['guest']]
-    );
-  }
+            ['guest', await bcrypt.hash('GuestPass123!', 10), ['guest']]
+        );
+    }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    const username = process.env.SEED_ADMIN_USERNAME ?? 'superadmin';
-    await queryRunner.query(`DELETE FROM "users" WHERE "username" = $1`, [username]);
-  }
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        const username = process.env.SEED_ADMIN_USERNAME ?? 'superadmin';
+        await queryRunner.query(`DELETE FROM "users" WHERE "username" = $1`, [username]);
+    }
 }

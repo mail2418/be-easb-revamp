@@ -1,0 +1,69 @@
+{
+	"info": {
+		"_postman_id": "asb-detail-review-module-collection",
+		"name": "ASB Detail Review Module API Collection",
+		"description": "API collection for ASB Detail Review module - manages reviewed detail records for ASB verification",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "ASB Detail Review",
+			"item": [
+				{
+					"name": "Get ASB Detail Review by ASB",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/asb-detail-review/get-by-asb?idAsb=1&page=1&amount=10",
+							"host": ["{{base_url}}"],
+							"path": ["asb-detail-review", "get-by-asb"],
+							"query": [
+								{
+									"key": "idAsb",
+									"value": "1",
+									"description": "ID of the ASB to get Detail Review records for"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (minimum 1)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Number of items per page (minimum 1)"
+								}
+							]
+						},
+						"description": "Get all ASB Detail Review records for a specific ASB with pagination. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for retrieving ASB Detail Review records used in verification process"
+		}
+	]
+}

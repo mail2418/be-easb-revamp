@@ -1,0 +1,197 @@
+{
+	"info": {
+		"_postman_id": "asb-komponen-bangunan-pros-std-module-api-collection",
+		"name": "EASB - ASB Komponen Bangunan Pros Std Module API",
+		"description": "API collection for ASB Komponen Bangunan Pros Std Module - managing ASB Komponen Bangunan Pros Standard data.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ASB Komponen Bangunan Pros Std Management (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create ASB Komponen Bangunan Pros Std",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idAsbKomponenBangunanStd\": 1,\n  \"min\": 100000,\n  \"avgMin\": 150000,\n  \"avg\": 200000,\n  \"avgMax\": 250000,\n  \"max\": 300000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-komponen-bangunan-pros-std",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-komponen-bangunan-pros-std"
+							]
+						},
+						"description": "Create a new ASB Komponen Bangunan Pros Std entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `idAsbKomponenBangunanStd` (number, required): ID of the related ASB Komponen Bangunan Std\n- `min` (number, optional): Minimum value\n- `avgMin` (number, optional): Average minimum value\n- `avg` (number, optional): Average value\n- `avgMax` (number, optional): Average maximum value\n- `max` (number, optional): Maximum value"
+					},
+					"response": []
+				},
+				{
+					"name": "Update ASB Komponen Bangunan Pros Std",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"idAsbKomponenBangunanStd\": 1,\n  \"min\": 120000,\n  \"avgMin\": 170000,\n  \"avg\": 220000,\n  \"avgMax\": 270000,\n  \"max\": 320000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-komponen-bangunan-pros-std",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-komponen-bangunan-pros-std"
+							]
+						},
+						"description": "Update an existing ASB Komponen Bangunan Pros Std. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the ASB Komponen Bangunan Pros Std to update\n- `idAsbKomponenBangunanStd` (number, optional): ID of the related ASB Komponen Bangunan Std\n- `min` (number, optional): Minimum value\n- `avgMin` (number, optional): Average minimum value\n- `avg` (number, optional): Average value\n- `avgMax` (number, optional): Average maximum value\n- `max` (number, optional): Maximum value"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ASB Komponen Bangunan Pros Std",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-komponen-bangunan-pros-std",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-komponen-bangunan-pros-std"
+							]
+						},
+						"description": "Delete an ASB Komponen Bangunan Pros Std entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the ASB Komponen Bangunan Pros Std to delete"
+					},
+					"response": []
+				}
+			],
+			"description": "Management operations for ASB Komponen Bangunan Pros Std"
+		},
+		{
+			"name": "ASB Komponen Bangunan Pros Std Queries",
+			"item": [
+				{
+					"name": "Get ASB Komponen Bangunan Pros Stds (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-komponen-bangunan-pros-std",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-komponen-bangunan-pros-std"
+							]
+						},
+						"description": "Get paginated list of ASB Komponen Bangunan Pros Std entries.\n\n**Request Body:**\n- `page` (number, required): Page number (minimum 1)\n- `amount` (number, required): Items per page (minimum 1)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get ASB Komponen Bangunan Pros Std Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-komponen-bangunan-pros-std/detail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-komponen-bangunan-pros-std",
+								"detail"
+							]
+						},
+						"description": "Get detailed information for a specific ASB Komponen Bangunan Pros Std entry.\n\n**Request Body:**\n- `id` (number, required): ID of the ASB Komponen Bangunan Pros Std (minimum 1)"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving ASB Komponen Bangunan Pros Std information"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		}
+	]
+}

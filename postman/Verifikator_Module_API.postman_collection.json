@@ -1,0 +1,198 @@
+{
+	"info": {
+		"_postman_id": "verifikator-module-collection",
+		"name": "Verifikator Module",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Check Verifikator Type",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/verifikators/check-verifikator-type",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"verifikators",
+						"check-verifikator-type"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Verifikators (List)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/verifikators?page=1&amount=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"verifikators"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "amount",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Verifikator Detail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/verifikators/detail?id=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"verifikators",
+						"detail"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Verifikator",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idUser\": 1,\n    \"jenisVerifikator\": \"ADPEM\",\n    \"verifikator\": \"Nama Verifikator\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/verifikators",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"verifikators"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Verifikator",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"jenisVerifikator\": \"BPKAD\",\n    \"verifikator\": \"Nama Verifikator Updated\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/verifikators",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"verifikators"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Verifikator",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/verifikators",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"verifikators"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

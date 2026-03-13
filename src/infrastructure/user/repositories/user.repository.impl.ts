@@ -11,7 +11,6 @@ import { DeleteUserDto } from 'src/presentation/users/dto/delete_user.dto';
 import { DeleteUserByAdminDto } from 'src/presentation/users/dto/delete_user_by_admin.dto';
 import { GetUsersDto } from 'src/presentation/users/dto/get_users.dto';
 import { GetUserDetailDto } from 'src/presentation/users/dto/get_user_detail.dto';
-import { UsersPaginationResult } from 'src/presentation/users/dto/users_pagination.dto';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
@@ -93,7 +92,7 @@ export class UserRepositoryImpl implements UserRepository {
         }
     }
 
-    async getUsers(pagination: GetUsersDto): Promise<UsersPaginationResult> {
+    async getUsers(pagination: GetUsersDto): Promise<{ data: User[], total: number }> {
         try {
             const [users, total] = await this.repo.findAndCount({
                 skip: (pagination.page - 1) * pagination.amount,
@@ -101,13 +100,7 @@ export class UserRepositoryImpl implements UserRepository {
                 order: { id: 'DESC' }
             });
 
-            return {
-                users,
-                total,
-                page: pagination.page,
-                amount: pagination.amount,
-                totalPages: Math.ceil(total / pagination.amount)
-            };
+            return { data: users, total };
         } catch (error) {
             throw error;
         }

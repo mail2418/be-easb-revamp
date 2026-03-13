@@ -1,0 +1,197 @@
+{
+	"info": {
+		"_postman_id": "asb-komponen-bangunan-nonstd-module-api-collection",
+		"name": "EASB - ASB Komponen Bangunan NonStd Module API",
+		"description": "API collection for ASB Komponen Bangunan NonStd Module - managing ASB Komponen Bangunan Non-Standard data.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ASB Komponen Bangunan NonStd Management (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create ASB Komponen Bangunan NonStd",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"komponen\": \"Pondasi Beton Custom\",\n  \"files\": \"ORIGIN\",\n  \"idAsbJenis\": 1,\n  \"idAsbTipeBangunan\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-komponen-bangunan-nonstds",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-komponen-bangunan-nonstds"
+							]
+						},
+						"description": "Create a new ASB Komponen Bangunan NonStd entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `komponen` (string, required): Komponen bangunan name/description\n- `files` (enum, required): File type - must be either 'ORIGIN' or 'REVIEW'\n- `idAsbJenis` (number, required): ID of the related ASB Jenis\n- `idAsbTipeBangunan` (number, required): ID of the related ASB Tipe Bangunan"
+					},
+					"response": []
+				},
+				{
+					"name": "Update ASB Komponen Bangunan NonStd",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"komponen\": \"Pondasi Beton Custom Modified\",\n  \"files\": \"REVIEW\",\n  \"idAsbJenis\": 1,\n  \"idAsbTipeBangunan\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-komponen-bangunan-nonstds",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-komponen-bangunan-nonstds"
+							]
+						},
+						"description": "Update an existing ASB Komponen Bangunan NonStd. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the ASB Komponen Bangunan NonStd to update\n- `komponen` (string, optional): Komponen bangunan name/description\n- `files` (enum, optional): File type - must be either 'ORIGIN' or 'REVIEW'\n- `idAsbJenis` (number, optional): ID of the related ASB Jenis\n- `idAsbTipeBangunan` (number, optional): ID of the related ASB Tipe Bangunan"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ASB Komponen Bangunan NonStd",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-komponen-bangunan-nonstds",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-komponen-bangunan-nonstds"
+							]
+						},
+						"description": "Delete an ASB Komponen Bangunan NonStd entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the ASB Komponen Bangunan NonStd to delete"
+					},
+					"response": []
+				}
+			],
+			"description": "Management operations for ASB Komponen Bangunan NonStd"
+		},
+		{
+			"name": "ASB Komponen Bangunan NonStd Queries",
+			"item": [
+				{
+					"name": "Get ASB Komponen Bangunan NonStds (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-komponen-bangunan-nonstds",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-komponen-bangunan-nonstds"
+							]
+						},
+						"description": "Get paginated list of ASB Komponen Bangunan NonStd entries.\n\n**Request Body:**\n- `page` (number, required): Page number (minimum 1)\n- `amount` (number, required): Items per page (minimum 1)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get ASB Komponen Bangunan NonStd Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-komponen-bangunan-nonstds/detail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-komponen-bangunan-nonstds",
+								"detail"
+							]
+						},
+						"description": "Get detailed information for a specific ASB Komponen Bangunan NonStd entry.\n\n**Request Body:**\n- `id` (number, required): ID of the ASB Komponen Bangunan NonStd (minimum 1)"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving ASB Komponen Bangunan NonStd information"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		}
+	]
+}

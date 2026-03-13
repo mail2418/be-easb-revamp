@@ -17,43 +17,45 @@ import { UserRepository } from 'src/domain/user/user.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserOrmEntity } from 'src/infrastructure/user/orm/user.orm_entity';
 import { AuthRepository } from 'src/application/auth/auth.repository';
+import { OpdModule } from '../opd/opd.module';
 
 @Module({
-  imports: [
-    ConfigModule,
-    UserModule,
-    PassportModule.register({ session: false }),
-    JwtModule.registerAsync({
-        inject: [ConfigService],
-        useFactory: (cfg: ConfigService): JwtModuleOptions => {
-            const expiresIn = cfg.getOrThrow<string>('jwt.accessTtl');
-            return {
-                secret: cfg.getOrThrow<string>('jwt.accessSecret'),
-                signOptions: { expiresIn: expiresIn as any },
-            };
+    imports: [
+        ConfigModule,
+        UserModule,
+        PassportModule.register({ session: false }),
+        JwtModule.registerAsync({
+            inject: [ConfigService],
+            useFactory: (cfg: ConfigService): JwtModuleOptions => {
+                const expiresIn = cfg.getOrThrow<string>('jwt.accessTtl');
+                return {
+                    secret: cfg.getOrThrow<string>('jwt.accessSecret'),
+                    signOptions: { expiresIn: expiresIn as any },
+                };
+            },
+        }),
+        TypeOrmModule.forFeature([UserOrmEntity]),
+        OpdModule
+    ],
+    controllers: [AuthController],
+    providers: [
+        AuthService,
+        JwtStrategy,
+        RefreshJwtStrategy,
+        { provide: APP_GUARD, useClass: JwtAuthGuard },
+        { provide: APP_GUARD, useClass: RolesGuard },
+        UserServiceImpl,
+        {
+            provide: UserService,
+            useExisting: UserServiceImpl,
         },
-    }),
-    TypeOrmModule.forFeature([UserOrmEntity])
-  ],
-  controllers: [AuthController],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    RefreshJwtStrategy,
-    { provide: APP_GUARD, useClass: JwtAuthGuard }, 
-    { provide: APP_GUARD, useClass: RolesGuard },  
-    UserServiceImpl,
-    {
-        provide: UserService,
-        useExisting: UserServiceImpl,
-    },
-    UserRepositoryImpl,
-    {
-        provide: UserRepository,
-        useExisting: UserRepositoryImpl,
-    },
-    AuthRepository,
-],
-  exports: [AuthService],
+        UserRepositoryImpl,
+        {
+            provide: UserRepository,
+            useExisting: UserRepositoryImpl,
+        },
+        AuthRepository,
+    ],
+    exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

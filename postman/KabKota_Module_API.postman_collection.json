@@ -1,0 +1,325 @@
+{
+	"info": {
+		"_postman_id": "kabkota-module-api-collection",
+		"name": "EASB - KabKota Module API",
+		"description": "API collection for KabKota (Kabupaten/Kota) Module - managing Indonesian regency/city master data with province relationships.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "KabKota Management (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create KabKota",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode\": \"3171\",\n  \"nama\": \"Kota Jakarta Pusat\",\n  \"provinceId\": 1,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kabkotas",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas"]
+						},
+						"description": "Create a new kabupaten/kota. Requires SUPERADMIN role only.\n\n**Fields:**\n- `kode` (string, required): KabKota code per BPS (1-10 chars, must be unique)\n- `nama` (string, required): KabKota name (1-255 chars)\n- `provinceId` (number, required): Foreign key to Province\n- `isActive` (boolean, optional): Active status (default: true)\n\n**Note:** Code typically follows format: Province code (2 digits) + KabKota code (2 digits)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update KabKota",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"kode\": \"3171\",\n  \"nama\": \"Kota Jakarta Pusat\",\n  \"provinceId\": 1,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kabkotas",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas"]
+						},
+						"description": "Update an existing kabupaten/kota. Requires SUPERADMIN role only.\n\n**Fields:**\n- `id` (number, required): KabKota ID to update\n- `kode` (string, optional): New KabKota code (1-10 chars)\n- `nama` (string, optional): New KabKota name (1-255 chars)\n- `provinceId` (number, optional): New province association\n- `isActive` (boolean, optional): New active status"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete KabKota",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kabkotas",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas"]
+						},
+						"description": "Soft delete a kabupaten/kota. Requires SUPERADMIN role only.\n\n**Fields:**\n- `id` (number, required): KabKota ID to delete\n\n**Note:** This performs a soft delete (sets deleted_at timestamp)."
+					},
+					"response": []
+				}
+			],
+			"description": "CRUD operations for KabKota management - All endpoints require SUPERADMIN role"
+		},
+		{
+			"name": "KabKota Queries (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Get KabKotas List (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kabkotas",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas"]
+						},
+						"description": "Get paginated list of all kabupaten/kota. Requires SUPERADMIN role only.\n\n**Request Body:**\n- `page` (number, required): Page number (min: 1)\n- `amount` (number, required): Items per page (min: 1)\n\n**Response includes:**\n- `kabkotas`: Array of KabKota objects\n- `total`: Total number of kabkotas\n- `page`: Current page\n- `amount`: Items per page\n- `totalPages`: Total number of pages"
+					},
+					"response": []
+				},
+				{
+					"name": "Get KabKota Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kabkotas/detail",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas", "detail"]
+						},
+						"description": "Get detailed information for a specific kabupaten/kota. Requires SUPERADMIN role only.\n\n**Request Body:**\n- `id` (number, required): KabKota ID to retrieve\n\n**Returns:** Complete KabKota object with all fields including provinceId"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving KabKota information - All require SUPERADMIN role"
+		},
+		{
+			"name": "Example Use Cases",
+			"item": [
+				{
+					"name": "Example: Jakarta KabKotas",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode\": \"3172\",\n  \"nama\": \"Kota Jakarta Utara\",\n  \"provinceId\": 1,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kabkotas",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas"]
+						},
+						"description": "Example of creating KabKota for DKI Jakarta Province (provinceId: 1):\n\nJakarta Cities:\n- `3171` = Kota Jakarta Pusat\n- `3172` = Kota Jakarta Utara\n- `3173` = Kota Jakarta Barat\n- `3174` = Kota Jakarta Selatan\n- `3175` = Kota Jakarta Timur\n- `3101` = Kabupaten Kepulauan Seribu\n\nNote: First 2 digits (31) match the province code for DKI Jakarta."
+					},
+					"response": []
+				},
+				{
+					"name": "Example: Jawa Barat KabKotas",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode\": \"3273\",\n  \"nama\": \"Kota Bandung\",\n  \"provinceId\": 2,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kabkotas",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas"]
+						},
+						"description": "Example of creating KabKota for Jawa Barat Province (provinceId: 2):\n\nSome Major Cities/Regencies:\n- `3201` = Kabupaten Bogor\n- `3204` = Kabupaten Bandung\n- `3273` = Kota Bandung\n- `3276` = Kota Bekasi\n- `3277` = Kota Depok\n\nNote: First 2 digits (32) match the province code for Jawa Barat."
+					},
+					"response": []
+				},
+				{
+					"name": "Example: Move KabKota to Different Province",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"provinceId\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kabkotas",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas"]
+						},
+						"description": "Example of reassigning a kabupaten/kota to a different province.\n\nThis might be needed for administrative boundary changes or corrections."
+					},
+					"response": []
+				}
+			],
+			"description": "Common use cases and examples for KabKota module with Indonesian data"
+		},
+		{
+			"name": "Example Responses",
+			"item": [
+				{
+					"name": "Example Success Response",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kabkotas/detail",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas", "detail"]
+						},
+						"description": "Example of a successful response:\n\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"KabKota detail retrieved\",\n  \"data\": {\n    \"id\": 1,\n    \"kode\": \"3171\",\n    \"nama\": \"Kota Jakarta Pusat\",\n    \"provinceId\": 1,\n    \"isActive\": true,\n    \"createdAt\": \"2024-11-25T10:30:00.000Z\",\n    \"updatedAt\": \"2024-11-25T10:30:00.000Z\",\n    \"deletedAt\": null\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Example Paginated Response",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kabkotas",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas"]
+						},
+						"description": "Example of a paginated response:\n\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"KabKotas retrieved\",\n  \"data\": {\n    \"kabkotas\": [\n      {\n        \"id\": 1,\n        \"kode\": \"3171\",\n        \"nama\": \"Kota Jakarta Pusat\",\n        \"provinceId\": 1,\n        \"isActive\": true\n      },\n      {\n        \"id\": 2,\n        \"kode\": \"3172\",\n        \"nama\": \"Kota Jakarta Utara\",\n        \"provinceId\": 1,\n        \"isActive\": true\n      },\n      {\n        \"id\": 3,\n        \"kode\": \"3273\",\n        \"nama\": \"Kota Bandung\",\n        \"provinceId\": 2,\n        \"isActive\": true\n      }\n    ],\n    \"total\": 514,\n    \"page\": 1,\n    \"amount\": 10,\n    \"totalPages\": 52\n  }\n}\n```\n\nNote: Indonesia has approximately 514 kabupaten/kota in total."
+					},
+					"response": []
+				},
+				{
+					"name": "Example Error - Duplicate Code",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kabkotas",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas"]
+						},
+						"description": "Example of an error when trying to create a kabkota with duplicate code:\n\n```json\n{\n  \"status\": \"error\",\n  \"responseCode\": 409,\n  \"message\": \"KabKota code already exists\",\n  \"data\": null\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Example Error - Invalid Province",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kabkotas",
+							"host": ["{{base_url}}"],
+							"path": ["kabkotas"]
+						},
+						"description": "Example of an error when referencing non-existent province:\n\n```json\n{\n  \"status\": \"error\",\n  \"responseCode\": 404,\n  \"message\": \"Province not found\",\n  \"data\": null\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Example responses for reference"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login (MUST have SUPERADMIN role)"
+		}
+	]
+}

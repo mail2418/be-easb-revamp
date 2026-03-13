@@ -12,13 +12,13 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
         private readonly userService: UserService,
     ) {
         super({
-        jwtFromRequest: ExtractJwt.fromExtractors([
-            (req: Request) => req?.cookies?.refreshToken || null,
-            ExtractJwt.fromAuthHeaderAsBearerToken(),
-        ]),
-        ignoreExpiration: false,
-        secretOrKey: config.getOrThrow<string>('jwt.refreshSecret'),
-        passReqToCallback: true,
+            jwtFromRequest: ExtractJwt.fromExtractors([
+                (req: Request) => req?.cookies?.refreshToken || null,
+                ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ]),
+            ignoreExpiration: false,
+            secretOrKey: config.getOrThrow<string>('jwt.refreshSecret'),
+            passReqToCallback: true,
         });
     }
 
@@ -38,6 +38,7 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
             sub: payload.sub,
             username: payload.username,
             roles: payload.roles,
+            idOpd: payload.idOpd,
         };
     }
 }

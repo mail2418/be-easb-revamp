@@ -1,0 +1,197 @@
+{
+	"info": {
+		"_postman_id": "asb-fungsi-ruang-module-api-collection",
+		"name": "EASB - ASB Fungsi Ruang Module API",
+		"description": "API collection for ASB Fungsi Ruang Module - managing fungsi ruang data.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ASB Fungsi Ruang Management (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create ASB Fungsi Ruang",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nama_fungsi_ruang\": \"Ruang Tamu\",\n  \"koef\": 1.5,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-fungsi-ruangs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-fungsi-ruangs"
+							]
+						},
+						"description": "Create a new ASB Fungsi Ruang entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `nama_fungsi_ruang` (string, required): Name of the fungsi ruang\n- `koef` (number, required): Coefficient value\n- `isActive` (boolean, required): Active status"
+					},
+					"response": []
+				},
+				{
+					"name": "Update ASB Fungsi Ruang",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"nama_fungsi_ruang\": \"Ruang Tamu Updated\",\n  \"koef\": 1.6,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-fungsi-ruangs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-fungsi-ruangs"
+							]
+						},
+						"description": "Update an existing ASB Fungsi Ruang. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the fungsi ruang\n- `nama_fungsi_ruang` (string, optional): Name of the fungsi ruang\n- `koef` (number, optional): Coefficient value\n- `isActive` (boolean, optional): Active status"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ASB Fungsi Ruang",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-fungsi-ruangs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-fungsi-ruangs"
+							]
+						},
+						"description": "Delete an ASB Fungsi Ruang entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the fungsi ruang to delete"
+					},
+					"response": []
+				}
+			],
+			"description": "Management operations for ASB Fungsi Ruang"
+		},
+		{
+			"name": "ASB Fungsi Ruang Queries",
+			"item": [
+				{
+					"name": "Get ASB Fungsi Ruangs (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-fungsi-ruangs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-fungsi-ruangs"
+							]
+						},
+						"description": "Get paginated list of ASB Fungsi Ruang entries.\n\n**Request Body:**\n- `page` (number, required): Page number\n- `amount` (number, required): Items per page"
+					},
+					"response": []
+				},
+				{
+					"name": "Get ASB Fungsi Ruang Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-fungsi-ruangs/detail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-fungsi-ruangs",
+								"detail"
+							]
+						},
+						"description": "Get detailed information for a specific ASB Fungsi Ruang entry.\n\n**Request Body:**\n- `id` (number, required): ID of the fungsi ruang"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving ASB Fungsi Ruang information"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		}
+	]
+}

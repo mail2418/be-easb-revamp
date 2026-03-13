@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "opd-module-api-collection",
+		"name": "EASB - OPD Module API",
+		"description": "API collection for OPD (Organisasi Perangkat Daerah) Module - managing regional government divisions and their associations with users.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "OPD Management",
+			"item": [
+				{
+					"name": "Create OPD",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN or ADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"opd\": \"Dinas Pendidikan\",\n  \"alias\": \"DISDIK\",\n  \"id_user\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/opds",
+							"host": ["{{base_url}}"],
+							"path": ["opds"]
+						},
+						"description": "Create a new OPD (Regional Government Division). Requires SUPERADMIN or ADMIN role.\n\n**Fields:**\n- `opd` (string, required): Full name of the OPD (must be unique)\n- `alias` (string, required): Short alias/abbreviation (max 50 chars)\n- `id_user` (number, required): User ID to associate with this OPD"
+					},
+					"response": []
+				},
+				{
+					"name": "Update OPD",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN or ADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"opd\": \"Dinas Pendidikan dan Kebudayaan\",\n  \"alias\": \"DISDIKBUD\",\n  \"id_user\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/opds",
+							"host": ["{{base_url}}"],
+							"path": ["opds"]
+						},
+						"description": "Update an existing OPD. Requires SUPERADMIN or ADMIN role.\n\n**Fields:**\n- `id` (number, required): OPD ID to update\n- `opd` (string, optional): New full name\n- `alias` (string, optional): New alias\n- `id_user` (number, optional): New user association"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete OPD",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN or ADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/opds",
+							"host": ["{{base_url}}"],
+							"path": ["opds"]
+						},
+						"description": "Soft delete an OPD. Requires SUPERADMIN or ADMIN role.\n\n**Fields:**\n- `id` (number, required): OPD ID to delete\n\n**Note:** This performs a soft delete (sets deleted_at timestamp)."
+					},
+					"response": []
+				}
+			],
+			"description": "CRUD operations for OPD management (Create, Update, Delete)"
+		},
+		{
+			"name": "OPD Queries",
+			"item": [
+				{
+					"name": "Get OPDs List (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN or ADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/opds",
+							"host": ["{{base_url}}"],
+							"path": ["opds"]
+						},
+						"description": "Get paginated list of all OPDs. Requires SUPERADMIN or ADMIN role.\n\n**Request Body:**\n- `page` (number, required): Page number (min: 1)\n- `amount` (number, required): Items per page (min: 1)\n\n**Response includes:**\n- `opds`: Array of OPD objects\n- `total`: Total number of OPDs\n- `page`: Current page\n- `amount`: Items per page\n- `totalPages`: Total number of pages"
+					},
+					"response": []
+				},
+				{
+					"name": "Get OPD Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN or ADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/opds/detail",
+							"host": ["{{base_url}}"],
+							"path": ["opds", "detail"]
+						},
+						"description": "Get detailed information for a specific OPD. Requires SUPERADMIN or ADMIN role.\n\n**Request Body:**\n- `id` (number, required): OPD ID to retrieve\n\n**Returns:** Complete OPD object with all fields"
+					},
+					"response": []
+				},
+				{
+					"name": "Get OPD by User ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN or ADMIN role"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/opds/user/:id_user",
+							"host": ["{{base_url}}"],
+							"path": ["opds", "user", ":id_user"],
+							"variable": [
+								{
+									"key": "id_user",
+									"value": "5",
+									"description": "User ID"
+								}
+							]
+						},
+						"description": "Get OPD associated with a specific user. Requires SUPERADMIN or ADMIN role.\n\n**Path Parameter:**\n- `id_user` (number): User ID to find associated OPD\n\n**Returns:** OPD object if found, or null if no OPD is associated with the user"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving OPD information"
+		},
+		{
+			"name": "Example Responses",
+			"item": [
+				{
+					"name": "Example Success Response",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/opds/detail",
+							"host": ["{{base_url}}"],
+							"path": ["opds", "detail"]
+						},
+						"description": "Example of a successful response:\n\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"OPD detail retrieved\",\n  \"data\": {\n    \"id\": 1,\n    \"opd\": \"Dinas Pendidikan\",\n    \"alias\": \"DISDIK\",\n    \"id_user\": 5,\n    \"createdAt\": \"2024-11-25T10:30:00.000Z\",\n    \"updatedAt\": \"2024-11-25T10:30:00.000Z\",\n    \"deletedAt\": null\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Example Paginated Response",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/opds",
+							"host": ["{{base_url}}"],
+							"path": ["opds"]
+						},
+						"description": "Example of a paginated response:\n\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"OPDs retrieved\",\n  \"data\": {\n    \"opds\": [\n      {\n        \"id\": 1,\n        \"opd\": \"Dinas Pendidikan\",\n        \"alias\": \"DISDIK\",\n        \"id_user\": 5\n      },\n      {\n        \"id\": 2,\n        \"opd\": \"Dinas Kesehatan\",\n        \"alias\": \"DINKES\",\n        \"id_user\": 6\n      }\n    ],\n    \"total\": 15,\n    \"page\": 1,\n    \"amount\": 10,\n    \"totalPages\": 2\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Example Error Response",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/opds",
+							"host": ["{{base_url}}"],
+							"path": ["opds"]
+						},
+						"description": "Example of an error response:\n\n```json\n{\n  \"status\": \"error\",\n  \"responseCode\": 409,\n  \"message\": \"OPD name already exists\",\n  \"data\": null\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Example responses for reference"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login (requires SUPERADMIN or ADMIN role)"
+		}
+	]
+}

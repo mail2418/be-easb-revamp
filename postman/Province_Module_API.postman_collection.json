@@ -1,0 +1,284 @@
+{
+	"info": {
+		"_postman_id": "province-module-api-collection",
+		"name": "EASB - Province Module API",
+		"description": "API collection for Province Module - managing Indonesian province master data with code, name, and active status.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Province Management (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create Province",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode\": \"31\",\n  \"nama\": \"DKI Jakarta\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/provinces",
+							"host": ["{{base_url}}"],
+							"path": ["provinces"]
+						},
+						"description": "Create a new province. Requires SUPERADMIN role only.\n\n**Fields:**\n- `kode` (string, required): Province code (1-10 chars, must be unique)\n- `nama` (string, required): Province name (1-255 chars)\n- `isActive` (boolean, optional): Active status (default: true)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Province",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"kode\": \"31\",\n  \"nama\": \"DKI Jakarta\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/provinces",
+							"host": ["{{base_url}}"],
+							"path": ["provinces"]
+						},
+						"description": "Update an existing province. Requires SUPERADMIN role only.\n\n**Fields:**\n- `id` (number, required): Province ID to update\n- `kode` (string, optional): New province code (1-10 chars)\n- `nama` (string, optional): New province name (1-255 chars)\n- `isActive` (boolean, optional): New active status"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Province",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/provinces",
+							"host": ["{{base_url}}"],
+							"path": ["provinces"]
+						},
+						"description": "Soft delete a province. Requires SUPERADMIN role only.\n\n**Fields:**\n- `id` (number, required): Province ID to delete\n\n**Note:** This performs a soft delete (sets deleted_at timestamp)."
+					},
+					"response": []
+				}
+			],
+			"description": "CRUD operations for province management - All endpoints require SUPERADMIN role"
+		},
+		{
+			"name": "Province Queries (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Get Provinces List (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/provinces",
+							"host": ["{{base_url}}"],
+							"path": ["provinces"]
+						},
+						"description": "Get paginated list of all provinces. Requires SUPERADMIN role only.\n\n**Request Body:**\n- `page` (number, required): Page number (min: 1)\n- `amount` (number, required): Items per page (min: 1)\n\n**Response includes:**\n- `provinces`: Array of Province objects\n- `total`: Total number of provinces\n- `page`: Current page\n- `amount`: Items per page\n- `totalPages`: Total number of pages"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Province Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/provinces/detail",
+							"host": ["{{base_url}}"],
+							"path": ["provinces", "detail"]
+						},
+						"description": "Get detailed information for a specific province. Requires SUPERADMIN role only.\n\n**Request Body:**\n- `id` (number, required): Province ID to retrieve\n\n**Returns:** Complete Province object with all fields"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving province information - All require SUPERADMIN role"
+		},
+		{
+			"name": "Example Use Cases",
+			"item": [
+				{
+					"name": "Example: Create Multiple Provinces",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode\": \"32\",\n  \"nama\": \"Jawa Barat\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/provinces",
+							"host": ["{{base_url}}"],
+							"path": ["provinces"]
+						},
+						"description": "Example of creating provinces for Indonesian provinces:\n\nCommon province codes:\n- `11` = Aceh\n- `12` = Sumatera Utara\n- `31` = DKI Jakarta\n- `32` = Jawa Barat\n- `33` = Jawa Tengah\n- `35` = Jawa Timur\n- `51` = Bali\n- `73` = Sulawesi Selatan\n\nNote: Execute this request multiple times with different data to create multiple provinces."
+					},
+					"response": []
+				},
+				{
+					"name": "Example: Deactivate Province",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"isActive\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/provinces",
+							"host": ["{{base_url}}"],
+							"path": ["provinces"]
+						},
+						"description": "Example of deactivating a province without deleting it.\n\nThis is useful when you want to temporarily disable a province without removing it from the database."
+					},
+					"response": []
+				}
+			],
+			"description": "Common use cases and examples for Province module"
+		},
+		{
+			"name": "Example Responses",
+			"item": [
+				{
+					"name": "Example Success Response",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/provinces/detail",
+							"host": ["{{base_url}}"],
+							"path": ["provinces", "detail"]
+						},
+						"description": "Example of a successful response:\n\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Province detail retrieved\",\n  \"data\": {\n    \"id\": 1,\n    \"kode\": \"31\",\n    \"nama\": \"DKI Jakarta\",\n    \"isActive\": true,\n    \"createdAt\": \"2024-11-25T10:30:00.000Z\",\n    \"updatedAt\": \"2024-11-25T10:30:00.000Z\",\n    \"deletedAt\": null\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Example Paginated Response",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/provinces",
+							"host": ["{{base_url}}"],
+							"path": ["provinces"]
+						},
+						"description": "Example of a paginated response:\n\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Provinces retrieved\",\n  \"data\": {\n    \"provinces\": [\n      {\n        \"id\": 1,\n        \"kode\": \"11\",\n        \"nama\": \"Aceh\",\n        \"isActive\": true\n      },\n      {\n        \"id\": 2,\n        \"kode\": \"12\",\n        \"nama\": \"Sumatera Utara\",\n        \"isActive\": true\n      },\n      {\n        \"id\": 3,\n        \"kode\": \"31\",\n        \"nama\": \"DKI Jakarta\",\n        \"isActive\": true\n      }\n    ],\n    \"total\": 34,\n    \"page\": 1,\n    \"amount\": 10,\n    \"totalPages\": 4\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Example Error - Duplicate Code",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/provinces",
+							"host": ["{{base_url}}"],
+							"path": ["provinces"]
+						},
+						"description": "Example of an error when trying to create a province with duplicate code:\n\n```json\n{\n  \"status\": \"error\",\n  \"responseCode\": 409,\n  \"message\": \"Province code already exists\",\n  \"data\": null\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Example responses for reference"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login (MUST have SUPERADMIN role)"
+		}
+	]
+}

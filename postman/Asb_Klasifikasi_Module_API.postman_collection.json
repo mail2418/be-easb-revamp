@@ -1,0 +1,197 @@
+{
+	"info": {
+		"_postman_id": "asb-klasifikasi-module-api-collection",
+		"name": "EASB - ASB Klasifikasi Module API",
+		"description": "API collection for ASB Klasifikasi Module - managing ASB Klasifikasi data.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ASB Klasifikasi Management (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create ASB Klasifikasi",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb_tipe_bangunan\": 1,\n  \"klasifikasi\": \"Klasifikasi A\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-klasifikasis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-klasifikasis"
+							]
+						},
+						"description": "Create a new ASB Klasifikasi entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `id_asb_tipe_bangunan` (number, required): ID of the ASB Tipe Bangunan\n- `klasifikasi` (string, required): Name/description of the klasifikasi"
+					},
+					"response": []
+				},
+				{
+					"name": "Update ASB Klasifikasi",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"id_asb_tipe_bangunan\": 2,\n  \"klasifikasi\": \"Klasifikasi Updated\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-klasifikasis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-klasifikasis"
+							]
+						},
+						"description": "Update an existing ASB Klasifikasi. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the ASB Klasifikasi to update\n- `id_asb_tipe_bangunan` (number, optional): ID of the ASB Tipe Bangunan\n- `klasifikasi` (string, optional): Name/description of the klasifikasi"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ASB Klasifikasi",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-klasifikasis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-klasifikasis"
+							]
+						},
+						"description": "Delete an ASB Klasifikasi entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): ID of the ASB Klasifikasi to delete"
+					},
+					"response": []
+				}
+			],
+			"description": "Management operations for ASB Klasifikasi"
+		},
+		{
+			"name": "ASB Klasifikasi Queries",
+			"item": [
+				{
+					"name": "Get ASB Klasifikasis (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-klasifikasis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-klasifikasis"
+							]
+						},
+						"description": "Get paginated list of ASB Klasifikasi entries.\n\n**Request Body:**\n- `page` (number, required): Page number (minimum 1)\n- `amount` (number, required): Items per page (minimum 1)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get ASB Klasifikasi Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-klasifikasis/detail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"asb-klasifikasis",
+								"detail"
+							]
+						},
+						"description": "Get detailed information for a specific ASB Klasifikasi entry.\n\n**Request Body:**\n- `id` (number, required): ID of the ASB Klasifikasi"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving ASB Klasifikasi information"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		}
+	]
+}

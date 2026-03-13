@@ -1,0 +1,290 @@
+{
+	"info": {
+		"_postman_id": "kecamatan-kelurahan-collection",
+		"name": "Kecamatan & Kelurahan API Collection",
+		"description": "API collection for Kecamatan (Sub-districts) and Kelurahan (Villages) modules",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Kecamatan",
+			"item": [
+				{
+					"name": "Get All Kecamatans",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kecamatans?page=1&amount=10",
+							"host": ["{{base_url}}"],
+							"path": ["kecamatans"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "amount",
+									"value": "10"
+								},
+								{
+									"key": "idKabkota",
+									"value": "62",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all kecamatans with pagination. Supports filtering by kabkota and search. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kecamatan Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kecamatans/detail?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["kecamatans", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get a specific kecamatan by ID. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Kecamatan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idKabkota\": 62,\n  \"kodeKecamatan\": \"20\",\n  \"namaKecamatan\": \"Kecamatan Baru\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kecamatans",
+							"host": ["{{base_url}}"],
+							"path": ["kecamatans"]
+						},
+						"description": "Create a new kecamatan. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Kecamatan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"namaKecamatan\": \"Tulungagung Updated\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kecamatans",
+							"host": ["{{base_url}}"],
+							"path": ["kecamatans"]
+						},
+						"description": "Update an existing kecamatan. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Kecamatan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kecamatans",
+							"host": ["{{base_url}}"],
+							"path": ["kecamatans"]
+						},
+						"description": "Delete a kecamatan (soft delete). Requires SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing kecamatans (sub-districts). All endpoints require SUPERADMIN role."
+		},
+		{
+			"name": "Kelurahan",
+			"item": [
+				{
+					"name": "Get All Kelurahans",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kelurahans?page=1&amount=10",
+							"host": ["{{base_url}}"],
+							"path": ["kelurahans"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "amount",
+									"value": "10"
+								},
+								{
+									"key": "idKecamatan",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all kelurahans with pagination. Supports filtering by kecamatan and search. Requires OPD, ADMIN, VERIFIKATOR, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kelurahan Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kelurahans/detail?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["kelurahans", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get a specific kelurahan by ID. Requires OPD, ADMIN, VERIFIKATOR, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Kelurahan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idKecamatan\": 1,\n  \"namaKelurahan\": \"Kelurahan Baru\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kelurahans",
+							"host": ["{{base_url}}"],
+							"path": ["kelurahans"]
+						},
+						"description": "Create a new kelurahan. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Kelurahan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"namaKelurahan\": \"Bago Updated\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kelurahans",
+							"host": ["{{base_url}}"],
+							"path": ["kelurahans"]
+						},
+						"description": "Update an existing kelurahan. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Kelurahan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/kelurahans",
+							"host": ["{{base_url}}"],
+							"path": ["kelurahans"]
+						},
+						"description": "Delete a kelurahan (soft delete). Requires SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing kelurahans (villages). GET methods: OPD, ADMIN, VERIFIKATOR, SUPERADMIN. CRUD operations (POST, PUT, DELETE): SUPERADMIN only."
+		}
+	]
+}

@@ -1,0 +1,698 @@
+{
+	"info": {
+		"_postman_id": "asb-module-collection",
+		"name": "ASB Module API Collection",
+		"description": "Comprehensive API collection for ASB (Analisis Standar Biaya) module including all endpoints for ASB management, verification, and related entities",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "ASB",
+			"item": [
+				{
+					"name": "Get All ASB",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/asb?page=1&amount=10",
+							"host": ["{{base_url}}"],
+							"path": ["asb"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "amount",
+									"value": "10"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all ASB with pagination. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get ASB by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/asb/id?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "id"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get a specific ASB by ID. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get ASB by Month and Year",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/asb/by-month-year?month=12&year=2025",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "by-month-year"],
+							"query": [
+								{
+									"key": "month",
+									"value": "12"
+								},
+								{
+									"key": "year",
+									"value": "2025"
+								}
+							]
+						},
+						"description": "Get ASB count grouped by date for a specific month and year"
+					},
+					"response": []
+				},
+				{
+					"name": "Get ASB by Month Year Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/asb/by-month-year-status?month=12&year=2025",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "by-month-year-status"],
+							"query": [
+								{
+									"key": "month",
+									"value": "12"
+								},
+								{
+									"key": "year",
+									"value": "2025"
+								}
+							]
+						},
+						"description": "Get ASB status summary for a specific month and year"
+					},
+					"response": []
+				},
+				{
+					"name": "Create ASB Index",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tahunAnggaran\": 2025,\n  \"namaAsb\": \"Gedung Kantor Baru\",\n  \"alamat\": \"Jl. Contoh No. 123\",\n  \"totalLantai\": 3,\n  \"idAsbTipeBangunan\": 1,\n  \"idKlasifikasi\": 1,\n  \"idKabkota\": 1,\n  \"jumlahKontraktor\": 2,\n  \"idAsbJenis\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/store-index",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "store-index"]
+						},
+						"description": "Create a new ASB entry (status will be set to 1). Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update ASB Index",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"tahunAnggaran\": 2025,\n  \"namaAsb\": \"Gedung Kantor Baru (Updated)\",\n  \"alamat\": \"Jl. Contoh No. 123\",\n  \"totalLantai\": 3,\n  \"idAsbTipeBangunan\": 1,\n  \"idKlasifikasi\": 1,\n  \"idKabkota\": 1,\n  \"jumlahKontraktor\": 2,\n  \"idAsbJenis\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/store-index",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "store-index"]
+						},
+						"description": "Update an existing ASB index (status will be set to 1). Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ASB",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb",
+							"host": ["{{base_url}}"],
+							"path": ["asb"]
+						},
+						"description": "Delete an ASB and all related documents. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Store Lantai",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1,\n  \"id_asb_detail\": [],\n  \"luas_lantai\": [100.5, 95.3, 90.2],\n  \"id_asb_lantai\": [1, 2, 3],\n  \"id_asb_fungsi_ruang\": [1, 2, 3]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/store-lantai",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "store-lantai"]
+						},
+						"description": "Store floor (lantai) details for ASB. Updates status to 2. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Store BPS (Bangunan Pekerjaan Standar)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1,\n  \"id_asb_bipek_standard\": null,\n  \"komponen_std\": [1, 2, 3],\n  \"bobot_std\": [30, 40, 30]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/store-bps",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "store-bps"]
+						},
+						"description": "Store BPS (Bipek Standard) data. Updates status to 3. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Store BPNS (Bangunan Pekerjaan Non-Standar)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1,\n  \"id_asb_bipek_nonstd\": null,\n  \"komponen_nonstd\": [1, 2],\n  \"bobot_nonstd\": [60, 40]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/store-bpns",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "store-bpns"]
+						},
+						"description": "Store BPNS (Bipek Non-Standard) data. Updates status to 4. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Store Rekening",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/store-rekening",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "store-rekening"]
+						},
+						"description": "Store rekening data. Updates status to 5. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Store Verif",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/store-verif",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "store-verif"]
+						},
+						"description": "Submit ASB for verification. Updates status to 5. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Lantai",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1,\n  \"verif_luas_lantai\": [100.5, 95.3, 90.2],\n  \"verif_id_asb_lantai\": [1, 2, 3],\n  \"verif_id_asb_fungsi_ruang\": [1, 2, 3]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/verify-lantai",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "verify-lantai"]
+						},
+						"description": "Verify floor details. Updates status to 9. Requires VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify BPS",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1,\n  \"verif_komponen_std\": [1, 2, 3],\n  \"verif_bobot_acuan_std\": [30, 40, 30]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/verify-bps",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "verify-bps"]
+						},
+						"description": "Verify BPS data. Updates status to 10. Requires VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify BPNS",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1,\n  \"verif_komponen_nonstd\": [1, 2],\n  \"verif_bobot_acuan_nonstd\": [60, 40]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/verify-bpns",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "verify-bpns"]
+						},
+						"description": "Verify BPNS data. Updates status to 11. Requires VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Rekening",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_asb\": 1,\n  \"id_rekening_review\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb/verify-rekening",
+							"host": ["{{base_url}}"],
+							"path": ["asb", "verify-rekening"]
+						},
+						"description": "Verify rekening. Updates status to 12. Requires VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Main ASB endpoints for managing ASB entries, including creation, updates, and verification workflows"
+		},
+		{
+			"name": "ASB Document",
+			"item": [
+				{
+					"name": "Get All Documents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/asb-document?page=1&amount=10",
+							"host": ["{{base_url}}"],
+							"path": ["asb-document"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "amount",
+									"value": "10"
+								},
+								{
+									"key": "idAsb",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all ASB documents with pagination. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Document Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/asb-document/detail?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["asb-document", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get a specific ASB document by ID. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Documents by Spec",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/asb-document/by-spec?spec=SURAT_PERMOHONAN",
+							"host": ["{{base_url}}"],
+							"path": ["asb-document", "by-spec"],
+							"query": [
+								{
+									"key": "spec",
+									"value": "SURAT_PERMOHONAN"
+								}
+							]
+						},
+						"description": "Get documents filtered by specification type. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Document",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "idAsb",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "spec",
+									"value": "SURAT_PERMOHONAN",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-document",
+							"host": ["{{base_url}}"],
+							"path": ["asb-document"]
+						},
+						"description": "Upload a new ASB document. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Document",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								},
+								{
+									"key": "spec",
+									"value": "SURAT_PERMOHONAN",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-document",
+							"host": ["{{base_url}}"],
+							"path": ["asb-document"]
+						},
+						"description": "Update an existing ASB document. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Document",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-document",
+							"host": ["{{base_url}}"],
+							"path": ["asb-document"]
+						},
+						"description": "Delete an ASB document. Requires SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing ASB documents (uploads, updates, deletions)"
+		},
+		{
+			"name": "ASB Lantai",
+			"item": [
+				{
+					"name": "Get All Lantai",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/asb-lantai?page=1&amount=10",
+							"host": ["{{base_url}}"],
+							"path": ["asb-lantai"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "amount",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get all ASB lantai (floor types) with pagination. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Lantai Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/asb-lantai/detail?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["asb-lantai", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get a specific ASB lantai by ID. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Lantai",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"lantai\": \"Lantai 1\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-lantai",
+							"host": ["{{base_url}}"],
+							"path": ["asb-lantai"]
+						},
+						"description": "Create a new ASB lantai (floor type). Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Lantai",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"lantai\": \"Lantai 1 (Updated)\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-lantai",
+							"host": ["{{base_url}}"],
+							"path": ["asb-lantai"]
+						},
+						"description": "Update an existing ASB lantai. Requires SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Lantai",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/asb-lantai",
+							"host": ["{{base_url}}"],
+							"path": ["asb-lantai"]
+						},
+						"description": "Delete an ASB lantai. Requires SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing ASB lantai (floor types) master data"
+		}
+	]
+}

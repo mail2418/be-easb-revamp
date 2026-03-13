@@ -11,7 +11,7 @@ import { RevokeAllDto } from './dto/revoke_all.dto';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService) { }
 
     @Public()
     @Post('login')
@@ -38,7 +38,7 @@ export class AuthController {
         };
     }
 
-    @Public() 
+    @Public()
     @UseGuards(RefreshJwtAuthGuard)
     @Post('refresh')
     async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
@@ -46,9 +46,9 @@ export class AuthController {
         const tokens = await this.authService.rotateTokens({ id: user.sub, username: user.username, roles: user.roles } as any);
 
         res.cookie('refreshToken', tokens.refreshToken, {
-            httpOnly: true, 
-            secure: process.env.NODE_ENV === 'production', 
-            sameSite: 'strict', 
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
             path: '/',
             maxAge: tokens.maxAgeRefresh,
         });

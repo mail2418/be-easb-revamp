@@ -1,0 +1,212 @@
+{
+	"info": {
+		"_postman_id": "asb-document-collection-v1",
+		"name": "ASB Document API",
+		"description": "Collection for ASB Document management including listing and downloading documents.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Documents by ASB",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/asb-document/by-asb?idAsb=1&page=1&amount=10",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"asb-document",
+						"by-asb"
+					],
+					"query": [
+						{
+							"key": "idAsb",
+							"value": "1",
+							"description": "ID of the ASB"
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Page number"
+						},
+						{
+							"key": "amount",
+							"value": "10",
+							"description": "Items per page"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Documents by Spec",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/asb-document/by-spec?spec=SURAT_PERMOHONAN",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"asb-document",
+						"by-spec"
+					],
+					"query": [
+						{
+							"key": "spec",
+							"value": "SURAT_PERMOHONAN",
+							"description": "Document specification type (SURAT_PERMOHONAN, KERTAS_KERJA, etc.)"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download All Documents (ZIP)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/asb-document/download-all-by-asb?idAsb=1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"asb-document",
+						"download-all-by-asb"
+					],
+					"query": [
+						{
+							"key": "idAsb",
+							"value": "1",
+							"description": "ID of the ASB"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download Surat Permohonan (File)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/asb-document/download-surat-permohonan?idAsb=1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"asb-document",
+						"download-surat-permohonan"
+					],
+					"query": [
+						{
+							"key": "idAsb",
+							"value": "1",
+							"description": "ID of the ASB"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Surat Permohonan (Inline)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/asb-document/download-surat-permohonan?idAsb=1&view=true",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"asb-document",
+						"download-surat-permohonan"
+					],
+					"query": [
+						{
+							"key": "idAsb",
+							"value": "1",
+							"description": "ID of the ASB"
+						},
+						{
+							"key": "view",
+							"value": "true",
+							"description": "Set to true to view in browser"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download Kertas Kerja (File)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/asb-document/download-kertas-kerja?idAsb=1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"asb-document",
+						"download-kertas-kerja"
+					],
+					"query": [
+						{
+							"key": "idAsb",
+							"value": "1",
+							"description": "ID of the ASB"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Kertas Kerja (Inline)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/asb-document/download-kertas-kerja?idAsb=1&view=true",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"asb-document",
+						"download-kertas-kerja"
+					],
+					"query": [
+						{
+							"key": "idAsb",
+							"value": "1",
+							"description": "ID of the ASB"
+						},
+						{
+							"key": "view",
+							"value": "true",
+							"description": "Set to true to view in browser"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}

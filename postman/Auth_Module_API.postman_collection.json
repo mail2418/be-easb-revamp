@@ -1,0 +1,164 @@
+{
+	"info": {
+		"_postman_id": "auth-module-api-collection",
+		"name": "EASB - Auth Module API",
+		"description": "API collection for Authentication Module - managing user authentication, login, token refresh, logout, and token revocation.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Public Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user and receive access token. This endpoint is public (no authentication required).\n\n**Fields:**\n- `username` (string, required): Username (3-50 characters)\n- `password` (string, required): Password (6-100 characters)\n\n**Response:**\n- Returns an access token in the response body\n- Sets a refresh token as an HttpOnly cookie"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Refresh the access token using the refresh token stored in HttpOnly cookie. This endpoint is public but requires a valid refresh token cookie.\n\n**Authentication:**\n- Requires refresh token in HttpOnly cookie (automatically sent by browser)\n- No Authorization header needed\n\n**Response:**\n- Returns a new access token\n- Sets a new refresh token as an HttpOnly cookie"
+					},
+					"response": []
+				}
+			],
+			"description": "Public authentication endpoints (no JWT required)"
+		},
+		{
+			"name": "Authenticated Operations",
+			"item": [
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT access token"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout the current user. Requires authentication.\n\n**Authentication:**\n- Requires valid JWT access token in Authorization header\n\n**Effect:**\n- Clears the refresh token cookie"
+					},
+					"response": []
+				}
+			],
+			"description": "Operations that require authentication"
+		},
+		{
+			"name": "Admin Operations (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Revoke All User Tokens",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/revoke-all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"revoke-all"
+							]
+						},
+						"description": "Revoke all refresh tokens for a specific user. Requires SUPERADMIN role.\n\n**Fields:**\n- `userId` (number, required): ID of the user whose tokens should be revoked\n\n**Authentication:**\n- Requires SUPERADMIN role\n\n**Effect:**\n- Revokes all refresh tokens for the specified user\n- Clears the refresh token cookie for the current session"
+					},
+					"response": []
+				}
+			],
+			"description": "Administrative operations for token management (SUPERADMIN only)"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		}
+	]
+}
