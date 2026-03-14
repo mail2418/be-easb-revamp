@@ -16,6 +16,7 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
     async findAll(
         search: string | undefined,
         tahunAnggaran: number | undefined,
+        idJenisUsulan: number | undefined,
         page: number,
         limit: number,
     ): Promise<{ data: MainDashboard[]; total: number }> {
@@ -27,41 +28,53 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
             .skip(skip)
             .take(limit);
 
-            const whereConditions: string[] = [];
-            const whereParams: any = {};
+        const whereConditions: string[] = [];
+        const whereParams: any = {};
 
-            // Apply search filter if provided
-            if (search) {
-                whereConditions.push('LOWER(main_dashboard.namaUsulan) LIKE :search');
-                whereParams.search = `%${search.toLowerCase()}%`;
-            }
+        if (search) {
+            whereConditions.push('LOWER(main_dashboard.namaUsulan) LIKE :search');
+            whereParams.search = `%${search.toLowerCase()}%`;
+        }
 
-            // Apply tahunAnggaran filter if provided
-            if (tahunAnggaran !== undefined) {
-                whereConditions.push('main_dashboard.tahunAnggaran = :tahunAnggaran');
-                whereParams.tahunAnggaran = tahunAnggaran;
-            }
+        if (tahunAnggaran !== undefined) {
+            whereConditions.push('main_dashboard.tahunAnggaran = :tahunAnggaran');
+            whereParams.tahunAnggaran = tahunAnggaran;
+        }
 
-            if (whereConditions.length > 0) {
-                qb.where(whereConditions.join(' AND '), whereParams);
-            }
+        if (idJenisUsulan !== undefined) {
+            whereConditions.push('main_dashboard.idJenisUsulan = :idJenisUsulan');
+            whereParams.idJenisUsulan = idJenisUsulan;
+        }
 
-            // Get total count
-            const totalQb = this.repo.createQueryBuilder('main_dashboard');
-            if (whereConditions.length > 0) {
-                totalQb.where(whereConditions.join(' AND '), whereParams);
-            }
+        if (whereConditions.length > 0) {
+            qb.where(whereConditions.join(' AND '), whereParams);
+        }
 
-            const [entities, total] = await Promise.all([
-                qb.getMany(),
-                totalQb.getCount(),
-            ]);
+        const totalQb = this.repo.createQueryBuilder('main_dashboard');
+        if (whereConditions.length > 0) {
+            totalQb.where(whereConditions.join(' AND '), whereParams);
+        }
 
-            const data = entities.map((entity) =>
-                plainToInstance(MainDashboard, entity),
-            );
+        const [entities, total] = await Promise.all([
+            qb.getMany(),
+            totalQb.getCount(),
+        ]);
 
-            return { data, total };
+        const data = entities.map((entity) =>
+            plainToInstance(MainDashboard, entity),
+        );
+
+        return { data, total };
+    }
+
+    async create(data: { idUsulan: number; idJenisUsulan: number; idAsbStatus: number; namaUsulan: string; rejectInfo?: string | null; tahunAnggaran?: number | null }): Promise<MainDashboard> {
+        const entity = this.repo.create(data);
+        const saved = await this.repo.save(entity);
+        return plainToInstance(MainDashboard, saved);
+    }
+
+    async updateByUsulan(idUsulan: number, idJenisUsulan: number, data: { idAsbStatus?: number; namaUsulan?: string; rejectInfo?: string | null; tahunAnggaran?: number | null }): Promise<void> {
+        await this.repo.update({ idUsulan, idJenisUsulan }, data);
     }
 }
 

@@ -22,7 +22,7 @@ import { MainDashboardOrmEntity } from '../../infrastructure/main_dashboard/orm/
             useClass: MainDashboardRepositoryImpl,
         },
     ],
-    exports: [MainDashboardService],
+    exports: [MainDashboardService, MainDashboardRepository],
 })
 export class MainDashboardModule { }
 

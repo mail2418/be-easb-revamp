@@ -11,6 +11,7 @@ import { JalanSpesifikasiDesainModule } from '../jalan_spesifikasi_desain/jalan_
 import { JalanSpesifikasiDesainReviewModule } from '../jalan_spesifikasi_desain_review/jalan_spesifikasi_desain_review.module';
 import { PpnGlobalModule } from '../ppn_global/ppn_global.module';
 import { SmkkGlobalModule } from '../smkk_global/smkk_global.module';
+import { JalanSaluranRuangLingkupModule } from '../jalan_saluran_ruang_lingkup/jalan_saluran_ruang_lingkup.module';
 import { JalanSaluranSmkkModule } from '../jalan_saluran_smkk/jalan_saluran_smkk.module';
 import { JalanSaluranSpesifikasiSmkkModule } from '../jalan_saluran_spesifikasi_smkk/jalan_saluran_spesifikasi_smkk.module';
 import { JalanSaluranSpesifikasiSmkkReviewModule } from '../jalan_saluran_spesifikasi_smkk_review/jalan_saluran_spesifikasi_smkk_review.module';

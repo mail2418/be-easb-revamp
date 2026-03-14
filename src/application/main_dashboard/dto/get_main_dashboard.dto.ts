@@ -16,6 +16,12 @@ export class GetMainDashboardDto {
     @Type(() => Number)
     @IsInt()
     @Min(1)
+    idJenisUsulan?: number;
+
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(1)
     page?: number;
 
     @IsOptional()

@@ -42,6 +42,7 @@ import { KelurahanModule } from './presentation/kelurahan/kelurahan.module';
 import { JalanJenisPerkerasanModule } from './presentation/jalan_jenis_perkerasan/jalan_jenis_perkerasan.module';
 import { UsulanJalanStatusModule } from './presentation/usulan_jalan_status/usulan_jalan_status.module';
 import { UsulanJalanModule } from './presentation/usulan_jalan/usulan_jalan.module';
+import { UsulanSaluranModule } from './presentation/usulan_saluran/usulan_saluran.module';
 import { JalanJenisPemeliharaanModule } from './presentation/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.module';
 import { PpnGlobalModule } from './presentation/ppn_global/ppn_global.module';
 import { SmkkGlobalModule } from './presentation/smkk_global/smkk_global.module';
@@ -150,6 +151,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
         JalanJenisPerkerasanModule,
         UsulanJalanStatusModule,
         UsulanJalanModule,
+        UsulanSaluranModule,
         JalanJenisPemeliharaanModule,
         PpnGlobalModule,
         SmkkGlobalModule,
