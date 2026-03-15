@@ -1,6 +1,8 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsulanSaluranOrmEntity } from '../../infrastructure/usulan_saluran/orm/usulan_saluran.orm_entity';
+import { JalanSaluranSpesifikasiSmkkOrmEntity } from '../../infrastructure/jalan_saluran_spesifikasi_smkk/orm/jalan_saluran_spesifikasi_smkk.orm_entity';
+import { JalanSaluranSpesifikasiSmkkReviewOrmEntity } from '../../infrastructure/jalan_saluran_spesifikasi_smkk_review/orm/jalan_saluran_spesifikasi_smkk_review.orm_entity';
 import { UsulanSaluranRepository } from '../../domain/usulan_saluran/usulan_saluran.repository';
 import { UsulanSaluranRepositoryImpl } from '../../infrastructure/usulan_saluran/repositories/usulan_saluran.repository.impl';
 import { UsulanSaluranService } from '../../domain/usulan_saluran/usulan_saluran.service';
@@ -21,7 +23,11 @@ import { CalculateBiayaSmkkUseCase } from '../../application/usulan_jalan/use_ca
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([UsulanSaluranOrmEntity]),
+        TypeOrmModule.forFeature([
+            UsulanSaluranOrmEntity,
+            JalanSaluranSpesifikasiSmkkOrmEntity,
+            JalanSaluranSpesifikasiSmkkReviewOrmEntity,
+        ]),
         VerifikatorModule,
         MainDashboardModule,
         forwardRef(() => SaluranSpesifikasiDesainModule),

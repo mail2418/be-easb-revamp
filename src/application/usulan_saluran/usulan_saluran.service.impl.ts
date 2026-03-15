@@ -31,8 +31,7 @@ import { SaluranSpesifikasiSmkkReviewService } from '../../domain/saluran_spesif
 import { CreateSaluranSpesifikasiSmkkDto } from '../../presentation/saluran_spesifikasi_smkk/dto/create_saluran_spesifikasi_smkk.dto';
 import { CreateSaluranSpesifikasiSmkkReviewDto } from '../../presentation/saluran_spesifikasi_smkk_review/dto/create_saluran_spesifikasi_smkk_review.dto';
 import { MainDashboardRepository } from '../../domain/main_dashboard/main_dashboard.repository';
-
-const ID_JENIS_USULAN_SALURAN = 3;
+import { ID_JENIS_USULAN_SALURAN } from '../../domain/jenis_usulan/jenis_usulan.constants';
 
 /**
  * Service implementasi modul Usulan Saluran.
@@ -191,7 +190,7 @@ export class UsulanSaluranServiceImpl implements UsulanSaluranService {
                 const hargaSatuan = hargaSpec / jumlahBarang;
                 const createSmkkDto: CreateSaluranSpesifikasiSmkkDto = {
                     id_jenis_usulan: komponenSmkk.id_jenis_usulan,
-                    id_usulan_saluran: dto.idUsulanSaluran,
+                    id_usulan: dto.idUsulanSaluran,
                     id_jalan_saluran_smkk: smkk.id_smkk,
                     harga_spec: hargaSpec,
                     jumlah_barang: jumlahBarang,
@@ -341,7 +340,7 @@ export class UsulanSaluranServiceImpl implements UsulanSaluranService {
                 const hargaSatuan = hargaSpec / jumlahBarang;
                 const createSmkkReviewDto: CreateSaluranSpesifikasiSmkkReviewDto = {
                     id_jenis_usulan: komponenSmkk.id_jenis_usulan,
-                    id_usulan_saluran: dto.idUsulanSaluran,
+                    id_usulan: dto.idUsulanSaluran,
                     id_jalan_saluran_smkk: smkk.id_smkk,
                     harga_spec: hargaSpec,
                     jumlah_barang: jumlahBarang,

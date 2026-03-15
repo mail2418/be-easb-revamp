@@ -24,7 +24,7 @@ import { UsulanJalanModule } from "../usulan_jalan/usulan_jalan.module";
             useClass: JalanSaluranSpesifikasiSmkkRepositoryImpl
         },
     ],
-    exports: [JalanSaluranSpesifikasiSmkkService]
+    exports: [JalanSaluranSpesifikasiSmkkService, JalanSaluranSpesifikasiSmkkRepository]
 })
 export class JalanSaluranSpesifikasiSmkkModule { }
 

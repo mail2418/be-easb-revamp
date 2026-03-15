@@ -4,6 +4,10 @@ import { CreateJalanSaluranSpesifikasiSmkkReviewDto } from "../../presentation/j
 export abstract class JalanSaluranSpesifikasiSmkkReviewRepository {
     abstract create(dto: CreateJalanSaluranSpesifikasiSmkkReviewDto): Promise<JalanSaluranSpesifikasiSmkkReview>;
     abstract deleteByUsulanJalanId(idUsulanJalan: number): Promise<void>;
+    abstract deleteByUsulanSaluranId(idUsulanSaluran: number): Promise<void>;
+    abstract deleteByUsulan(idUsulan: number, idJenisUsulan: number): Promise<void>;
     abstract findByUsulanJalan(idUsulanJalan: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkkReview[], number]>;
+    abstract findByUsulanSaluran(idUsulanSaluran: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkkReview[], number]>;
+    abstract findByUsulan(idUsulan: number, idJenisUsulan: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkkReview[], number]>;
 }
 

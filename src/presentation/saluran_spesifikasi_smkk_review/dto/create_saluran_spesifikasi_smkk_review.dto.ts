@@ -10,7 +10,7 @@ export class CreateSaluranSpesifikasiSmkkReviewDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    id_usulan_saluran!: number;
+    id_usulan!: number;
 
     @IsNotEmpty()
     @IsNumber()

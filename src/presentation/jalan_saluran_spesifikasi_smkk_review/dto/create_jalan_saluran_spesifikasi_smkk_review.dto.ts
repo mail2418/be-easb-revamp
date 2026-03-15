@@ -10,7 +10,7 @@ export class CreateJalanSaluranSpesifikasiSmkkReviewDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    id_usulan_jalan!: number;
+    id_usulan!: number;
 
     @IsNotEmpty()
     @IsNumber()

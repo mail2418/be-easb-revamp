@@ -6,6 +6,7 @@ import { JalanSaluranSpesifikasiSmkkOrmEntity } from "../orm/jalan_saluran_spesi
 import { JalanSaluranSpesifikasiSmkk } from "../../../domain/jalan_saluran_spesifikasi_smkk/jalan_saluran_spesifikasi_smkk.entity";
 import { CreateJalanSaluranSpesifikasiSmkkDto } from "../../../presentation/jalan_saluran_spesifikasi_smkk/dto/create_jalan_saluran_spesifikasi_smkk.dto";
 import { plainToInstance } from "class-transformer";
+import { ID_JENIS_USULAN_JALAN, ID_JENIS_USULAN_SALURAN } from "../../../domain/jenis_usulan/jenis_usulan.constants";
 
 @Injectable()
 export class JalanSaluranSpesifikasiSmkkRepositoryImpl implements JalanSaluranSpesifikasiSmkkRepository {
@@ -18,21 +19,39 @@ export class JalanSaluranSpesifikasiSmkkRepositoryImpl implements JalanSaluranSp
     }
 
     async deleteByUsulanJalanId(idUsulanJalan: number): Promise<void> {
-        await this.repo.softDelete({ id_usulan_jalan: idUsulanJalan });
+        await this.deleteByUsulan(idUsulanJalan, ID_JENIS_USULAN_JALAN);
+    }
+
+    async deleteByUsulanSaluranId(idUsulanSaluran: number): Promise<void> {
+        await this.deleteByUsulan(idUsulanSaluran, ID_JENIS_USULAN_SALURAN);
+    }
+
+    async deleteByUsulan(idUsulan: number, idJenisUsulan: number): Promise<void> {
+        await this.repo.softDelete({ id_usulan: idUsulan, id_jenis_usulan: idJenisUsulan });
     }
 
     async findByUsulanJalan(idUsulanJalan: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkk[], number]> {
+        return this.findByUsulan(idUsulanJalan, ID_JENIS_USULAN_JALAN, page, amount);
+    }
+
+    async findByUsulanSaluran(idUsulanSaluran: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkk[], number]> {
+        return this.findByUsulan(idUsulanSaluran, ID_JENIS_USULAN_SALURAN, page, amount);
+    }
+
+    async findByUsulan(idUsulan: number, idJenisUsulan: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkk[], number]> {
         const queryBuilder = this.repo
             .createQueryBuilder('jsss')
             .select([
                 'jsss.id',
                 'jsss.id_jenis_usulan',
-                'jsss.id_usulan_jalan',
+                'jsss.id_usulan',
                 'jsss.id_jalan_saluran_smkk',
                 'jsss.harga_spec',
-                'jsss.jumlah_barang'
+                'jsss.jumlah_barang',
+                'jsss.harga_satuan'
             ])
-            .where('jsss.id_usulan_jalan = :idUsulanJalan', { idUsulanJalan })
+            .where('jsss.id_usulan = :idUsulan', { idUsulan })
+            .andWhere('jsss.id_jenis_usulan = :idJenisUsulan', { idJenisUsulan })
             .orderBy('jsss.id', 'DESC');
 
         if (page !== undefined && amount !== undefined) {

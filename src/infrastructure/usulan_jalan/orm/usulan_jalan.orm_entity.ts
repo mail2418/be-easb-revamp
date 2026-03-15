@@ -21,9 +21,6 @@ import { KelurahanOrmEntity } from '../../kelurahan/orm/kelurahan.orm_entity';
 import { UserOrmEntity } from '../../user/orm/user.orm_entity';
 import { JalanSpesifikasiDesainOrmEntity } from '../../jalan_spesifikasi_desain/orm/jalan_spesifikasi_desain.orm_entity';
 import { JalanSpesifikasiDesainReviewOrmEntity } from '../../jalan_spesifikasi_desain_review/orm/jalan_spesifikasi_desain_review.orm_entity';
-import { JalanSaluranSpesifikasiSmkkOrmEntity } from '../../jalan_saluran_spesifikasi_smkk/orm/jalan_saluran_spesifikasi_smkk.orm_entity';
-import { JalanSaluranSpesifikasiSmkkReviewOrmEntity } from '../../jalan_saluran_spesifikasi_smkk_review/orm/jalan_saluran_spesifikasi_smkk_review.orm_entity';
-
 @Entity('usulan_jalan')
 export class UsulanJalanOrmEntity {
     @PrimaryGeneratedColumn()
@@ -200,10 +197,4 @@ export class UsulanJalanOrmEntity {
 
     @OneToMany(() => JalanSpesifikasiDesainReviewOrmEntity, (entity) => entity.usulanJalan)
     spesifikasiDesainReview!: JalanSpesifikasiDesainReviewOrmEntity[];
-
-    @OneToMany(() => JalanSaluranSpesifikasiSmkkOrmEntity, (entity) => entity.usulanJalan)
-    spesifikasiSmkk!: JalanSaluranSpesifikasiSmkkOrmEntity[];
-
-    @OneToMany(() => JalanSaluranSpesifikasiSmkkReviewOrmEntity, (entity) => entity.usulanJalan)
-    spesifikasiSmkkReview!: JalanSaluranSpesifikasiSmkkReviewOrmEntity[];
 }

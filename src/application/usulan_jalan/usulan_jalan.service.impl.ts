@@ -317,7 +317,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
                     const createSpesifikasiSmkkDto: CreateJalanSaluranSpesifikasiSmkkDto = {
                         id_jenis_usulan: komponenSmkk.id_jenis_usulan,
-                        id_usulan_jalan: dto.idUsulanJalan,
+                        id_usulan: dto.idUsulanJalan,
                         id_jalan_saluran_smkk: smkk.id_smkk,
                         harga_spec: hargaSpec,
                         jumlah_barang: jumlahBarang,
@@ -558,7 +558,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
                 const createSpesifikasiSmkkReviewDto: CreateJalanSaluranSpesifikasiSmkkReviewDto = {
                     id_jenis_usulan: komponenSmkk.id_jenis_usulan,
-                    id_usulan_jalan: dto.idUsulanJalan,
+                    id_usulan: dto.idUsulanJalan,
                     id_jalan_saluran_smkk: smkk.id_smkk,
                     harga_spec: hargaSpec,
                     jumlah_barang: jumlahBarang,

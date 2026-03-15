@@ -9,12 +9,19 @@ import { FindAllUsulanSaluranDto } from 'src/application/usulan_saluran/dto/find
 import { RejectInfoSaluranDto } from 'src/application/usulan_saluran/dto/reject_info.dto';
 import { GetUsulanSaluranAnalyticsFilterDto } from 'src/application/usulan_saluran/dto/get_usulan_saluran_analytics_filter.dto';
 import { UsulanSaluranAnalyticsDto } from 'src/application/usulan_saluran/dto/usulan_saluran_analytics.dto';
+import { JalanSaluranSpesifikasiSmkkOrmEntity } from '../../jalan_saluran_spesifikasi_smkk/orm/jalan_saluran_spesifikasi_smkk.orm_entity';
+import { JalanSaluranSpesifikasiSmkkReviewOrmEntity } from '../../jalan_saluran_spesifikasi_smkk_review/orm/jalan_saluran_spesifikasi_smkk_review.orm_entity';
+import { ID_JENIS_USULAN_SALURAN } from '../../../domain/jenis_usulan/jenis_usulan.constants';
 
 @Injectable()
 export class UsulanSaluranRepositoryImpl implements UsulanSaluranRepository {
     constructor(
         @InjectRepository(UsulanSaluranOrmEntity)
         private readonly repo: Repository<UsulanSaluranOrmEntity>,
+        @InjectRepository(JalanSaluranSpesifikasiSmkkOrmEntity)
+        private readonly spesifikasiSmkkRepo: Repository<JalanSaluranSpesifikasiSmkkOrmEntity>,
+        @InjectRepository(JalanSaluranSpesifikasiSmkkReviewOrmEntity)
+        private readonly spesifikasiSmkkReviewRepo: Repository<JalanSaluranSpesifikasiSmkkReviewOrmEntity>,
     ) { }
 
     async findById(id: number, idOpd?: number): Promise<UsulanSaluranWithRelationsDto | null> {
@@ -38,12 +45,6 @@ export class UsulanSaluranRepositoryImpl implements UsulanSaluranRepository {
             .leftJoinAndSelect('us.spesifikasiDesainReview', 'spesifikasiDesainReview')
             .leftJoinAndSelect('spesifikasiDesainReview.ruangLingkup', 'spesifikasiDesainReviewRuangLingkup')
             .leftJoinAndSelect('spesifikasiDesainReview.hspk', 'spesifikasiDesainReviewHspk')
-            .leftJoinAndSelect('us.spesifikasiSmkk', 'spesifikasiSmkk')
-            .leftJoinAndSelect('spesifikasiSmkk.jenisUsulan', 'spesifikasiSmkkJenisUsulan')
-            .leftJoinAndSelect('spesifikasiSmkk.jalanSaluranSmkk', 'spesifikasiSmkkJalanSaluranSmkk')
-            .leftJoinAndSelect('us.spesifikasiSmkkReview', 'spesifikasiSmkkReview')
-            .leftJoinAndSelect('spesifikasiSmkkReview.jenisUsulan', 'spesifikasiSmkkReviewJenisUsulan')
-            .leftJoinAndSelect('spesifikasiSmkkReview.jalanSaluranSmkk', 'spesifikasiSmkkReviewJalanSaluranSmkk')
             .where('us.id = :id', { id });
 
         if (idOpd) {
@@ -55,6 +56,22 @@ export class UsulanSaluranRepositoryImpl implements UsulanSaluranRepository {
         if (!entity) {
             return null;
         }
+
+        const [spesifikasiSmkk, spesifikasiSmkkReview] = await Promise.all([
+            this.spesifikasiSmkkRepo.find({
+                where: { id_usulan: id, id_jenis_usulan: ID_JENIS_USULAN_SALURAN },
+                relations: ['jenisUsulan', 'jalanSaluranSmkk'],
+                order: { id: 'DESC' },
+            }),
+            this.spesifikasiSmkkReviewRepo.find({
+                where: { id_usulan: id, id_jenis_usulan: ID_JENIS_USULAN_SALURAN },
+                relations: ['jenisUsulan', 'jalanSaluranSmkk'],
+                order: { id: 'DESC' },
+            }),
+        ]);
+        (entity as any).spesifikasiSmkk = spesifikasiSmkk;
+        (entity as any).spesifikasiSmkkReview = spesifikasiSmkkReview;
+
         return plainToInstance(UsulanSaluranWithRelationsDto, entity);
     }
 

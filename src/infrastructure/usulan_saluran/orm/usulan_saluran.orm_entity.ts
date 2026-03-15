@@ -20,8 +20,6 @@ import { KelurahanOrmEntity } from '../../kelurahan/orm/kelurahan.orm_entity';
 import { UserOrmEntity } from '../../user/orm/user.orm_entity';
 import { SaluranSpesifikasiDesainOrmEntity } from '../../saluran_spesifikasi_desain/orm/saluran_spesifikasi_desain.orm_entity';
 import { SaluranSpesifikasiDesainReviewOrmEntity } from '../../saluran_spesifikasi_desain_review/orm/saluran_spesifikasi_desain_review.orm_entity';
-import { SaluranSpesifikasiSmkkOrmEntity } from '../../saluran_spesifikasi_smkk/orm/saluran_spesifikasi_smkk.orm_entity';
-import { SaluranSpesifikasiSmkkReviewOrmEntity } from '../../saluran_spesifikasi_smkk_review/orm/saluran_spesifikasi_smkk_review.orm_entity';
 
 @Entity('usulan_saluran')
 export class UsulanSaluranOrmEntity {
@@ -184,10 +182,4 @@ export class UsulanSaluranOrmEntity {
 
     @OneToMany(() => SaluranSpesifikasiDesainReviewOrmEntity, (entity) => entity.usulanSaluran)
     spesifikasiDesainReview!: SaluranSpesifikasiDesainReviewOrmEntity[];
-
-    @OneToMany(() => SaluranSpesifikasiSmkkOrmEntity, (entity) => entity.usulanSaluran)
-    spesifikasiSmkk!: SaluranSpesifikasiSmkkOrmEntity[];
-
-    @OneToMany(() => SaluranSpesifikasiSmkkReviewOrmEntity, (entity) => entity.usulanSaluran)
-    spesifikasiSmkkReview!: SaluranSpesifikasiSmkkReviewOrmEntity[];
 }
