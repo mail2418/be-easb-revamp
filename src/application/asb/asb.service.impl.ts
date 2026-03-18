@@ -794,7 +794,18 @@ export class AsbServiceImpl implements AsbService {
         };
     }
 
-    async storePenyesuaian(dto: StorePenyesuaianDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async storePenyesuaian(dto: StorePenyesuaianDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Jika VERIFIKATOR, hanya Adbang yang boleh akses store penyesuaian
+        if (userRoles.includes(Role.VERIFIKATOR)) {
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            if (!verificatorType) {
+                throw new NotFoundException(`User not sync with verifikator`);
+            }
+            if (verificatorType === JenisVerifikator.BAPPEDA || verificatorType === JenisVerifikator.BPKAD) {
+                throw new ForbiddenException(`Only ADBANG verifikator can access store penyesuaian`);
+            }
+        }
+
         const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
         if (!asb) {
             throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);

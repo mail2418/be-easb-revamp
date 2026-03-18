@@ -589,14 +589,14 @@ export class AsbController {
     }
 
     @Put('store-penyesuaian')
-    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async storePenyesuaian(
         @Body() dto: StorePenyesuaianDto,
         @Req() req: Request,
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.storePenyesuaian(dto, user.idOpd, user.roles);
+            const result = await this.asbService.storePenyesuaian(dto, user.userId, user.idOpd, user.roles);
 
             return {
                 status: 'success',

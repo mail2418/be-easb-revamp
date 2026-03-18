@@ -35,7 +35,7 @@ export abstract class AsbService {
     abstract storeBpns(dto: StoreBpnsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract storeRekening(dto: StoreRekeningDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract storeVerif(dto: StoreVerifDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract storePenyesuaian(dto: StorePenyesuaianDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract storePenyesuaian(dto: StorePenyesuaianDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyLantai(dto: VerifyLantaiDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyBps(dto: VerifyBpsDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyBpns(dto: VerifyBpnsDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
