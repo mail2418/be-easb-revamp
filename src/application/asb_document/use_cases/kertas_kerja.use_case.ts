@@ -170,7 +170,22 @@ export class KertasKerjaUseCase {
         const jakonPengawasan = dataAsb.pengawasanKonstruksi ?? 0;
         const jakonManagement = dataAsb.managementKonstruksi ?? 0;
 
-        const calculatedRekapitulasi = Number(totalBiayaKonstruksi) + Number(jakonPerencanaan) + Number(jakonPengawasan) + Number(jakonManagement);
+        const penyesuaianPerencanaan = dataAsb.penyesuaianPerencanaanKonstruksi ?? 0;
+        const penyesuaianPengawasan = dataAsb.penyesuaianPengawasanKonstruksi ?? 0;
+        const penyesuaianManagement = dataAsb.penyesuaianManagementKonstruksi ?? 0;
+
+        const hasPenyesuaian = penyesuaianPerencanaan !== 0 || penyesuaianPengawasan !== 0 || penyesuaianManagement !== 0;
+
+        // Fallback: jika pakai penyesuaian, total = konstruksi + penyesuaian; jika tidak, total = konstruksi + jakon
+        const calculatedRekapitulasi = hasPenyesuaian
+            ? Number(totalBiayaKonstruksi) + Number(penyesuaianPerencanaan) + Number(penyesuaianPengawasan) + Number(penyesuaianManagement)
+            : Number(totalBiayaKonstruksi) + Number(jakonPerencanaan) + Number(jakonPengawasan) + Number(jakonManagement);
+
+        const penyesuaianRowsHtml = hasPenyesuaian ? `
+  <tr><td></td><td>e.</td><td class="text-left" colspan="3">Penyesuaian Perencanaan Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(penyesuaianPerencanaan)}</td></tr>
+  <tr><td></td><td>f.</td><td class="text-left" colspan="3">Penyesuaian Pengawasan Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(penyesuaianPengawasan)}</td></tr>
+  <tr><td></td><td>g.</td><td class="text-left" colspan="3">Penyesuaian Manajemen Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(penyesuaianManagement)}</td></tr>
+` : '';
 
         // Helper to safely access nested properties
         const getOpd = (d: any) => d.opd?.opd ?? '';
@@ -545,6 +560,7 @@ export class KertasKerjaUseCase {
         <tr><td></td><td>b.</td><td class="text-left" colspan="3">Biaya Perencanaan Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(jakonPerencanaan)}</td></tr>
         <tr><td></td><td>c.</td><td class="text-left" colspan="3">Biaya Pengawasan Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(jakonPengawasan)}</td></tr>
         <tr><td></td><td>d.</td><td class="text-left" colspan="3">Biaya Manajemen Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(jakonManagement)}</td></tr>
+        ${penyesuaianRowsHtml}
         <tr class="highlight-row"><td class="text-right" colspan="5">Total</td><td class="text-right font-weight-bold num">Rp${number_format(dataAsb.rekapitulasiBiayaKonstruksi ?? calculatedRekapitulasi)}</td></tr>
         <tr><td class="text-right" colspan="5"><i><b>Dibulatkan</b></i></td><td class="text-right font-weight-bold num">Rp${number_format(dataAsb.rekapitulasiBiayaKonstruksiRounded ?? Math.round(calculatedRekapitulasi / 100) * 100)}</td></tr>
         <tr><td colspan="6" class="terbilang-label"><b>Terbilang:</b></td></tr>

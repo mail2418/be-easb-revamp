@@ -1,3 +1,5 @@
+import { Expose, Transform } from 'class-transformer';
+
 export class AsbWithRelationsDto {
     id: number;
     idAsbJenis: number;
@@ -29,8 +31,16 @@ export class AsbWithRelationsDto {
     perencanaanKonstruksi: number | null;
     pengawasanKonstruksi: number | null;
     managementKonstruksi: number | null;
+    @Expose()
+    @Transform(({ value }) => (value != null ? Number(value) : null))
     penyesuaianPerencanaanKonstruksi: number | null;
+
+    @Expose()
+    @Transform(({ value }) => (value != null ? Number(value) : null))
     penyesuaianPengawasanKonstruksi: number | null;
+
+    @Expose()
+    @Transform(({ value }) => (value != null ? Number(value) : null))
     penyesuaianManagementKonstruksi: number | null;
     pengelolaanKegiatan: number | null;
     luasTotalBangunan: number | null;

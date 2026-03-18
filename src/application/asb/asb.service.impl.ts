@@ -743,6 +743,9 @@ export class AsbServiceImpl implements AsbService {
             perencanaanKonstruksi: nominalPerencanaanKonstruksi,
             pengawasanKonstruksi: nominalPengawasanKonstruksi,
             managementKonstruksi: nominalManagementKonstruksi,
+            penyesuaianPerencanaanKonstruksi: nominalPerencanaanKonstruksi,
+            penyesuaianPengawasanKonstruksi: nominalPengawasanKonstruksi,
+            penyesuaianManagementKonstruksi: nominalManagementKonstruksi,
             pengelolaanKegiatan: 0,
             rekapitulasiBiayaKonstruksi: rekapitulasiBiayaKonstruksi,
             rekapitulasiBiayaKonstruksiRounded: rekapitulasiBiayaKonstruksiRounded,
@@ -797,17 +800,22 @@ export class AsbServiceImpl implements AsbService {
             throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
         }
 
+        // Nilai efektif: jika DTO dikirim pakai DTO, else pakai harga asli (sebelum penyesuaian)
+        const nilaiPerencanaan = dto.penyesuaian_perencanaan_konstruksi ?? asb.perencanaanKonstruksi ?? 0;
+        const nilaiPengawasan = dto.penyesuaian_pengawasan_konstruksi ?? asb.pengawasanKonstruksi ?? 0;
+        const nilaiManagement = dto.penyesuaian_management_konstruksi ?? asb.managementKonstruksi ?? 0;
+
         const totalBiayaPembangunan = Number(asb.totalBiayaPembangunan ?? 0);
         const rekapitulasiBiayaKonstruksi = totalBiayaPembangunan
-            + Number(dto.penyesuaian_perencanaan_konstruksi)
-            + Number(dto.penyesuaian_pengawasan_konstruksi)
-            + Number(dto.penyesuaian_management_konstruksi);
+            + Number(nilaiPerencanaan)
+            + Number(nilaiPengawasan)
+            + Number(nilaiManagement);
         const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
 
         const updatedAsb = await this.repository.update(dto.id_asb, {
-            penyesuaianPerencanaanKonstruksi: dto.penyesuaian_perencanaan_konstruksi,
-            penyesuaianPengawasanKonstruksi: dto.penyesuaian_pengawasan_konstruksi,
-            penyesuaianManagementKonstruksi: dto.penyesuaian_management_konstruksi,
+            penyesuaianPerencanaanKonstruksi: nilaiPerencanaan,
+            penyesuaianPengawasanKonstruksi: nilaiPengawasan,
+            penyesuaianManagementKonstruksi: nilaiManagement,
             rekapitulasiBiayaKonstruksi,
             rekapitulasiBiayaKonstruksiRounded,
         });

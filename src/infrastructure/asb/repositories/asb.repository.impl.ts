@@ -59,7 +59,14 @@ export class AsbRepositoryImpl implements AsbRepository {
         if (!entity) {
             return null;
         }
-        return plainToInstance(AsbWithRelationsDto, entity);
+        const dto = plainToInstance(AsbWithRelationsDto, entity, {
+            enableImplicitConversion: true,
+            excludeExtraneousValues: false,
+        });
+        dto.penyesuaianPerencanaanKonstruksi = entity.penyesuaianPerencanaanKonstruksi != null ? Number(entity.penyesuaianPerencanaanKonstruksi) : null;
+        dto.penyesuaianPengawasanKonstruksi = entity.penyesuaianPengawasanKonstruksi != null ? Number(entity.penyesuaianPengawasanKonstruksi) : null;
+        dto.penyesuaianManagementKonstruksi = entity.penyesuaianManagementKonstruksi != null ? Number(entity.penyesuaianManagementKonstruksi) : null;
+        return dto;
     }
 
     async findAll(dto: FindAllAsbDto, idOpd?: number): Promise<{ data: AsbWithRelationsDto[]; total: number }> {
@@ -131,9 +138,16 @@ export class AsbRepositoryImpl implements AsbRepository {
             totalQb.getCount()
         ]);
 
-        const data = entities.map((entity) =>
-            plainToInstance(AsbWithRelationsDto, entity),
-        );
+        const data = entities.map((entity) => {
+            const dto = plainToInstance(AsbWithRelationsDto, entity, {
+                enableImplicitConversion: true,
+                excludeExtraneousValues: false,
+            });
+            dto.penyesuaianPerencanaanKonstruksi = entity.penyesuaianPerencanaanKonstruksi != null ? Number(entity.penyesuaianPerencanaanKonstruksi) : null;
+            dto.penyesuaianPengawasanKonstruksi = entity.penyesuaianPengawasanKonstruksi != null ? Number(entity.penyesuaianPengawasanKonstruksi) : null;
+            dto.penyesuaianManagementKonstruksi = entity.penyesuaianManagementKonstruksi != null ? Number(entity.penyesuaianManagementKonstruksi) : null;
+            return dto;
+        });
 
         return { data, total };
     }
