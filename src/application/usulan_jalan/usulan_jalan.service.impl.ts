@@ -737,24 +737,37 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
 
-            // Validate status flow: reject can only be done on status 5-8 (VERIFICATION)
-        const allowedStatuses = [5, 6, 7, 8];
+        // Validate status flow: reject can only be done on status 2 or 5-8 (VERIFICATION)
+        const allowedStatuses = [2, 5, 6, 7, 8];
         if (!allowedStatuses.includes(usulanJalan.idUsulanJalanStatus)) {
             throw new BadRequestException(
-                `Usulan Jalan can only be rejected when in status 5-8 (VERIFICATION). Current status: ${usulanJalan.idUsulanJalanStatus}`
+                `Usulan Jalan can only be rejected when in status 2 or 5-8 (VERIFICATION). Current status: ${usulanJalan.idUsulanJalanStatus}`
             );
         }
 
-            // Re-read Usulan Jalan data before update to prevent race condition
+        // Status 2: hanya Adbang, ADMIN, atau SUPERADMIN yang boleh menolak
+        if (usulanJalan.idUsulanJalanStatus === 2) {
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            if (!isAdmin && !isSuperAdmin) {
+                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+                if (!verificatorType) throw new NotFoundException(`User not sync with verifikator`);
+                if (verificatorType !== JenisVerifikator.ADBANG) {
+                    throw new ForbiddenException(`Only ADBANG verifikator, ADMIN, or SUPERADMIN can reject Usulan Jalan in status 2`);
+                }
+            }
+        }
+
+        // Re-read Usulan Jalan data before update to prevent race condition
         const usulanJalanBeforeUpdate = await this.findById(id, userIdOpd, userRoles);
         if (!usulanJalanBeforeUpdate) {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
 
-            // Re-validate status before update (race condition protection)
+        // Re-validate status before update (race condition protection)
         if (!allowedStatuses.includes(usulanJalanBeforeUpdate.idUsulanJalanStatus)) {
             throw new BadRequestException(
-                `Usulan Jalan status has changed. Expected status 5-8, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
+                `Usulan Jalan status has changed. Expected status 2 or 5-8, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
             );
         }
 

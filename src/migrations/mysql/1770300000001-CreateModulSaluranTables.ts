@@ -218,14 +218,6 @@ export class CreateModulSaluranTables1770300000001 implements MigrationInterface
                 [status],
             );
         }
-
-        const tipeSalurans = ['Saluran Beton', 'Saluran Pasangan Batu', 'Saluran Gorong-gorong'];
-        for (const tipe of tipeSalurans) {
-            await queryRunner.query(
-                `INSERT INTO \`tipe_saluran\` (\`tipe_saluran\`) VALUES (?)`,
-                [tipe],
-            );
-        }
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

@@ -431,12 +431,25 @@ export class UsulanSaluranServiceImpl implements UsulanSaluranService {
         return { id: updated.id, status: updated.usulanSaluranStatus };
     }
 
-    /** Reject usulan (status 5/6/7/8 → 4). */
+    /** Reject usulan (status 2 atau 5/6/7/8 → 4). Status 2 hanya Adbang, ADMIN, atau SUPERADMIN. */
     async reject(id: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         const usulan = await this.findById(id, userIdOpd, userRoles);
         if (!usulan) throw new NotFoundException(`Usulan Saluran with id ${id} not found`);
-        const allowedStatuses = [5, 6, 7, 8];
-        if (!allowedStatuses.includes(usulan.idUsulanSaluranStatus)) throw new BadRequestException(`Usulan Saluran can only be rejected when in status 5-8`);
+        const allowedStatuses = [2, 5, 6, 7, 8];
+        if (!allowedStatuses.includes(usulan.idUsulanSaluranStatus)) throw new BadRequestException(`Usulan Saluran can only be rejected when in status 2 or 5-8`);
+
+        // Status 2: hanya Adbang, ADMIN, atau SUPERADMIN yang boleh menolak
+        if (usulan.idUsulanSaluranStatus === 2) {
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            if (!isAdmin && !isSuperAdmin) {
+                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+                if (!verificatorType) throw new NotFoundException(`User not sync with verifikator`);
+                if (verificatorType !== JenisVerifikator.ADBANG) {
+                    throw new ForbiddenException(`Only ADBANG verifikator, ADMIN, or SUPERADMIN can reject Usulan Saluran in status 2`);
+                }
+            }
+        }
         const updated = await this.repository.update(id, {
             idUsulanSaluranStatus: 4,
             idRejectVerif: Number(userId),
