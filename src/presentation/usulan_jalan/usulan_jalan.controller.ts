@@ -231,7 +231,7 @@ export class UsulanJalanController {
         }
     }
 
-    @Put('update-index')
+    @Put('store-index')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async updateIndex(
         @Body() dto: UpdateUsulanJalanStoreIndexDto,

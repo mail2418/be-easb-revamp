@@ -212,9 +212,9 @@
 							"raw": "{\n    \"id\": 1,\n    \"idAsbJenis\": 2,\n    \"idJalanJenisPemeliharaan\": 1,\n    \"idJalanJenisPerkerasan\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Jalan Baru (Updated)\",\n    \"alamat\": \"Jl. Contoh No. 123 (Updated)\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/update-index",
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/store-index",
 							"host": ["{{base_url}}"],
-							"path": ["{{api_prefix}}", "usulan-jalan", "update-index"]
+							"path": ["{{api_prefix}}", "usulan-jalan", "store-index"]
 						},
 						"description": "Update usulan jalan index. OPD users can only update their own data. idJalanJenisPerkerasan and alamat are optional. Note: idOpd cannot be updated from request body, it comes from UserContext. Requires OPD, ADMIN, or SUPERADMIN role."
 					},

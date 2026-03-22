@@ -212,9 +212,9 @@
 							"raw": "{\n    \"id\": 1,\n    \"idAsbJenis\": 1,\n    \"idTipeSaluran\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Saluran Drainase (Updated)\",\n    \"alamat\": \"Jl. Contoh No. 123 (Updated)\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/update-index",
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/store-index",
 							"host": ["{{base_url}}"],
-							"path": ["{{api_prefix}}", "usulan-saluran", "update-index"]
+							"path": ["{{api_prefix}}", "usulan-saluran", "store-index"]
 						},
 						"description": "Update usulan saluran index. OPD users can only update their own data. All fields except id are optional. Requires OPD, ADMIN, or SUPERADMIN role."
 					},
