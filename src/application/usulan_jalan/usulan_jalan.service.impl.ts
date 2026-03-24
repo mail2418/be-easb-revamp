@@ -30,11 +30,14 @@ import { JalanSaluranSpesifikasiSmkkService } from '../../domain/jalan_saluran_s
 import { JalanSaluranSpesifikasiSmkkReviewService } from '../../domain/jalan_saluran_spesifikasi_smkk_review/jalan_saluran_spesifikasi_smkk_review.service';
 import { CreateJalanSaluranSpesifikasiSmkkDto } from '../../presentation/jalan_saluran_spesifikasi_smkk/dto/create_jalan_saluran_spesifikasi_smkk.dto';
 import { CreateJalanSaluranSpesifikasiSmkkReviewDto } from '../../presentation/jalan_saluran_spesifikasi_smkk_review/dto/create_jalan_saluran_spesifikasi_smkk_review.dto';
+import { MainDashboardRepository } from '../../domain/main_dashboard/main_dashboard.repository';
+import { ID_JENIS_USULAN_JALAN } from '../../domain/jenis_usulan/jenis_usulan.constants';
 
 @Injectable()
 export class UsulanJalanServiceImpl implements UsulanJalanService {
     constructor(
         private readonly repository: UsulanJalanRepository,
+        private readonly mainDashboardRepository: MainDashboardRepository,
         private readonly verifikatorService: VerifikatorService,
         private readonly jalanSpesifikasiDesainService: JalanSpesifikasiDesainService,
         private readonly jalanSpesifikasiDesainReviewService: JalanSpesifikasiDesainReviewService,
@@ -109,6 +112,14 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             idUsulanJalanStatus: 1,
         });
 
+        await this.mainDashboardRepository.create({
+            idUsulan: usulanJalan.id,
+            idJenisUsulan: ID_JENIS_USULAN_JALAN,
+            idAsbStatus: 1,
+            namaUsulan: usulanJalan.namaUsulan,
+            tahunAnggaran: usulanJalan.tahunAnggaran ?? null,
+        });
+
         return {
             id: usulanJalan.id,
             status: usulanJalan.usulanJalanStatus,
@@ -172,6 +183,12 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
         // Update Usulan Jalan
         const updatedUsulanJalan = await this.repository.update(dto.id, updateData);
+
+        await this.mainDashboardRepository.updateByUsulan(dto.id, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 1,
+            namaUsulan: updatedUsulanJalan.namaUsulan,
+            tahunAnggaran: updatedUsulanJalan.tahunAnggaran ?? null,
+        });
 
         return {
             id: updatedUsulanJalan.id,
@@ -328,6 +345,12 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 }
             }
 
+        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 2,
+            namaUsulan: updatedUsulanJalan.namaUsulan,
+            tahunAnggaran: updatedUsulanJalan.tahunAnggaran ?? null,
+        });
+
         return {
             id: updatedUsulanJalan.id,
             status: updatedUsulanJalan.usulanJalanStatus,
@@ -432,6 +455,12 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             namaUsulan: dto.namaUsulan,
             alamat: dto.alamat ?? null,
             idUsulanJalanStatus: 5, // Verifikasi Informasi Usulan Jalan
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 5,
+            namaUsulan: updated.namaUsulan,
+            tahunAnggaran: updated.tahunAnggaran ?? null,
         });
 
         return {
@@ -569,6 +598,12 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             }
         }
 
+        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 6,
+            namaUsulan: updated.namaUsulan,
+            tahunAnggaran: updated.tahunAnggaran ?? null,
+        });
+
         return {
             id: updated.id,
             status: updated.usulanJalanStatus,
@@ -604,6 +639,12 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             idUsulanJalanStatus: 7,
             idVerifikatorAdbang: Number(userId),
             verifikatorAdbangReviewAt: new Date(),
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(id, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 7,
+            namaUsulan: updated.namaUsulan,
+            tahunAnggaran: updated.tahunAnggaran ?? null,
         });
 
         return {
@@ -666,6 +707,12 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
             // Update status to 8 (Verifikasi Bpkad), set verificator, and update rekening review
         const updated = await this.repository.update(dto.idUsulanJalan, updateData);
+
+        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 8,
+            namaUsulan: updated.namaUsulan,
+            tahunAnggaran: updated.tahunAnggaran ?? null,
+        });
 
         return {
             id: updated.id,
@@ -777,6 +824,13 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             idRejectVerif: Number(userId),
             rejectReason: rejectReason,
             rejectVerifikatorReviewAt: new Date(),
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(id, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 4,
+            rejectInfo: rejectReason,
+            namaUsulan: updated.namaUsulan,
+            tahunAnggaran: updated.tahunAnggaran ?? null,
         });
 
         return {

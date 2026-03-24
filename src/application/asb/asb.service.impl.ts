@@ -45,11 +45,14 @@ import { UserService } from 'src/domain/user/user.service';
 import { OpdService } from 'src/domain/opd/opd.service';
 import { VerifikatorService } from 'src/domain/verifikator/verifikator.service';
 import { JenisVerifikator } from 'src/domain/verifikator/jenis_verifikator.enum';
+import { MainDashboardRepository } from '../../domain/main_dashboard/main_dashboard.repository';
+import { ID_JENIS_USULAN_GEDUNG } from '../../domain/jenis_usulan/jenis_usulan.constants';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
     constructor(
         private readonly repository: AsbRepository,
+        private readonly mainDashboardRepository: MainDashboardRepository,
         private readonly asbDocumentService: AsbDocumentService,
         private readonly asbDetailService: AsbDetailService,
         private readonly shstService: ShstService,
@@ -278,6 +281,14 @@ export class AsbServiceImpl implements AsbService {
 
         const asbDocs = await this.asbDocumentService.generateSuratPermohonan(suratPermohonanDto);
 
+        await this.mainDashboardRepository.create({
+            idUsulan: asb.id,
+            idJenisUsulan: ID_JENIS_USULAN_GEDUNG,
+            idAsbStatus: 1,
+            namaUsulan: asb.namaAsb,
+            tahunAnggaran: asb.tahunAnggaran ?? null,
+        });
+
         return { id: asb.id, status: asb.idAsbStatus };
     }
 
@@ -451,6 +462,12 @@ export class AsbServiceImpl implements AsbService {
             // Update ASB
             const updatedAsb = await this.repository.update(dto.id, updateData);
 
+            await this.mainDashboardRepository.updateByUsulan(dto.id, ID_JENIS_USULAN_GEDUNG, {
+                idAsbStatus: updatedAsb.idAsbStatus,
+                namaUsulan: updatedAsb.namaAsb,
+                tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
+            });
+
             return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
     }
 
@@ -578,6 +595,12 @@ export class AsbServiceImpl implements AsbService {
                 koefisienFungsiRuangTotal: existingAsb.koefisienFungsiRuangTotal
             });
 
+            await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+                idAsbStatus: 2,
+                namaUsulan: updatedAsb.namaAsb,
+                tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
+            });
+
             return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
     }
 
@@ -626,6 +649,12 @@ export class AsbServiceImpl implements AsbService {
             nominalBps: BPS,
             bobotTotalBps: jumlahBobot,
             totalBiayaPembangunan: totalBiayaPembangunan
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+            idAsbStatus: 3,
+            namaUsulan: updatedAsb.namaAsb,
+            tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
         });
 
         return {
@@ -751,6 +780,12 @@ export class AsbServiceImpl implements AsbService {
             rekapitulasiBiayaKonstruksiRounded: rekapitulasiBiayaKonstruksiRounded,
         });
 
+        await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+            idAsbStatus: 4,
+            namaUsulan: updatedAsb.namaAsb,
+            tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
+        });
+
         return {
             id: updatedAsb.id,
             status: updatedAsb.asbStatus
@@ -770,6 +805,12 @@ export class AsbServiceImpl implements AsbService {
             idRekening: dto.id_rekening
         });
 
+        await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+            idAsbStatus: 5,
+            namaUsulan: updatedAsb.namaAsb,
+            tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
+        });
+
         return {
             id: updatedAsb.id,
             status: updatedAsb.asbStatus
@@ -786,6 +827,12 @@ export class AsbServiceImpl implements AsbService {
         // 2. Update ASB status to 6
         const updatedAsb = await this.repository.update(dto.id_asb, {
             idAsbStatus: 6
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+            idAsbStatus: 6,
+            namaUsulan: updatedAsb.namaAsb,
+            tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
         });
 
         return {
@@ -829,6 +876,12 @@ export class AsbServiceImpl implements AsbService {
             penyesuaianManagementKonstruksi: nilaiManagement,
             rekapitulasiBiayaKonstruksi,
             rekapitulasiBiayaKonstruksiRounded,
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+            idAsbStatus: asb.idAsbStatus,
+            namaUsulan: updatedAsb.namaAsb,
+            tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
         });
 
         return {
@@ -1073,6 +1126,12 @@ export class AsbServiceImpl implements AsbService {
                 rekapitulasiBiayaKonstruksiRounded: rekapitulasiBiayaKonstruksiRounded
             });
 
+            await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+                idAsbStatus: 9,
+                namaUsulan: updatedAsb.namaAsb,
+                tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
+            });
+
             return {
                 id: updatedAsb.id,
                 status: updatedAsb.asbStatus
@@ -1186,6 +1245,12 @@ export class AsbServiceImpl implements AsbService {
                 managementKonstruksi: nominalManagementKonstruksi,
                 rekapitulasiBiayaKonstruksi: rekapitulasiBiayaKonstruksi,
                 rekapitulasiBiayaKonstruksiRounded: rekapitulasiBiayaKonstruksiRounded
+            });
+
+            await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+                idAsbStatus: 10,
+                namaUsulan: updatedAsb.namaAsb,
+                tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
             });
 
             return {
@@ -1352,6 +1417,12 @@ export class AsbServiceImpl implements AsbService {
             pengelolaanKegiatan: 0,
         });
 
+        await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+            idAsbStatus: 11,
+            namaUsulan: updatedAsb.namaAsb,
+            tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
+        });
+
         return {
             id: updatedAsb.id,
             status: updatedAsb.asbStatus
@@ -1389,6 +1460,12 @@ export class AsbServiceImpl implements AsbService {
             idVerifikatorBPKAD: Number(userId),
             verifiedBpkadAt: new Date(),
             idAsbStatus: 12
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+            idAsbStatus: 12,
+            namaUsulan: updatedAsb.namaAsb,
+            tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
         });
 
         return {
@@ -1440,6 +1517,12 @@ export class AsbServiceImpl implements AsbService {
             idVerifikatorAdpem: Number(userId),
             verifiedAdpemAt: new Date(),
             idAsbStatus: 13
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(dto.id_asb, ID_JENIS_USULAN_GEDUNG, {
+            idAsbStatus: 13,
+            namaUsulan: updatedAsb.namaAsb,
+            tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
         });
 
         return {
@@ -1622,6 +1705,13 @@ export class AsbServiceImpl implements AsbService {
                 rejectReason: rejectReason,
                 rejectVerifId: Number(userId),
                 rejectedAt: new Date()
+            });
+
+            await this.mainDashboardRepository.updateByUsulan(id_asb, ID_JENIS_USULAN_GEDUNG, {
+                idAsbStatus: 7,
+                rejectInfo: rejectReason,
+                namaUsulan: updatedAsb.namaAsb,
+                tahunAnggaran: updatedAsb.tahunAnggaran ?? null,
             });
 
             return {
