@@ -26,13 +26,15 @@ if (!dbUrl) {
     throw new Error('Database URL not configured. Set DB_URL_MYSQL or DB_URL in .env');
 }
 
+const isProd = process.env.NODE_ENV === 'production';
+
 export default new DataSource({
     type: 'mysql',
     url: dbUrl,
 
-    entities: ['src/infrastructure/**/orm/*.orm_entity.ts'],
+    entities: [isProd ? 'dist/infrastructure/**/orm/*.orm_entity.js' : 'src/infrastructure/**/orm/*.orm_entity.ts'],
 
-    migrations: ['src/migrations/mysql/*{.ts,.js}'],
+    migrations: [isProd ? 'dist/migrations/mysql/*.js' : 'src/migrations/mysql/*{.ts,.js}'],
     migrationsTableName: 'typeorm_migrations',
 
     namingStrategy: new SnakeNamingStrategy(),

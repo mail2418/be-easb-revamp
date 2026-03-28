@@ -43,6 +43,11 @@ const getDbUrl = (): string => {
 
 const dbUrl = getDbUrl();
 const isRender = process.env.NODE_ENV === 'production' && dbUrl.includes('render');
+const isProd = process.env.NODE_ENV === 'production';
+
+const entitiesGlob = isProd
+    ? 'dist/infrastructure/**/orm/*.orm_entity.js'
+    : 'src/infrastructure/**/orm/*.orm_entity.ts';
 
 // Build configuration based on DB_TYPE
 const getDataSourceOptions = (): DataSourceOptions => {
@@ -50,8 +55,8 @@ const getDataSourceOptions = (): DataSourceOptions => {
         return {
             type: 'mysql',
             url: dbUrl,
-            entities: ['src/infrastructure/**/orm/*.orm_entity.ts'],
-            migrations: ['src/migrations/mysql/*{.ts,.js}'],
+            entities: [entitiesGlob],
+            migrations: [isProd ? 'dist/migrations/mysql/*.js' : 'src/migrations/mysql/*{.ts,.js}'],
             migrationsTableName: 'typeorm_migrations',
             namingStrategy: new SnakeNamingStrategy(),
             synchronize: false,
@@ -66,8 +71,8 @@ const getDataSourceOptions = (): DataSourceOptions => {
         type: 'postgres',
         url: dbUrl,
         ssl: isRender ? { rejectUnauthorized: false } : false,
-        entities: ['src/infrastructure/**/orm/*.orm_entity.ts'],
-        migrations: ['src/migrations/postgres/*{.ts,.js}'],
+        entities: [entitiesGlob],
+        migrations: [isProd ? 'dist/migrations/postgres/*.js' : 'src/migrations/postgres/*{.ts,.js}'],
         migrationsTableName: 'typeorm_migrations',
         namingStrategy: new SnakeNamingStrategy(),
         synchronize: false,

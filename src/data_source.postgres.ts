@@ -27,16 +27,17 @@ if (!dbUrl) {
 }
 
 const isRender = process.env.NODE_ENV === 'production' && dbUrl.includes('render');
+const isProd = process.env.NODE_ENV === 'production';
 
 export default new DataSource({
     type: 'postgres',
     url: dbUrl,
     ssl: isRender ? { rejectUnauthorized: false } : false,
 
-    entities: ['src/infrastructure/**/orm/*.orm_entity.ts'],
+    entities: [isProd ? 'dist/infrastructure/**/orm/*.orm_entity.js' : 'src/infrastructure/**/orm/*.orm_entity.ts'],
 
     // PostgreSQL migrations folder
-    migrations: ['src/migrations/postgres/*{.ts,.js}'],
+    migrations: [isProd ? 'dist/migrations/postgres/*.js' : 'src/migrations/postgres/*{.ts,.js}'],
     migrationsTableName: 'typeorm_migrations',
 
     namingStrategy: new SnakeNamingStrategy(),
