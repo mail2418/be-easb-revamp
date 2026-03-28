@@ -7,7 +7,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   # ─── Job 1: Build & Push image to GHCR ──────────────────────────────────────
@@ -17,10 +16,16 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      image_name_lc: ${{ steps.lowercase.outputs.image_name_lc }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Lowercase repository name for Docker/OCI
+        id: lowercase
+        run: echo "image_name_lc=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -36,7 +41,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.image_name_lc }}
           tags: |
             type=ref,event=branch
             type=sha,prefix=,format=short
@@ -61,7 +66,7 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         env:
-          BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev
+          BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ needs.build-and-push.outputs.image_name_lc }}:dev
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
         with:
