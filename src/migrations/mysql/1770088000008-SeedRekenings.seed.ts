@@ -643,12 +643,17 @@ export class SeedRekenings1770088000008 implements MigrationInterface {
     
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        // Match postgres AddBulanAndTahunToRekenings: catalog rows use the month/year at seed time
+        const now = new Date();
+        const bulan = now.getMonth() + 1;
+        const tahun = now.getFullYear();
+
         for (const rekening of this.rekenings) {
             await queryRunner.query(
-                `INSERT INTO \`rekenings\` (\`rekening_kode\`, \`rekening_uraian\`, \`id_jenis_usulan\`)
-                 VALUES (?, ?, ?)
+                `INSERT INTO \`rekenings\` (\`rekening_kode\`, \`rekening_uraian\`, \`id_jenis_usulan\`, \`bulan\`, \`tahun\`)
+                 VALUES (?, ?, ?, ?, ?)
                  ON DUPLICATE KEY UPDATE \`id_jenis_usulan\` = VALUES(\`id_jenis_usulan\`)`,
-                [rekening.rekening_kode, rekening.rekening_uraian, rekening.id_usulan_jenis],
+                [rekening.rekening_kode, rekening.rekening_uraian, rekening.id_usulan_jenis, bulan, tahun],
             );
         }
     }
