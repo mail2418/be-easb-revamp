@@ -94,7 +94,7 @@ jobs:
             sleep 5
 
             # Run database migrations
-            docker exec -T easb-backend \
+            docker exec -i easb-backend \
               node ./node_modules/typeorm/cli.js -d dist/data_source.js migration:run
 
             echo "Deployment complete."
