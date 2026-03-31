@@ -21,7 +21,7 @@ export class RefactorJalanSaluranSmkkTable1770200000005 implements MigrationInte
 
         // Step 4: Drop index for id_ruang_lingkup
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_smkk_ruang_lingkup\` ON \`jalan_saluran_smkk\`
+            DROP INDEX \`idx_jalan_saluran_smkk_ruang_lingkup\` ON \`jalan_saluran_smkk\`
         `);
 
         // Step 5: Remove id_ruang_lingkup column

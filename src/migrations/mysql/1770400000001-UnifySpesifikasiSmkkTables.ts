@@ -19,7 +19,7 @@ export class UnifySpesifikasiSmkkTables1770400000001 implements MigrationInterfa
 
         // 3. Drop old index, create new index on id_usulan
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_usulan_jalan\` ON \`jalan_saluran_spesifikasi_smkk\`;
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_usulan_jalan\` ON \`jalan_saluran_spesifikasi_smkk\`;
         `);
         await queryRunner.query(`
             CREATE INDEX \`idx_jalan_saluran_spesifikasi_smkk_id_usulan\`
@@ -72,7 +72,7 @@ export class UnifySpesifikasiSmkkTables1770400000001 implements MigrationInterfa
 
         // 3. Drop old index, create new index on id_usulan
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_review_usulan_jalan\` ON \`jalan_saluran_spesifikasi_smkk_review\`;
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_usulan_jalan\` ON \`jalan_saluran_spesifikasi_smkk_review\`;
         `);
         await queryRunner.query(`
             CREATE INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_id_usulan\`
@@ -146,7 +146,7 @@ export class UnifySpesifikasiSmkkTables1770400000001 implements MigrationInterfa
 
         // Revert jalan_saluran_spesifikasi_smkk_review
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_review_id_usulan\` ON \`jalan_saluran_spesifikasi_smkk_review\`;
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_id_usulan\` ON \`jalan_saluran_spesifikasi_smkk_review\`;
         `);
         await queryRunner.query(`
             ALTER TABLE \`jalan_saluran_spesifikasi_smkk_review\`
@@ -195,7 +195,7 @@ export class UnifySpesifikasiSmkkTables1770400000001 implements MigrationInterfa
 
         // Revert jalan_saluran_spesifikasi_smkk
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_id_usulan\` ON \`jalan_saluran_spesifikasi_smkk\`;
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_id_usulan\` ON \`jalan_saluran_spesifikasi_smkk\`;
         `);
         await queryRunner.query(`
             ALTER TABLE \`jalan_saluran_spesifikasi_smkk\`

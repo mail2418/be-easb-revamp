@@ -14,699 +14,699 @@ export class AddAllMissingIndexes1770115044325 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
 
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_asb_jenis\` 
+            CREATE INDEX \`idx_asb_asb_jenis\` 
             ON \`asb\` (\`id_asb_jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_asb_status\` 
+            CREATE INDEX \`idx_asb_asb_status\` 
             ON \`asb\` (\`id_asb_status\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_opds\` 
+            CREATE INDEX \`idx_asb_opds\` 
             ON \`asb\` (\`id_opd\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_tipe_bangunan\` 
+            CREATE INDEX \`idx_asb_tipe_bangunan\` 
             ON \`asb\` (\`id_asb_tipe_bangunan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_rekenings\` 
+            CREATE INDEX \`idx_asb_rekenings\` 
             ON \`asb\` (\`id_rekening\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_rekening_reviews\` 
+            CREATE INDEX \`idx_asb_rekening_reviews\` 
             ON \`asb\` (\`id_rekening_review\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_kabkotas\` 
+            CREATE INDEX \`idx_asb_kabkotas\` 
             ON \`asb\` (\`id_kabkota\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_klasifikasi\` 
+            CREATE INDEX \`idx_asb_klasifikasi\` 
             ON \`asb\` (\`id_asb_klasifikasi\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_deleted_at\` 
+            CREATE INDEX \`idx_asb_deleted_at\` 
             ON \`asb\` (\`deleted_at\`)
         `);
         // Index for id_verifikator_adpem (renamed from id_verifikator in PostgreSQL)
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`IDX_asb_id_verifikator_adpem\` 
+            CREATE INDEX \`IDX_asb_id_verifikator_adpem\` 
             ON \`asb\` (\`id_verifikator_adpem\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`IDX_asb_id_verifikator_bpkad\` 
+            CREATE INDEX \`IDX_asb_id_verifikator_bpkad\` 
             ON \`asb\` (\`id_verifikator_bpkad\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`IDX_asb_id_verifikator_bappeda\` 
+            CREATE INDEX \`IDX_asb_id_verifikator_bappeda\` 
             ON \`asb\` (\`id_verifikator_bappeda\`)
         `);
         // Note: Analytics indexes (idx_asb_created_at, idx_asb_tahun_anggaran, etc.) 
         // are handled separately in AddAnalyticsIndexes migration
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_non_std_reviews_files\` 
+            CREATE INDEX \`idx_asb_bipek_non_std_reviews_files\` 
             ON \`asb_bipek_non_std_reviews\` (\`files\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_non_std_reviews_bipek_non_std\` 
+            CREATE INDEX \`idx_asb_bipek_non_std_reviews_bipek_non_std\` 
             ON \`asb_bipek_non_std_reviews\` (\`id_asb_bipek_non_std\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_non_std_reviews_komponen_bangunan_nonstd\` 
+            CREATE INDEX \`idx_asb_bipek_non_std_reviews_komponen_bangunan_nonstd\` 
             ON \`asb_bipek_non_std_reviews\` (\`id_asb_komponen_bangunan_nonstd\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_non_std_reviews_deleted_at\` 
+            CREATE INDEX \`idx_asb_bipek_non_std_reviews_deleted_at\` 
             ON \`asb_bipek_non_std_reviews\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_non_std_reviews_asb\` 
+            CREATE INDEX \`idx_asb_bipek_non_std_reviews_asb\` 
             ON \`asb_bipek_non_std_reviews\` (\`id_asb\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_non_stds_files\` 
+            CREATE INDEX \`idx_asb_bipek_non_stds_files\` 
             ON \`asb_bipek_non_stds\` (\`files\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_non_stds_komponen_bangunan_nonstd\` 
+            CREATE INDEX \`idx_asb_bipek_non_stds_komponen_bangunan_nonstd\` 
             ON \`asb_bipek_non_stds\` (\`id_asb_komponen_bangunan_nonstd\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_non_stds_deleted_at\` 
+            CREATE INDEX \`idx_asb_bipek_non_stds_deleted_at\` 
             ON \`asb_bipek_non_stds\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_non_stds_asb\` 
+            CREATE INDEX \`idx_asb_bipek_non_stds_asb\` 
             ON \`asb_bipek_non_stds\` (\`id_asb\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standard_reviews_files\` 
+            CREATE INDEX \`idx_asb_bipek_standard_reviews_files\` 
             ON \`asb_bipek_standard_reviews\` (\`files\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standard_reviews_bipek_standard\` 
+            CREATE INDEX \`idx_asb_bipek_standard_reviews_bipek_standard\` 
             ON \`asb_bipek_standard_reviews\` (\`id_asb_bipek_standard\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standard_reviews_komponen_bangunan_std\` 
+            CREATE INDEX \`idx_asb_bipek_standard_reviews_komponen_bangunan_std\` 
             ON \`asb_bipek_standard_reviews\` (\`id_asb_komponen_bangunan_std\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standard_reviews_calculation_method\` 
+            CREATE INDEX \`idx_asb_bipek_standard_reviews_calculation_method\` 
             ON \`asb_bipek_standard_reviews\` (\`calculation_method\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standard_reviews_deleted_at\` 
+            CREATE INDEX \`idx_asb_bipek_standard_reviews_deleted_at\` 
             ON \`asb_bipek_standard_reviews\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standard_reviews_asb\` 
+            CREATE INDEX \`idx_asb_bipek_standard_reviews_asb\` 
             ON \`asb_bipek_standard_reviews\` (\`id_asb\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standards_files\` 
+            CREATE INDEX \`idx_asb_bipek_standards_files\` 
             ON \`asb_bipek_standards\` (\`files\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standards_komponen_bangunan_std\` 
+            CREATE INDEX \`idx_asb_bipek_standards_komponen_bangunan_std\` 
             ON \`asb_bipek_standards\` (\`id_asb_komponen_bangunan_std\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standards_calculation_method\` 
+            CREATE INDEX \`idx_asb_bipek_standards_calculation_method\` 
             ON \`asb_bipek_standards\` (\`calculation_method\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standards_deleted_at\` 
+            CREATE INDEX \`idx_asb_bipek_standards_deleted_at\` 
             ON \`asb_bipek_standards\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bipek_standards_asb\` 
+            CREATE INDEX \`idx_asb_bipek_standards_asb\` 
             ON \`asb_bipek_standards\` (\`id_asb\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bps_gallery_nonstd_komponen_bangunan_nonstd\` 
+            CREATE INDEX \`idx_asb_bps_gallery_nonstd_komponen_bangunan_nonstd\` 
             ON \`asb_bps_gallery_nonstd\` (\`id_asb_komponen_bangunan_nonstd\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bps_gallery_nonstd_deleted_at\` 
+            CREATE INDEX \`idx_asb_bps_gallery_nonstd_deleted_at\` 
             ON \`asb_bps_gallery_nonstd\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bps_gallery_std_komponen_bangunan_std\` 
+            CREATE INDEX \`idx_asb_bps_gallery_std_komponen_bangunan_std\` 
             ON \`asb_bps_gallery_std\` (\`id_asb_komponen_bangunan_std\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_bps_gallery_std_deleted_at\` 
+            CREATE INDEX \`idx_asb_bps_gallery_std_deleted_at\` 
             ON \`asb_bps_gallery_std\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_detail_reviews_files\` 
+            CREATE INDEX \`idx_asb_detail_reviews_files\` 
             ON \`asb_detail_reviews\` (\`files\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_detail_reviews_detail\` 
+            CREATE INDEX \`idx_asb_detail_reviews_detail\` 
             ON \`asb_detail_reviews\` (\`id_asb_detail\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_detail_reviews_lantai\` 
+            CREATE INDEX \`idx_asb_detail_reviews_lantai\` 
             ON \`asb_detail_reviews\` (\`id_asb_lantai\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_detail_reviews_fungsi_ruang\` 
+            CREATE INDEX \`idx_asb_detail_reviews_fungsi_ruang\` 
             ON \`asb_detail_reviews\` (\`id_asb_fungsi_ruang\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_detail_reviews_deleted_at\` 
+            CREATE INDEX \`idx_asb_detail_reviews_deleted_at\` 
             ON \`asb_detail_reviews\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_detail_reviews_asb\` 
+            CREATE INDEX \`idx_asb_detail_reviews_asb\` 
             ON \`asb_detail_reviews\` (\`id_asb\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_details_files\` 
+            CREATE INDEX \`idx_asb_details_files\` 
             ON \`asb_details\` (\`files\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_details_lantai\` 
+            CREATE INDEX \`idx_asb_details_lantai\` 
             ON \`asb_details\` (\`id_asb_lantai\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_details_fungsi_ruang\` 
+            CREATE INDEX \`idx_asb_details_fungsi_ruang\` 
             ON \`asb_details\` (\`id_asb_fungsi_ruang\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_details_deleted_at\` 
+            CREATE INDEX \`idx_asb_details_deleted_at\` 
             ON \`asb_details\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_detail_asb\` 
+            CREATE INDEX \`idx_asb_detail_asb\` 
             ON \`asb_details\` (\`id_asb\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_document_spec\` 
+            CREATE INDEX \`idx_asb_document_spec\` 
             ON \`asb_document\` (\`spec\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_document_deleted_at\` 
+            CREATE INDEX \`idx_asb_document_deleted_at\` 
             ON \`asb_document\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_document_asb\` 
+            CREATE INDEX \`idx_asb_document_asb\` 
             ON \`asb_document\` (\`id_asb\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_fungsi_ruangs_nama\` 
+            CREATE INDEX \`idx_asb_fungsi_ruangs_nama\` 
             ON \`asb_fungsi_ruangs\` (\`nama_fungsi_ruang\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_fungsi_ruangs_active\` 
+            CREATE INDEX \`idx_asb_fungsi_ruangs_active\` 
             ON \`asb_fungsi_ruangs\` (\`is_active\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_fungsi_ruangs_deleted\` 
+            CREATE INDEX \`idx_asb_fungsi_ruangs_deleted\` 
             ON \`asb_fungsi_ruangs\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_fungsi_ruangs_koef\` 
+            CREATE INDEX \`idx_asb_fungsi_ruangs_koef\` 
             ON \`asb_fungsi_ruangs\` (\`koef\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_jakon_tipe_bangunan\` 
+            CREATE INDEX \`idx_asb_jakon_tipe_bangunan\` 
             ON \`asb_jakon\` (\`id_asb_tipe_bangunan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_jakon_jenis\` 
+            CREATE INDEX \`idx_asb_jakon_jenis\` 
             ON \`asb_jakon\` (\`id_asb_jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_jakon_klasifikasi\` 
+            CREATE INDEX \`idx_asb_jakon_klasifikasi\` 
             ON \`asb_jakon\` (\`id_asb_klasifikasi\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_jakon_tahun\` 
+            CREATE INDEX \`idx_asb_jakon_tahun\` 
             ON \`asb_jakon\` (\`tahun\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_jakon_type\` 
+            CREATE INDEX \`idx_asb_jakon_type\` 
             ON \`asb_jakon\` (\`type\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_jakon_deleted_at\` 
+            CREATE INDEX \`idx_asb_jakon_deleted_at\` 
             ON \`asb_jakon\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_jenis_jenis\` 
+            CREATE INDEX \`idx_asb_jenis_jenis\` 
             ON \`asb_jenis\` (\`jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_jenis_asb\` 
+            CREATE INDEX \`idx_asb_jenis_asb\` 
             ON \`asb_jenis\` (\`asb\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_jenis_deleted\` 
+            CREATE INDEX \`idx_asb_jenis_deleted\` 
             ON \`asb_jenis\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_klasifikasi_klasifikasi\` 
+            CREATE INDEX \`idx_asb_klasifikasi_klasifikasi\` 
             ON \`asb_klasifikasi\` (\`klasifikasi\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_klasifikasi_tipe_bangunan_id\` 
+            CREATE INDEX \`idx_asb_klasifikasi_tipe_bangunan_id\` 
             ON \`asb_klasifikasi\` (\`id_asb_tipe_bangunan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_klasifikasi_deleted\` 
+            CREATE INDEX \`idx_asb_klasifikasi_deleted\` 
             ON \`asb_klasifikasi\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_nonstd_komponen\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_nonstd_komponen\` 
             ON \`asb_komponen_bangunan_nonstd\` (\`komponen\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_nonstd_deleted\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_nonstd_deleted\` 
             ON \`asb_komponen_bangunan_nonstd\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_nonstd_id_asb_jenis\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_nonstd_id_asb_jenis\` 
             ON \`asb_komponen_bangunan_nonstd\` (\`id_asb_jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_nonstd_id_asb_tipe_bangunan\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_nonstd_id_asb_tipe_bangunan\` 
             ON \`asb_komponen_bangunan_nonstd\` (\`id_asb_tipe_bangunan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_pros_nonstd_komponen\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_pros_nonstd_komponen\` 
             ON \`asb_komponen_bangunan_pros_nonstd\` (\`id_asb_komponen_bangunan_nonstd\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_pros_nonstd_deleted\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_pros_nonstd_deleted\` 
             ON \`asb_komponen_bangunan_pros_nonstd\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_pros_std_komponen\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_pros_std_komponen\` 
             ON \`asb_komponen_bangunan_pros_std\` (\`id_asb_komponen_bangunan_std\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_pros_std_deleted\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_pros_std_deleted\` 
             ON \`asb_komponen_bangunan_pros_std\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_std_komponen\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_std_komponen\` 
             ON \`asb_komponen_bangunan_stds\` (\`komponen\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_std_files\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_std_files\` 
             ON \`asb_komponen_bangunan_stds\` (\`files\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_std_id_asb_jenis\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_std_id_asb_jenis\` 
             ON \`asb_komponen_bangunan_stds\` (\`id_asb_jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_std_id_asb_tipe_bangunan\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_std_id_asb_tipe_bangunan\` 
             ON \`asb_komponen_bangunan_stds\` (\`id_asb_tipe_bangunan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_komponen_bangunan_std_deleted\` 
+            CREATE INDEX \`idx_asb_komponen_bangunan_std_deleted\` 
             ON \`asb_komponen_bangunan_stds\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_lantais_lantai\` 
+            CREATE INDEX \`idx_asb_lantais_lantai\` 
             ON \`asb_lantais\` (\`lantai\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_lantais_type\` 
+            CREATE INDEX \`idx_asb_lantais_type\` 
             ON \`asb_lantais\` (\`type\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_lantais_id_satuan\` 
+            CREATE INDEX \`idx_asb_lantais_id_satuan\` 
             ON \`asb_lantais\` (\`id_satuan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_lantais_deleted\` 
+            CREATE INDEX \`idx_asb_lantais_deleted\` 
             ON \`asb_lantais\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_log_user\` 
+            CREATE INDEX \`idx_asb_log_user\` 
             ON \`asb_log\` (\`id_user\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_log_created_at\` 
+            CREATE INDEX \`idx_asb_log_created_at\` 
             ON \`asb_log\` (\`created_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_log_deleted_at\` 
+            CREATE INDEX \`idx_asb_log_deleted_at\` 
             ON \`asb_log\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_log_asb\` 
+            CREATE INDEX \`idx_asb_log_asb\` 
             ON \`asb_log\` (\`id_asb\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_status_status\` 
+            CREATE INDEX \`idx_asb_status_status\` 
             ON \`asb_status\` (\`status\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_status_deleted\` 
+            CREATE INDEX \`idx_asb_status_deleted\` 
             ON \`asb_status\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_tipe_bangunan_tipe_bangunan\` 
+            CREATE INDEX \`idx_asb_tipe_bangunan_tipe_bangunan\` 
             ON \`asb_tipe_bangunan\` (\`tipe_bangunan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_asb_tipe_bangunan_deleted\` 
+            CREATE INDEX \`idx_asb_tipe_bangunan_deleted\` 
             ON \`asb_tipe_bangunan\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_hspk_ruang_lingkup\` 
+            CREATE INDEX \`idx_hspk_ruang_lingkup\` 
             ON \`hspk\` (\`id_ruang_lingkup\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_hspk_no_mata_pembayaran\` 
+            CREATE INDEX \`idx_hspk_no_mata_pembayaran\` 
             ON \`hspk\` (\`no_mata_pembayaran\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_hspk_deleted\` 
+            CREATE INDEX \`idx_hspk_deleted\` 
             ON \`hspk\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_jenis_pemeliharaan_tingkat\` 
+            CREATE INDEX \`idx_jalan_jenis_pemeliharaan_tingkat\` 
             ON \`jalan_jenis_pemeliharaan\` (\`tingkat_pemeliharaan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_jenis_pemeliharaan_jenis\` 
+            CREATE INDEX \`idx_jalan_jenis_pemeliharaan_jenis\` 
             ON \`jalan_jenis_pemeliharaan\` (\`jenis_pemeliharaan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_jenis_pemeliharaan_deleted\` 
+            CREATE INDEX \`idx_jalan_jenis_pemeliharaan_deleted\` 
             ON \`jalan_jenis_pemeliharaan\` (\`deleted_at\`)
         `);
         // Note: Column is 'jenis_perkerasan' not 'jenis' (renamed in PostgreSQL migration AlterJalanJenisPerkerasanColumn)
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_jenis_perkerasan_jenis_perkerasan\` 
+            CREATE INDEX \`idx_jalan_jenis_perkerasan_jenis_perkerasan\` 
             ON \`jalan_jenis_perkerasan\` (\`jenis_perkerasan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_jenis_perkerasan_deleted\` 
+            CREATE INDEX \`idx_jalan_jenis_perkerasan_deleted\` 
             ON \`jalan_jenis_perkerasan\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_kebijakan_kabkota_bulan_tahun\` 
+            CREATE INDEX \`idx_jalan_kebijakan_kabkota_bulan_tahun\` 
             ON \`jalan_kebijakan\` (\`id_kabkota\`, \`bulan\`, \`tahun\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_mutu_beton_jenis\` 
+            CREATE INDEX \`idx_jalan_mutu_beton_jenis\` 
             ON \`jalan_mutu_beton\` (\`jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_mutu_beton_deleted\` 
+            CREATE INDEX \`idx_jalan_mutu_beton_deleted\` 
             ON \`jalan_mutu_beton\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_ruang_lingkup_perkerasan_kaku_jenis\` 
+            CREATE INDEX \`idx_jalan_ruang_lingkup_perkerasan_kaku_jenis\` 
             ON \`jalan_ruang_lingkup_perkerasan_kaku\` (\`jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_ruang_lingkup_perkerasan_kaku_deleted\` 
+            CREATE INDEX \`idx_jalan_ruang_lingkup_perkerasan_kaku_deleted\` 
             ON \`jalan_ruang_lingkup_perkerasan_kaku\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_ruang_lingkup_perkerasan_lentur_jenis\` 
+            CREATE INDEX \`idx_jalan_ruang_lingkup_perkerasan_lentur_jenis\` 
             ON \`jalan_ruang_lingkup_perkerasan_lentur\` (\`jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_ruang_lingkup_perkerasan_lentur_deleted\` 
+            CREATE INDEX \`idx_jalan_ruang_lingkup_perkerasan_lentur_deleted\` 
             ON \`jalan_ruang_lingkup_perkerasan_lentur\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_ruang_lingkup_jenis\` 
+            CREATE INDEX \`idx_jalan_saluran_ruang_lingkup_jenis\` 
             ON \`jalan_saluran_ruang_lingkup\` (\`id_jenis_usulan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_smkk_ruang_lingkup\` 
+            CREATE INDEX \`idx_jalan_saluran_smkk_ruang_lingkup\` 
             ON \`jalan_saluran_smkk\` (\`id_ruang_lingkup\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_smkk_no_mata_pembayaran\` 
+            CREATE INDEX \`idx_jalan_saluran_smkk_no_mata_pembayaran\` 
             ON \`jalan_saluran_smkk\` (\`no_mata_pembayaran\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_smkk_deleted\` 
+            CREATE INDEX \`idx_jalan_saluran_smkk_deleted\` 
             ON \`jalan_saluran_smkk\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_spesifikasi_smkk_jenis_usulan\` 
+            CREATE INDEX \`idx_jalan_saluran_spesifikasi_smkk_jenis_usulan\` 
             ON \`jalan_saluran_spesifikasi_smkk\` (\`id_jenis_usulan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_spesifikasi_smkk_usulan_jalan\` 
+            CREATE INDEX \`idx_jalan_saluran_spesifikasi_smkk_usulan_jalan\` 
             ON \`jalan_saluran_spesifikasi_smkk\` (\`id_usulan_jalan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_spesifikasi_smkk_jalan_saluran_smkk\` 
+            CREATE INDEX \`idx_jalan_saluran_spesifikasi_smkk_jalan_saluran_smkk\` 
             ON \`jalan_saluran_spesifikasi_smkk\` (\`id_jalan_saluran_smkk\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_spesifikasi_smkk_deleted\` 
+            CREATE INDEX \`idx_jalan_saluran_spesifikasi_smkk_deleted\` 
             ON \`jalan_saluran_spesifikasi_smkk\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_spesifikasi_smkk_review_jenis_usulan\` 
+            CREATE INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_jenis_usulan\` 
             ON \`jalan_saluran_spesifikasi_smkk_review\` (\`id_jenis_usulan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_spesifikasi_smkk_review_usulan_jalan\` 
+            CREATE INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_usulan_jalan\` 
             ON \`jalan_saluran_spesifikasi_smkk_review\` (\`id_usulan_jalan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_spesifikasi_smkk_review_jalan_saluran_smkk\` 
+            CREATE INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_jalan_saluran_smkk\` 
             ON \`jalan_saluran_spesifikasi_smkk_review\` (\`id_jalan_saluran_smkk\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_saluran_spesifikasi_smkk_review_deleted\` 
+            CREATE INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_deleted\` 
             ON \`jalan_saluran_spesifikasi_smkk_review\` (\`deleted_at\`)
         `);
         // Note: Table is smkk_global in MySQL (not jalan_smkk)
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_smkk_global_bulan_tahun\` 
+            CREATE INDEX \`idx_smkk_global_bulan_tahun\` 
             ON \`smkk_global\` (\`bulan\`, \`tahun\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_usulan_jalan\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_usulan_jalan\` 
             ON \`jalan_spesifikasi_desain\` (\`id_usulan_jalan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_ruang_lingkup\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_ruang_lingkup\` 
             ON \`jalan_spesifikasi_desain\` (\`id_ruang_lingkup\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_hspk\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_hspk\` 
             ON \`jalan_spesifikasi_desain\` (\`id_hspk\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_deleted\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_deleted\` 
             ON \`jalan_spesifikasi_desain\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_kaku_spec\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_kaku_spec\` 
             ON \`jalan_spesifikasi_desain_kaku\` (\`spec\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_kaku_deleted\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_kaku_deleted\` 
             ON \`jalan_spesifikasi_desain_kaku\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_lentur_spec\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_lentur_spec\` 
             ON \`jalan_spesifikasi_desain_lentur\` (\`spec\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_lentur_deleted\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_lentur_deleted\` 
             ON \`jalan_spesifikasi_desain_lentur\` (\`deleted_at\`)
         `);
         // Note: Index for id_spesifikasi_desain removed - column was dropped in PostgreSQL migration DropIdSpesifikasiDesainFromJalanSpesifikasiDesainReview
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_review_usulan_jalan\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_review_usulan_jalan\` 
             ON \`jalan_spesifikasi_desain_review\` (\`id_usulan_jalan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_review_ruang_lingkup\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_review_ruang_lingkup\` 
             ON \`jalan_spesifikasi_desain_review\` (\`id_ruang_lingkup\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_review_hspk\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_review_hspk\` 
             ON \`jalan_spesifikasi_desain_review\` (\`id_hspk\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jalan_spesifikasi_desain_review_deleted\` 
+            CREATE INDEX \`idx_jalan_spesifikasi_desain_review_deleted\` 
             ON \`jalan_spesifikasi_desain_review\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jenis_standars_jenis\` 
+            CREATE INDEX \`idx_jenis_standars_jenis\` 
             ON \`jenis_standars\` (\`jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jenis_standars_deleted\` 
+            CREATE INDEX \`idx_jenis_standars_deleted\` 
             ON \`jenis_standars\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jenis_usulan_jenis\` 
+            CREATE INDEX \`idx_jenis_usulan_jenis\` 
             ON \`jenis_usulan\` (\`jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_jenis_usulan_deleted\` 
+            CREATE INDEX \`idx_jenis_usulan_deleted\` 
             ON \`jenis_usulan\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_kabkotas_province_id\` 
+            CREATE INDEX \`idx_kabkotas_province_id\` 
             ON \`kabkotas\` (\`province_id\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_kabkotas_kode\` 
+            CREATE INDEX \`idx_kabkotas_kode\` 
             ON \`kabkotas\` (\`kode\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_kabkotas_active\` 
+            CREATE INDEX \`idx_kabkotas_active\` 
             ON \`kabkotas\` (\`is_active\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_kabkotas_province_active\` 
+            CREATE INDEX \`idx_kabkotas_province_active\` 
             ON \`kabkotas\` (\`province_id\`, \`is_active\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_kecamatans_kabkota\` 
+            CREATE INDEX \`idx_kecamatans_kabkota\` 
             ON \`kecamatans\` (\`id_kabkota\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_kecamatans_deleted_at\` 
+            CREATE INDEX \`idx_kecamatans_deleted_at\` 
             ON \`kecamatans\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_kelurahans_kecamatan\` 
+            CREATE INDEX \`idx_kelurahans_kecamatan\` 
             ON \`kelurahans\` (\`id_kecamatan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_kelurahans_deleted_at\` 
+            CREATE INDEX \`idx_kelurahans_deleted_at\` 
             ON \`kelurahans\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_opds_opd\` 
+            CREATE INDEX \`idx_opds_opd\` 
             ON \`opds\` (\`opd\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_opds_alias\` 
+            CREATE INDEX \`idx_opds_alias\` 
             ON \`opds\` (\`alias\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_opds_id_user\` 
+            CREATE INDEX \`idx_opds_id_user\` 
             ON \`opds\` (\`id_user\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_opds_deleted\` 
+            CREATE INDEX \`idx_opds_deleted\` 
             ON \`opds\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE UNIQUE INDEX IF NOT EXISTS \`idx_opds_id_user_unique\` 
+            CREATE UNIQUE INDEX \`idx_opds_id_user_unique\` 
             ON \`opds\` (\`id_user\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_ppn_global_bulan_tahun\` 
+            CREATE INDEX \`idx_ppn_global_bulan_tahun\` 
             ON \`ppn_global\` (\`bulan\`, \`tahun\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_provinces_kode\` 
+            CREATE INDEX \`idx_provinces_kode\` 
             ON \`provinces\` (\`kode\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_provinces_active\` 
+            CREATE INDEX \`idx_provinces_active\` 
             ON \`provinces\` (\`is_active\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_rekenings_rekening_kode\` 
+            CREATE INDEX \`idx_rekenings_rekening_kode\` 
             ON \`rekenings\` (\`rekening_kode\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_satuans_satuan\` 
+            CREATE INDEX \`idx_satuans_satuan\` 
             ON \`satuans\` (\`satuan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_satuans_active\` 
+            CREATE INDEX \`idx_satuans_active\` 
             ON \`satuans\` (\`is_active\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_satuans_deleted\` 
+            CREATE INDEX \`idx_satuans_deleted\` 
             ON \`satuans\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_shst_tahun\` 
+            CREATE INDEX \`idx_shst_tahun\` 
             ON \`shst\` (\`tahun\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_shst_tipe_bangunan_id\` 
+            CREATE INDEX \`idx_shst_tipe_bangunan_id\` 
             ON \`shst\` (\`id_asb_tipe_bangunan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_shst_klasifikasi_id\` 
+            CREATE INDEX \`idx_shst_klasifikasi_id\` 
             ON \`shst\` (\`id_asb_klasifikasi\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_shst_kabkota_id\` 
+            CREATE INDEX \`idx_shst_kabkota_id\` 
             ON \`shst\` (\`id_kabkota\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_shst_deleted\` 
+            CREATE INDEX \`idx_shst_deleted\` 
             ON \`shst\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_shst_nominal\` 
+            CREATE INDEX \`idx_shst_nominal\` 
             ON \`shst\` (\`nominal\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_standard_klasifikasi_asb_klasifikasi_id\` 
+            CREATE INDEX \`idx_standard_klasifikasi_asb_klasifikasi_id\` 
             ON \`standard_klasifikasi\` (\`id_asb_klasifikasi\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_standard_klasifikasi_kabkota_id\` 
+            CREATE INDEX \`idx_standard_klasifikasi_kabkota_id\` 
             ON \`standard_klasifikasi\` (\`id_kabkota\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_standard_klasifikasi_deleted\` 
+            CREATE INDEX \`idx_standard_klasifikasi_deleted\` 
             ON \`standard_klasifikasi\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_users_username\` 
+            CREATE INDEX \`idx_users_username\` 
             ON \`users\` (\`username\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_usulan_jalan_id_asb_jenis\` 
+            CREATE INDEX \`idx_usulan_jalan_id_asb_jenis\` 
             ON \`usulan_jalan\` (\`id_asb_jenis\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_usulan_jalan_id_jalan_jenis_pemeliharaan\` 
+            CREATE INDEX \`idx_usulan_jalan_id_jalan_jenis_pemeliharaan\` 
             ON \`usulan_jalan\` (\`id_jalan_jenis_pemeliharaan\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_usulan_jalan_id_rekening\` 
+            CREATE INDEX \`idx_usulan_jalan_id_rekening\` 
             ON \`usulan_jalan\` (\`id_rekening\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_usulan_jalan_id_rekening_review\` 
+            CREATE INDEX \`idx_usulan_jalan_id_rekening_review\` 
             ON \`usulan_jalan\` (\`id_rekening_review\`)
         `);
         // Note: Analytics indexes (idx_usulan_jalan_created_at, idx_usulan_jalan_tahun_anggaran, etc.) 
         // are handled separately in AddAnalyticsIndexes migration
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_usulan_jalan_status_status\` 
+            CREATE INDEX \`idx_usulan_jalan_status_status\` 
             ON \`usulan_jalan_status\` (\`status\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`idx_usulan_jalan_status_deleted\` 
+            CREATE INDEX \`idx_usulan_jalan_status_deleted\` 
             ON \`usulan_jalan_status\` (\`deleted_at\`)
         `);
         await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS \`IDX_verifikators_id_user\` 
+            CREATE INDEX \`IDX_verifikators_id_user\` 
             ON \`verifikators\` (\`id_user\`)
         `);
     }
@@ -714,538 +714,538 @@ export class AddAllMissingIndexes1770115044325 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
 
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`IDX_verifikators_id_user\` ON \`verifikators\`
+            DROP INDEX \`IDX_verifikators_id_user\` ON \`verifikators\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_usulan_jalan_status_deleted\` ON \`usulan_jalan_status\`
+            DROP INDEX \`idx_usulan_jalan_status_deleted\` ON \`usulan_jalan_status\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_usulan_jalan_status_status\` ON \`usulan_jalan_status\`
+            DROP INDEX \`idx_usulan_jalan_status_status\` ON \`usulan_jalan_status\`
         `);
         // Note: Analytics indexes are handled separately in AddAnalyticsIndexes migration
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_usulan_jalan_id_rekening_review\` ON \`usulan_jalan\`
+            DROP INDEX \`idx_usulan_jalan_id_rekening_review\` ON \`usulan_jalan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_usulan_jalan_id_rekening\` ON \`usulan_jalan\`
+            DROP INDEX \`idx_usulan_jalan_id_rekening\` ON \`usulan_jalan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_usulan_jalan_id_jalan_jenis_pemeliharaan\` ON \`usulan_jalan\`
+            DROP INDEX \`idx_usulan_jalan_id_jalan_jenis_pemeliharaan\` ON \`usulan_jalan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_usulan_jalan_id_asb_jenis\` ON \`usulan_jalan\`
+            DROP INDEX \`idx_usulan_jalan_id_asb_jenis\` ON \`usulan_jalan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_users_username\` ON \`users\`
+            DROP INDEX \`idx_users_username\` ON \`users\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_standard_klasifikasi_deleted\` ON \`standard_klasifikasi\`
+            DROP INDEX \`idx_standard_klasifikasi_deleted\` ON \`standard_klasifikasi\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_standard_klasifikasi_kabkota_id\` ON \`standard_klasifikasi\`
+            DROP INDEX \`idx_standard_klasifikasi_kabkota_id\` ON \`standard_klasifikasi\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_standard_klasifikasi_asb_klasifikasi_id\` ON \`standard_klasifikasi\`
+            DROP INDEX \`idx_standard_klasifikasi_asb_klasifikasi_id\` ON \`standard_klasifikasi\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_shst_nominal\` ON \`shst\`
+            DROP INDEX \`idx_shst_nominal\` ON \`shst\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_shst_deleted\` ON \`shst\`
+            DROP INDEX \`idx_shst_deleted\` ON \`shst\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_shst_kabkota_id\` ON \`shst\`
+            DROP INDEX \`idx_shst_kabkota_id\` ON \`shst\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_shst_klasifikasi_id\` ON \`shst\`
+            DROP INDEX \`idx_shst_klasifikasi_id\` ON \`shst\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_shst_tipe_bangunan_id\` ON \`shst\`
+            DROP INDEX \`idx_shst_tipe_bangunan_id\` ON \`shst\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_shst_tahun\` ON \`shst\`
+            DROP INDEX \`idx_shst_tahun\` ON \`shst\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_satuans_deleted\` ON \`satuans\`
+            DROP INDEX \`idx_satuans_deleted\` ON \`satuans\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_satuans_active\` ON \`satuans\`
+            DROP INDEX \`idx_satuans_active\` ON \`satuans\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_satuans_satuan\` ON \`satuans\`
+            DROP INDEX \`idx_satuans_satuan\` ON \`satuans\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_rekenings_rekening_kode\` ON \`rekenings\`
+            DROP INDEX \`idx_rekenings_rekening_kode\` ON \`rekenings\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_provinces_active\` ON \`provinces\`
+            DROP INDEX \`idx_provinces_active\` ON \`provinces\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_provinces_kode\` ON \`provinces\`
+            DROP INDEX \`idx_provinces_kode\` ON \`provinces\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_ppn_global_bulan_tahun\` ON \`ppn_global\`
+            DROP INDEX \`idx_ppn_global_bulan_tahun\` ON \`ppn_global\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_opds_id_user_unique\` ON \`opds\`
+            DROP INDEX \`idx_opds_id_user_unique\` ON \`opds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_opds_deleted\` ON \`opds\`
+            DROP INDEX \`idx_opds_deleted\` ON \`opds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_opds_id_user\` ON \`opds\`
+            DROP INDEX \`idx_opds_id_user\` ON \`opds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_opds_alias\` ON \`opds\`
+            DROP INDEX \`idx_opds_alias\` ON \`opds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_opds_opd\` ON \`opds\`
+            DROP INDEX \`idx_opds_opd\` ON \`opds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_kelurahans_deleted_at\` ON \`kelurahans\`
+            DROP INDEX \`idx_kelurahans_deleted_at\` ON \`kelurahans\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_kelurahans_kecamatan\` ON \`kelurahans\`
+            DROP INDEX \`idx_kelurahans_kecamatan\` ON \`kelurahans\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_kecamatans_deleted_at\` ON \`kecamatans\`
+            DROP INDEX \`idx_kecamatans_deleted_at\` ON \`kecamatans\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_kecamatans_kabkota\` ON \`kecamatans\`
+            DROP INDEX \`idx_kecamatans_kabkota\` ON \`kecamatans\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_kabkotas_province_active\` ON \`kabkotas\`
+            DROP INDEX \`idx_kabkotas_province_active\` ON \`kabkotas\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_kabkotas_active\` ON \`kabkotas\`
+            DROP INDEX \`idx_kabkotas_active\` ON \`kabkotas\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_kabkotas_kode\` ON \`kabkotas\`
+            DROP INDEX \`idx_kabkotas_kode\` ON \`kabkotas\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_kabkotas_province_id\` ON \`kabkotas\`
+            DROP INDEX \`idx_kabkotas_province_id\` ON \`kabkotas\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jenis_usulan_deleted\` ON \`jenis_usulan\`
+            DROP INDEX \`idx_jenis_usulan_deleted\` ON \`jenis_usulan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jenis_usulan_jenis\` ON \`jenis_usulan\`
+            DROP INDEX \`idx_jenis_usulan_jenis\` ON \`jenis_usulan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jenis_standars_deleted\` ON \`jenis_standars\`
+            DROP INDEX \`idx_jenis_standars_deleted\` ON \`jenis_standars\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jenis_standars_jenis\` ON \`jenis_standars\`
+            DROP INDEX \`idx_jenis_standars_jenis\` ON \`jenis_standars\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_review_deleted\` ON \`jalan_spesifikasi_desain_review\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_review_deleted\` ON \`jalan_spesifikasi_desain_review\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_review_hspk\` ON \`jalan_spesifikasi_desain_review\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_review_hspk\` ON \`jalan_spesifikasi_desain_review\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_review_ruang_lingkup\` ON \`jalan_spesifikasi_desain_review\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_review_ruang_lingkup\` ON \`jalan_spesifikasi_desain_review\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_review_usulan_jalan\` ON \`jalan_spesifikasi_desain_review\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_review_usulan_jalan\` ON \`jalan_spesifikasi_desain_review\`
         `);
         // Note: Index for id_spesifikasi_desain removed - column was dropped in PostgreSQL migration DropIdSpesifikasiDesainFromJalanSpesifikasiDesainReview
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_lentur_deleted\` ON \`jalan_spesifikasi_desain_lentur\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_lentur_deleted\` ON \`jalan_spesifikasi_desain_lentur\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_lentur_spec\` ON \`jalan_spesifikasi_desain_lentur\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_lentur_spec\` ON \`jalan_spesifikasi_desain_lentur\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_kaku_deleted\` ON \`jalan_spesifikasi_desain_kaku\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_kaku_deleted\` ON \`jalan_spesifikasi_desain_kaku\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_kaku_spec\` ON \`jalan_spesifikasi_desain_kaku\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_kaku_spec\` ON \`jalan_spesifikasi_desain_kaku\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_deleted\` ON \`jalan_spesifikasi_desain\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_deleted\` ON \`jalan_spesifikasi_desain\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_hspk\` ON \`jalan_spesifikasi_desain\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_hspk\` ON \`jalan_spesifikasi_desain\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_ruang_lingkup\` ON \`jalan_spesifikasi_desain\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_ruang_lingkup\` ON \`jalan_spesifikasi_desain\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_spesifikasi_desain_usulan_jalan\` ON \`jalan_spesifikasi_desain\`
+            DROP INDEX \`idx_jalan_spesifikasi_desain_usulan_jalan\` ON \`jalan_spesifikasi_desain\`
         `);
         // Note: Table is smkk_global in MySQL (not jalan_smkk)
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_smkk_global_bulan_tahun\` ON \`smkk_global\`
+            DROP INDEX \`idx_smkk_global_bulan_tahun\` ON \`smkk_global\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_review_deleted\` ON \`jalan_saluran_spesifikasi_smkk_review\`
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_deleted\` ON \`jalan_saluran_spesifikasi_smkk_review\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_review_jalan_saluran_smkk\` ON \`jalan_saluran_spesifikasi_smkk_review\`
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_jalan_saluran_smkk\` ON \`jalan_saluran_spesifikasi_smkk_review\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_review_usulan_jalan\` ON \`jalan_saluran_spesifikasi_smkk_review\`
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_usulan_jalan\` ON \`jalan_saluran_spesifikasi_smkk_review\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_review_jenis_usulan\` ON \`jalan_saluran_spesifikasi_smkk_review\`
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_review_jenis_usulan\` ON \`jalan_saluran_spesifikasi_smkk_review\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_deleted\` ON \`jalan_saluran_spesifikasi_smkk\`
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_deleted\` ON \`jalan_saluran_spesifikasi_smkk\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_jalan_saluran_smkk\` ON \`jalan_saluran_spesifikasi_smkk\`
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_jalan_saluran_smkk\` ON \`jalan_saluran_spesifikasi_smkk\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_usulan_jalan\` ON \`jalan_saluran_spesifikasi_smkk\`
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_usulan_jalan\` ON \`jalan_saluran_spesifikasi_smkk\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_spesifikasi_smkk_jenis_usulan\` ON \`jalan_saluran_spesifikasi_smkk\`
+            DROP INDEX \`idx_jalan_saluran_spesifikasi_smkk_jenis_usulan\` ON \`jalan_saluran_spesifikasi_smkk\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_smkk_deleted\` ON \`jalan_saluran_smkk\`
+            DROP INDEX \`idx_jalan_saluran_smkk_deleted\` ON \`jalan_saluran_smkk\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_smkk_no_mata_pembayaran\` ON \`jalan_saluran_smkk\`
+            DROP INDEX \`idx_jalan_saluran_smkk_no_mata_pembayaran\` ON \`jalan_saluran_smkk\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_smkk_ruang_lingkup\` ON \`jalan_saluran_smkk\`
+            DROP INDEX \`idx_jalan_saluran_smkk_ruang_lingkup\` ON \`jalan_saluran_smkk\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_saluran_ruang_lingkup_jenis\` ON \`jalan_saluran_ruang_lingkup\`
+            DROP INDEX \`idx_jalan_saluran_ruang_lingkup_jenis\` ON \`jalan_saluran_ruang_lingkup\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_ruang_lingkup_perkerasan_lentur_deleted\` ON \`jalan_ruang_lingkup_perkerasan_lentur\`
+            DROP INDEX \`idx_jalan_ruang_lingkup_perkerasan_lentur_deleted\` ON \`jalan_ruang_lingkup_perkerasan_lentur\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_ruang_lingkup_perkerasan_lentur_jenis\` ON \`jalan_ruang_lingkup_perkerasan_lentur\`
+            DROP INDEX \`idx_jalan_ruang_lingkup_perkerasan_lentur_jenis\` ON \`jalan_ruang_lingkup_perkerasan_lentur\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_ruang_lingkup_perkerasan_kaku_deleted\` ON \`jalan_ruang_lingkup_perkerasan_kaku\`
+            DROP INDEX \`idx_jalan_ruang_lingkup_perkerasan_kaku_deleted\` ON \`jalan_ruang_lingkup_perkerasan_kaku\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_ruang_lingkup_perkerasan_kaku_jenis\` ON \`jalan_ruang_lingkup_perkerasan_kaku\`
+            DROP INDEX \`idx_jalan_ruang_lingkup_perkerasan_kaku_jenis\` ON \`jalan_ruang_lingkup_perkerasan_kaku\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_mutu_beton_deleted\` ON \`jalan_mutu_beton\`
+            DROP INDEX \`idx_jalan_mutu_beton_deleted\` ON \`jalan_mutu_beton\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_mutu_beton_jenis\` ON \`jalan_mutu_beton\`
+            DROP INDEX \`idx_jalan_mutu_beton_jenis\` ON \`jalan_mutu_beton\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_kebijakan_kabkota_bulan_tahun\` ON \`jalan_kebijakan\`
+            DROP INDEX \`idx_jalan_kebijakan_kabkota_bulan_tahun\` ON \`jalan_kebijakan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_jenis_perkerasan_deleted\` ON \`jalan_jenis_perkerasan\`
+            DROP INDEX \`idx_jalan_jenis_perkerasan_deleted\` ON \`jalan_jenis_perkerasan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_jenis_perkerasan_jenis_perkerasan\` ON \`jalan_jenis_perkerasan\`
+            DROP INDEX \`idx_jalan_jenis_perkerasan_jenis_perkerasan\` ON \`jalan_jenis_perkerasan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_jenis_pemeliharaan_deleted\` ON \`jalan_jenis_pemeliharaan\`
+            DROP INDEX \`idx_jalan_jenis_pemeliharaan_deleted\` ON \`jalan_jenis_pemeliharaan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_jenis_pemeliharaan_jenis\` ON \`jalan_jenis_pemeliharaan\`
+            DROP INDEX \`idx_jalan_jenis_pemeliharaan_jenis\` ON \`jalan_jenis_pemeliharaan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_jalan_jenis_pemeliharaan_tingkat\` ON \`jalan_jenis_pemeliharaan\`
+            DROP INDEX \`idx_jalan_jenis_pemeliharaan_tingkat\` ON \`jalan_jenis_pemeliharaan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_hspk_deleted\` ON \`hspk\`
+            DROP INDEX \`idx_hspk_deleted\` ON \`hspk\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_hspk_no_mata_pembayaran\` ON \`hspk\`
+            DROP INDEX \`idx_hspk_no_mata_pembayaran\` ON \`hspk\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_hspk_ruang_lingkup\` ON \`hspk\`
+            DROP INDEX \`idx_hspk_ruang_lingkup\` ON \`hspk\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_tipe_bangunan_deleted\` ON \`asb_tipe_bangunan\`
+            DROP INDEX \`idx_asb_tipe_bangunan_deleted\` ON \`asb_tipe_bangunan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_tipe_bangunan_tipe_bangunan\` ON \`asb_tipe_bangunan\`
+            DROP INDEX \`idx_asb_tipe_bangunan_tipe_bangunan\` ON \`asb_tipe_bangunan\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_status_deleted\` ON \`asb_status\`
+            DROP INDEX \`idx_asb_status_deleted\` ON \`asb_status\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_status_status\` ON \`asb_status\`
+            DROP INDEX \`idx_asb_status_status\` ON \`asb_status\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_log_asb\` ON \`asb_log\`
+            DROP INDEX \`idx_asb_log_asb\` ON \`asb_log\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_log_deleted_at\` ON \`asb_log\`
+            DROP INDEX \`idx_asb_log_deleted_at\` ON \`asb_log\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_log_created_at\` ON \`asb_log\`
+            DROP INDEX \`idx_asb_log_created_at\` ON \`asb_log\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_log_user\` ON \`asb_log\`
+            DROP INDEX \`idx_asb_log_user\` ON \`asb_log\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_lantais_deleted\` ON \`asb_lantais\`
+            DROP INDEX \`idx_asb_lantais_deleted\` ON \`asb_lantais\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_lantais_id_satuan\` ON \`asb_lantais\`
+            DROP INDEX \`idx_asb_lantais_id_satuan\` ON \`asb_lantais\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_lantais_type\` ON \`asb_lantais\`
+            DROP INDEX \`idx_asb_lantais_type\` ON \`asb_lantais\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_lantais_lantai\` ON \`asb_lantais\`
+            DROP INDEX \`idx_asb_lantais_lantai\` ON \`asb_lantais\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_std_deleted\` ON \`asb_komponen_bangunan_stds\`
+            DROP INDEX \`idx_asb_komponen_bangunan_std_deleted\` ON \`asb_komponen_bangunan_stds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_std_id_asb_tipe_bangunan\` ON \`asb_komponen_bangunan_stds\`
+            DROP INDEX \`idx_asb_komponen_bangunan_std_id_asb_tipe_bangunan\` ON \`asb_komponen_bangunan_stds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_std_id_asb_jenis\` ON \`asb_komponen_bangunan_stds\`
+            DROP INDEX \`idx_asb_komponen_bangunan_std_id_asb_jenis\` ON \`asb_komponen_bangunan_stds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_std_files\` ON \`asb_komponen_bangunan_stds\`
+            DROP INDEX \`idx_asb_komponen_bangunan_std_files\` ON \`asb_komponen_bangunan_stds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_std_komponen\` ON \`asb_komponen_bangunan_stds\`
+            DROP INDEX \`idx_asb_komponen_bangunan_std_komponen\` ON \`asb_komponen_bangunan_stds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_pros_std_deleted\` ON \`asb_komponen_bangunan_pros_std\`
+            DROP INDEX \`idx_asb_komponen_bangunan_pros_std_deleted\` ON \`asb_komponen_bangunan_pros_std\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_pros_std_komponen\` ON \`asb_komponen_bangunan_pros_std\`
+            DROP INDEX \`idx_asb_komponen_bangunan_pros_std_komponen\` ON \`asb_komponen_bangunan_pros_std\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_pros_nonstd_deleted\` ON \`asb_komponen_bangunan_pros_nonstd\`
+            DROP INDEX \`idx_asb_komponen_bangunan_pros_nonstd_deleted\` ON \`asb_komponen_bangunan_pros_nonstd\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_pros_nonstd_komponen\` ON \`asb_komponen_bangunan_pros_nonstd\`
+            DROP INDEX \`idx_asb_komponen_bangunan_pros_nonstd_komponen\` ON \`asb_komponen_bangunan_pros_nonstd\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_nonstd_id_asb_tipe_bangunan\` ON \`asb_komponen_bangunan_nonstd\`
+            DROP INDEX \`idx_asb_komponen_bangunan_nonstd_id_asb_tipe_bangunan\` ON \`asb_komponen_bangunan_nonstd\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_nonstd_id_asb_jenis\` ON \`asb_komponen_bangunan_nonstd\`
+            DROP INDEX \`idx_asb_komponen_bangunan_nonstd_id_asb_jenis\` ON \`asb_komponen_bangunan_nonstd\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_nonstd_deleted\` ON \`asb_komponen_bangunan_nonstd\`
+            DROP INDEX \`idx_asb_komponen_bangunan_nonstd_deleted\` ON \`asb_komponen_bangunan_nonstd\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_komponen_bangunan_nonstd_komponen\` ON \`asb_komponen_bangunan_nonstd\`
+            DROP INDEX \`idx_asb_komponen_bangunan_nonstd_komponen\` ON \`asb_komponen_bangunan_nonstd\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_klasifikasi_deleted\` ON \`asb_klasifikasi\`
+            DROP INDEX \`idx_asb_klasifikasi_deleted\` ON \`asb_klasifikasi\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_klasifikasi_tipe_bangunan_id\` ON \`asb_klasifikasi\`
+            DROP INDEX \`idx_asb_klasifikasi_tipe_bangunan_id\` ON \`asb_klasifikasi\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_klasifikasi_klasifikasi\` ON \`asb_klasifikasi\`
+            DROP INDEX \`idx_asb_klasifikasi_klasifikasi\` ON \`asb_klasifikasi\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_jenis_deleted\` ON \`asb_jenis\`
+            DROP INDEX \`idx_asb_jenis_deleted\` ON \`asb_jenis\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_jenis_asb\` ON \`asb_jenis\`
+            DROP INDEX \`idx_asb_jenis_asb\` ON \`asb_jenis\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_jenis_jenis\` ON \`asb_jenis\`
+            DROP INDEX \`idx_asb_jenis_jenis\` ON \`asb_jenis\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_jakon_deleted_at\` ON \`asb_jakon\`
+            DROP INDEX \`idx_asb_jakon_deleted_at\` ON \`asb_jakon\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_jakon_type\` ON \`asb_jakon\`
+            DROP INDEX \`idx_asb_jakon_type\` ON \`asb_jakon\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_jakon_tahun\` ON \`asb_jakon\`
+            DROP INDEX \`idx_asb_jakon_tahun\` ON \`asb_jakon\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_jakon_klasifikasi\` ON \`asb_jakon\`
+            DROP INDEX \`idx_asb_jakon_klasifikasi\` ON \`asb_jakon\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_jakon_jenis\` ON \`asb_jakon\`
+            DROP INDEX \`idx_asb_jakon_jenis\` ON \`asb_jakon\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_jakon_tipe_bangunan\` ON \`asb_jakon\`
+            DROP INDEX \`idx_asb_jakon_tipe_bangunan\` ON \`asb_jakon\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_fungsi_ruangs_koef\` ON \`asb_fungsi_ruangs\`
+            DROP INDEX \`idx_asb_fungsi_ruangs_koef\` ON \`asb_fungsi_ruangs\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_fungsi_ruangs_deleted\` ON \`asb_fungsi_ruangs\`
+            DROP INDEX \`idx_asb_fungsi_ruangs_deleted\` ON \`asb_fungsi_ruangs\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_fungsi_ruangs_active\` ON \`asb_fungsi_ruangs\`
+            DROP INDEX \`idx_asb_fungsi_ruangs_active\` ON \`asb_fungsi_ruangs\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_fungsi_ruangs_nama\` ON \`asb_fungsi_ruangs\`
+            DROP INDEX \`idx_asb_fungsi_ruangs_nama\` ON \`asb_fungsi_ruangs\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_document_asb\` ON \`asb_document\`
+            DROP INDEX \`idx_asb_document_asb\` ON \`asb_document\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_document_deleted_at\` ON \`asb_document\`
+            DROP INDEX \`idx_asb_document_deleted_at\` ON \`asb_document\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_document_spec\` ON \`asb_document\`
+            DROP INDEX \`idx_asb_document_spec\` ON \`asb_document\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_detail_asb\` ON \`asb_details\`
+            DROP INDEX \`idx_asb_detail_asb\` ON \`asb_details\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_details_deleted_at\` ON \`asb_details\`
+            DROP INDEX \`idx_asb_details_deleted_at\` ON \`asb_details\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_details_fungsi_ruang\` ON \`asb_details\`
+            DROP INDEX \`idx_asb_details_fungsi_ruang\` ON \`asb_details\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_details_lantai\` ON \`asb_details\`
+            DROP INDEX \`idx_asb_details_lantai\` ON \`asb_details\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_details_files\` ON \`asb_details\`
+            DROP INDEX \`idx_asb_details_files\` ON \`asb_details\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_detail_reviews_asb\` ON \`asb_detail_reviews\`
+            DROP INDEX \`idx_asb_detail_reviews_asb\` ON \`asb_detail_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_detail_reviews_deleted_at\` ON \`asb_detail_reviews\`
+            DROP INDEX \`idx_asb_detail_reviews_deleted_at\` ON \`asb_detail_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_detail_reviews_fungsi_ruang\` ON \`asb_detail_reviews\`
+            DROP INDEX \`idx_asb_detail_reviews_fungsi_ruang\` ON \`asb_detail_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_detail_reviews_lantai\` ON \`asb_detail_reviews\`
+            DROP INDEX \`idx_asb_detail_reviews_lantai\` ON \`asb_detail_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_detail_reviews_detail\` ON \`asb_detail_reviews\`
+            DROP INDEX \`idx_asb_detail_reviews_detail\` ON \`asb_detail_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_detail_reviews_files\` ON \`asb_detail_reviews\`
+            DROP INDEX \`idx_asb_detail_reviews_files\` ON \`asb_detail_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bps_gallery_std_deleted_at\` ON \`asb_bps_gallery_std\`
+            DROP INDEX \`idx_asb_bps_gallery_std_deleted_at\` ON \`asb_bps_gallery_std\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bps_gallery_std_komponen_bangunan_std\` ON \`asb_bps_gallery_std\`
+            DROP INDEX \`idx_asb_bps_gallery_std_komponen_bangunan_std\` ON \`asb_bps_gallery_std\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bps_gallery_nonstd_deleted_at\` ON \`asb_bps_gallery_nonstd\`
+            DROP INDEX \`idx_asb_bps_gallery_nonstd_deleted_at\` ON \`asb_bps_gallery_nonstd\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bps_gallery_nonstd_komponen_bangunan_nonstd\` ON \`asb_bps_gallery_nonstd\`
+            DROP INDEX \`idx_asb_bps_gallery_nonstd_komponen_bangunan_nonstd\` ON \`asb_bps_gallery_nonstd\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standards_asb\` ON \`asb_bipek_standards\`
+            DROP INDEX \`idx_asb_bipek_standards_asb\` ON \`asb_bipek_standards\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standards_deleted_at\` ON \`asb_bipek_standards\`
+            DROP INDEX \`idx_asb_bipek_standards_deleted_at\` ON \`asb_bipek_standards\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standards_calculation_method\` ON \`asb_bipek_standards\`
+            DROP INDEX \`idx_asb_bipek_standards_calculation_method\` ON \`asb_bipek_standards\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standards_komponen_bangunan_std\` ON \`asb_bipek_standards\`
+            DROP INDEX \`idx_asb_bipek_standards_komponen_bangunan_std\` ON \`asb_bipek_standards\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standards_files\` ON \`asb_bipek_standards\`
+            DROP INDEX \`idx_asb_bipek_standards_files\` ON \`asb_bipek_standards\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standard_reviews_asb\` ON \`asb_bipek_standard_reviews\`
+            DROP INDEX \`idx_asb_bipek_standard_reviews_asb\` ON \`asb_bipek_standard_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standard_reviews_deleted_at\` ON \`asb_bipek_standard_reviews\`
+            DROP INDEX \`idx_asb_bipek_standard_reviews_deleted_at\` ON \`asb_bipek_standard_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standard_reviews_calculation_method\` ON \`asb_bipek_standard_reviews\`
+            DROP INDEX \`idx_asb_bipek_standard_reviews_calculation_method\` ON \`asb_bipek_standard_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standard_reviews_komponen_bangunan_std\` ON \`asb_bipek_standard_reviews\`
+            DROP INDEX \`idx_asb_bipek_standard_reviews_komponen_bangunan_std\` ON \`asb_bipek_standard_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standard_reviews_bipek_standard\` ON \`asb_bipek_standard_reviews\`
+            DROP INDEX \`idx_asb_bipek_standard_reviews_bipek_standard\` ON \`asb_bipek_standard_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_standard_reviews_files\` ON \`asb_bipek_standard_reviews\`
+            DROP INDEX \`idx_asb_bipek_standard_reviews_files\` ON \`asb_bipek_standard_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_non_stds_asb\` ON \`asb_bipek_non_stds\`
+            DROP INDEX \`idx_asb_bipek_non_stds_asb\` ON \`asb_bipek_non_stds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_non_stds_deleted_at\` ON \`asb_bipek_non_stds\`
+            DROP INDEX \`idx_asb_bipek_non_stds_deleted_at\` ON \`asb_bipek_non_stds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_non_stds_komponen_bangunan_nonstd\` ON \`asb_bipek_non_stds\`
+            DROP INDEX \`idx_asb_bipek_non_stds_komponen_bangunan_nonstd\` ON \`asb_bipek_non_stds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_non_stds_files\` ON \`asb_bipek_non_stds\`
+            DROP INDEX \`idx_asb_bipek_non_stds_files\` ON \`asb_bipek_non_stds\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_non_std_reviews_asb\` ON \`asb_bipek_non_std_reviews\`
+            DROP INDEX \`idx_asb_bipek_non_std_reviews_asb\` ON \`asb_bipek_non_std_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_non_std_reviews_deleted_at\` ON \`asb_bipek_non_std_reviews\`
+            DROP INDEX \`idx_asb_bipek_non_std_reviews_deleted_at\` ON \`asb_bipek_non_std_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_non_std_reviews_komponen_bangunan_nonstd\` ON \`asb_bipek_non_std_reviews\`
+            DROP INDEX \`idx_asb_bipek_non_std_reviews_komponen_bangunan_nonstd\` ON \`asb_bipek_non_std_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_non_std_reviews_bipek_non_std\` ON \`asb_bipek_non_std_reviews\`
+            DROP INDEX \`idx_asb_bipek_non_std_reviews_bipek_non_std\` ON \`asb_bipek_non_std_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_bipek_non_std_reviews_files\` ON \`asb_bipek_non_std_reviews\`
+            DROP INDEX \`idx_asb_bipek_non_std_reviews_files\` ON \`asb_bipek_non_std_reviews\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_opd_tahun\` ON \`asb\`
+            DROP INDEX \`idx_asb_opd_tahun\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_status_tahun\` ON \`asb\`
+            DROP INDEX \`idx_asb_status_tahun\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_opd_created_at\` ON \`asb\`
+            DROP INDEX \`idx_asb_opd_created_at\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_tahun_anggaran\` ON \`asb\`
+            DROP INDEX \`idx_asb_tahun_anggaran\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_created_at\` ON \`asb\`
+            DROP INDEX \`idx_asb_created_at\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`IDX_asb_id_verifikator_bappeda\` ON \`asb\`
+            DROP INDEX \`IDX_asb_id_verifikator_bappeda\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`IDX_asb_id_verifikator_bpkad\` ON \`asb\`
+            DROP INDEX \`IDX_asb_id_verifikator_bpkad\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`IDX_asb_id_verifikator_adpem\` ON \`asb\`
+            DROP INDEX \`IDX_asb_id_verifikator_adpem\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_deleted_at\` ON \`asb\`
+            DROP INDEX \`idx_asb_deleted_at\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_klasifikasi\` ON \`asb\`
+            DROP INDEX \`idx_asb_klasifikasi\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_kabkotas\` ON \`asb\`
+            DROP INDEX \`idx_asb_kabkotas\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_rekening_reviews\` ON \`asb\`
+            DROP INDEX \`idx_asb_rekening_reviews\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_rekenings\` ON \`asb\`
+            DROP INDEX \`idx_asb_rekenings\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_tipe_bangunan\` ON \`asb\`
+            DROP INDEX \`idx_asb_tipe_bangunan\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_opds\` ON \`asb\`
+            DROP INDEX \`idx_asb_opds\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_asb_status\` ON \`asb\`
+            DROP INDEX \`idx_asb_asb_status\` ON \`asb\`
         `);
         await queryRunner.query(`
-            DROP INDEX IF EXISTS \`idx_asb_asb_jenis\` ON \`asb\`
+            DROP INDEX \`idx_asb_asb_jenis\` ON \`asb\`
         `);
     }
 }

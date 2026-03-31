@@ -643,7 +643,6 @@ export class SeedRekenings1770088000008 implements MigrationInterface {
     
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        // Match postgres AddBulanAndTahunToRekenings: catalog rows use the month/year at seed time
         const now = new Date();
         const bulan = now.getMonth() + 1;
         const tahun = now.getFullYear();
