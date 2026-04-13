@@ -8,6 +8,7 @@ E-ASB adalah aplikasi backend untuk mengelola dan memverifikasi analisis standar
 
 ## 📋 Table of Contents
 
+- [Documentation](#-documentation)
 - [Business Overview](#-business-overview)
 - [Technical Architecture](#-technical-architecture)
 - [Features](#-features)
@@ -24,6 +25,17 @@ E-ASB adalah aplikasi backend untuk mengelola dan memverifikasi analisis standar
 - [Development Guidelines](#-development-guidelines)
 - [Testing](#-testing)
 - [Deployment](#-deployment)
+
+---
+
+## 📖 Documentation
+
+The documentation index lives in **[`docs/README.md`](docs/README.md)**. It links to:
+
+- **Getting started** — [`docs/quick-start.md`](docs/quick-start.md)
+- **Cross-cutting** — architecture, authentication, HTTP API, database, contributing
+- **Business modules** — ASB (gedung), Jalan, Saluran — [`docs/modules-asb.md`](docs/modules-asb.md), [`docs/modules-jalan.md`](docs/modules-jalan.md), [`docs/modules-saluran.md`](docs/modules-saluran.md)
+- **Module catalog** — all Nest presentation modules: [`docs/module-catalog.md`](docs/module-catalog.md)
 
 ---
 
@@ -619,6 +631,7 @@ be-easb-revamp/
 ├── test/                     # Test files
 ├── public/                   # Static files (PDFs, uploads)
 ├── postman/                  # Postman collections
+├── docs/                     # Documentation index (see docs/README.md)
 ├── .env                      # Environment variables
 ├── .env.example              # Environment template
 ├── package.json
@@ -634,6 +647,7 @@ be-easb-revamp/
 - **`presentation/`**: HTTP controllers, modules, request/response
 - **`common/`**: Shared utilities, guards, interceptors, middleware
 - **`migrations/`**: Database schema versioning
+- **`docs/`**: Markdown guides and module catalog ([`docs/README.md`](docs/README.md))
 
 ---
 

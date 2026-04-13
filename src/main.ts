@@ -112,7 +112,7 @@ async function bootstrap() {
     app.setGlobalPrefix(process.env.NODE_ENV === 'production' ? 'api/v1' : 'api/dev/v1');
 
     const port = config.get('port', 3000);
-    await app.listen(port);
+    await app.listen(port, '0.0.0.0');
     Logger.log(`App started on port ${port}`);
 }
 bootstrap();
