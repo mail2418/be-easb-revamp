@@ -39,7 +39,7 @@ Postman: [`Usulan_Saluran_Module_API.postman_collection.json`](../postman/Usulan
 
 - **Modules**: `UsulanSaluranModule` imports `SaluranSpesifikasiDesainModule`, `SaluranSpesifikasiDesainReviewModule`, `SaluranSpesifikasiSmkkModule`, `SaluranSpesifikasiSmkkReviewModule`, plus `JalanSaluranSmkkModule`, `JalanSaluranSpesifikasiSmkkModule`, `JalanSaluranSpesifikasiSmkkReviewModule`, `PpnGlobalModule`, `SmkkGlobalModule` ([`usulan_saluran.module.ts`](../src/presentation/usulan_saluran/usulan_saluran.module.ts)).
 - **Use cases**: e.g. `CalculateBiayaSmkkUseCase`, `GenerateUraianUsulanSaluranUseCase`, `GenerateSpesifikasiUsulanSaluranUseCase` in [`application/usulan_saluran/`](../src/application/usulan_saluran/) — compare with Jalan’s [`application/usulan_jalan/`](../src/application/usulan_jalan/).
-- Conceptual split: **Jalan** = road `UsulanJalan` + jalan design specs; **Saluran** = `UsulanSaluran` + saluran-specific specs; **Shared** = SMKK/HSPK/PPN globals and `JalanSaluran*` aggregates.
+- Conceptual split: **Jalan** = road `UsulanJalan` + jalan design specs; **Saluran** = `UsulanSaluran` + saluran-specific specs; **Shared** = SMKK/HSPK/PPN globals and `JalanSaluran*` aggregates. HSPK rows include **tahun anggaran**; spesifikasi desain still points to `id_hspk`, while the `/hspks` API filters and uniqueness use `tahun_anggaran` together with `no_mata_pembayaran`.
 
 ## Dependencies
 

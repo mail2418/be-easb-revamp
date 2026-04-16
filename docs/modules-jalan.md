@@ -42,7 +42,7 @@ Postman: [`Usulan_Jalan_Module_API.postman_collection.json`](../postman/Usulan_J
 
 ## Shared logic (with Saluran)
 
-- **Nest composition**: `UsulanJalanModule` imports `JalanSaluranSmkkModule`, `JalanSaluranSpesifikasiSmkkModule`, `JalanSaluranSpesifikasiSmkkReviewModule`, `PpnGlobalModule`, `SmkkGlobalModule`, `HspkModule` (see [`usulan_jalan.module.ts`](../src/presentation/usulan_jalan/usulan_jalan.module.ts)).
+- **Nest composition**: `UsulanJalanModule` imports `JalanSaluranSmkkModule`, `JalanSaluranSpesifikasiSmkkModule`, `JalanSaluranSpesifikasiSmkkReviewModule`, `PpnGlobalModule`, `SmkkGlobalModule`, `HspkModule` (see [`usulan_jalan.module.ts`](../src/presentation/usulan_jalan/usulan_jalan.module.ts)). Design specs reference HSPK by primary key `id`; the HSPK master itself is versioned by **tahun anggaran** so the same payment code can exist for different budget years.
 - **Use cases**: e.g. `CalculateBiayaSmkkUseCase` under [`application/usulan_jalan/use_cases/`](../src/application/usulan_jalan/use_cases/) may align with Saluran’s cost pipeline — compare with [`application/usulan_saluran/`](../src/application/usulan_saluran/).
 - **Entities**: `JalanSaluranSpesifikasiSmkk*` ORM tables back both workflows; see [modules-saluran.md](./modules-saluran.md) for the drainage-specific side.
 

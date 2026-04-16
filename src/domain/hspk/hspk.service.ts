@@ -10,7 +10,7 @@ export abstract class HspkService {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<Hspk | null>;
     abstract findAll(dto: GetHspkDto): Promise<HspkPaginationResultDto>;
-    abstract findByNoMataPembayaran(no_mata_pembayaran: string): Promise<Hspk | null>;
-    abstract findByRuangLingkup(id_ruang_lingkup: number): Promise<Hspk[]>;
+    abstract findByNoMataPembayaranAndTahun(no_mata_pembayaran: string, tahun_anggaran: number): Promise<Hspk | null>;
+    abstract findByRuangLingkup(id_ruang_lingkup: number, tahun_anggaran?: number): Promise<Hspk[]>;
 }
 

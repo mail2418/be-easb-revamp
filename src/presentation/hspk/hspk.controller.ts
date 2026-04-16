@@ -272,15 +272,18 @@ export class HspkController {
 
     @Roles(Role.SUPERADMIN, Role.ADMIN, Role.OPD, Role.VERIFIKATOR)
     @Get('by-no-mata-pembayaran')
-    async findByNoMataPembayaran(@Query('no_mata_pembayaran') no_mata_pembayaran: string): Promise<ResponseDto> {
+    async findByNoMataPembayaran(
+        @Query('no_mata_pembayaran') no_mata_pembayaran: string,
+        @Query('tahun_anggaran', ParseIntPipe) tahun_anggaran: number,
+    ): Promise<ResponseDto> {
         try {
-            const hspk = await this.hspkService.findByNoMataPembayaran(no_mata_pembayaran);
+            const hspk = await this.hspkService.findByNoMataPembayaranAndTahun(no_mata_pembayaran, tahun_anggaran);
 
             if (!hspk) {
                 return {
                     status: 'error',
                     responseCode: HttpStatus.NOT_FOUND,
-                    message: `HSPK with no_mata_pembayaran ${no_mata_pembayaran} not found`,
+                    message: `HSPK with no_mata_pembayaran ${no_mata_pembayaran} and tahun_anggaran ${tahun_anggaran} not found`,
                     data: null,
                 };
             }
@@ -328,9 +331,17 @@ export class HspkController {
 
     @Roles(Role.SUPERADMIN, Role.ADMIN, Role.OPD, Role.VERIFIKATOR)
     @Get('by-ruang-lingkup')
-    async findByRuangLingkup(@Query('id_ruang_lingkup', ParseIntPipe) id_ruang_lingkup: number): Promise<ResponseDto> {
+    async findByRuangLingkup(
+        @Query('id_ruang_lingkup', ParseIntPipe) id_ruang_lingkup: number,
+        @Query('tahun_anggaran') tahunAnggaranRaw?: string,
+    ): Promise<ResponseDto> {
         try {
-            const hspks = await this.hspkService.findByRuangLingkup(id_ruang_lingkup);
+            let tahun_anggaran: number | undefined;
+            if (tahunAnggaranRaw !== undefined && tahunAnggaranRaw !== '') {
+                const parsed = Number.parseInt(tahunAnggaranRaw, 10);
+                tahun_anggaran = Number.isNaN(parsed) ? undefined : parsed;
+            }
+            const hspks = await this.hspkService.findByRuangLingkup(id_ruang_lingkup, tahun_anggaran);
 
             return {
                 status: 'success',

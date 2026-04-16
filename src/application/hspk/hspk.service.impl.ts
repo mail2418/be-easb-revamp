@@ -14,9 +14,11 @@ export class HspkServiceImpl implements HspkService {
     ) {}
 
     async create(dto: CreateHspkDto): Promise<Hspk> {
-        const existing = await this.hspkRepository.findByNoMataPembayaran(dto.no_mata_pembayaran);
+        const existing = await this.hspkRepository.findByNoMataPembayaranAndTahun(dto.no_mata_pembayaran, dto.tahun_anggaran);
         if (existing) {
-            throw new ConflictException(`Hspk with no_mata_pembayaran ${dto.no_mata_pembayaran} already exists`);
+            throw new ConflictException(
+                `Hspk with no_mata_pembayaran ${dto.no_mata_pembayaran} and tahun_anggaran ${dto.tahun_anggaran} already exists`
+            );
         }
         return await this.hspkRepository.create(dto);
     }
@@ -27,10 +29,15 @@ export class HspkServiceImpl implements HspkService {
             throw new NotFoundException(`Hspk with id ${dto.id} not found`);
         }
 
-        if (dto.no_mata_pembayaran && dto.no_mata_pembayaran !== existing.no_mata_pembayaran) {
-            const duplicate = await this.hspkRepository.findByNoMataPembayaran(dto.no_mata_pembayaran);
-            if (duplicate) {
-                throw new ConflictException(`Hspk with no_mata_pembayaran ${dto.no_mata_pembayaran} already exists`);
+        const targetNo = dto.no_mata_pembayaran ?? existing.no_mata_pembayaran;
+        const targetTahun = dto.tahun_anggaran ?? existing.tahun_anggaran;
+
+        if (targetNo !== existing.no_mata_pembayaran || targetTahun !== existing.tahun_anggaran) {
+            const duplicate = await this.hspkRepository.findByNoMataPembayaranAndTahun(targetNo, targetTahun);
+            if (duplicate && duplicate.id !== dto.id) {
+                throw new ConflictException(
+                    `Hspk with no_mata_pembayaran ${targetNo} and tahun_anggaran ${targetTahun} already exists`
+                );
             }
         }
 
@@ -60,12 +67,12 @@ export class HspkServiceImpl implements HspkService {
         };
     }
 
-    async findByNoMataPembayaran(no_mata_pembayaran: string): Promise<Hspk | null> {
-        return await this.hspkRepository.findByNoMataPembayaran(no_mata_pembayaran);
+    async findByNoMataPembayaranAndTahun(no_mata_pembayaran: string, tahun_anggaran: number): Promise<Hspk | null> {
+        return await this.hspkRepository.findByNoMataPembayaranAndTahun(no_mata_pembayaran, tahun_anggaran);
     }
 
-    async findByRuangLingkup(id_ruang_lingkup: number): Promise<Hspk[]> {
-        return await this.hspkRepository.findByRuangLingkup(id_ruang_lingkup);
+    async findByRuangLingkup(id_ruang_lingkup: number, tahun_anggaran?: number): Promise<Hspk[]> {
+        return await this.hspkRepository.findByRuangLingkup(id_ruang_lingkup, tahun_anggaran);
     }
 }
 

@@ -39,6 +39,7 @@ export class HspkRepositoryImpl implements HspkRepository {
             .select([
                 'hspk.id',
                 'hspk.id_ruang_lingkup',
+                'hspk.tahun_anggaran',
                 'hspk.no_mata_pembayaran',
                 'hspk.satuan',
                 'hspk.harga_satuan',
@@ -54,6 +55,10 @@ export class HspkRepositoryImpl implements HspkRepository {
             order: { id: 'DESC' }
         };
 
+        if (dto.tahun_anggaran !== undefined) {
+            findOptions.where = { tahun_anggaran: dto.tahun_anggaran };
+        }
+
         if (dto.page !== undefined && dto.amount !== undefined) {
             findOptions.skip = (dto.page - 1) * dto.amount;
             findOptions.take = dto.amount;
@@ -64,13 +69,17 @@ export class HspkRepositoryImpl implements HspkRepository {
         return { data, total };
     }
 
-    async findByNoMataPembayaran(no_mata_pembayaran: string): Promise<Hspk | null> {
-        const entity = await this.repo.findOne({ where: { no_mata_pembayaran } });
+    async findByNoMataPembayaranAndTahun(no_mata_pembayaran: string, tahun_anggaran: number): Promise<Hspk | null> {
+        const entity = await this.repo.findOne({ where: { no_mata_pembayaran, tahun_anggaran } });
         return entity || null;
     }
 
-    async findByRuangLingkup(id_ruang_lingkup: number): Promise<Hspk[]> {
-        const entities = await this.repo.find({ where: { id_ruang_lingkup } });
+    async findByRuangLingkup(id_ruang_lingkup: number, tahun_anggaran?: number): Promise<Hspk[]> {
+        const where: { id_ruang_lingkup: number; tahun_anggaran?: number } = { id_ruang_lingkup };
+        if (tahun_anggaran !== undefined) {
+            where.tahun_anggaran = tahun_anggaran;
+        }
+        const entities = await this.repo.find({ where });
         return entities;
     }
 }

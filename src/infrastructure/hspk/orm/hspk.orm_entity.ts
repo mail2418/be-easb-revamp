@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { JalanSaluranRuangLingkupOrmEntity } from '../../jalan_saluran_ruang_lingkup/orm/jalan_saluran_ruang_lingkup.orm_entity';
 
 @Entity('hspk')
+@Unique('UQ_hspk_tahun_no_mata_pembayaran', ['tahun_anggaran', 'no_mata_pembayaran'])
 export class HspkOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;
@@ -9,7 +10,10 @@ export class HspkOrmEntity {
     @Column({ name: 'id_ruang_lingkup', type: 'int' })
     id_ruang_lingkup!: number;
 
-    @Column({ name: 'no_mata_pembayaran', type: 'varchar', length: 255, unique: true })
+    @Column({ name: 'tahun_anggaran', type: 'int' })
+    tahun_anggaran!: number;
+
+    @Column({ name: 'no_mata_pembayaran', type: 'varchar', length: 255 })
     no_mata_pembayaran!: string;
 
     @Column({ type: 'varchar', length: 255 })

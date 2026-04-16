@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateHspkDto {
@@ -6,6 +6,13 @@ export class CreateHspkDto {
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
     id_ruang_lingkup!: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Min(2000)
+    @Max(2100)
+    @Transform(({ value }) => parseInt(value, 10))
+    tahun_anggaran!: number;
 
     @IsNotEmpty()
     @IsString()

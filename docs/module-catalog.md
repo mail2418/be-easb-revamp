@@ -54,7 +54,7 @@ All Nest **presentation** modules: HTTP prefix (from `@Controller`), domain fold
 | `JenisUsulanModule` | `jenis-usulan` | `jenis_usulan` | Yes | Shared | Proposal types |
 | `JalanSaluranRuangLingkupModule` | `jalan-saluran-ruang-lingkup` | `jalan_saluran_ruang_lingkup` | Yes | Shared | Scope master for jalan + saluran |
 | `JalanSaluranSmkkModule` | `jalan-saluran-smkk` | `jalan_saluran_smkk` | Yes | Shared | SMKK tree shared by workflows |
-| `HspkModule` | `hspks` | `hspk` | Yes | Shared | HSPK catalog |
+| `HspkModule` | `hspks` | `hspk` | Yes | Shared | HSPK catalog (rows keyed by `tahun_anggaran` + `no_mata_pembayaran`; list/filter by tahun anggaran) |
 | `MainDashboardModule` | `main-dashboard` | `main_dashboard` | Yes | Platform | Metrics |
 
 ## Nested presentation modules (not in `AppModule` imports)
