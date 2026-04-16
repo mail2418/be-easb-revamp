@@ -1,5 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  ColumnOptions,
+} from 'typeorm';
 import { Role } from 'src/domain/user/user_role.enum';
+
+/** Postgres uses native TEXT[]; MySQL stores JSON in varchar (see migrations). */
+function userRolesColumn(): ColumnOptions {
+  const dbType = process.env.DB_TYPE || 'postgres';
+  if (dbType === 'mysql') {
+    return { type: 'simple-json', default: '[]' };
+  }
+  return { type: 'text', array: true, default: '{}' };
+}
 
 @Entity({ name: 'users' })
 export class UserOrmEntity {
@@ -11,8 +28,8 @@ export class UserOrmEntity {
 
   @Column({ name: 'password_hash', length: 255 })
   passwordHash!: string;
-  
-  @Column({ type: 'simple-json', default: '[]' })
+
+  @Column(userRolesColumn())
   roles!: Role[];
 
   @Column({ name: 'refresh_token_version', type: 'int', default: 0 })
