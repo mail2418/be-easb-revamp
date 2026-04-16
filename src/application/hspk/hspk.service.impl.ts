@@ -1,4 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import * as ExcelJS from 'exceljs';
+import { Express } from 'express';
 import { HspkService } from '../../domain/hspk/hspk.service';
 import { HspkRepository } from '../../domain/hspk/hspk.repository';
 import { Hspk } from '../../domain/hspk/hspk.entity';
@@ -6,11 +8,20 @@ import { CreateHspkDto } from '../../presentation/hspk/dto/create_hspk.dto';
 import { UpdateHspkDto } from '../../presentation/hspk/dto/update_hspk.dto';
 import { GetHspkDto } from '../../presentation/hspk/dto/get_hspk.dto';
 import { HspkPaginationResultDto } from '../../presentation/hspk/dto/hspk_pagination_result.dto';
+import { CreateBulkHspkResultDto } from '../../presentation/hspk/dto/create_bulk_hspk_result.dto';
+import { ValidateExcelFileUseCase } from './use_cases/validate_excel_file.use_case';
+import { ValidateExcelHeadersUseCase } from './use_cases/validate_excel_headers.use_case';
+import { ParseExcelDataUseCase } from './use_cases/parse_excel_data.use_case';
+import { GenerateExcelTemplateUseCase } from './use_cases/generate_excel_template.use_case';
 
 @Injectable()
 export class HspkServiceImpl implements HspkService {
     constructor(
-        private readonly hspkRepository: HspkRepository
+        private readonly hspkRepository: HspkRepository,
+        private readonly validateExcelFileUseCase: ValidateExcelFileUseCase,
+        private readonly validateExcelHeadersUseCase: ValidateExcelHeadersUseCase,
+        private readonly parseExcelDataUseCase: ParseExcelDataUseCase,
+        private readonly generateExcelTemplateUseCase: GenerateExcelTemplateUseCase,
     ) {}
 
     async create(dto: CreateHspkDto): Promise<Hspk> {
@@ -73,6 +84,44 @@ export class HspkServiceImpl implements HspkService {
 
     async findByRuangLingkup(id_ruang_lingkup: number, tahun_anggaran?: number): Promise<Hspk[]> {
         return await this.hspkRepository.findByRuangLingkup(id_ruang_lingkup, tahun_anggaran);
+    }
+
+    async createBulk(file: Express.Multer.File): Promise<CreateBulkHspkResultDto> {
+        this.validateExcelFileUseCase.execute(file);
+
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(file.buffer as any);
+        this.validateExcelHeadersUseCase.execute(workbook);
+
+        const rows = await this.parseExcelDataUseCase.execute(file);
+
+        const conflictingKeys: string[] = [];
+        for (const row of rows) {
+            const existing = await this.hspkRepository.findByNoMataPembayaranAndTahun(
+                row.no_mata_pembayaran,
+                row.tahun_anggaran,
+            );
+            if (existing) {
+                conflictingKeys.push(`no_mata_pembayaran "${row.no_mata_pembayaran}" (tahun_anggaran ${row.tahun_anggaran})`);
+            }
+        }
+        if (conflictingKeys.length > 0) {
+            throw new ConflictException(
+                `HSPK already exists: ${[...new Set(conflictingKeys)].join('; ')}`,
+            );
+        }
+
+        const created = await this.hspkRepository.bulkCreate(rows);
+        const result = new CreateBulkHspkResultDto();
+        result.created = created.length;
+        result.data = created;
+        return result;
+    }
+
+    async downloadTemplate(): Promise<{ buffer: Buffer; filename: string }> {
+        const buffer = await this.generateExcelTemplateUseCase.execute();
+        const filename = `HSPK_Template_${new Date().getFullYear()}.xlsx`;
+        return { buffer, filename };
     }
 }
 

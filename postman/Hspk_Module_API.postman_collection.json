@@ -63,6 +63,45 @@
 					"response": []
 				},
 				{
+					"name": "Create HSPK (Bulk Excel)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": [],
+									"description": "Excel (.xlsx/.xls) with sheet \"HSPK Data\" and columns: id_ruang_lingkup, no_mata_pembayaran, satuan, harga_satuan, uraian, tahun_anggaran"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/hspks/bulk",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "hspks", "bulk"]
+						},
+						"description": "Create multiple HSPK records from an Excel file. Requires ADMIN or SUPERADMIN role.\n\n**Form-data:**\n- `file` (file, required): Excel with sheet name exactly `HSPK Data` and headers: id_ruang_lingkup, no_mata_pembayaran, satuan, harga_satuan, uraian, tahun_anggaran\n\n`tahun_anggaran` is per row (2000–2100). `id_ruang_lingkup` must exist in `jalan_saluran_ruang_lingkup`. `uraian` may be left empty. Download **Download HSPK Template** for the ID reference list.\n\nMax file size 10MB."
+					},
+					"response": []
+				},
+				{
+					"name": "Download HSPK Template",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/hspks/template",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "hspks", "template"]
+						},
+						"description": "Download Excel template for HSPK bulk upload (SOP sheet + empty \"HSPK Data\" sheet). Requires ADMIN or SUPERADMIN role.\n\n**Response:** `.xlsx` binary (save as file and fill the HSPK Data sheet)."
+					},
+					"response": []
+				},
+				{
 					"name": "Update HSPK",
 					"request": {
 						"method": "PUT",

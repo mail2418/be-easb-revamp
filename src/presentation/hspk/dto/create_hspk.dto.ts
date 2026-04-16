@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateHspkDto {
@@ -27,5 +27,9 @@ export class CreateHspkDto {
     @Min(0)
     @Transform(({ value }) => parseFloat(value))
     harga_satuan!: number;
+
+    @IsOptional()
+    @IsString()
+    uraian?: string | null;
 }
 

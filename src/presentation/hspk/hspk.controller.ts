@@ -10,7 +10,14 @@ import {
     HttpException,
     Query,
     ParseIntPipe,
+    UploadedFile,
+    UseInterceptors,
+    Res,
+    StreamableFile,
 } from '@nestjs/common';
+import type { Express } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import type { Response } from 'express';
 import { HspkService } from '../../domain/hspk/hspk.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CreateHspkDto } from './dto/create_hspk.dto';
@@ -25,6 +32,74 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class HspkController {
     constructor(private readonly hspkService: HspkService) { }
+
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    @Post('bulk')
+    @UseInterceptors(FileInterceptor('file'))
+    async createBulk(@UploadedFile() file: Express.Multer.File): Promise<ResponseDto> {
+        try {
+            const result = await this.hspkService.createBulk(file);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.CREATED,
+                message: `${result.created} HSPK record(s) created successfully`,
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    @Get('template')
+    async downloadTemplate(@Res({ passthrough: true }) res: Response): Promise<StreamableFile> {
+        try {
+            const { buffer, filename } = await this.hspkService.downloadTemplate();
+
+            res.set({
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition': `attachment; filename="${filename}"`,
+            });
+
+            return new StreamableFile(buffer);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Post()

@@ -22,6 +22,14 @@ export class HspkRepositoryImpl implements HspkRepository {
         return newEntity;
     }
 
+    async bulkCreate(dtos: CreateHspkDto[]): Promise<Hspk[]> {
+        return await this.repo.manager.transaction(async (manager) => {
+            const repo = manager.getRepository(HspkOrmEntity);
+            const entities = dtos.map((dto) => plainToInstance(HspkOrmEntity, dto));
+            return await repo.save(entities);
+        });
+    }
+
     async update(dto: UpdateHspkDto): Promise<Hspk> {
         const { id, ...updateData } = dto;
         await this.repo.update(id, updateData);

@@ -5,6 +5,7 @@ import { GetHspkDto } from 'src/presentation/hspk/dto/get_hspk.dto';
 
 export abstract class HspkRepository {
     abstract create(dto: CreateHspkDto): Promise<Hspk>;
+    abstract bulkCreate(dtos: CreateHspkDto[]): Promise<Hspk[]>;
     abstract update(dto: UpdateHspkDto): Promise<Hspk>;
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<Hspk | null>;
