@@ -8,6 +8,7 @@ import { DeleteUserByAdminDto } from "src/presentation/users/dto/delete_user_by_
 import { GetUsersDto } from "src/presentation/users/dto/get_users.dto";
 import { GetUserDetailDto } from "src/presentation/users/dto/get_user_detail.dto";
 import { UsersPaginationResult } from "src/presentation/users/dto/users_pagination.dto";
+import { ChangeUserPasswordDto } from "src/presentation/users/dto/change_user_password.dto";
 
 export abstract class UserService {
     abstract create(user: CreateUserDto): Promise<User>
@@ -21,4 +22,5 @@ export abstract class UserService {
     abstract deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean>
     abstract getUsers(pagination: GetUsersDto): Promise<UsersPaginationResult>
     abstract getUserDetail(user: GetUserDetailDto): Promise<User>
+    abstract changeUserPassword(authenticatedUserId: number, dto: ChangeUserPasswordDto): Promise<User>
 }

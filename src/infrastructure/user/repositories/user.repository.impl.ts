@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserRepository } from '../../../domain/user/user.repository';
 import { User } from '../../../domain/user/user.entity';
 import { UserOrmEntity } from '../orm/user.orm_entity';
@@ -80,5 +80,10 @@ export class UserRepositoryImpl implements UserRepository {
         const existingUser = await this.repo.findOne({ where: { id: user.id } });
 
         return existingUser ? existingUser : null;
+    }
+
+    async updatePasswordHashAndIncrementRefreshTokenVersion(userId: number, passwordHash: string): Promise<void> {
+        await this.repo.update({ id: userId }, { passwordHash });
+        await this.repo.increment({ id: userId }, 'refreshTokenVersion', 1);
     }
 }

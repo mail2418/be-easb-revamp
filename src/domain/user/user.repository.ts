@@ -17,4 +17,5 @@ export abstract class UserRepository {
     abstract deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean>;
     abstract getUsers(pagination: GetUsersDto): Promise<{ data: User[], total: number }>;
     abstract getUserDetail(user: GetUserDetailDto): Promise<User | null>;
+    abstract updatePasswordHashAndIncrementRefreshTokenVersion(userId: number, passwordHash: string): Promise<void>;
 }
