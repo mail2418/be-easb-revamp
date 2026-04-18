@@ -1,6 +1,6 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe, Logger, ClassSerializerInterceptor } from '@nestjs/common';
+import { ValidationPipe, Logger, ClassSerializerInterceptor, RequestMethod } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggerMiddleware } from './common/middleware/request_logger.middleware';
 import { CorrelationIdMiddleware } from './common/middleware/correlation_id.middleware';
@@ -108,8 +108,10 @@ async function bootstrap() {
     app.use(CorrelationIdMiddleware());
     app.use(LoggerMiddleware());
 
-    // Prefix API, e.g. /api/v1
-    app.setGlobalPrefix(process.env.NODE_ENV === 'production' ? 'api/v1' : 'api/dev/v1');
+    const apiPrefix = process.env.NODE_ENV === 'production' ? 'api/v1' : 'api/dev/v1';
+    app.setGlobalPrefix(apiPrefix, {
+        exclude: [{ path: '/', method: RequestMethod.GET }],
+    });
 
     const port = config.get('port', 3000);
     await app.listen(port, '0.0.0.0');

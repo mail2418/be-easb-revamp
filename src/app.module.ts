@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { validationSchema } from './config/validation';
@@ -62,6 +63,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 // import module lain sesuai kebutuhan
 
 @Module({
+    controllers: [AppController],
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
