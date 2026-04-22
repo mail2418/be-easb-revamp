@@ -223,7 +223,7 @@ export class VerifikatorController {
     @Roles(Role.SUPERADMIN, Role.ADMIN)
     async getVerifikators(@Query() dto: GetVerifikatorsDto): Promise<ResponseDto> {
         try {
-            const result = await this.verifikatorService.findAll(dto.page, dto.amount);
+            const result = await this.verifikatorService.findAll(dto.page, dto.amount, dto.search);
 
             return {
                 status: 'success',

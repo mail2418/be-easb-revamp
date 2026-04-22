@@ -56,6 +56,13 @@ export class JalanSaluranSmkkRepositoryImpl implements JalanSaluranSmkkRepositor
             ])
             .orderBy('jss.id', 'DESC');
 
+        if (dto.search) {
+            queryBuilder.andWhere(
+                '(jss.no_mata_pembayaran ILIKE :search OR jss.uraian ILIKE :search)',
+                { search: `%${dto.search}%` },
+            );
+        }
+
         if (dto.page !== undefined && dto.amount !== undefined) {
             const skip = (dto.page - 1) * dto.amount;
             queryBuilder.skip(skip).take(dto.amount);

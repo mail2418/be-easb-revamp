@@ -45,8 +45,14 @@ export class AsbKomponenBangunanProsNonstdRepositoryImpl implements AsbKomponenB
     async findAll(pagination: GetAsbKomponenBangunanProsNonstdListDto): Promise<{ data: AsbKomponenBangunanProsNonstd[], total: number }> {
         const queryBuilder = this.repo
             .createQueryBuilder('asb_komponen_bangunan_pros_nonstd')
-            .select(['asb_komponen_bangunan_pros_nonstd.id', 'asb_komponen_bangunan_pros_nonstd.avgMin', 'asb_komponen_bangunan_pros_nonstd.avgMax', 'asb_komponen_bangunan_pros_nonstd.max', 'asb_komponen_bangunan_pros_nonstd.avg'])
+            .leftJoinAndSelect('asb_komponen_bangunan_pros_nonstd.asbKomponenBangunanNonstd', 'komponen_nonstd')
             .orderBy('asb_komponen_bangunan_pros_nonstd.id', 'DESC');
+
+        if (pagination.search) {
+            queryBuilder.andWhere('komponen_nonstd.komponen ILIKE :search', {
+                search: `%${pagination.search}%`,
+            });
+        }
 
         if (pagination.page !== undefined && pagination.amount !== undefined) {
             const skip = (pagination.page - 1) * pagination.amount;

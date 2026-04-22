@@ -60,6 +60,10 @@ export class AsbKomponenBangunanStdRepositoryImpl implements AsbKomponenBangunan
             where.idAsbTipeBangunan = pagination.id_asb_tipe_bangunan;
         }
 
+        if (pagination.search) {
+            where.komponen = ILike(`%${pagination.search}%`);
+        }
+
         const findOptions: any = {
             where: Object.keys(where).length > 0 ? where : undefined,
             order: { id: 'DESC' }

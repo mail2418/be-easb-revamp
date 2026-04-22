@@ -77,6 +77,13 @@ export class ShstRepositoryImpl extends ShstRepository {
             queryBuilder.andWhere("shst.id_kabkota = :id_kabkota", { id_kabkota: dto.id_kabkota });
         }
 
+        if (dto.search) {
+            queryBuilder.andWhere(
+                "(asbTipeBangunan.tipe_bangunan ILIKE :search OR asbKlasifikasi.klasifikasi ILIKE :search OR kabkota.nama ILIKE :search)",
+                { search: `%${dto.search}%` },
+            );
+        }
+
         if (dto.page !== undefined && dto.amount !== undefined) {
             const skip = (dto.page - 1) * dto.amount;
             queryBuilder.skip(skip).take(dto.amount);

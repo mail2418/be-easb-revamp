@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetAsbKomponenBangunanNonstdsDto {
@@ -25,4 +25,8 @@ export class GetAsbKomponenBangunanNonstdsDto {
     @Min(1)
     @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     id_asb_tipe_bangunan?: number;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
 }

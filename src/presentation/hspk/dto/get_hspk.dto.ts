@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsNumber, IsOptional, Max, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class GetHspkDto {
     @IsOptional()
@@ -20,5 +20,9 @@ export class GetHspkDto {
     @Max(2100)
     @Transform(({ value }) => (value !== undefined && value !== null && value !== '' ? parseInt(value, 10) : undefined))
     tahun_anggaran?: number;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
 }
 

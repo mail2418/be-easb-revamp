@@ -82,6 +82,12 @@ export class JalanSaluranRuangLingkupRepositoryImpl implements JalanSaluranRuang
             ])
             .orderBy('jsrl.id', 'DESC');
 
+        if (dto.search) {
+            queryBuilder.andWhere('jsrl.deskripsi_ruang_lingkup ILIKE :search', {
+                search: `%${dto.search}%`,
+            });
+        }
+
         if (dto.page !== undefined && dto.amount !== undefined) {
             const skip = (dto.page - 1) * dto.amount;
             queryBuilder.skip(skip).take(dto.amount);

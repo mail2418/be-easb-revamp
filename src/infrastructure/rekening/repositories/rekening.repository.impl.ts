@@ -74,12 +74,18 @@ export class RekeningRepositoryImpl implements RekeningRepository {
 
         // Filter by id_jenis_usulan if provided
         if (pagination.id_jenis_usulan !== undefined) {
-            queryBuilder.where('rekening.id_jenis_usulan = :id_jenis_usulan', { 
+            queryBuilder.andWhere('rekening.id_jenis_usulan = :id_jenis_usulan', { 
                 id_jenis_usulan: pagination.id_jenis_usulan 
             });
         }
 
-        // Order by id DESC
+        if (pagination.search) {
+            queryBuilder.andWhere(
+                '(rekening.rekening_kode ILIKE :search OR rekening.rekening_uraian ILIKE :search)',
+                { search: `%${pagination.search}%` },
+            );
+        }
+
         queryBuilder.orderBy('rekening.id', 'DESC');
 
         // Apply pagination

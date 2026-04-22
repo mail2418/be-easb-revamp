@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { HspkRepository } from '../../../domain/hspk/hspk.repository';
 import { HspkOrmEntity } from '../orm/hspk.orm_entity';
 import { Hspk } from '../../../domain/hspk/hspk.entity';
@@ -63,8 +63,19 @@ export class HspkRepositoryImpl implements HspkRepository {
             order: { id: 'DESC' }
         };
 
+        const baseWhere: Record<string, unknown> = {};
         if (dto.tahun_anggaran !== undefined) {
-            findOptions.where = { tahun_anggaran: dto.tahun_anggaran };
+            baseWhere.tahun_anggaran = dto.tahun_anggaran;
+        }
+
+        if (dto.search) {
+            const q = ILike(`%${dto.search}%`);
+            findOptions.where = [
+                { ...baseWhere, no_mata_pembayaran: q },
+                { ...baseWhere, uraian: q },
+            ];
+        } else if (Object.keys(baseWhere).length > 0) {
+            findOptions.where = baseWhere;
         }
 
         if (dto.page !== undefined && dto.amount !== undefined) {

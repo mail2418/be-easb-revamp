@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { AsbJenisRepository } from "../../../domain/asb_jenis/asb_jenis.repository";
 import { AsbJenis } from "../../../domain/asb_jenis/asb_jenis.entity";
 import { AsbJenisOrmEntity } from "../orm/asb_jenis.orm_entity";
@@ -45,6 +45,11 @@ export class AsbJenisRepositoryImpl implements AsbJenisRepository {
     const findOptions: any = {
       order: { id: "DESC" }
     };
+
+    if (dto.search) {
+      const q = ILike(`%${dto.search}%`);
+      findOptions.where = [{ jenis: q }, { asb: q }];
+    }
 
     if (dto.page !== undefined && dto.amount !== undefined) {
       findOptions.skip = (dto.page - 1) * dto.amount;

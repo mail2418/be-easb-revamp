@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { JenisStandarRepository } from "../../../domain/jenis_standar/jenis_standar.repository";
 import { JenisStandar } from "../../../domain/jenis_standar/jenis_standar.entity";
 import { JenisStandarOrmEntity } from "../orm/jenis_standar.orm_entity";
@@ -48,6 +48,10 @@ export class JenisStandarRepositoryImpl implements JenisStandarRepository {
     const findOptions: any = {
       order: { id: "DESC" }
     };
+
+    if (dto.search) {
+      findOptions.where = { jenis: ILike(`%${dto.search}%`) };
+    }
 
     if (dto.page !== undefined && dto.amount !== undefined) {
       findOptions.skip = (dto.page - 1) * dto.amount;

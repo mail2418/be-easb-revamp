@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { OpdRepository } from '../../../domain/opd/opd.repository';
 import { Opd } from '../../../domain/opd/opd.entity';
 import { OpdOrmEntity } from '../orm/opd.orm_entity';
@@ -39,6 +39,11 @@ export class OpdRepositoryImpl implements OpdRepository {
         const findOptions: any = {
             order: { id: 'DESC' }
         };
+
+        if (pagination.search) {
+            const q = ILike(`%${pagination.search}%`);
+            findOptions.where = [{ opd: q }, { alias: q }];
+        }
 
         if (pagination.page !== undefined && pagination.amount !== undefined) {
             findOptions.skip = (pagination.page - 1) * pagination.amount;
