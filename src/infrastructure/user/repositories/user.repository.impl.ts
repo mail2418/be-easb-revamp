@@ -66,13 +66,34 @@ export class UserRepositoryImpl implements UserRepository {
       ): Promise<{ data: User[]; total: number }> {
           const page = Math.max(Number(pagination?.page) || 1, 1);
           const amount = Math.max(Number(pagination?.amount) || 10, 1);
-      
-          const [users, total] = await this.repo.findAndCount({
-            skip: (page - 1) * amount,
-            take: amount,
-            order: { id: 'DESC' },
-          });
-      
+
+          const qb = this.repo
+            .createQueryBuilder('u')
+            .skip((page - 1) * amount)
+            .take(amount)
+            .orderBy('u.id', 'DESC')
+            .where('u.deleted_at IS NULL');
+
+          if (pagination.search) {
+            const dbType = process.env.DB_TYPE || 'postgres';
+            if (dbType === 'mysql') {
+              qb.andWhere('u.username LIKE :search', { search: `%${pagination.search}%` });
+            } else {
+              qb.andWhere('u.username ILIKE :search', { search: `%${pagination.search}%` });
+            }
+          }
+
+          if (pagination.role) {
+            const dbType = process.env.DB_TYPE || 'postgres';
+            if (dbType === 'mysql') {
+              qb.andWhere('u.roles LIKE :role', { role: `%${pagination.role}%` });
+            } else {
+              qb.andWhere(':role = ANY(u.roles)', { role: pagination.role });
+            }
+          }
+
+          const [users, total] = await qb.getManyAndCount();
+
           return { data: users, total };
       }
 

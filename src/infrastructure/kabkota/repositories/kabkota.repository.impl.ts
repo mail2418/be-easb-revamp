@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { KabKotaRepository } from '../../../domain/kabkota/kabkota.repository';
 import { KabKota } from '../../../domain/kabkota/kabkota.entity';
 import { KabKotaOrmEntity } from '../orm/kabkota.orm_entity';
@@ -59,6 +59,11 @@ export class KabKotaRepositoryImpl implements KabKotaRepository {
         const findOptions: any = {
             order: { id: 'DESC' }
         };
+
+        if (pagination.search) {
+            const q = ILike(`%${pagination.search}%`);
+            findOptions.where = [{ nama: q }, { kode: q }];
+        }
 
         if (pagination.page !== undefined && pagination.amount !== undefined) {
             findOptions.skip = (pagination.page - 1) * pagination.amount;

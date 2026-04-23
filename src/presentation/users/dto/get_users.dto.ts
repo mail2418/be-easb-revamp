@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetUsersDto {
@@ -14,4 +14,13 @@ export class GetUsersDto {
     @Min(1)
     @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     amount?: number;
+
+    // Search & filter
+    @IsOptional()
+    @IsString()
+    search?: string;
+
+    @IsOptional()
+    @IsString()
+    role?: string;
 }

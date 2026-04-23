@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 import { Transform } from "class-transformer";
 
 export class GetJalanSaluranRuangLingkupDto {
@@ -11,4 +11,8 @@ export class GetJalanSaluranRuangLingkupDto {
     @IsNumber()
     @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     amount?: number;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
 }

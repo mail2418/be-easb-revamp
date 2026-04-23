@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { JalanJenisPerkerasanRepository } from "../../../domain/jalan_jenis_perkerasan/jalan_jenis_perkerasan.repository";
 import { JalanJenisPerkerasanOrmEntity } from "../orm/jalan_jenis_perkerasan.orm_entity";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { JalanJenisPerkerasan } from "../../../domain/jalan_jenis_perkerasan/jalan_jenis_perkerasan.entity";
 import { CreateJalanJenisPerkerasanDto } from "../../../presentation/jalan_jenis_perkerasan/dto/create_jalan_jenis_perkerasan.dto";
 import { plainToInstance } from "class-transformer";
@@ -39,6 +39,10 @@ export class JalanJenisPerkerasanRepositoryImpl implements JalanJenisPerkerasanR
         const findOptions: any = {
             order: { id: "DESC" }
         };
+
+        if (dto.search) {
+            findOptions.where = { jenis_perkerasan: ILike(`%${dto.search}%`) };
+        }
 
         if (dto.page !== undefined && dto.amount !== undefined) {
             findOptions.skip = (dto.page - 1) * dto.amount;

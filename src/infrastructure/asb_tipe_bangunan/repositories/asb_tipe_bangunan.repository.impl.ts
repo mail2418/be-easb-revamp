@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { AsbTipeBangunanRepository } from "../../../domain/asb_tipe_bangunan/asb_tipe_bangunan.repository";
 import { AsbTipeBangunan } from "../../../domain/asb_tipe_bangunan/asb_tipe_bangunan.entity";
 import { AsbTipeBangunanOrmEntity } from "../orm/asb_tipe_bangunan.orm_entity";
@@ -45,6 +45,10 @@ export class AsbTipeBangunanRepositoryImpl implements AsbTipeBangunanRepository 
         const findOptions: any = {
             order: { id: "DESC" }
         };
+
+        if (dto.search) {
+            findOptions.where = { tipe_bangunan: ILike(`%${dto.search}%`) };
+        }
 
         if (dto.page !== undefined && dto.amount !== undefined) {
             findOptions.skip = (dto.page - 1) * dto.amount;

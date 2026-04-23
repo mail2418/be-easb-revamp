@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { AsbStatusRepository } from "../../../domain/asb_status/asb_status.repository";
 import { AsbStatus } from "../../../domain/asb_status/asb_status.entity";
 import { AsbStatusOrmEntity } from "../orm/asb_status.orm_entity";
@@ -48,6 +48,10 @@ export class AsbStatusRepositoryImpl implements AsbStatusRepository {
     const findOptions: any = {
       order: { id: "DESC" }
     };
+
+    if (dto.search) {
+      findOptions.where = { status: ILike(`%${dto.search}%`) };
+    }
 
     if (dto.page !== undefined && dto.amount !== undefined) {
       findOptions.skip = (dto.page - 1) * dto.amount;

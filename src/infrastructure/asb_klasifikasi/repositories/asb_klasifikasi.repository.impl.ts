@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { AsbKlasifikasiRepository } from '../../../domain/asb_klasifikasi/asb_klasifikasi.repository';
 import { AsbKlasifikasi } from '../../../domain/asb_klasifikasi/asb_klasifikasi.entity';
@@ -41,6 +41,10 @@ export class AsbKlasifikasiRepositoryImpl implements AsbKlasifikasiRepository {
             order: { id: 'DESC' },
             relations: ['asbTipeBangunan']
         };
+
+        if (pagination.search) {
+            findOptions.where = { klasifikasi: ILike(`%${pagination.search}%`) };
+        }
 
         if (pagination.page !== undefined && pagination.amount !== undefined) {
             findOptions.skip = (pagination.page - 1) * pagination.amount;

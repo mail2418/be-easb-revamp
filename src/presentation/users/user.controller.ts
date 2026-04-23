@@ -175,7 +175,7 @@ export class UserController {
         }
     }
 
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Patch('change-password')
     async changeUserPassword(
         @Body() dto: ChangeUserPasswordDto,

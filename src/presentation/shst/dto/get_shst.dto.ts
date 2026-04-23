@@ -1,4 +1,4 @@
-import { IsNumber, IsNotEmpty, Min, IsOptional } from "class-validator";
+import { IsNumber, IsNotEmpty, IsString, Min, IsOptional } from "class-validator";
 import { Transform } from "class-transformer";
 
 export class GetShstDto {
@@ -33,4 +33,8 @@ export class GetShstDto {
   @IsNumber()
   @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
   id_kabkota?: number;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

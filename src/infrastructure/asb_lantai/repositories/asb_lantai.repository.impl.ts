@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { AsbLantaiRepository } from '../../../domain/asb_lantai/asb_lantai.repository';
 import { AsbLantai } from '../../../domain/asb_lantai/asb_lantai.entity';
 import { AsbLantaiOrmEntity } from '../orm/asb_lantai.orm_entity';
@@ -54,6 +54,11 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
         const findOptions: any = {
             order: { id: 'DESC' }
         };
+
+        if (pagination.search) {
+            const q = ILike(`%${pagination.search}%`);
+            findOptions.where = [{ lantai: q }, { type: q }];
+        }
 
         if (pagination.page !== undefined && pagination.amount !== undefined) {
             findOptions.skip = (pagination.page - 1) * pagination.amount;

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { JalanJenisPemeliharaanRepository } from "../../../domain/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.repository";
 import { JalanJenisPemeliharaanOrmEntity } from "../orm/jalan_jenis_pemeliharaan.orm_entity";
 import { JalanJenisPemeliharaan } from "../../../domain/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.entity";
@@ -39,6 +39,15 @@ export class JalanJenisPemeliharaanRepositoryImpl implements JalanJenisPemelihar
         const findOptions: any = {
             order: { id: "DESC" }
         };
+
+        if (dto.search) {
+            const q = ILike(`%${dto.search}%`);
+            findOptions.where = [
+                { tingkat_pemeliharaan: q },
+                { jenis_pemeliharaan: q },
+                { ruang_lingkup: q },
+            ];
+        }
 
         if (dto.page !== undefined && dto.amount !== undefined) {
             findOptions.skip = (dto.page - 1) * dto.amount;

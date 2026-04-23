@@ -66,7 +66,7 @@
 					"response": []
 				},
 				{
-					"name": "Change User Password",
+					"name": "Change User Password (Superadmin → Admin/Verifikator/OPD)",
 					"request": {
 						"method": "PATCH",
 						"header": [
@@ -82,14 +82,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"userId\": 2,\n  \"newPassword\": \"newpassword123\",\n  \"currentPassword\": \"SuperAdminCurrentPassword\"\n}"
+							"raw": "{\n  \"userId\": 2,\n  \"newPassword\": \"NewPassword123\",\n  \"currentPassword\": \"SuperAdminCurrentPassword\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/users/change-password",
 							"host": ["{{base_url}}"],
 							"path": ["users", "change-password"]
 						},
-						"description": "Change password for an OPD or Verifikator user (SUPERADMIN only). Requires the SUPERADMIN's current password (currentPassword). Invalidates refresh tokens for the target user."
+						"description": "Change password for an Admin, Verifikator, or OPD user (SUPERADMIN role required).\n\n- `currentPassword`: password akun superadmin yang sedang login (bukan password target).\n- `userId`: ID user target (admin / verifikator / opd — bukan sesama superadmin).\n- `newPassword`: password baru untuk target (minimal 8 karakter).\n\nEfek samping: refreshTokenVersion target di-increment sehingga sesi aktif target di-invalidate.\n\nKesalahan umum:\n- 401 Invalid credentials → currentPassword salah.\n- 403 Cannot change password for superadmin users → target adalah superadmin.\n- 403 Password can only be changed for Admin, Verifikator, or OPD users → target bukan role yang diizinkan.\n- 403 Cannot change your own password through this endpoint → userId sama dengan ID pemanggil."
 					},
 					"response": []
 				},
@@ -208,6 +208,34 @@
 							"path": ["users", "admin", "delete"]
 						},
 						"description": "Soft delete a user (ADMIN only). Cannot delete SUPERADMIN or ADMIN users."
+					},
+					"response": []
+				},
+				{
+					"name": "Change User Password (Admin → Verifikator/OPD)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for ADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 5,\n  \"newPassword\": \"NewPassword123\",\n  \"currentPassword\": \"AdminCurrentPassword\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/change-password",
+							"host": ["{{base_url}}"],
+							"path": ["users", "change-password"]
+						},
+						"description": "Change password for a Verifikator or OPD user (ADMIN role required).\n\n- `currentPassword`: password akun admin yang sedang login (bukan password target).\n- `userId`: ID user target (verifikator / opd saja — tidak boleh admin atau superadmin).\n- `newPassword`: password baru untuk target (minimal 8 karakter).\n\nEfek samping: refreshTokenVersion target di-increment sehingga sesi aktif target di-invalidate.\n\nKesalahan umum:\n- 401 Invalid credentials → currentPassword salah.\n- 403 Admin can only change password for Verifikator or OPD users → target bukan verifikator/opd.\n- 403 Cannot change your own password through this endpoint → userId sama dengan ID pemanggil."
 					},
 					"response": []
 				}

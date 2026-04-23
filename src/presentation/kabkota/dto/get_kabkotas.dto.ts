@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetKabKotasDto {
@@ -13,4 +13,8 @@ export class GetKabKotasDto {
     @Min(1)
     @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     amount?: number;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
 }

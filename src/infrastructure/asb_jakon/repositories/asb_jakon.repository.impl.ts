@@ -85,7 +85,16 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
             ])
             .leftJoinAndSelect('asb_jakon.asbTipeBangunan', 'asb_tipe_bangunan')
             .leftJoinAndSelect('asb_jakon.asbJenis', 'asb_jenis')
-            .leftJoinAndSelect('asb_jakon.asbKlasifikasi', 'asb_klasifikasi')
+            .leftJoinAndSelect('asb_jakon.asbKlasifikasi', 'asb_klasifikasi');
+
+        if (pagination.search) {
+            queryBuilder.andWhere(
+                '(asb_jakon.nama ILIKE :search OR asb_jakon.spec ILIKE :search)',
+                { search: `%${pagination.search}%` },
+            );
+        }
+
+        queryBuilder
             .orderBy('asb_jakon.id', 'DESC')
             .skip((page - 1) * amount)
             .take(amount);

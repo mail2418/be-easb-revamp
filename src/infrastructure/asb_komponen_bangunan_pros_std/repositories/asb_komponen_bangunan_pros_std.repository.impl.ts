@@ -45,8 +45,14 @@ export class AsbKomponenBangunanProsStdRepositoryImpl implements AsbKomponenBang
     async findAll(pagination: GetAsbKomponenBangunanProsStdListDto): Promise<{ data: AsbKomponenBangunanProsStd[], total: number }> {
         const queryBuilder = this.repo
             .createQueryBuilder('asb_komponen_bangunan_pros_std')
-            .select(['asb_komponen_bangunan_pros_std.id', 'asb_komponen_bangunan_pros_std.avgMin', 'asb_komponen_bangunan_pros_std.avgMax', 'asb_komponen_bangunan_pros_std.max', 'asb_komponen_bangunan_pros_std.avg'])
+            .leftJoinAndSelect('asb_komponen_bangunan_pros_std.asbKomponenBangunanStd', 'komponen_std')
             .orderBy('asb_komponen_bangunan_pros_std.id', 'DESC');
+
+        if (pagination.search) {
+            queryBuilder.andWhere('komponen_std.komponen ILIKE :search', {
+                search: `%${pagination.search}%`,
+            });
+        }
 
         if (pagination.page !== undefined && pagination.amount !== undefined) {
             const skip = (pagination.page - 1) * pagination.amount;

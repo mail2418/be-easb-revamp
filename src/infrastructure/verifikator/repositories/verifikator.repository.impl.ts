@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { VerifikatorRepository } from '../../../domain/verifikator/verifikator.repository';
 import { Verifikator } from '../../../domain/verifikator/verifikator.entity';
 import { VerifikatorOrmEntity } from '../orm/verifikator.orm_entity';
@@ -47,18 +47,28 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
         return entity || null;
     }
 
-    async findAll(page?: number, amount?: number): Promise<{ data: Verifikator[]; total: number }> {
+    async findAll(page?: number, amount?: number, search?: string): Promise<{ data: Verifikator[]; total: number }> {
         const safePage = Math.max(page ?? 1, 1);
         const safeAmount = Math.max(amount ?? 10, 1); // default 10 items
 
         const skip = (safePage - 1) * safeAmount;
 
-        const [data, total] = await this.repo.findAndCount({
+        const findOptions: any = {
             skip,
             take: safeAmount,
             order: { id: 'DESC' },
             relations: ['user'],
-        });
+        };
+
+        if (search) {
+            const q = ILike(`%${search}%`);
+            findOptions.where = [
+                { verifikator: q },
+                { user: { username: q } },
+            ];
+        }
+
+        const [data, total] = await this.repo.findAndCount(findOptions);
 
         return { data, total };
     }

@@ -286,29 +286,54 @@ export class UserServiceImpl implements UserService {
             if (!authenticatedUser) {
                 throw new UnauthorizedException('Invalid credentials');
             }
-            if (!authenticatedUser.roles.includes(Role.SUPERADMIN)) {
+
+            const isSuperadmin = authenticatedUser.roles.includes(Role.SUPERADMIN);
+            const isAdmin = authenticatedUser.roles.includes(Role.ADMIN);
+
+            if (!isSuperadmin && !isAdmin) {
                 throw new ForbiddenException('Forbidden: insufficient permissions');
             }
 
+            // Verifikasi password milik pemanggil (bukan password target)
             const passwordOk = await bcrypt.compare(
                 dto.currentPassword,
                 authenticatedUser.passwordHash ? authenticatedUser.passwordHash : '',
             );
             if (!passwordOk) {
-                throw new UnauthorizedException('Invalid credentials');
+                // Gunakan 403 (bukan 401) agar frontend tidak memperlakukan ini sebagai sesi kadaluarsa
+                throw new ForbiddenException('Wrong current password');
+            }
+
+            if (dto.userId === authenticatedUserId) {
+                throw new ForbiddenException('Cannot change your own password through this endpoint');
             }
 
             const target = await this.userRepo.findById(dto.userId);
             if (!target) {
                 throw new NotFoundException('User not found');
             }
-            if (target.roles.includes(Role.SUPERADMIN) || target.roles.includes(Role.ADMIN)) {
-                throw new ForbiddenException('Cannot change password for this user');
-            }
-            const hasOpdOrVerifikator =
-                target.roles.includes(Role.OPD) || target.roles.includes(Role.VERIFIKATOR);
-            if (!hasOpdOrVerifikator) {
-                throw new ForbiddenException('Password can only be changed for OPD or Verifikator users');
+
+            if (isSuperadmin) {
+                // Superadmin boleh mengubah password admin, verifikator, dan opd; tidak boleh sesama superadmin
+                const isSuperadminTarget = target.roles.includes(Role.SUPERADMIN);
+                if (isSuperadminTarget) {
+                    throw new ForbiddenException('Cannot change password for superadmin users');
+                }
+                const isAllowedTarget =
+                    target.roles.includes(Role.ADMIN) ||
+                    target.roles.includes(Role.VERIFIKATOR) ||
+                    target.roles.includes(Role.OPD);
+                if (!isAllowedTarget) {
+                    throw new ForbiddenException('Password can only be changed for Admin, Verifikator, or OPD users');
+                }
+            } else {
+                // Admin hanya boleh mengubah password verifikator dan opd
+                const isAllowedTarget =
+                    target.roles.includes(Role.VERIFIKATOR) ||
+                    target.roles.includes(Role.OPD);
+                if (!isAllowedTarget) {
+                    throw new ForbiddenException('Admin can only change password for Verifikator or OPD users');
+                }
             }
 
             const passwordHash = bcrypt.hashSync(dto.newPassword, this.SALT_ROUNDS);

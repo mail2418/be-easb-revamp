@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { AsbFungsiRuangRepository } from '../../../domain/asb_fungsi_ruang/asb_fungsi_ruang.repository';
 import { AsbFungsiRuang } from '../../../domain/asb_fungsi_ruang/asb_fungsi_ruang.entity';
 import { AsbFungsiRuangOrmEntity } from '../orm/asb_fungsi_ruang.orm_entity';
@@ -40,7 +40,11 @@ export class AsbFungsiRuangRepositoryImpl implements AsbFungsiRuangRepository {
     async findAll(pagination: GetAsbFungsiRuangsDto): Promise<{ data: AsbFungsiRuang[]; total: number }> {
         const page = pagination.page ?? 1;
         const amount = pagination.amount ?? 10;
+        const where = pagination.search
+            ? { nama_fungsi_ruang: ILike(`%${pagination.search}%`) }
+            : undefined;
         const [data, total] = await this.repo.findAndCount({
+            where,
             skip: (page - 1) * amount,
             take: amount,
             order: { id: 'DESC' }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { SatuanRepository } from '../../../domain/satuan/satuan.repository';
 import { Satuan } from '../../../domain/satuan/satuan.entity';
 import { SatuanOrmEntity } from '../orm/satuan.orm_entity';
@@ -38,12 +38,20 @@ export class SatuanRepositoryImpl implements SatuanRepository {
         return satuanData || null;
     }
 
-    async findAll(pagination: { page: number; amount: number }): Promise<{ data: Satuan[], total: number }> {
-        const [satuans, total] = await this.repo.findAndCount({
-            skip: (pagination.page - 1) * pagination.amount,
-            take: pagination.amount,
+    async findAll(pagination: GetSatuansDto): Promise<{ data: Satuan[], total: number }> {
+        const page = pagination.page ?? 1;
+        const amount = pagination.amount ?? 10;
+        const findOptions: any = {
+            skip: (page - 1) * amount,
+            take: amount,
             order: { id: 'DESC' }
-        });
+        };
+
+        if (pagination.search) {
+            findOptions.where = { satuan: ILike(`%${pagination.search}%`) };
+        }
+
+        const [satuans, total] = await this.repo.findAndCount(findOptions);
 
         return { data: satuans, total };
     }
