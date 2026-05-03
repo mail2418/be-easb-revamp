@@ -38,17 +38,18 @@ export class AsbFungsiRuangRepositoryImpl implements AsbFungsiRuangRepository {
     }
 
     async findAll(pagination: GetAsbFungsiRuangsDto): Promise<{ data: AsbFungsiRuang[]; total: number }> {
-        const page = pagination.page ?? 1;
-        const amount = pagination.amount ?? 10;
         const where = pagination.search
             ? { nama_fungsi_ruang: ILike(`%${pagination.search}%`) }
             : undefined;
-        const [data, total] = await this.repo.findAndCount({
+        const findOptions: any = {
             where,
-            skip: (page - 1) * amount,
-            take: amount,
-            order: { id: 'DESC' }
-        });
+            order: { id: 'DESC' },
+        };
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            findOptions.skip = (pagination.page - 1) * pagination.amount;
+            findOptions.take = pagination.amount;
+        }
+        const [data, total] = await this.repo.findAndCount(findOptions);
 
         return { data, total };
     }

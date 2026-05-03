@@ -39,16 +39,17 @@ export class SatuanRepositoryImpl implements SatuanRepository {
     }
 
     async findAll(pagination: GetSatuansDto): Promise<{ data: Satuan[], total: number }> {
-        const page = pagination.page ?? 1;
-        const amount = pagination.amount ?? 10;
         const findOptions: any = {
-            skip: (page - 1) * amount,
-            take: amount,
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (pagination.search) {
             findOptions.where = { satuan: ILike(`%${pagination.search}%`) };
+        }
+
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            findOptions.skip = (pagination.page - 1) * pagination.amount;
+            findOptions.take = pagination.amount;
         }
 
         const [satuans, total] = await this.repo.findAndCount(findOptions);
