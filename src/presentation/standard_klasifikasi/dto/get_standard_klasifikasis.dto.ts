@@ -1,24 +1,26 @@
 import { IsNumber, IsOptional, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export class GetStandardKlasifikasisDto {
-    @Type(() => Number)
+    @IsOptional()
     @IsNumber()
     @Min(1)
-    page: number = 1;
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    page?: number;
 
-    @Type(() => Number)
+    @IsOptional()
     @IsNumber()
     @Min(1)
-    amount: number = 10;
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    amount?: number;
 
-    @Type(() => Number)
     @IsNumber()
     @IsOptional()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     id_asb_klasifikasi?: number;
 
-    @Type(() => Number)
     @IsNumber()
     @IsOptional()
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
     id_kabkota?: number;
 }

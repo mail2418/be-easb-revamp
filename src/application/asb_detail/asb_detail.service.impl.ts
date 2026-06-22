@@ -21,142 +21,103 @@ export class AsbDetailServiceImpl extends AsbDetailService {
     }
 
     async create(dto: CreateAsbDetailDto): Promise<AsbDetail> {
-        try {
-            // Calculate lantai koef
-            const lantaiKoef = await this.calculateKoefLantaiUseCase.execute(
+        // Calculate lantai koef
+        const lantaiKoef = await this.calculateKoefLantaiUseCase.execute(
+            dto.luas,
+            dto.idAsbLantai,
+        );
+
+        // Calculate fungsi bangunan koef
+        const asbFungsiRuangKoef =
+            await this.calculateKoefFungsiBangunanUseCase.execute(
                 dto.luas,
-                dto.idAsbLantai,
+                dto.idAsbFungsiRuang,
             );
 
-            // Calculate fungsi bangunan koef
-            const asbFungsiRuangKoef =
-                await this.calculateKoefFungsiBangunanUseCase.execute(
-                    dto.luas,
-                    dto.idAsbFungsiRuang,
-                );
-
-            // Create with calculated coefficients
-            dto.lantaiKoef = lantaiKoef;
-            dto.asbFungsiRuangKoef = asbFungsiRuangKoef;
-            return await this.repository.create(dto);
-        } catch (error) {
-            throw error;
-        }
+        // Create with calculated coefficients
+        dto.lantaiKoef = lantaiKoef;
+        dto.asbFungsiRuangKoef = asbFungsiRuangKoef;
+        return await this.repository.create(dto);
     }
 
     async update(dto: UpdateAsbDetailDto): Promise<AsbDetail> {
-        try {
-            const existing = await this.repository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(
-                    `AsbDetail with id ${dto.id} not found`,
-                );
-            }
-
-            return await this.repository.update(dto);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(
+                `AsbDetail with id ${dto.id} not found`,
+            );
         }
+
+        return await this.repository.update(dto);
     }
 
     async delete(id: number): Promise<void> {
-        try {
-            const existing = await this.repository.findById(id);
-            if (!existing) {
-                throw new NotFoundException(
-                    `AsbDetail with id ${id} not found`,
-                );
-            }
-
-            await this.repository.delete(id);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(id);
+        if (!existing) {
+            throw new NotFoundException(
+                `AsbDetail with id ${id} not found`,
+            );
         }
+
+        await this.repository.delete(id);
     }
 
     async getById(id: number): Promise<AsbDetail> {
-        try {
-            const detail = await this.repository.findById(id);
-            if (!detail) {
-                throw new NotFoundException(
-                    `AsbDetail with id ${id} not found`,
-                );
-            }
-            return detail;
-        } catch (error) {
-            throw error;
+        const detail = await this.repository.findById(id);
+        if (!detail) {
+            throw new NotFoundException(
+                `AsbDetail with id ${id} not found`,
+            );
         }
+        return detail;
     }
 
     async getByFileType(files: Files): Promise<AsbDetail[]> {
-        try {
-            return await this.repository.findByFileType(files);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repository.findByFileType(files);
     }
 
     async getByAsb(dto: GetAsbDetailByAsbDto): Promise<{ data: AsbDetail[], total: number, page: number, amount: number, totalPages: number }> {
-        try {
-            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
-            return {
-                data,
-                total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(total / dto.amount)
-            };
-        } catch (error) {
-            throw error;
-        }
+        const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+        
+        // If pagination is not provided, return all data with page=1, amount=total
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? total;
+        
+        return {
+            data,
+            total,
+            page,
+            amount,
+            totalPages: amount > 0 ? Math.ceil(total / amount) : 1
+        };
     }
 
     async getAsbDetailWithRelation(idAsb: number): Promise<AsbDetailWithRelationDto[]> {
-        try {
-            return await this.repository.getAsbDetailWithRelation(idAsb);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repository.getAsbDetailWithRelation(idAsb);
     }
 
     async deleteByIds(ids: number[]): Promise<void> {
-        try {
-            await this.repository.deleteByIds(ids);
-        } catch (error) {
-            throw error;
-        }
+        await this.repository.deleteByIds(ids);
     }
 
     async deleteByAsbId(idAsb: number): Promise<void> {
-        try {
-            console.log("Deleting ASB Detail by ASB ID: ", idAsb);
-            await this.repository.deleteByAsbId(idAsb);
-        } catch (error) {
-            console.log("Error deleting ASB Detail by ASB ID: ", error);
-            throw error;
-        }
+        await this.repository.deleteByAsbId(idAsb);
     }
 
     async calculateKoefLantaiTotal(idAsb: number, luasTotal: number): Promise<number> {
-        try {
-            const details = await this.repository.findByAsb(idAsb, 1, 100);
+        // Get all details without pagination
+        const [details] = await this.repository.findByAsb(idAsb);
 
-            const totalKoefLantai = details[0].reduce((total, detail) => total + (detail.lantaiKoef || 0), 0);
+        const totalKoefLantai = details.reduce((total, detail) => total + (detail.lantaiKoef || 0), 0);
 
-            return Number((totalKoefLantai / luasTotal).toPrecision(3));
-        } catch (error) {
-            throw error;
-        }
+        return Number((totalKoefLantai / luasTotal).toPrecision(3));
     }
 
     async calculateKoefFungsiRuangTotal(idAsb: number, luasTotal: number): Promise<number> {
-        try {
-            const details = await this.repository.findByAsb(idAsb, 1, 100);
-            const totalKoefFungsiRuang = details[0].reduce((total, detail) => total + (detail.asbFungsiRuangKoef || 0), 0);
+        // Get all details without pagination
+        const [details] = await this.repository.findByAsb(idAsb);
+        const totalKoefFungsiRuang = details.reduce((total, detail) => total + (detail.asbFungsiRuangKoef || 0), 0);
 
-            return Number((totalKoefFungsiRuang / luasTotal).toPrecision(3));
-        } catch (error) {
-            throw error;
-        }
+        return Number((totalKoefFungsiRuang / luasTotal).toPrecision(3));
     }
 }

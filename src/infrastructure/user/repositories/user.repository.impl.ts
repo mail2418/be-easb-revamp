@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserRepository } from '../../../domain/user/user.repository';
 import { User } from '../../../domain/user/user.entity';
 import { UserOrmEntity } from '../orm/user.orm_entity';
@@ -12,124 +12,99 @@ import { DeleteUserByAdminDto } from 'src/presentation/users/dto/delete_user_by_
 import { GetUsersDto } from 'src/presentation/users/dto/get_users.dto';
 import { GetUserDetailDto } from 'src/presentation/users/dto/get_user_detail.dto';
 import { plainToInstance } from 'class-transformer';
-import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class UserRepositoryImpl implements UserRepository {
   constructor(@InjectRepository(UserOrmEntity) private readonly repo: Repository<UserOrmEntity>) {}
 
     async create(user: CreateUserDto): Promise<User> {
-        try {
-            const userOrm = plainToInstance(UserOrmEntity, user);
-            userOrm.passwordHash = user.password;
-            console.log("UserORM: ", userOrm);
-
-            const newUser = await this.repo.save(userOrm);
-            return newUser;
-        } catch (error) {
-            throw error;
-        }
+        const userOrm = plainToInstance(UserOrmEntity, user);
+        userOrm.passwordHash = user.password;
+        const newUser = await this.repo.save(userOrm);
+        return newUser;
     }
 
     async findByUsername(username: string): Promise<User | null> {
-        try {
-            const u = await this.repo.findOne({ where: { username } });
-            if (!u) {
-                return null;
-            }
-
-            return u;
-        } catch (error) {
-            throw error;
+        const u = await this.repo.findOne({ where: { username } });
+        if (!u) {
+            return null;
         }
+
+        return u;
     }
 
     async findById(id: number): Promise<User | null> { 
-        try {
-            const u = await this.repo.findOne({ where: { id } });
+        const u = await this.repo.findOne({ where: { id } });
 
-            if (!u) {
-                return null;
-            }
-
-            return u;
-        } catch (error) {
-            throw error;
+        if (!u) {
+            return null;
         }
+
+        return u;
     }
 
-    // Database operations only - no business logic
     async updateUser(existingUser: UpdateUserDto): Promise<User> {
-        try {
-            const updatedUser = await this.repo.save(existingUser);
-            return updatedUser;
-        } catch (error) {
-            throw error;
-        }
+        const updatedUser = await this.repo.save(existingUser);
+        return updatedUser;
     }
 
     async updateUserByAdmin(existingUser: UpdateUserByAdminDto): Promise<User> {
-        try {
-            const updatedUser = await this.repo.save(existingUser);
-            return updatedUser;
-        } catch (error) {
-            throw error;
-        }
+        const updatedUser = await this.repo.save(existingUser);
+        return updatedUser;
     }
 
     async deleteUser(user: DeleteUserDto): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(user.id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(user.id).then(() => true).catch(() => false);
     }
 
     async deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(user.id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(user.id).then(() => true).catch(() => false);
     }
 
-    async getUsers(pagination: GetUsersDto): Promise<{ data: User[], total: number }> {
-        try {
-            const qb = this.repo.createQueryBuilder('user');
+    async getUsers(
+        pagination: GetUsersDto,
+      ): Promise<{ data: User[]; total: number }> {
+          const page = Math.max(Number(pagination?.page) || 1, 1);
+          const amount = Math.max(Number(pagination?.amount) || 10, 1);
 
-            applyIlikeSearch(qb, 'user', ['username'], pagination.search);
+          const qb = this.repo
+            .createQueryBuilder('u')
+            .skip((page - 1) * amount)
+            .take(amount)
+            .orderBy('u.id', 'DESC')
+            .where('u.deleted_at IS NULL');
 
-            if (pagination.role) {
-                qb.andWhere(':role = ANY(user.roles)', { role: pagination.role });
+          if (pagination.search) {
+            const dbType = process.env.DB_TYPE || 'postgres';
+            if (dbType === 'mysql') {
+              qb.andWhere('u.username LIKE :search', { search: `%${pagination.search}%` });
+            } else {
+              qb.andWhere('u.username ILIKE :search', { search: `%${pagination.search}%` });
             }
+          }
 
-            const [users, total] = await qb
-                .orderBy('user.id', 'DESC')
-                .skip((pagination.page - 1) * pagination.amount)
-                .take(pagination.amount)
-                .getManyAndCount();
+          if (pagination.role) {
+            const dbType = process.env.DB_TYPE || 'postgres';
+            if (dbType === 'mysql') {
+              qb.andWhere('u.roles LIKE :role', { role: `%${pagination.role}%` });
+            } else {
+              qb.andWhere(':role = ANY(u.roles)', { role: pagination.role });
+            }
+          }
 
-            return { data: users, total };
-        } catch (error) {
-            throw error;
-        }
-    }
+          const [users, total] = await qb.getManyAndCount();
 
-    async updatePasswordHash(id: number, passwordHash: string): Promise<void> {
-        try {
-            await this.repo.update(id, { passwordHash });
-        } catch (error) {
-            throw error;
-        }
-    }
+          return { data: users, total };
+      }
 
     async getUserDetail(user: GetUserDetailDto): Promise<User | null> {
-        try {
-            const existingUser = await this.repo.findOne({ where: { id: user.id } });
+        const existingUser = await this.repo.findOne({ where: { id: user.id } });
 
-            return existingUser ? existingUser : null;
-        } catch (error) {
-            throw error;
-        }
+        return existingUser ? existingUser : null;
+    }
+
+    async updatePasswordHashAndIncrementRefreshTokenVersion(userId: number, passwordHash: string): Promise<void> {
+        await this.repo.update({ id: userId }, { passwordHash });
+        await this.repo.increment({ id: userId }, 'refreshTokenVersion', 1);
     }
 }

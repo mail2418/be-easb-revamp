@@ -20,8 +20,11 @@ export class CalculateBobotBPSReviewUseCase {
         komponenIds: number[],
         bobotInputs: number[],
         shst: number,
-        totalLantai: number
-    ): Promise<number> {
+        totalLantai: number,
+        koefisienLantaiTotal: number,
+        koefisienFungsiRuangTotal: number,
+        luasTotalBangunan: number
+    ): Promise<number[]> {
         let jumlahBobot = 0;
         let kompBangProsList: AsbKomponenBangunanProsStd[] = [];
         let calculationMethod: CalculationMethod;
@@ -62,25 +65,10 @@ export class CalculateBobotBPSReviewUseCase {
             }
         }
 
-        // Calculate KTL, KFB, LTB from AsbDetail
-        const asbDetails = await this.asbDetailService.getByAsb({
-            idAsb,
-            page: 1,
-            amount: 100
-        });
-
-        let KTL = 0;
-        let KFB = 0;
-        let LTB = 0;
-
-        for (const detail of asbDetails.data) {
-            KTL += detail.lantaiKoef || 0;
-            KFB += detail.asbFungsiRuangKoef || 0;
-            LTB += detail.luas || 0;
-        }
+        jumlahBobot = jumlahBobot > 1 ? 1 : jumlahBobot;
 
         // Calculate BPS Review
-        const BPSReview = jumlahBobot * shst * (KTL / LTB) * (KFB / LTB) * LTB;
+        const BPSReview = jumlahBobot * shst * koefisienLantaiTotal * koefisienFungsiRuangTotal * luasTotalBangunan;
 
         // Loop 2: Create and save AsbBipekStandard records
         for (let i = 0; i < komponenIds.length; i++) {
@@ -97,11 +85,14 @@ export class CalculateBobotBPSReviewUseCase {
                     bobotAcuan = kompBangProsList[i].avg || 0;
                 }
 
-                const bobot = (bobotInputs[i] / 100) * (bobotAcuan / 100);
+                const bobot = (bobotInputs[i] / 100) * bobotAcuan;
 
+                // Use optional chaining to safely access idAsbBipekStandard[i] - it may not exist if arrays are mismatched
+                const idAsbBipekStandardValue = idAsbBipekStandard[i] ?? null;
+                
                 const asbBipekReviewStandard = {
                     idAsb,
-                    idAsbBipekStandard: idAsbBipekStandard[i],
+                    idAsbBipekStandard: idAsbBipekStandardValue,
                     idAsbKomponenBangunanStd: komponenIds[i],
                     bobotInput: bobotInputs[i],
                     calculationMethod: calculationMethod,
@@ -114,6 +105,6 @@ export class CalculateBobotBPSReviewUseCase {
             }
         }
 
-        return BPSReview;
+        return [BPSReview, jumlahBobot];
     }
 }

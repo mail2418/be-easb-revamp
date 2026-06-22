@@ -1,0 +1,237 @@
+{
+	"info": {
+		"_postman_id": "asb-jakon-module-api-collection",
+		"name": "EASB - ASB Jakon Module API",
+		"description": "API collection for ASB Jakon Module - managing ASB Jasa Konstruksi (Construction Services) with Excel file upload for bulk creation.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ASB Jakon Management (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create ASB Jakon (Single)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idAsbTipeBangunan\": 1,\n  \"idAsbJenis\": 1,\n  \"idAsbKlasifikasi\": 1,\n  \"tahun\": 2024,\n  \"type\": \"perencanaan\",\n  \"nama\": \"Jasa Perencanaan Konstruksi\",\n  \"spec\": \"Spesifikasi detail perencanaan\",\n  \"priceFrom\": 1000000,\n  \"priceTo\": 5000000,\n  \"satuan\": \"Paket\",\n  \"standard\": 0.15\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/dev/v1/asb-jakon",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dev", "v1", "asb-jakon"]
+						},
+						"description": "Create a single ASB Jakon entry. Requires SUPERADMIN role.\n\n**Request Body:**\n- `idAsbTipeBangunan` (number, required): Building Type ID\n- `idAsbJenis` (number, required): ASB Type ID\n- `idAsbKlasifikasi` (number, required): Classification ID\n- `tahun` (number, required): Year\n- `type` (enum, required): Type of service - one of: `perencanaan`, `pengawasan`, `management`, `pengelolaan`\n- `nama` (string, required): Service name\n- `spec` (string, required): Specification\n- `priceFrom` (number, required): Minimum price\n- `priceTo` (number, required): Maximum price (must be >= priceFrom)\n- `satuan` (string, required): Unit (must exist in database)\n- `standard` (number, required): Standard value (positive number)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create ASB Jakon (Bulk Upload)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "tahun",
+									"value": "2024",
+									"type": "text",
+									"description": "Year (number, required, positive)"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": [],
+									"description": "Excel file (.xlsx or .xls) with columns: tipe_bangunan, jenis usulan asb, klasifikasi, type, nama, spec, priceFrom, priceTo, satuan, standard"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/dev/v1/asb-jakon/bulk",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dev", "v1", "asb-jakon", "bulk"]
+						},
+						"description": "Create ASB Jakon records in bulk by uploading an Excel file. The file must contain exactly 10 columns.\n\n**Request Body (form-data):**\n- `tahun` (number, required): Year for the ASB Jakon records\n- `file` (file, required): Excel file (.xlsx or .xls) with data rows\n\n**Excel File Format:**\n- Header row: tipe_bangunan, jenis usulan asb, klasifikasi, type, nama, spec, priceFrom, priceTo, satuan, standard\n- Data rows: Each row should contain values matching existing data in database\n- File size: Maximum 10MB\n- Type values: Must be one of: perencanaan, pengawasan, management, pengelolaan\n- priceTo must be >= priceFrom\n\n**Response:**\nReturns the number of records created and the created data array."
+					},
+					"response": []
+				},
+				{
+					"name": "Download ASB Jakon Template",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/dev/v1/asb-jakon/template",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dev", "v1", "asb-jakon", "template"]
+						},
+						"description": "Download Excel template file for ASB Jakon bulk upload. The template contains the required headers: tipe_bangunan, jenis usulan asb, klasifikasi, type, nama, spec, priceFrom, priceTo, satuan, standard.\n\n**Response:**\nReturns an Excel file (.xlsx) that can be filled with data and uploaded via the Create ASB Jakon Bulk endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Update ASB Jakon",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"idAsbTipeBangunan\": 1,\n  \"idAsbJenis\": 1,\n  \"idAsbKlasifikasi\": 1,\n  \"tahun\": 2024,\n  \"type\": \"pengawasan\",\n  \"nama\": \"Jasa Pengawasan Konstruksi Updated\",\n  \"spec\": \"Spesifikasi updated\",\n  \"priceFrom\": 2000000,\n  \"priceTo\": 6000000,\n  \"satuan\": \"Paket\",\n  \"standard\": 0.20\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/dev/v1/asb-jakon",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dev", "v1", "asb-jakon"]
+						},
+						"description": "Update an existing ASB Jakon entry. Requires SUPERADMIN role.\n\n**Request Body:**\n- `id` (number, required): ASB Jakon ID\n- All other fields are optional - only include fields you want to update\n- `type` (enum, optional): perencanaan, pengawasan, management, pengelolaan\n- `priceTo` must be >= `priceFrom`"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ASB Jakon",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN role"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/dev/v1/asb-jakon",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dev", "v1", "asb-jakon"]
+						},
+						"description": "Delete an ASB Jakon entry. Requires SUPERADMIN role.\n\n**Request Body:**\n- `id` (number, required): ASB Jakon ID to delete"
+					},
+					"response": []
+				}
+			],
+			"description": "Management operations for ASB Jakon"
+		},
+		{
+			"name": "ASB Jakon Queries",
+			"item": [
+				{
+					"name": "Get ASB Jakon List (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/dev/v1/asb-jakon?page=1&amount=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dev", "v1", "asb-jakon"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (required, minimum: 1)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Number of records per page (required, minimum: 1)"
+								}
+							]
+						},
+						"description": "Get paginated list of ASB Jakon entries.\n\n**Query Parameters:**\n- `page` (number, required): Page number (minimum: 1)\n- `amount` (number, required): Number of records per page (minimum: 1)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get ASB Jakon Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/dev/v1/asb-jakon/detail?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dev", "v1", "asb-jakon", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ASB Jakon ID (required)"
+								}
+							]
+						},
+						"description": "Get detailed information for a specific ASB Jakon entry.\n\n**Query Parameters:**\n- `id` (number, required): ASB Jakon ID"
+					},
+					"response": []
+				}
+			],
+			"description": "Query endpoints for retrieving ASB Jakon information"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		}
+	]
+}
+

@@ -1,0 +1,456 @@
+{
+	"info": {
+		"_postman_id": "usulan-jalan-module-collection-v2",
+		"name": "Usulan Jalan Module API Collection",
+		"description": "Complete API collection for Usulan Jalan (Road Proposal) module with all CRUD, verification, and rejection endpoints. Note: idOpd is automatically extracted from UserContext (JWT token), so it should not be included in request body.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		},
+		{
+			"key": "api_prefix",
+			"value": "api/dev/v1",
+			"type": "string",
+			"description": "API prefix (api/dev/v1 for development, api/v1 for production)"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get Analytics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/analytics?bulan=1&tahun=2024",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "analytics"],
+							"query": [
+								{
+									"key": "bulan",
+									"value": "1",
+									"description": "Month (1-12), optional"
+								},
+								{
+									"key": "tahun",
+									"value": "2024",
+									"description": "Year (minimum 2000), optional"
+								}
+							]
+						},
+						"description": "Get analytics data for usulan jalan. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Usulan Jalan",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan?page=1&amount=10&idUsulanJalanStatus=1&tahunAnggaran=2024&namaUsulanJalan=&idKabkota=&idKecamatan=&idKelurahan=&idJalanJenisPerkerasan=",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								},
+								{
+									"key": "idUsulanJalanStatus",
+									"value": "1",
+									"description": "Filter by status ID (optional)"
+								},
+								{
+									"key": "tahunAnggaran",
+									"value": "2024",
+									"description": "Filter by tahun anggaran (optional)"
+								},
+								{
+									"key": "namaUsulanJalan",
+									"value": "",
+									"description": "Search by name (optional)"
+								},
+								{
+									"key": "idKabkota",
+									"value": "",
+									"description": "Filter by kabkota ID (optional)"
+								},
+								{
+									"key": "idKecamatan",
+									"value": "",
+									"description": "Filter by kecamatan ID (optional)"
+								},
+								{
+									"key": "idKelurahan",
+									"value": "",
+									"description": "Filter by kelurahan ID (optional)"
+								},
+								{
+									"key": "idJalanJenisPerkerasan",
+									"value": "",
+									"description": "Filter by jenis perkerasan ID (optional)"
+								}
+							]
+						},
+						"description": "Get all usulan jalan with optional filters and pagination. OPD users only see their own data. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Usulan Jalan by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/id?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "id"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID of the usulan jalan"
+								}
+							]
+						},
+						"description": "Get a specific usulan jalan by ID. OPD users can only see their own data. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reject Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/reject-info?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "reject-info"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID of the usulan jalan"
+								}
+							]
+						},
+						"description": "Get rejection information for a usulan jalan. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for querying and retrieving usulan jalan data"
+		},
+		{
+			"name": "CRUD Operations",
+			"item": [
+				{
+					"name": "Store Index",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idAsbJenis\": 2,\n    \"idJalanJenisPemeliharaan\": 1,\n    \"idJalanJenisPerkerasan\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Jalan Baru\",\n    \"alamat\": \"Jl. Contoh No. 123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/store-index",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "store-index"]
+						},
+						"description": "Create a new usulan jalan index. This creates a basic usulan jalan record with status 1 (Input Informasi Usulan Jalan). idJalanJenisPerkerasan and alamat are optional. Note: idOpd is automatically extracted from UserContext (JWT token), so it should not be included in request body. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Index",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"idAsbJenis\": 2,\n    \"idJalanJenisPemeliharaan\": 1,\n    \"idJalanJenisPerkerasan\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Jalan Baru (Updated)\",\n    \"alamat\": \"Jl. Contoh No. 123 (Updated)\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/store-index",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "store-index"]
+						},
+						"description": "Update usulan jalan index. OPD users can only update their own data. idJalanJenisPerkerasan and alamat are optional. Note: idOpd cannot be updated from request body, it comes from UserContext. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Store Informasi",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"idRekening\": 1,\n    \"lebar\": 5.5,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi\": 100,\n                    \"tinggi\": 150\n                }\n            ]\n        }\n    ],\n    \"data_smkk\": [\n        {\n            \"id_smkk\": 1,\n            \"jumlah\": 10\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/store-informasi",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "store-informasi"]
+						},
+						"description": "Store informasi usulan jalan including lebar, idRekening, data_ruang_lingkup with HSPK data, and data_smkk. Volume, harga_spec, harga_spec (SMKK), and harga_satuan (SMKK) will be calculated automatically. Requires OPD, ADMIN, or SUPERADMIN role.\n\nRequest body structure:\n- idUsulanJalan (number, required): ID of the usulan jalan\n- idRekening (number, required): Budget account ID\n- lebar (number, required): Width of the road\n- data_ruang_lingkup (array, required, min 1 item): Array of ruang lingkup data\n  - id (number, required): ID of the ruang lingkup\n  - data_hspk (array, required, min 1 item): Array of HSPK data\n    - id_hspk (number, required): ID of the HSPK\n    - spasi (number, required): Spacing value\n    - tinggi (number, required): Height value\n- data_smkk (array, optional): Array of SMKK data\n  - id_smkk (number, required): ID of the jalan_saluran_smkk\n  - jumlah (number, required): Number of items (jumlah_barang). harga_spec will be calculated as biaya_smkk * pengali, and harga_satuan will be calculated as harga_spec / jumlah"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Usulan Jalan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"idUsulanJalanStatus\": 2,\n    \"idAsbJenis\": 2,\n    \"idJalanJenisPemeliharaan\": 1,\n    \"idJalanJenisPerkerasan\": 1,\n    \"idRekening\": 1,\n    \"idRekeningReview\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"isIncludePpn\": true,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Jalan Baru\",\n    \"alamat\": \"Jl. Contoh No. 123\",\n    \"uraian\": \"1 m^1 Aspal Lebar 5 meter\",\n    \"spesifikasi\": \"Tebal Perkerasan 150 mm - 200 mm; Tanpa Lapis Pondasi.\",\n    \"satuan\": \"m^1\",\n    \"deskripsiDesain\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/update",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "update"]
+						},
+						"description": "Update usulan jalan. All fields are optional except id. Note: idOpd cannot be updated from request body, it comes from UserContext. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Usulan Jalan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanJalan\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan"]
+						},
+						"description": "Delete a usulan jalan by ID. OPD users can only delete their own data. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for creating, updating, and deleting usulan jalan"
+		},
+		{
+			"name": "Verification Operations",
+			"item": [
+				{
+					"name": "Verify Index",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"idAsbJenis\": 2,\n    \"idJalanJenisPerkerasan\": 1,\n    \"idJalanJenisPemeliharaan\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/verify-index",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "verify-index"]
+						},
+						"description": "Verify usulan jalan index by ADBANG verifikator. This verifies the index created by OPD and changes status from 1 (Input Informasi Usulan Jalan) to 5 (Verifikasi Informasi Usulan Jalan). idAsbJenis, idJalanJenisPerkerasan, and idJalanJenisPemeliharaan are optional. If idAsbJenis is 2 (Pemeliharaan), idJalanJenisPemeliharaan is required. If idAsbJenis is 1 (Pembangunan), idJalanJenisPemeliharaan must be null or not provided. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Informasi",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"lebar\": 5.5,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi_review\": 100,\n                    \"tinggi_review\": 150\n                }\n            ]\n        }\n    ],\n    \"data_smkk\": [\n        {\n            \"id_smkk\": 1,\n            \"jumlah\": 10\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/verify-informasi",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "verify-informasi"]
+						},
+						"description": "Verify informasi usulan jalan by ADBANG verifikator. This changes status from 5 (Verifikasi Informasi Usulan Jalan) to 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan). Volume_review, harga_spec_review, harga_spec (SMKK Review), and harga_satuan (SMKK Review) will be calculated automatically. lebar is optional - if not provided, will use existing value. Note: idJalanJenisPerkerasan should already be set in verifyIndex and cannot be changed here. idRekeningReview cannot be updated here, only BPKAD can update rekening review in verifyBpkad endpoint. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role.\n\nRequest body structure:\n- idUsulanJalan (number, required): ID of the usulan jalan\n- lebar (number, optional): Width of the road (if not provided, uses existing value)\n- data_ruang_lingkup (array, required, min 1 item): Array of ruang lingkup review data\n  - id (number, required): ID of the ruang lingkup\n  - data_hspk (array, required, min 1 item): Array of HSPK review data\n    - id_hspk (number, required): ID of the HSPK\n    - spasi_review (number, required): Review spacing value\n    - tinggi_review (number, required): Review height value\n- data_smkk (array, optional): Array of SMKK review data\n  - id_smkk (number, required): ID of the jalan_saluran_smkk\n  - jumlah (number, required): Number of items (jumlah_barang). harga_spec will be calculated as biaya_smkk * pengali, and harga_satuan will be calculated as harga_spec / jumlah"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify ADBANG",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanJalan\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/verify-adbang",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "verify-adbang"]
+						},
+						"description": "Approve usulan jalan by ADBANG verifikator. This changes status to 7 (Verifikasi Adbang). Only requires idUsulanJalan. ADBANG must have already completed verifyIndex and verifyInformasi before this step. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify BPKAD",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"idRekeningReview\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/verify-bpkad",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "verify-bpkad"]
+						},
+						"description": "Approve usulan jalan by BPKAD verifikator and verify rekening. This changes status to 8 (Verifikasi Bpkad). Requires idUsulanJalan and idRekeningReview (both required). This is the only endpoint that can update idRekeningReview field. ADBANG must have verified first. Requires VERIFIKATOR (BPKAD), ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify BAPPEDA",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanJalan\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/verify-bappeda",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "verify-bappeda"]
+						},
+						"description": "Approve usulan jalan by BAPPEDA verifikator. This changes status to 3 (Memenuhi Syarat - Final approved). Only requires idUsulanJalan. ADBANG and BPKAD must have verified first. Requires VERIFIKATOR (BAPPEDA), ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Usulan Jalan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanJalan\": 1,\n    \"rejectReason\": \"Data tidak lengkap\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-jalan/reject",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-jalan", "reject"]
+						},
+						"description": "Reject usulan jalan with a reason. Requires VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for verifying and rejecting usulan jalan by different verifikators"
+		}
+	]
+}
+

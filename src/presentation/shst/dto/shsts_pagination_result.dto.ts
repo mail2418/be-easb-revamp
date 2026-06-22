@@ -1,7 +1,7 @@
-import { Shst } from "../../../domain/shst/shst.entity";
+import { ShstWithRelationsDto } from "../../../application/shst/dto/shst_with_relations.dto";
 
 export class ShstsPaginationResultDto {
-  data!: Shst[];
+  data!: ShstWithRelationsDto[];
   total!: number;
   page!: number;
   amount!: number;

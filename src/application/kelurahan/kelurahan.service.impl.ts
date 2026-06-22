@@ -17,86 +17,66 @@ export class KelurahanServiceImpl implements KelurahanService {
     ) { }
 
     async create(dto: CreateKelurahanDto): Promise<Kelurahan> {
-        try {
-            // Validate that kecamatan exists
+        // Validate that kecamatan exists
+        const kecamatan = await this.kecamatanRepository.findById(dto.idKecamatan);
+        if (!kecamatan) {
+            throw new BadRequestException(`Kecamatan with id ${dto.idKecamatan} not found`);
+        }
+
+        const kelurahan = await this.repository.create(dto);
+        return kelurahan;
+    }
+
+    async update(dto: UpdateKelurahanDto): Promise<Kelurahan> {
+        const existing = await this.repository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`Kelurahan with id ${dto.id} not found`);
+        }
+
+        // Validate kecamatan if it's being updated
+        if (dto.idKecamatan) {
             const kecamatan = await this.kecamatanRepository.findById(dto.idKecamatan);
             if (!kecamatan) {
                 throw new BadRequestException(`Kecamatan with id ${dto.idKecamatan} not found`);
             }
-
-            const kelurahan = await this.repository.create(dto);
-            return kelurahan;
-        } catch (error) {
-            throw error;
         }
-    }
 
-    async update(dto: UpdateKelurahanDto): Promise<Kelurahan> {
-        try {
-            const existing = await this.repository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`Kelurahan with id ${dto.id} not found`);
-            }
-
-            // Validate kecamatan if it's being updated
-            if (dto.idKecamatan) {
-                const kecamatan = await this.kecamatanRepository.findById(dto.idKecamatan);
-                if (!kecamatan) {
-                    throw new BadRequestException(`Kecamatan with id ${dto.idKecamatan} not found`);
-                }
-            }
-
-            const { id, ...updateData } = dto;
-            const updated = await this.repository.update(id, updateData);
-            return updated;
-        } catch (error) {
-            throw error;
-        }
+        const { id, ...updateData } = dto;
+        const updated = await this.repository.update(id, updateData);
+        return updated;
     }
 
     async delete(dto: DeleteKelurahanDto): Promise<void> {
-        try {
-            const existing = await this.repository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`Kelurahan with id ${dto.id} not found`);
-            }
-
-            await this.repository.delete(dto.id);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`Kelurahan with id ${dto.id} not found`);
         }
+
+        await this.repository.delete(dto.id);
     }
 
     async getById(dto: GetKelurahanDetailDto): Promise<Kelurahan> {
-        try {
-            const kelurahan = await this.repository.findById(dto.id);
-            if (!kelurahan) {
-                throw new NotFoundException(`Kelurahan with id ${dto.id} not found`);
-            }
-            return kelurahan;
-        } catch (error) {
-            throw error;
+        const kelurahan = await this.repository.findById(dto.id);
+        if (!kelurahan) {
+            throw new NotFoundException(`Kelurahan with id ${dto.id} not found`);
         }
+        return kelurahan;
     }
 
     async getAll(dto: GetKelurahansDto): Promise<{ data: Kelurahan[]; total: number; page: number; amount: number; totalPages: number }> {
-        try {
-            const filter: any = {};
-            if (dto.idKecamatan) filter.idKecamatan = dto.idKecamatan;
-            if (dto.search) filter.search = dto.search;
+        const filter: any = {};
+        if (dto.idKecamatan) filter.idKecamatan = dto.idKecamatan;
+        if (dto.search) filter.search = dto.search;
 
-            const { data, total } = await this.repository.findAll(dto.page, dto.amount, filter);
+        const { data, total } = await this.repository.findAll(dto.page, dto.amount, filter);
 
-            return {
-                data,
-                total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(total / dto.amount),
-            };
-        } catch (error) {
-            throw error;
-        }
+        return {
+            data,
+            total,
+            page: dto.page ?? 1,
+            amount: dto.amount ?? total,
+            totalPages: dto.amount ? Math.ceil(total / dto.amount) : 1,
+        };
     }
 
     async getKelurahanByKecamatanId(idKecamatan: number): Promise<{
@@ -106,17 +86,13 @@ export class KelurahanServiceImpl implements KelurahanService {
         amount: number;
         totalPages: number;
     }> {
-        try {
-            const kelurahans = await this.repository.findByKecamatanId(idKecamatan);
-            return {
-                data: kelurahans,
-                total: kelurahans.length,
-                page: 1,
-                amount: kelurahans.length,
-                totalPages: 1,
-            };
-        } catch (error) {
-            throw error;
-        }
+        const kelurahans = await this.repository.findByKecamatanId(idKecamatan);
+        return {
+            data: kelurahans,
+            total: kelurahans.length,
+            page: 1,
+            amount: kelurahans.length,
+            totalPages: 1,
+        };
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { OpdRepository } from '../../../domain/opd/opd.repository';
 import { Opd } from '../../../domain/opd/opd.entity';
 import { OpdOrmEntity } from '../orm/opd.orm_entity';
@@ -9,76 +9,57 @@ import { UpdateOpdDto } from '../../../presentation/opd/dto/update_opd.dto';
 import { DeleteOpdDto } from '../../../presentation/opd/dto/delete_opd.dto';
 import { GetOpdsDto } from '../../../presentation/opd/dto/get_opds.dto';
 import { plainToInstance } from 'class-transformer';
-import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class OpdRepositoryImpl implements OpdRepository {
     constructor(@InjectRepository(OpdOrmEntity) private readonly repo: Repository<OpdOrmEntity>) {}
 
     async create(dto: CreateOpdDto): Promise<Opd> {
-        try {
-            const ormEntity = plainToInstance(OpdOrmEntity, dto);
-            const newEntity = await this.repo.save(ormEntity);
-            return newEntity;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = plainToInstance(OpdOrmEntity, dto);
+        const newEntity = await this.repo.save(ormEntity);
+        return newEntity;
     }
 
     async update(dto: UpdateOpdDto): Promise<Opd> {
-        try {
-            await this.repo.update(dto.id, dto);
-            const updatedEntity = await this.repo.findOne({ where: { id: dto.id } });
-            return updatedEntity!;
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.update(dto.id, dto);
+        const updatedEntity = await this.repo.findOne({ where: { id: dto.id } });
+        return updatedEntity!;
     }
     
     async delete(dto: DeleteOpdDto): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(dto.id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(dto.id).then(() => true).catch(() => false);
     }
 
     async findById(id: number): Promise<Opd | null> {
-        try {
-            const entity = await this.repo.findOne({ where: { id } });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo.findOne({ where: { id } });
+        return entity || null;
     }
 
     async findAll(pagination: GetOpdsDto): Promise<{ data: Opd[]; total: number }> {
-        try {
-            const qb = this.repo.createQueryBuilder('opd');
+        const findOptions: any = {
+            order: { id: 'DESC' }
+        };
 
-            applyIlikeSearch(qb, 'opd', ['opd', 'alias'], pagination.search);
-
-            const [data, total] = await qb
-                .orderBy('opd.id', 'DESC')
-                .skip((pagination.page - 1) * pagination.amount)
-                .take(pagination.amount)
-                .getManyAndCount();
-
-            return { data, total };
-        } catch (error) {
-            throw error;
+        if (pagination.search) {
+            const q = ILike(`%${pagination.search}%`);
+            findOptions.where = [{ opd: q }, { alias: q }];
         }
+
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            findOptions.skip = (pagination.page - 1) * pagination.amount;
+            findOptions.take = pagination.amount;
+        }
+
+        const [data, total] = await this.repo.findAndCount(findOptions);
+
+        return { data, total };
     }
 
     async getOpdByUser(id_user: number): Promise<Opd | null> {
-        try {
-            const entity = await this.repo
-                .createQueryBuilder('opd')
-                .where('opd.id_user = :id_user', { id_user })
-                .getOne();
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo
+            .createQueryBuilder('opd')
+            .where('opd.id_user = :id_user', { id_user })
+            .getOne();
+        return entity || null;
     }
 }

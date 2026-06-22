@@ -7,7 +7,7 @@ export class CreateAsbBipekNonStdDto {
     files: Files;
 
     @IsInt()
-    idAsbKomponenBangunanNonStd: number;
+    idAsbKomponenBangunanNonstd: number;
 
     @IsInt()
     idAsb: number;

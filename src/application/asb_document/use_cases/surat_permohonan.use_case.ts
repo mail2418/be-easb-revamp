@@ -7,8 +7,25 @@ export class SuratPermohonanUseCase {
     async execute(data: SuratPermohonanDto): Promise<Buffer> {
         const now = new Date();
 
-        const date = new Intl.DateTimeFormat('en-GB').format(now); // DD/MM/YYYY
-        const time = now.toTimeString().split(' ')[0].replace(/:/g, ':'); // HH:mm:ss
+        // Format date as DD/MM/YYYY in Jakarta timezone (UTC+7)
+        const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Asia/Jakarta',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+        const date = dateFormatter.format(now);
+
+        // Format time as HH:mm:ss
+        const timeFormatter = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Asia/Jakarta',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
+        const time = timeFormatter.format(now);
+
         const dateFormatted = `${date.replace(/\//g, '-')} ${time}`;
 
         const html = await this.generateHtml(data, dateFormatted);

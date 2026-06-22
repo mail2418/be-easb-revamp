@@ -22,19 +22,15 @@ export class AsbBpsGalleryNonstdRepositoryImpl extends AsbBpsGalleryNonstdReposi
         dto: CreateAsbBpsGalleryNonstdDto,
         filename: string,
     ): Promise<AsbBpsGalleryNonstd> {
-        try {
-            const ormEntity = this.repository.create({
-                idAsbKomponenBangunanNonstd: dto.idAsbKomponenBangunanNonstd,
-                filename: filename,
-                jumlahBobot: dto.jumlahBobot,
-                rincianHarga: dto.rincianHarga,
-            });
+        const ormEntity = this.repository.create({
+            idAsbKomponenBangunanNonstd: dto.idAsbKomponenBangunanNonstd,
+            filename: filename,
+            jumlahBobot: dto.jumlahBobot,
+            rincianHarga: dto.rincianHarga,
+        });
 
-            const saved = await this.repository.save(ormEntity);
-            return plainToInstance(AsbBpsGalleryNonstd, saved);
-        } catch (error) {
-            throw error;
-        }
+        const saved = await this.repository.save(ormEntity);
+        return plainToInstance(AsbBpsGalleryNonstd, saved);
     }
 
     async update(
@@ -42,57 +38,45 @@ export class AsbBpsGalleryNonstdRepositoryImpl extends AsbBpsGalleryNonstdReposi
         dto: UpdateAsbBpsGalleryNonstdDto,
         filename?: string,
     ): Promise<AsbBpsGalleryNonstd> {
-        try {
-            const existing = await this.repository.findOne({ where: { id } });
-            if (!existing) {
-                throw new Error(`AsbBpsGalleryNonstd with id ${id} not found`);
-            }
-
-            const updateData: Partial<AsbBpsGalleryNonstdOrmEntity> = {};
-
-            if (dto.idAsbKomponenBangunanNonstd !== undefined) {
-                updateData.idAsbKomponenBangunanNonstd = dto.idAsbKomponenBangunanNonstd;
-            }
-            if (dto.idAsb !== undefined) {
-                updateData.idAsb = dto.idAsb;
-            }
-            if (dto.jumlahBobot !== undefined) {
-                updateData.jumlahBobot = dto.jumlahBobot;
-            }
-            if (dto.rincianHarga !== undefined) {
-                updateData.rincianHarga = dto.rincianHarga;
-            }
-            if (filename !== undefined) {
-                updateData.filename = filename;
-            }
-
-            await this.repository.update(id, updateData);
-
-            const updated = await this.repository.findOne({ where: { id } });
-            return plainToInstance(AsbBpsGalleryNonstd, updated);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findOne({ where: { id } });
+        if (!existing) {
+            throw new Error(`AsbBpsGalleryNonstd with id ${id} not found`);
         }
+
+        const updateData: Partial<AsbBpsGalleryNonstdOrmEntity> = {};
+
+        if (dto.idAsbKomponenBangunanNonstd !== undefined) {
+            updateData.idAsbKomponenBangunanNonstd = dto.idAsbKomponenBangunanNonstd;
+        }
+        if (dto.idAsb !== undefined) {
+            updateData.idAsb = dto.idAsb;
+        }
+        if (dto.jumlahBobot !== undefined) {
+            updateData.jumlahBobot = dto.jumlahBobot;
+        }
+        if (dto.rincianHarga !== undefined) {
+            updateData.rincianHarga = dto.rincianHarga;
+        }
+        if (filename !== undefined) {
+            updateData.filename = filename;
+        }
+
+        await this.repository.update(id, updateData);
+
+        const updated = await this.repository.findOne({ where: { id } });
+        return plainToInstance(AsbBpsGalleryNonstd, updated);
     }
 
     async delete(id: number): Promise<void> {
-        try {
-            const result = await this.repository.softDelete(id);
-            if (result.affected === 0) {
-                throw new Error(`AsbBpsGalleryNonstd with id ${id} not found`);
-            }
-        } catch (error) {
-            throw error;
+        const result = await this.repository.softDelete(id);
+        if (result.affected === 0) {
+            throw new Error(`AsbBpsGalleryNonstd with id ${id} not found`);
         }
     }
 
     async findById(id: number): Promise<AsbBpsGalleryNonstd | null> {
-        try {
-            const entity = await this.repository.findOne({ where: { id } });
-            return entity ? plainToInstance(AsbBpsGalleryNonstd, entity) : null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repository.findOne({ where: { id } });
+        return entity ? plainToInstance(AsbBpsGalleryNonstd, entity) : null;
     }
 
     async findAll(
@@ -100,71 +84,59 @@ export class AsbBpsGalleryNonstdRepositoryImpl extends AsbBpsGalleryNonstdReposi
         amount: number,
         filters?: GetAsbBpsGalleryNonstdListFilterDto,
     ): Promise<[AsbBpsGalleryNonstd[], number]> {
-        try {
-            const queryBuilder = this.repository.createQueryBuilder('gallery');
+        const queryBuilder = this.repository.createQueryBuilder('gallery');
 
-            if (filters?.idAsbKomponenBangunanNonstd) {
-                queryBuilder.andWhere(
-                    'gallery.idAsbKomponenBangunanNonstd = :idAsbKomponenBangunanNonstd',
-                    { idAsbKomponenBangunanNonstd: filters.idAsbKomponenBangunanNonstd },
-                );
-            }
-
-            if (filters?.filename) {
-                queryBuilder.andWhere('gallery.filename LIKE :filename', {
-                    filename: `%${filters.filename}%`,
-                });
-            }
-
-            if (filters?.jumlahBobot !== undefined) {
-                queryBuilder.andWhere('gallery.jumlahBobot = :jumlahBobot', {
-                    jumlahBobot: filters.jumlahBobot,
-                });
-            }
-
-            if (filters?.rincianHarga !== undefined) {
-                queryBuilder.andWhere('gallery.rincianHarga = :rincianHarga', {
-                    rincianHarga: filters.rincianHarga,
-                });
-            }
-
-            const [entities, total] = await queryBuilder
-                .skip((page - 1) * amount)
-                .take(amount)
-                .getManyAndCount();
-
-            const domainEntities = entities.map((e) =>
-                plainToInstance(AsbBpsGalleryNonstd, e),
+        if (filters?.idAsbKomponenBangunanNonstd) {
+            queryBuilder.andWhere(
+                'gallery.idAsbKomponenBangunanNonstd = :idAsbKomponenBangunanNonstd',
+                { idAsbKomponenBangunanNonstd: filters.idAsbKomponenBangunanNonstd },
             );
-            return [domainEntities, total];
-        } catch (error) {
-            throw error;
         }
+
+        if (filters?.filename) {
+            queryBuilder.andWhere('gallery.filename LIKE :filename', {
+                filename: `%${filters.filename}%`,
+            });
+        }
+
+        if (filters?.jumlahBobot !== undefined) {
+            queryBuilder.andWhere('gallery.jumlahBobot = :jumlahBobot', {
+                jumlahBobot: filters.jumlahBobot,
+            });
+        }
+
+        if (filters?.rincianHarga !== undefined) {
+            queryBuilder.andWhere('gallery.rincianHarga = :rincianHarga', {
+                rincianHarga: filters.rincianHarga,
+            });
+        }
+
+        const [entities, total] = await queryBuilder
+            .skip((page - 1) * amount)
+            .take(amount)
+            .getManyAndCount();
+
+        const domainEntities = entities.map((e) =>
+            plainToInstance(AsbBpsGalleryNonstd, e),
+        );
+        return [domainEntities, total];
     }
 
     async findByKomponenBangunanNonstdId(id: number): Promise<AsbBpsGalleryNonstd[]> {
-        try {
-            const entities = await this.repository.find({
-                where: { idAsbKomponenBangunanNonstd: id },
-            });
-            return entities.map((e) => plainToInstance(AsbBpsGalleryNonstd, e));
-        } catch (error) {
-            throw error;
-        }
+        const entities = await this.repository.find({
+            where: { idAsbKomponenBangunanNonstd: id },
+        });
+        return entities.map((e) => plainToInstance(AsbBpsGalleryNonstd, e));
     }
 
     async findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBpsGalleryNonstd[], number]> {
-        try {
-            const [entities, total] = await this.repository.findAndCount({
-                where: { idAsb },
-                skip: (page - 1) * amount,
-                take: amount,
-                order: { id: 'DESC' }
-            });
-            const domainEntities = entities.map((e) => plainToInstance(AsbBpsGalleryNonstd, e));
-            return [domainEntities, total];
-        } catch (error) {
-            throw error;
-        }
+        const [entities, total] = await this.repository.findAndCount({
+            where: { idAsb },
+            skip: (page - 1) * amount,
+            take: amount,
+            order: { id: 'DESC' }
+        });
+        const domainEntities = entities.map((e) => plainToInstance(AsbBpsGalleryNonstd, e));
+        return [domainEntities, total];
     }
 }

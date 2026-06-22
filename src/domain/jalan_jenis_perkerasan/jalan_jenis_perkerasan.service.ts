@@ -1,14 +1,14 @@
-import { PaginationQueryDto } from '../../common/dto/pagination_query.dto';
-import { CreateJalanJenisPerkerasanDto } from '../../presentation/jalan_jenis_perkerasan/dto/create_jalan_jenis_perkerasan.dto';
-import { UpdateJalanJenisPerkerasanDto } from '../../presentation/jalan_jenis_perkerasan/dto/update_jalan_jenis_perkerasan.dto';
-import { DeleteJalanJenisPerkerasanDto } from '../../presentation/jalan_jenis_perkerasan/dto/delete_jalan_jenis_perkerasan.dto';
-import { JalanJenisPerkerasan } from './jalan_jenis_perkerasan.entity';
-import { JalanJenisPerkerasanPaginationResultDto } from '../../presentation/jalan_jenis_perkerasan/dto/jalan_jenis_perkerasan_pagination_result.dto';
+import { CreateJalanJenisPerkerasanDto } from "src/presentation/jalan_jenis_perkerasan/dto/create_jalan_jenis_perkerasan.dto";
+import { JalanJenisPerkerasan } from "./jalan_jenis_perkerasan.entity";
+import { UpdateJalanJenisPerkerasanDto } from "src/presentation/jalan_jenis_perkerasan/dto/update_jalan_jenis_perkerasan.dto";
+import { GetJalanJenisPerkerasanDto } from "src/presentation/jalan_jenis_perkerasan/dto/get_jalan_jenis_perkerasan.dto";
+import { JalanJenisPerkerasanPaginationResultDto } from "src/presentation/jalan_jenis_perkerasan/dto/jalan_jenis_perkerasan_pagination_result.dto";
 
 export abstract class JalanJenisPerkerasanService {
     abstract create(dto: CreateJalanJenisPerkerasanDto): Promise<JalanJenisPerkerasan>;
     abstract update(dto: UpdateJalanJenisPerkerasanDto): Promise<JalanJenisPerkerasan>;
-    abstract delete(dto: DeleteJalanJenisPerkerasanDto): Promise<boolean>;
-    abstract findAll(dto: PaginationQueryDto): Promise<JalanJenisPerkerasanPaginationResultDto>;
-    abstract findById(id: number): Promise<JalanJenisPerkerasan>;
+    abstract delete(id: number): Promise<boolean>;
+    abstract findById(id: number): Promise<JalanJenisPerkerasan | null>;
+    abstract findAll(dto: GetJalanJenisPerkerasanDto): Promise<JalanJenisPerkerasanPaginationResultDto>;
+    abstract findByJenisPerkerasan(jenis_perkerasan: string): Promise<JalanJenisPerkerasan | null>;
 }

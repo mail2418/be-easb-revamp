@@ -17,69 +17,58 @@ export class AsbBipekStandardServiceImpl extends AsbBipekStandardService {
     async create(
         dto: CreateAsbBipekStandardDto,
     ): Promise<AsbBipekStandard> {
-        try {
-            return await this.repository.create(dto);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repository.create(dto);
     }
 
     async update(dto: UpdateAsbBipekStandardDto): Promise<AsbBipekStandard> {
-        try {
-            const existing = await this.repository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(
-                    `AsbBipekStandard with id ${dto.id} not found`,
-                );
-            }
-
-            return await this.repository.update(dto);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(
+                `AsbBipekStandard with id ${dto.id} not found`,
+            );
         }
+
+        return await this.repository.update(dto);
     }
 
     async delete(id: number): Promise<void> {
-        try {
-            const existing = await this.repository.findById(id);
-            if (!existing) {
-                throw new NotFoundException(
-                    `AsbBipekStandard with id ${id} not found`,
-                );
-            }
-
-            await this.repository.delete(id);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(id);
+        if (!existing) {
+            throw new NotFoundException(
+                `AsbBipekStandard with id ${id} not found`,
+            );
         }
+
+        await this.repository.delete(id);
     }
 
     async getById(id: number): Promise<AsbBipekStandard> {
-        try {
-            const bipekStandard = await this.repository.findById(id);
-            if (!bipekStandard) {
-                throw new NotFoundException(
-                    `AsbBipekStandard with id ${id} not found`,
-                );
-            }
-            return bipekStandard;
-        } catch (error) {
-            throw error;
+        const bipekStandard = await this.repository.findById(id);
+        if (!bipekStandard) {
+            throw new NotFoundException(
+                `AsbBipekStandard with id ${id} not found`,
+            );
         }
+        return bipekStandard;
     }
 
     async getByAsb(dto: GetAsbBipekStandardByAsbDto): Promise<{ data: AsbBipekStandard[], total: number, page: number, amount: number, totalPages: number }> {
-        try {
-            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
-            return {
-                data,
-                total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(total / dto.amount)
-            };
-        } catch (error) {
-            throw error;
-        }
+        const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+        
+        // If pagination is not provided, return all data with page=1, amount=total
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? total;
+        
+        return {
+            data,
+            total,
+            page,
+            amount,
+            totalPages: amount > 0 ? Math.ceil(total / amount) : 1
+        };
+    }
+
+    async deleteByAsbId(idAsb: number): Promise<void> {
+        await this.repository.deleteByAsbId(idAsb);
     }
 }

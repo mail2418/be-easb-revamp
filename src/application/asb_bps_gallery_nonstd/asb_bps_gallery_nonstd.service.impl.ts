@@ -32,13 +32,9 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
         dto: CreateAsbBpsGalleryNonstdDto,
         file: Express.Multer.File,
     ): Promise<AsbBpsGalleryNonstd> {
-        try {
-            this.validateFileUpload.execute(file);
-            const filepath = this.saveFile.execute(file);
-            return await this.repository.create(dto, filepath);
-        } catch (error) {
-            throw error;
-        }
+        await this.validateFileUpload.execute(file);
+        const filepath = this.saveFile.execute(file);
+        return await this.repository.create(dto, filepath);
     }
 
     async update(
@@ -46,56 +42,44 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
         dto: UpdateAsbBpsGalleryNonstdDto,
         file?: Express.Multer.File,
     ): Promise<AsbBpsGalleryNonstd> {
-        try {
-            const existing = await this.repository.findById(id);
-            if (!existing) {
-                throw new NotFoundException(
-                    `AsbBpsGalleryNonstd with id ${id} not found`,
-                );
-            }
-
-            let filepath: string | undefined = undefined;
-
-            if (file) {
-                this.validateFileUpload.execute(file);
-                this.deleteFile.execute(existing.filename);
-                filepath = this.saveFile.execute(file);
-            }
-
-            return await this.repository.update(id, dto, filepath);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(id);
+        if (!existing) {
+            throw new NotFoundException(
+                `AsbBpsGalleryNonstd with id ${id} not found`,
+            );
         }
+
+        let filepath: string | undefined = undefined;
+
+        if (file) {
+            await this.validateFileUpload.execute(file);
+            this.deleteFile.execute(existing.filename);
+            filepath = this.saveFile.execute(file);
+        }
+
+        return await this.repository.update(id, dto, filepath);
     }
 
     async delete(id: number): Promise<void> {
-        try {
-            const existing = await this.repository.findById(id);
-            if (!existing) {
-                throw new NotFoundException(
-                    `AsbBpsGalleryNonstd with id ${id} not found`,
-                );
-            }
-
-            this.deleteFile.execute(existing.filename);
-            await this.repository.delete(id);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(id);
+        if (!existing) {
+            throw new NotFoundException(
+                `AsbBpsGalleryNonstd with id ${id} not found`,
+            );
         }
+
+        this.deleteFile.execute(existing.filename);
+        await this.repository.delete(id);
     }
 
     async findById(id: number): Promise<AsbBpsGalleryNonstd> {
-        try {
-            const entity = await this.repository.findById(id);
-            if (!entity) {
-                throw new NotFoundException(
-                    `AsbBpsGalleryNonstd with id ${id} not found`,
-                );
-            }
-            return entity;
-        } catch (error) {
-            throw error;
+        const entity = await this.repository.findById(id);
+        if (!entity) {
+            throw new NotFoundException(
+                `AsbBpsGalleryNonstd with id ${id} not found`,
+            );
         }
+        return entity;
     }
 
     async findAll(
@@ -103,38 +87,28 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
         amount: number,
         filters?: GetAsbBpsGalleryNonstdListFilterDto,
     ): Promise<{ data: AsbBpsGalleryNonstd[]; total: number }> {
-        try {
-            const [data, total] = await this.repository.findAll(
-                page,
-                amount,
-                filters,
-            );
-            return { data, total };
-        } catch (error) {
-            throw error;
-        }
+        const [data, total] = await this.repository.findAll(
+            page,
+            amount,
+            filters,
+        );
+        return { data, total };
     }
 
     async findByKomponenBangunanNonstdId(id: number): Promise<AsbBpsGalleryNonstd[]> {
-        try {
-            return await this.repository.findByKomponenBangunanNonstdId(id);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repository.findByKomponenBangunanNonstdId(id);
     }
 
     async getByAsb(dto: GetAsbBpsGalleryNonstdByAsbDto): Promise<{ data: AsbBpsGalleryNonstd[], total: number, page: number, amount: number, totalPages: number }> {
-        try {
-            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
-            return {
-                data,
-                total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(total / dto.amount)
-            };
-        } catch (error) {
-            throw error;
-        }
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? 10;
+        const [data, total] = await this.repository.findByAsb(dto.idAsb, page, amount);
+        return {
+            data,
+            total,
+            page,
+            amount,
+            totalPages: Math.ceil(total / amount)
+        };
     }
 }

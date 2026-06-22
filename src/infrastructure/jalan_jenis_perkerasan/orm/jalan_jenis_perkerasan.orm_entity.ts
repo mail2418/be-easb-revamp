@@ -1,19 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('jalan_jenis_perkerasan')
 export class JalanJenisPerkerasanOrmEntity {
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
-    @Column({ name: 'jenis_perkerasan', type: 'varchar', length: 255 })
-    jenis_perkerasan: string;
+    @Column({ type: "varchar", length: 255, name: "jenis_perkerasan" })
+    jenis_perkerasan!: string;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: "created_at", type: "timestamp" })
     createdAt!: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
     updatedAt!: Date;
 
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+    @DeleteDateColumn({ name: "deleted_at", type: "timestamp", nullable: true })
     deletedAt?: Date;
 }

@@ -1,104 +1,359 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
-import {
-    UsulanSaluranRepository,
-    UsulanSaluranListQuery,
-    UsulanSaluranListResult,
-} from '../../../domain/usulan_saluran/usulan_saluran.repository';
+import { Repository, DeepPartial } from 'typeorm';
+import { plainToInstance } from 'class-transformer';
+import { UsulanSaluranRepository } from '../../../domain/usulan_saluran/usulan_saluran.repository';
 import { UsulanSaluranOrmEntity } from '../orm/usulan_saluran.orm_entity';
-
-const RELATIONS = [
-    'opd',
-    'usulanSaluranStatus',
-    'asbJenis',
-    'tipeSaluran',
-    'rekening',
-    'rekeningReview',
-    'kabkota',
-    'kecamatan',
-    'kelurahan',
-    'verifikatorAdbang',
-    'verifikatorAdbang.user',
-    'verifikatorBpkad',
-    'verifikatorBpkad.user',
-    'verifikatorBappeda',
-    'verifikatorBappeda.user',
-    'rejectVerifikator',
-] as const;
+import { UsulanSaluranWithRelationsDto } from 'src/application/usulan_saluran/dto/usulan_saluran_with_relations.dto';
+import { FindAllUsulanSaluranDto } from 'src/application/usulan_saluran/dto/find_all_usulan_saluran.dto';
+import { RejectInfoSaluranDto } from 'src/application/usulan_saluran/dto/reject_info.dto';
+import { GetUsulanSaluranAnalyticsFilterDto } from 'src/application/usulan_saluran/dto/get_usulan_saluran_analytics_filter.dto';
+import { UsulanSaluranAnalyticsDto } from 'src/application/usulan_saluran/dto/usulan_saluran_analytics.dto';
+import { JalanSaluranSpesifikasiSmkkOrmEntity } from '../../jalan_saluran_spesifikasi_smkk/orm/jalan_saluran_spesifikasi_smkk.orm_entity';
+import { JalanSaluranSpesifikasiSmkkReviewOrmEntity } from '../../jalan_saluran_spesifikasi_smkk_review/orm/jalan_saluran_spesifikasi_smkk_review.orm_entity';
+import { ID_JENIS_USULAN_SALURAN } from '../../../domain/jenis_usulan/jenis_usulan.constants';
 
 @Injectable()
 export class UsulanSaluranRepositoryImpl implements UsulanSaluranRepository {
     constructor(
         @InjectRepository(UsulanSaluranOrmEntity)
         private readonly repo: Repository<UsulanSaluranOrmEntity>,
-    ) {}
+        @InjectRepository(JalanSaluranSpesifikasiSmkkOrmEntity)
+        private readonly spesifikasiSmkkRepo: Repository<JalanSaluranSpesifikasiSmkkOrmEntity>,
+        @InjectRepository(JalanSaluranSpesifikasiSmkkReviewOrmEntity)
+        private readonly spesifikasiSmkkReviewRepo: Repository<JalanSaluranSpesifikasiSmkkReviewOrmEntity>,
+    ) { }
 
-    private toDto(entity: UsulanSaluranOrmEntity): Record<string, unknown> {
-        const rejectVerifikator = entity.rejectVerifikator
-            ? { id: entity.rejectVerifikator.id, username: (entity.rejectVerifikator as { username?: string }).username }
-            : null;
+    async findById(id: number, idOpd?: number): Promise<UsulanSaluranWithRelationsDto | null> {
+        const qb = this.repo.createQueryBuilder('us')
+            .leftJoinAndSelect('us.opd', 'opd')
+            .leftJoinAndSelect('us.usulanSaluranStatus', 'usulanSaluranStatus')
+            .leftJoinAndSelect('us.asbJenis', 'asbJenis')
+            .leftJoinAndSelect('us.tipeSaluran', 'tipeSaluran')
+            .leftJoinAndSelect('us.rekening', 'rekening')
+            .leftJoinAndSelect('us.rekeningReview', 'rekeningReview')
+            .leftJoinAndSelect('us.kabkota', 'kabkota')
+            .leftJoinAndSelect('us.kecamatan', 'kecamatan')
+            .leftJoinAndSelect('us.kelurahan', 'kelurahan')
+            .leftJoinAndSelect('us.verifikatorAdbang', 'verifikatorAdbang')
+            .leftJoinAndSelect('us.verifikatorBpkad', 'verifikatorBpkad')
+            .leftJoinAndSelect('us.verifikatorBappeda', 'verifikatorBappeda')
+            .leftJoinAndSelect('us.rejectVerifikator', 'rejectVerifikator')
+            .leftJoinAndSelect('us.spesifikasiDesain', 'spesifikasiDesain')
+            .leftJoinAndSelect('spesifikasiDesain.ruangLingkup', 'spesifikasiDesainRuangLingkup')
+            .leftJoinAndSelect('spesifikasiDesain.hspk', 'spesifikasiDesainHspk')
+            .leftJoinAndSelect('us.spesifikasiDesainReview', 'spesifikasiDesainReview')
+            .leftJoinAndSelect('spesifikasiDesainReview.ruangLingkup', 'spesifikasiDesainReviewRuangLingkup')
+            .leftJoinAndSelect('spesifikasiDesainReview.hspk', 'spesifikasiDesainReviewHspk')
+            .where('us.id = :id', { id });
+
+        if (idOpd) {
+            qb.andWhere('us.idOpd = :idOpd', { idOpd });
+        }
+
+        const entity = await qb.getOne();
+
+        if (!entity) {
+            return null;
+        }
+
+        const [spesifikasiSmkk, spesifikasiSmkkReview] = await Promise.all([
+            this.spesifikasiSmkkRepo.find({
+                where: { id_usulan: id, id_jenis_usulan: ID_JENIS_USULAN_SALURAN },
+                relations: ['jenisUsulan', 'jalanSaluranSmkk'],
+                order: { id: 'DESC' },
+            }),
+            this.spesifikasiSmkkReviewRepo.find({
+                where: { id_usulan: id, id_jenis_usulan: ID_JENIS_USULAN_SALURAN },
+                relations: ['jenisUsulan', 'jalanSaluranSmkk'],
+                order: { id: 'DESC' },
+            }),
+        ]);
+        (entity as any).spesifikasiSmkk = spesifikasiSmkk;
+        (entity as any).spesifikasiSmkkReview = spesifikasiSmkkReview;
+
+        return plainToInstance(UsulanSaluranWithRelationsDto, entity);
+    }
+
+    async findAll(dto: FindAllUsulanSaluranDto, idOpd?: number): Promise<{ data: UsulanSaluranWithRelationsDto[]; total: number }> {
+        const page = dto.page ? Math.max(dto.page, 1) : undefined;
+        const amount = dto.amount ? Math.max(dto.amount, 1) : undefined;
+        const skip = page && amount ? (page - 1) * amount : undefined;
+
+        const whereConditions: string[] = [];
+        const whereParams: any = {};
+
+        if (idOpd) {
+            whereConditions.push('us.idOpd = :idOpd');
+            whereParams.idOpd = idOpd;
+        }
+
+        if (dto.tahunAnggaran) {
+            whereConditions.push('us.tahunAnggaran = :tahunAnggaran');
+            whereParams.tahunAnggaran = dto.tahunAnggaran;
+        }
+
+        if (dto.idUsulanSaluranStatus) {
+            whereConditions.push('us.idUsulanSaluranStatus = :idUsulanSaluranStatus');
+            whereParams.idUsulanSaluranStatus = dto.idUsulanSaluranStatus;
+        }
+
+        if (dto.namaUsulanSaluran) {
+            whereConditions.push('LOWER(us.namaUsulan) LIKE :namaUsulanSaluran');
+            whereParams.namaUsulanSaluran = `%${dto.namaUsulanSaluran.toLowerCase()}%`;
+        }
+
+        if (dto.idKabkota) {
+            whereConditions.push('us.idKabkota = :idKabkota');
+            whereParams.idKabkota = dto.idKabkota;
+        }
+
+        if (dto.idKecamatan) {
+            whereConditions.push('us.idKecamatan = :idKecamatan');
+            whereParams.idKecamatan = dto.idKecamatan;
+        }
+
+        if (dto.idKelurahan) {
+            whereConditions.push('us.idKelurahan = :idKelurahan');
+            whereParams.idKelurahan = dto.idKelurahan;
+        }
+
+        if (dto.idTipeSaluran) {
+            whereConditions.push('us.idTipeSaluran = :idTipeSaluran');
+            whereParams.idTipeSaluran = dto.idTipeSaluran;
+        }
+
+        const qb = this.repo.createQueryBuilder('us')
+            .leftJoinAndSelect('us.opd', 'opd')
+            .leftJoinAndSelect('us.usulanSaluranStatus', 'usulanSaluranStatus')
+            .leftJoinAndSelect('us.asbJenis', 'asbJenis')
+            .leftJoinAndSelect('us.tipeSaluran', 'tipeSaluran')
+            .leftJoinAndSelect('us.kabkota', 'kabkota')
+            .leftJoinAndSelect('us.kecamatan', 'kecamatan')
+            .leftJoinAndSelect('us.kelurahan', 'kelurahan')
+            .leftJoinAndSelect('us.verifikatorAdbang', 'verifikatorAdbang')
+            .leftJoinAndSelect('us.verifikatorBpkad', 'verifikatorBpkad')
+            .leftJoinAndSelect('us.verifikatorBappeda', 'verifikatorBappeda')
+            .leftJoinAndSelect('us.rejectVerifikator', 'rejectVerifikator')
+            .orderBy('us.id', 'DESC');
+
+        if (whereConditions.length > 0) {
+            qb.where(whereConditions.join(' AND '), whereParams);
+        }
+
+        if (skip !== undefined && amount !== undefined) {
+            qb.skip(skip).take(amount);
+        }
+
+        const totalQb = this.repo.createQueryBuilder('us');
+        if (whereConditions.length > 0) {
+            totalQb.where(whereConditions.join(' AND '), whereParams);
+        }
+
+        const [data, total] = await Promise.all([
+            qb.getMany(),
+            totalQb.getCount()
+        ]);
 
         return {
-            ...entity,
-            rejectVerifikator,
+            data: data.map(e => plainToInstance(UsulanSaluranWithRelationsDto, e)),
+            total
         };
     }
 
-    async create(data: Record<string, unknown>): Promise<{ id: number }> {
-        const entity = this.repo.create(data as Partial<UsulanSaluranOrmEntity>);
+    async create(data: DeepPartial<UsulanSaluranOrmEntity>): Promise<UsulanSaluranWithRelationsDto> {
+        const entity = this.repo.create(data);
         const saved = await this.repo.save(entity);
-        return { id: saved.id };
+
+        const entityWithBasicRelations = await this.repo.createQueryBuilder('us')
+            .leftJoinAndSelect('us.opd', 'opd')
+            .leftJoinAndSelect('us.usulanSaluranStatus', 'usulanSaluranStatus')
+            .leftJoinAndSelect('us.asbJenis', 'asbJenis')
+            .leftJoinAndSelect('us.tipeSaluran', 'tipeSaluran')
+            .leftJoinAndSelect('us.rekening', 'rekening')
+            .leftJoinAndSelect('us.rekeningReview', 'rekeningReview')
+            .leftJoinAndSelect('us.kabkota', 'kabkota')
+            .leftJoinAndSelect('us.kecamatan', 'kecamatan')
+            .leftJoinAndSelect('us.kelurahan', 'kelurahan')
+            .leftJoinAndSelect('us.verifikatorAdbang', 'verifikatorAdbang')
+            .leftJoinAndSelect('us.verifikatorBpkad', 'verifikatorBpkad')
+            .leftJoinAndSelect('us.verifikatorBappeda', 'verifikatorBappeda')
+            .leftJoinAndSelect('us.rejectVerifikator', 'rejectVerifikator')
+            .where('us.id = :id', { id: saved.id })
+            .getOne();
+
+        return plainToInstance(UsulanSaluranWithRelationsDto, entityWithBasicRelations);
     }
 
-    async update(id: number, data: Record<string, unknown>): Promise<{ id: number; idUsulanSaluranStatus: number }> {
-        await this.repo.update(id, data as Parameters<Repository<UsulanSaluranOrmEntity>['update']>[1]);
-        const updated = await this.repo.findOne({ where: { id } });
-        return { id, idUsulanSaluranStatus: updated?.idUsulanSaluranStatus ?? 0 };
+    async update(id: number, data: DeepPartial<UsulanSaluranOrmEntity>): Promise<UsulanSaluranWithRelationsDto> {
+        await this.repo.update(id, data);
+
+        const updatedEntity = await this.repo.createQueryBuilder('us')
+            .leftJoinAndSelect('us.opd', 'opd')
+            .leftJoinAndSelect('us.usulanSaluranStatus', 'usulanSaluranStatus')
+            .leftJoinAndSelect('us.asbJenis', 'asbJenis')
+            .leftJoinAndSelect('us.tipeSaluran', 'tipeSaluran')
+            .leftJoinAndSelect('us.rekening', 'rekening')
+            .leftJoinAndSelect('us.rekeningReview', 'rekeningReview')
+            .leftJoinAndSelect('us.kabkota', 'kabkota')
+            .leftJoinAndSelect('us.kecamatan', 'kecamatan')
+            .leftJoinAndSelect('us.kelurahan', 'kelurahan')
+            .leftJoinAndSelect('us.verifikatorAdbang', 'verifikatorAdbang')
+            .leftJoinAndSelect('us.verifikatorBpkad', 'verifikatorBpkad')
+            .leftJoinAndSelect('us.verifikatorBappeda', 'verifikatorBappeda')
+            .leftJoinAndSelect('us.rejectVerifikator', 'rejectVerifikator')
+            .where('us.id = :id', { id })
+            .getOne();
+
+        return plainToInstance(UsulanSaluranWithRelationsDto, updatedEntity);
     }
 
-    async softDelete(id: number): Promise<boolean> {
-        const result = await this.repo.softDelete(id);
-        return (result.affected ?? 0) > 0;
-    }
+    async getRejectInfo(id: number, idOpd?: number): Promise<RejectInfoSaluranDto | null> {
+        const qb = this.repo.createQueryBuilder('us')
+            .select('us.idRejectVerif', 'rejectVerifId')
+            .addSelect('us.rejectReason', 'rejectReason')
+            .addSelect('us.rejectVerifikatorReviewAt', 'rejectedAt')
+            .leftJoin('us.rejectVerifikator', 'rejectVerifikator')
+            .addSelect('rejectVerifikator.id', 'rejectVerifikatorId')
+            .addSelect('rejectVerifikator.username', 'rejectVerifikatorUsername')
+            .where('us.id = :id', { id });
 
-    async findById(id: number, idOpd?: number | null): Promise<Record<string, unknown> | null> {
-        const where: { id: number; idOpd?: number } = { id };
         if (idOpd) {
-            where.idOpd = idOpd;
+            qb.andWhere('us.idOpd = :idOpd', { idOpd });
         }
 
-        const entity = await this.repo.findOne({ where, relations: [...RELATIONS] });
-        return entity ? this.toDto(entity) : null;
-    }
+        const result = await qb.getRawOne<{
+            rejectVerifId: number | null;
+            rejectReason: string | null;
+            rejectedAt: Date | null;
+            rejectVerifikatorId: number | null;
+            rejectVerifikatorUsername: string | null;
+        }>();
 
-    async findAll(query: UsulanSaluranListQuery, idOpd?: number | null): Promise<UsulanSaluranListResult> {
-        const page = query.page ?? 1;
-        const amount = query.amount ?? 10;
-        const where: Record<string, unknown> = {};
-
-        if (idOpd) where.idOpd = idOpd;
-        if (query.tahunAnggaran) where.tahunAnggaran = query.tahunAnggaran;
-        if (query.idUsulanSaluranStatus) where.idUsulanSaluranStatus = query.idUsulanSaluranStatus;
-        if (query.idKabkota) where.idKabkota = query.idKabkota;
-        if (query.idKecamatan) where.idKecamatan = query.idKecamatan;
-        if (query.idKelurahan) where.idKelurahan = query.idKelurahan;
-        if (query.idTipeSaluran) where.idTipeSaluran = query.idTipeSaluran;
-        if (query.namaUsulanSaluran) where.namaUsulan = ILike(`%${query.namaUsulanSaluran}%`);
-
-        const [entities, total] = await this.repo.findAndCount({
-            where,
-            relations: [...RELATIONS],
-            skip: (page - 1) * amount,
-            take: amount,
-            order: { createdAt: 'DESC' },
-        });
+        if (!result) {
+            return null;
+        }
 
         return {
-            data: entities.map((e) => this.toDto(e)),
-            total,
-            totalPages: Math.ceil(total / amount) || 1,
-            page,
+            rejectVerifId: result.rejectVerifId,
+            rejectReason: result.rejectReason,
+            rejectedAt: result.rejectedAt,
+            rejectVerifikator: result.rejectVerifikatorId
+                ? {
+                    id: result.rejectVerifikatorId,
+                    username: result.rejectVerifikatorUsername || '',
+                }
+                : null,
+            verifikator: null,
+        };
+    }
+
+    async delete(id: number): Promise<void> {
+        await this.repo.softDelete(id);
+    }
+
+    async getAnalytics(idOpd?: number, filter?: GetUsulanSaluranAnalyticsFilterDto): Promise<UsulanSaluranAnalyticsDto> {
+        const qb = this.repo
+            .createQueryBuilder('e')
+            .select("e.id_usulan_saluran_status", "idUsulanSaluranStatus")
+            .addSelect("COUNT(e.id)", "count");
+
+        if (idOpd) {
+            qb.where("e.id_opd = :idOpd", { idOpd });
+        }
+
+        if (filter?.bulan !== undefined && filter?.tahun !== undefined) {
+            const startDate = new Date(filter.tahun, filter.bulan - 1, 1);
+            const endDate = new Date(filter.tahun, filter.bulan, 0, 23, 59, 59, 999);
+
+            if (idOpd) {
+                qb.andWhere("e.created_at >= :startDate", { startDate })
+                    .andWhere("e.created_at <= :endDate", { endDate });
+            } else {
+                qb.where("e.created_at >= :startDate", { startDate })
+                    .andWhere("e.created_at <= :endDate", { endDate });
+            }
+        } else if (filter?.bulan !== undefined) {
+            if (idOpd) {
+                qb.andWhere("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan });
+            } else {
+                qb.where("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan });
+            }
+        }
+
+        if (filter?.tahun !== undefined && filter?.bulan === undefined) {
+            if (idOpd) {
+                qb.andWhere("e.tahun_anggaran = :tahun", { tahun: filter.tahun });
+            } else {
+                qb.where("e.tahun_anggaran = :tahun", { tahun: filter.tahun });
+            }
+        }
+
+        qb.groupBy("e.id_usulan_saluran_status");
+
+        const rows = await qb.getRawMany<{ idUsulanSaluranStatus: number; count: string }>();
+
+        let totalSukses = 0;
+        let totalTolak = 0;
+        let totalProses = 0;
+
+        rows.forEach(r => {
+            const count = Number(r.count);
+            const statusId = Number(r.idUsulanSaluranStatus);
+
+            if (statusId === 3) {
+                totalSukses += count;
+            } else if (statusId === 4) {
+                totalTolak += count;
+            } else {
+                totalProses += count;
+            }
+        });
+
+        const totalUsulan = totalSukses + totalTolak + totalProses;
+
+        const persentaseSukses = totalUsulan > 0 ? (totalSukses / totalUsulan) * 100 : 0;
+        const persentaseTolak = totalUsulan > 0 ? (totalTolak / totalUsulan) * 100 : 0;
+        const persentaseProses = totalUsulan > 0 ? (totalProses / totalUsulan) * 100 : 0;
+
+        let dailyData: Array<{ date: string; count: number }> = [];
+        if (filter?.bulan !== undefined && filter?.tahun !== undefined) {
+            const startDate = new Date(filter.tahun, filter.bulan - 1, 1);
+            const endDate = new Date(filter.tahun, filter.bulan, 0, 23, 59, 59, 999);
+
+            const dailyQb = this.repo
+                .createQueryBuilder('e')
+                .select("DATE(e.created_at)", "date")
+                .addSelect("COUNT(e.id)", "count");
+
+            if (idOpd) {
+                dailyQb.where("e.id_opd = :idOpd", { idOpd })
+                    .andWhere("e.created_at >= :startDate", { startDate })
+                    .andWhere("e.created_at <= :endDate", { endDate });
+            } else {
+                dailyQb.where("e.created_at >= :startDate", { startDate })
+                    .andWhere("e.created_at <= :endDate", { endDate });
+            }
+
+            dailyQb.groupBy("DATE(e.created_at)")
+                .orderBy("DATE(e.created_at)", "ASC");
+
+            const dailyRows = await dailyQb.getRawMany<{ date: string; count: string }>();
+            dailyData = dailyRows.map(r => ({
+                date: r.date,
+                count: Number(r.count),
+            }));
+        }
+
+        return {
+            totalSukses,
+            totalTolak,
+            totalProses,
+            totalUsulan,
+            persentaseSukses: Number(persentaseSukses.toFixed(2)),
+            persentaseTolak: Number(persentaseTolak.toFixed(2)),
+            persentaseProses: Number(persentaseProses.toFixed(2)),
+            dailyData,
         };
     }
 }

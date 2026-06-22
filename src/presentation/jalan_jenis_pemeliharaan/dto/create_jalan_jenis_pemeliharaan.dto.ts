@@ -1,18 +1,19 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from "class-validator";
+
 export class CreateJalanJenisPemeliharaanDto {
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     tingkat_pemeliharaan!: string;
 
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     jenis_pemeliharaan!: string;
 
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     ruang_lingkup!: string;
 
-    @IsString()
     @IsNotEmpty()
+    @IsString()
     deskripsi!: string;
 }

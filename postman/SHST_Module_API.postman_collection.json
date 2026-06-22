@@ -2,22 +2,22 @@
 	"info": {
 		"_postman_id": "shst-module-api-collection",
 		"name": "EASB - SHST Module API",
-		"description": "API collection for SHST (Standar Harga Satuan Tertinggi) Module - managing standard maximum unit prices with file attachments.",
+		"description": "API collection for SHST (Standar Harga Satuan Tertinggi) Module - managing standard maximum unit prices with Excel file upload for bulk creation.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "SHST Management (SUPERADMIN Only)",
+			"name": "SHST Management (SUPERADMIN/ADMIN)",
 			"item": [
 				{
-					"name": "Create SHST",
+					"name": "Create SHST (Bulk Upload)",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
 								"value": "Bearer {{access_token}}",
-								"description": "JWT token for SUPERADMIN role"
+								"description": "JWT token for SUPERADMIN or ADMIN role"
 							}
 						],
 						"body": {
@@ -26,48 +26,50 @@
 								{
 									"key": "tahun",
 									"value": "2024",
-									"type": "text"
-								},
-								{
-									"key": "id_asb_tipe_bangunan",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "id_asb_klasifikasi",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "id_kabkota",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "nominal",
-									"value": "5000000",
-									"type": "text"
+									"type": "text",
+									"description": "Year (number, required, positive)"
 								},
 								{
 									"key": "file",
 									"type": "file",
-									"src": []
+									"src": [],
+									"description": "Excel file (.xlsx or .xls) with columns: tipe_bangunan, klasifikasi, kabkota, nominal"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{base_url}}/shsts",
+							"raw": "{{base_url}}/api/dev/v1/shst",
 							"host": ["{{base_url}}"],
-							"path": ["shsts"]
+							"path": ["api", "dev", "v1", "shst"]
 						},
-						"description": "Create a new SHST entry with file upload. Requires SUPERADMIN role.\n\n**Fields:**\n- `tahun` (number, required): Year\n- `id_asb_tipe_bangunan` (number, required): Building Type ID\n- `id_asb_klasifikasi` (number, required): Classification ID\n- `id_kabkota` (number, required): KabKota ID\n- `nominal` (number, required): Price amount\n- `file` (file, required): PDF/Document file"
+						"description": "Create SHST records in bulk by uploading an Excel file. The file must contain exactly 4 columns: tipe_bangunan, klasifikasi, kabkota, nominal.\n\n**Request Body (form-data):**\n- `tahun` (number, required): Year for the SHST records\n- `file` (file, required): Excel file (.xlsx or .xls) with data rows\n\n**Excel File Format:**\n- Header row: tipe_bangunan, klasifikasi, kabkota, nominal\n- Data rows: Each row should contain values matching existing data in database\n- File size: Maximum 10MB\n\n**Response:**\nReturns the number of records created and the created data array."
+					},
+					"response": []
+				},
+				{
+					"name": "Download SHST Template",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "JWT token for SUPERADMIN or ADMIN role"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/dev/v1/shst/template",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dev", "v1", "shst", "template"]
+						},
+						"description": "Download Excel template file for SHST bulk upload. The template contains the required headers: tipe_bangunan, klasifikasi, kabkota, nominal.\n\n**Response:**\nReturns an Excel file (.xlsx) that can be filled with data and uploaded via the Create SHST endpoint."
 					},
 					"response": []
 				},
 				{
 					"name": "Update Nominal SHST",
 					"request": {
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -76,7 +78,7 @@
 							{
 								"key": "Authorization",
 								"value": "Bearer {{access_token}}",
-								"description": "JWT token for SUPERADMIN role"
+								"description": "JWT token for SUPERADMIN or ADMIN role"
 							}
 						],
 						"body": {
@@ -84,11 +86,11 @@
 							"raw": "{\n  \"id\": 1,\n  \"nominal\": 5500000\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/shsts/nominal",
+							"raw": "{{base_url}}/api/dev/v1/shst",
 							"host": ["{{base_url}}"],
-							"path": ["shsts", "nominal"]
+							"path": ["api", "dev", "v1", "shst"]
 						},
-						"description": "Update nominal value of an existing SHST. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): SHST ID\n- `nominal` (number, required): New price amount"
+						"description": "Update nominal value of an existing SHST record. Requires SUPERADMIN or ADMIN role.\n\n**Request Body:**\n- `id` (number, required): SHST ID\n- `nominal` (number, required): New price amount"
 					},
 					"response": []
 				},
@@ -104,7 +106,7 @@
 							{
 								"key": "Authorization",
 								"value": "Bearer {{access_token}}",
-								"description": "JWT token for SUPERADMIN role"
+								"description": "JWT token for SUPERADMIN role only"
 							}
 						],
 						"body": {
@@ -112,11 +114,11 @@
 							"raw": "{\n  \"id\": 1\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/shsts",
+							"raw": "{{base_url}}/api/dev/v1/shst",
 							"host": ["{{base_url}}"],
-							"path": ["shsts"]
+							"path": ["api", "dev", "v1", "shst"]
 						},
-						"description": "Delete an SHST entry. Requires SUPERADMIN role.\n\n**Fields:**\n- `id` (number, required): SHST ID to delete"
+						"description": "Delete an SHST entry. Requires SUPERADMIN role.\n\n**Request Body:**\n- `id` (number, required): SHST ID to delete"
 					},
 					"response": []
 				}
@@ -132,25 +134,49 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{access_token}}",
-								"description": "JWT token for SUPERADMIN role"
+								"description": "JWT token for SUPERADMIN or ADMIN role"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"page\": 1,\n  \"amount\": 10,\n  \"tahun\": 2024,\n  \"id_kabkota\": 1\n}"
-						},
 						"url": {
-							"raw": "{{base_url}}/shsts",
+							"raw": "{{base_url}}/api/dev/v1/shst?page=1&amount=10&tahun=2024&id_asb_tipe_bangunan=1&id_asb_klasifikasi=1&id_kabkota=1",
 							"host": ["{{base_url}}"],
-							"path": ["shsts"]
+							"path": ["api", "dev", "v1", "shst"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional, default: 1)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Number of records per page (optional)"
+								},
+								{
+									"key": "tahun",
+									"value": "2024",
+									"description": "Filter by year (optional)"
+								},
+								{
+									"key": "id_asb_tipe_bangunan",
+									"value": "1",
+									"description": "Filter by building type ID (optional)"
+								},
+								{
+									"key": "id_asb_klasifikasi",
+									"value": "1",
+									"description": "Filter by classification ID (optional)"
+								},
+								{
+									"key": "id_kabkota",
+									"value": "1",
+									"description": "Filter by kabkota ID (optional)"
+								}
+							]
 						},
-						"description": "Get paginated list of SHST entries with optional filters.\n\n**Request Body:**\n- `page` (number, required)\n- `amount` (number, required)\n- `tahun` (number, optional): Filter by year\n- `id_asb_tipe_bangunan` (number, optional)\n- `id_asb_klasifikasi` (number, optional)\n- `id_kabkota` (number, optional)"
+						"description": "Get paginated list of SHST entries with optional filters.\n\n**Query Parameters:**\n- `page` (number, optional): Page number\n- `amount` (number, optional): Number of records per page\n- `tahun` (number, optional): Filter by year\n- `id_asb_tipe_bangunan` (number, optional): Filter by building type ID\n- `id_asb_klasifikasi` (number, optional): Filter by classification ID\n- `id_kabkota` (number, optional): Filter by kabkota ID"
 					},
 					"response": []
 				},
@@ -160,78 +186,56 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{access_token}}",
-								"description": "JWT token for SUPERADMIN role"
+								"description": "JWT token for SUPERADMIN or ADMIN role"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"id\": 1\n}"
-						},
 						"url": {
-							"raw": "{{base_url}}/shsts/detail",
+							"raw": "{{base_url}}/api/dev/v1/shst/detail?id=1",
 							"host": ["{{base_url}}"],
-							"path": ["shsts", "detail"]
+							"path": ["api", "dev", "v1", "shst", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "SHST ID (required)"
+								}
+							]
 						},
-						"description": "Get detailed information for a specific SHST entry.\n\n**Request Body:**\n- `id` (number, required)"
+						"description": "Get detailed information for a specific SHST entry.\n\n**Query Parameters:**\n- `id` (number, required): SHST ID"
 					},
 					"response": []
 				},
 				{
-					"name": "Download SHST File",
+					"name": "Get SHST File Path",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{access_token}}",
-								"description": "JWT token for SUPERADMIN role"
+								"description": "JWT token for SUPERADMIN or ADMIN role"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"id\": 1\n}"
-						},
 						"url": {
-							"raw": "{{base_url}}/shsts/file",
+							"raw": "{{base_url}}/api/dev/v1/shst/file?id=1",
 							"host": ["{{base_url}}"],
-							"path": ["shsts", "file"]
+							"path": ["api", "dev", "v1", "shst", "file"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "SHST ID (required)"
+								}
+							]
 						},
-						"description": "Download the file associated with an SHST entry.\n\n**Request Body:**\n- `id` (number, required)"
+						"description": "Get file path and download URL for an SHST entry.\n\n**Query Parameters:**\n- `id` (number, required): SHST ID\n\n**Response:**\nReturns file path and download URL for the uploaded Excel file."
 					},
 					"response": []
 				}
 			],
 			"description": "Query endpoints for retrieving SHST information"
-		},
-		{
-			"name": "Example Responses",
-			"item": [
-				{
-					"name": "Example Success Response",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/shsts/detail",
-							"host": ["{{base_url}}"],
-							"path": ["shsts", "detail"]
-						},
-						"description": "Example of a successful response:\n\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"SHST detail retrieved\",\n  \"data\": {\n    \"id\": 1,\n    \"tahun\": 2024,\n    \"id_asb_tipe_bangunan\": 1,\n    \"id_asb_klasifikasi\": 1,\n    \"id_kabkota\": 1,\n    \"nominal\": 5000000,\n    \"file\": \"uploads/shst/2024/file.pdf\"\n  }\n}\n```"
-					},
-					"response": []
-				}
-			],
-			"description": "Example responses for reference"
 		}
 	],
 	"variable": [

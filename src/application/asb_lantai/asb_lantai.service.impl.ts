@@ -17,88 +17,64 @@ export class AsbLantaiServiceImpl implements AsbLantaiService {
     ) {}
 
   async create(dto: CreateAsbLantaiDto): Promise<AsbLantai> {
-    try {
-      // Check if asb_lantai with the same lantai already exists
-      const existingAsbLantai = await this.asbLantaiRepository.findByLantai(dto.lantai);
-      if (existingAsbLantai) {
-        throw new ConflictException(`AsbLantai with lantai ${dto.lantai} already exists`);
-      }
-
-      // Check if satuan id is exists
-      if (!await this.satuanService.findById(dto.id_satuan)) {
-        throw new NotFoundException(`Satuan with id ${dto.id_satuan} not found`);
-      }
-
-      const newAsbLantai = await this.asbLantaiRepository.create(dto);
-      return newAsbLantai;
-    } catch (error) {
-      throw error;
+    // Check if asb_lantai with the same lantai already exists
+    const existingAsbLantai = await this.asbLantaiRepository.findByLantai(dto.lantai);
+    if (existingAsbLantai) {
+      throw new ConflictException(`AsbLantai with lantai ${dto.lantai} already exists`);
     }
+
+    // Check if satuan id is exists
+    if (!await this.satuanService.findById(dto.id_satuan)) {
+      throw new NotFoundException(`Satuan with id ${dto.id_satuan} not found`);
+    }
+
+    const newAsbLantai = await this.asbLantaiRepository.create(dto);
+    return newAsbLantai;
   }
 
   async update(dto: UpdateAsbLantaiDto): Promise<AsbLantai> {
-    try {
-      // Check if asb_lantai exists
-      const existingAsbLantai = await this.asbLantaiRepository.findById(dto.id);
-      if (!existingAsbLantai) {
-        throw new NotFoundException(`AsbLantai with id ${dto.id} not found`);
-      }
-
-      // Check if satuan id is exists
-      if (!await this.satuanService.findById(dto.id_satuan)) {
-        throw new NotFoundException(`Satuan with id ${dto.id_satuan} not found`);
-      }
-
-      // If lantai is being updated, check for duplicates
-      if (dto.lantai && dto.lantai !== existingAsbLantai.lantai) {
-        const duplicateAsbLantai = await this.asbLantaiRepository.findByLantai(dto.lantai);
-        if (duplicateAsbLantai) {
-          throw new ConflictException(`AsbLantai with lantai ${dto.lantai} already exists`);
-        }
-      }
-
-      const updatedAsbLantai = await this.asbLantaiRepository.update(dto);
-      return updatedAsbLantai;
-    } catch (error) {
-      throw error;
+    // Check if asb_lantai exists
+    const existingAsbLantai = await this.asbLantaiRepository.findById(dto.id);
+    if (!existingAsbLantai) {
+      throw new NotFoundException(`AsbLantai with id ${dto.id} not found`);
     }
+
+    // Check if satuan id is exists
+    if (!await this.satuanService.findById(dto.id_satuan)) {
+      throw new NotFoundException(`Satuan with id ${dto.id_satuan} not found`);
+    }
+
+    // If lantai is being updated, check for duplicates
+    if (dto.lantai && dto.lantai !== existingAsbLantai.lantai) {
+      const duplicateAsbLantai = await this.asbLantaiRepository.findByLantai(dto.lantai);
+      if (duplicateAsbLantai) {
+        throw new ConflictException(`AsbLantai with lantai ${dto.lantai} already exists`);
+      }
+    }
+
+    const updatedAsbLantai = await this.asbLantaiRepository.update(dto);
+    return updatedAsbLantai;
   }
 
   async delete(id: number): Promise<boolean> {
-    try {
-      // Check if asb_lantai exists
-      const existingAsbLantai = await this.asbLantaiRepository.findById(id);
-      if (!existingAsbLantai) {
-        throw new NotFoundException(`AsbLantai with id ${id} not found`);
-      }
-
-      return await this.asbLantaiRepository.delete(id);
-    } catch (error) {
-      throw error;
+    // Check if asb_lantai exists
+    const existingAsbLantai = await this.asbLantaiRepository.findById(id);
+    if (!existingAsbLantai) {
+      throw new NotFoundException(`AsbLantai with id ${id} not found`);
     }
+
+    return await this.asbLantaiRepository.delete(id);
   }
 
   async findById(id: number): Promise<AsbLantai | null> {
-    try {
-      return await this.asbLantaiRepository.findById(id);
-    } catch (error) {
-      throw error;
-    }
+    return await this.asbLantaiRepository.findById(id);
   }
 
   async findByLantai(lantai: string): Promise<AsbLantai | null> {
-    try {
-      return await this.asbLantaiRepository.findByLantai(lantai);
-    } catch (error) {
-      throw error;
-    }
+    return await this.asbLantaiRepository.findByLantai(lantai);
   }
 
   async findAll(dto: GetAsbLantaisDto): Promise<AsbLantaiPaginationResultDto> {
-    try {
-      return await this.asbLantaiRepository.findAll(dto);
-    } catch (error) {
-      throw error;
-    }
+    return await this.asbLantaiRepository.findAll(dto);
   }
 }

@@ -1,5 +1,13 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { Transform } from "class-transformer";
+
 export class CreateJalanSaluranRuangLingkupDto {
-    @IsNumber() @IsNotEmpty() id_jenis_usulan!: number;
-    @IsString() @IsNotEmpty() deskripsi_ruang_lingkup!: string;
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    id_jenis_usulan!: number;
+
+    @IsNotEmpty()
+    @IsString()
+    deskripsi_ruang_lingkup!: string;
 }

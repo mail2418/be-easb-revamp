@@ -1,321 +1,927 @@
-import {
-    BadRequestException,
-    ForbiddenException,
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
-import { JenisVerifikator } from '../../domain/verifikator/jenis_verifikator.enum';
-import { VerifikatorService } from '../../domain/verifikator/verifikator.service';
-import { Role } from '../../domain/user/user_role.enum';
-import { UsulanJalanRepository, UsulanJalanListQuery } from '../../domain/usulan_jalan/usulan_jalan.repository';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { UsulanJalanService } from '../../domain/usulan_jalan/usulan_jalan.service';
-import { USULAN_JALAN_STATUS } from '../../domain/usulan_jalan/usulan_jalan_status.constants';
+import { UsulanJalanRepository } from '../../domain/usulan_jalan/usulan_jalan.repository';
+import { VerifikatorService } from '../../domain/verifikator/verifikator.service';
+import { JalanSpesifikasiDesainService } from '../../domain/jalan_spesifikasi_desain/jalan_spesifikasi_desain.service';
+import { JalanSpesifikasiDesainReviewService } from '../../domain/jalan_spesifikasi_desain_review/jalan_spesifikasi_desain_review.service';
+import { PpnGlobalService } from '../../domain/ppn_global/ppn_global.service';
+import { Role } from '../../domain/user/user_role.enum';
+import { JenisVerifikator } from '../../domain/verifikator/jenis_verifikator.enum';
+import { UsulanJalanWithRelationsDto } from './dto/usulan_jalan_with_relations.dto';
+import { FindAllUsulanJalanDto } from './dto/find_all_usulan_jalan.dto';
+import { UsulanJalanListResultDto } from './dto/usulan_jalan_list_result.dto';
+import { RejectInfoDto } from './dto/reject_info.dto';
+import { StoreInformasiUsulanJalanDto } from '../../presentation/usulan_jalan/dto/store_informasi_usulan_jalan.dto';
+import { UpdateUsulanJalanDto } from '../../presentation/usulan_jalan/dto/update_usulan_jalan.dto';
+import { VerifyInformasiUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_informasi_usulan_jalan.dto';
+import { GetUsulanJalanAnalyticsFilterDto } from './dto/get_usulan_jalan_analytics_filter.dto';
+import { UsulanJalanAnalyticsDto } from './dto/usulan_jalan_analytics.dto';
+import { CreateUsulanJalanStoreIndexDto } from './dto/create_usulan_jalan_store_index.dto';
+import { UpdateUsulanJalanStoreIndexDto } from './dto/update_usulan_jalan_store_index.dto';
+import { VerifyIndexUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_index_usulan_jalan.dto';
+import { VerifyBpkadUsulanJalanDto } from '../../presentation/usulan_jalan/dto/verify_bpkad_usulan_jalan.dto';
+import { CreateJalanSpesifikasiDesainDto } from '../../presentation/jalan_spesifikasi_desain/dto/create_jalan_spesifikasi_desain.dto';
+import { CreateJalanSpesifikasiDesainReviewDto } from '../../presentation/jalan_spesifikasi_desain_review/dto/create_jalan_spesifikasi_desain_review.dto';
+import { GenerateUraianUsulanJalanUseCase } from './use_cases/generate_uraian_usulan_jalan.use_case';
+import { GenerateSpesifikasiUsulanJalanUseCase } from './use_cases/generate_spesifikasi_usulan_jalan.use_case';
+import { CalculateBiayaSmkkUseCase } from './use_cases/calculate_biaya_smkk.use_case';
+import { JalanSaluranSmkkService } from '../../domain/jalan_saluran_smkk/jalan_saluran_smkk.service';
+import { JalanSaluranSpesifikasiSmkkService } from '../../domain/jalan_saluran_spesifikasi_smkk/jalan_saluran_spesifikasi_smkk.service';
+import { JalanSaluranSpesifikasiSmkkReviewService } from '../../domain/jalan_saluran_spesifikasi_smkk_review/jalan_saluran_spesifikasi_smkk_review.service';
+import { CreateJalanSaluranSpesifikasiSmkkDto } from '../../presentation/jalan_saluran_spesifikasi_smkk/dto/create_jalan_saluran_spesifikasi_smkk.dto';
+import { CreateJalanSaluranSpesifikasiSmkkReviewDto } from '../../presentation/jalan_saluran_spesifikasi_smkk_review/dto/create_jalan_saluran_spesifikasi_smkk_review.dto';
+import { MainDashboardRepository } from '../../domain/main_dashboard/main_dashboard.repository';
+import { ID_JENIS_USULAN_JALAN } from '../../domain/jenis_usulan/jenis_usulan.constants';
 
 @Injectable()
 export class UsulanJalanServiceImpl implements UsulanJalanService {
     constructor(
         private readonly repository: UsulanJalanRepository,
+        private readonly mainDashboardRepository: MainDashboardRepository,
         private readonly verifikatorService: VerifikatorService,
-    ) {}
+        private readonly jalanSpesifikasiDesainService: JalanSpesifikasiDesainService,
+        private readonly jalanSpesifikasiDesainReviewService: JalanSpesifikasiDesainReviewService,
+        private readonly ppnGlobalService: PpnGlobalService,
+        private readonly generateUraianUsulanJalanUseCase: GenerateUraianUsulanJalanUseCase,
+        private readonly generateSpesifikasiUsulanJalanUseCase: GenerateSpesifikasiUsulanJalanUseCase,
+        private readonly calculateBiayaSmkkUseCase: CalculateBiayaSmkkUseCase,
+        private readonly jalanSaluranSmkkService: JalanSaluranSmkkService,
+        private readonly jalanSaluranSpesifikasiSmkkService: JalanSaluranSpesifikasiSmkkService,
+        private readonly jalanSaluranSpesifikasiSmkkReviewService: JalanSaluranSpesifikasiSmkkReviewService,
+    ) { }
 
-    private assertOpdAccess(idOpd: number | null, userIdOpd: number | null, userRoles: Role[]): void {
-        const isPrivileged = userRoles.includes(Role.ADMIN) || userRoles.includes(Role.SUPERADMIN) || userRoles.includes(Role.VERIFIKATOR);
-        if (!isPrivileged && userIdOpd !== idOpd) {
-            throw new ForbiddenException('Access denied for this OPD usulan');
-        }
+    async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanWithRelationsDto | null> {
+        // OPD users can only see their own data
+        const idOpd = userRoles.includes(Role.OPD) && userIdOpd !== null ? userIdOpd : undefined;
+        return await this.repository.findById(id, idOpd);
     }
 
-    private async getUsulanOrThrow(id: number, userIdOpd: number | null, userRoles: Role[]) {
-        const isOpdOnly = userRoles.includes(Role.OPD) && !userRoles.includes(Role.ADMIN) && !userRoles.includes(Role.SUPERADMIN) && !userRoles.includes(Role.VERIFIKATOR);
-        const usulan = await this.repository.findById(id, isOpdOnly ? userIdOpd : null);
-        if (!usulan) {
-            throw new NotFoundException(`Usulan jalan with id ${id} not found`);
-        }
-        return usulan;
-    }
+    async findAll(dto: FindAllUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanListResultDto> {
+        // OPD users can only see their own data
+        const idOpd = userRoles.includes(Role.OPD) && userIdOpd !== null ? userIdOpd : undefined;
 
-    private async assertVerifikator(userId: string, expected: JenisVerifikator): Promise<{ id: number }> {
-        const type = await this.verifikatorService.checkVerifikatorType(Number(userId));
-        if (type !== expected) {
-            throw new ForbiddenException(`Only ${expected} verifikator can perform this action`);
-        }
-        const verifikator = await this.verifikatorService.findByUserId(Number(userId));
-        if (!verifikator) {
-            throw new NotFoundException('Verifikator not found');
-        }
-        return { id: verifikator.id };
-    }
+        const { data, total } = await this.repository.findAll(dto, idOpd);
 
-    async storeIndex(
-        dto: Record<string, unknown>,
-        userIdOpd: number | null,
-        userRoles: Role[],
-        isUpdate: boolean,
-    ): Promise<{ id: number }> {
-        const idOpd = userIdOpd;
-        if (!idOpd && !userRoles.includes(Role.ADMIN) && !userRoles.includes(Role.SUPERADMIN)) {
-            throw new ForbiddenException('User is not synced to an OPD');
-        }
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? total;
+        const totalPages = amount > 0 ? Math.ceil(total / amount) : 0;
 
-        const payload = {
-            idAsbJenis: dto.idAsbJenis as number,
-            idJalanJenisPemeliharaan: (dto.idJalanJenisPemeliharaan as number) ?? null,
-            idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan as number,
-            idKabkota: dto.idKabkota as number,
-            idKecamatan: dto.idKecamatan as number,
-            idKelurahan: dto.idKelurahan as number,
-            tahunAnggaran: dto.tahunAnggaran as number,
-            namaUsulan: dto.namaUsulan as string,
-            alamat: (dto.alamat as string) ?? null,
-            idUsulanJalanStatus: USULAN_JALAN_STATUS.DRAFT,
-            idOpd: idOpd!,
-        };
-
-        if (isUpdate) {
-            const id = dto.id as number;
-            const existing = await this.getUsulanOrThrow(id, userIdOpd, userRoles);
-            if ((existing.idUsulanJalanStatus as number) !== USULAN_JALAN_STATUS.DRAFT) {
-                throw new BadRequestException('Only draft usulan can be updated');
-            }
-            await this.repository.update(id, payload);
-            return { id };
-        }
-
-        const created = await this.repository.create(payload);
-        return { id: created.id };
-    }
-
-    async storeInformasi(
-        dto: Record<string, unknown>,
-        userIdOpd: number | null,
-        userRoles: Role[],
-    ): Promise<{ id: number; idUsulanJalanStatus: number }> {
-        const id = dto.idUsulanJalan as number;
-        const existing = await this.getUsulanOrThrow(id, userIdOpd, userRoles);
-        if ((existing.idUsulanJalanStatus as number) !== USULAN_JALAN_STATUS.DRAFT) {
-            throw new BadRequestException('Only draft usulan can submit informasi');
-        }
-
-        const result = await this.repository.update(id, {
-            lebar: dto.lebar as number,
-            idRekening: dto.idRekening as number,
-            dataRuangLingkup: dto.data_ruang_lingkup as Record<string, unknown>[],
-            dataSmkk: dto.data_smkk as Record<string, unknown>[],
-            idUsulanJalanStatus: USULAN_JALAN_STATUS.DIAJUKAN,
-        });
-
-        return { id, idUsulanJalanStatus: result.idUsulanJalanStatus };
-    }
-
-    async verifyIndex(
-        dto: Record<string, unknown>,
-        userId: string,
-        userRoles: Role[],
-    ): Promise<{ id: number; idUsulanJalanStatus: number }> {
-        await this.assertVerifikator(userId, JenisVerifikator.ADBANG);
-        const id = dto.idUsulanJalan as number;
-        const existing = await this.getUsulanOrThrow(id, null, userRoles);
-        if ((existing.idUsulanJalanStatus as number) !== USULAN_JALAN_STATUS.DIAJUKAN) {
-            throw new BadRequestException('Usulan is not in verifikasi index stage');
-        }
-
-        const result = await this.repository.update(id, {
-            idAsbJenis: dto.idAsbJenis as number,
-            idJalanJenisPemeliharaan: (dto.idJalanJenisPemeliharaan as number) ?? null,
-            idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan as number,
-            idKabkota: dto.idKabkota as number,
-            idKecamatan: dto.idKecamatan as number,
-            idKelurahan: dto.idKelurahan as number,
-            tahunAnggaran: dto.tahunAnggaran as number,
-            namaUsulan: dto.namaUsulan as string,
-            alamat: (dto.alamat as string) ?? null,
-            idUsulanJalanStatus: USULAN_JALAN_STATUS.VERIFIKASI_INDEX_ADBANG,
-        });
-
-        return { id, idUsulanJalanStatus: result.idUsulanJalanStatus };
-    }
-
-    async verifyInformasi(
-        dto: Record<string, unknown>,
-        userId: string,
-        userRoles: Role[],
-    ): Promise<{ id: number; idUsulanJalanStatus: number }> {
-        await this.assertVerifikator(userId, JenisVerifikator.ADBANG);
-        const id = dto.idUsulanJalan as number;
-        const existing = await this.getUsulanOrThrow(id, null, userRoles);
-        if ((existing.idUsulanJalanStatus as number) !== USULAN_JALAN_STATUS.VERIFIKASI_INDEX_ADBANG) {
-            throw new BadRequestException('Usulan is not in verifikasi informasi stage');
-        }
-
-        const mergedRuangLingkup = this.mergeReviewRuangLingkup(
-            (existing.dataRuangLingkup as Record<string, unknown>[]) ?? [],
-            (dto.data_ruang_lingkup as Record<string, unknown>[]) ?? [],
-        );
-
-        const result = await this.repository.update(id, {
-            lebarJalanReview: (dto.lebar as number) ?? null,
-            dataRuangLingkup: mergedRuangLingkup,
-            dataSmkk: (dto.data_smkk as Record<string, unknown>[]) ?? existing.dataSmkk,
-            idUsulanJalanStatus: USULAN_JALAN_STATUS.VERIFIKASI_INFORMASI_ADBANG,
-        });
-
-        return { id, idUsulanJalanStatus: result.idUsulanJalanStatus };
-    }
-
-    async verifyAdbang(
-        idUsulanJalan: number,
-        userId: string,
-        userRoles: Role[],
-    ): Promise<{ id: number; idUsulanJalanStatus: number }> {
-        const verifikator = await this.assertVerifikator(userId, JenisVerifikator.ADBANG);
-        const existing = await this.getUsulanOrThrow(idUsulanJalan, null, userRoles);
-        if ((existing.idUsulanJalanStatus as number) !== USULAN_JALAN_STATUS.VERIFIKASI_INFORMASI_ADBANG) {
-            throw new BadRequestException('Usulan is not in verifikasi adbang stage');
-        }
-
-        const result = await this.repository.update(idUsulanJalan, {
-            idVerifikatorAdbang: verifikator.id,
-            verifiedAdbangAt: new Date(),
-            idUsulanJalanStatus: USULAN_JALAN_STATUS.VERIFIKASI_BPKAD,
-        });
-
-        return { id: idUsulanJalan, idUsulanJalanStatus: result.idUsulanJalanStatus };
-    }
-
-    async verifyBpkad(
-        dto: Record<string, unknown>,
-        userId: string,
-        userRoles: Role[],
-    ): Promise<{ id: number; idUsulanJalanStatus: number }> {
-        const verifikator = await this.assertVerifikator(userId, JenisVerifikator.BPKAD);
-        const id = dto.idUsulanJalan as number;
-        const existing = await this.getUsulanOrThrow(id, null, userRoles);
-        if ((existing.idUsulanJalanStatus as number) !== USULAN_JALAN_STATUS.VERIFIKASI_BPKAD) {
-            throw new BadRequestException('Usulan is not in verifikasi BPKAD stage');
-        }
-
-        const updateData: Record<string, unknown> = {
-            idVerifikatorBpkad: verifikator.id,
-            verifiedBpkadAt: new Date(),
-            idUsulanJalanStatus: USULAN_JALAN_STATUS.VERIFIKASI_BAPPEDA,
-        };
-        if (dto.idRekeningReview !== undefined && dto.idRekeningReview !== null) {
-            updateData.idRekeningReview = dto.idRekeningReview;
-        }
-
-        const result = await this.repository.update(id, updateData);
-        return { id, idUsulanJalanStatus: result.idUsulanJalanStatus };
-    }
-
-    async verifyBappeda(
-        idUsulanJalan: number,
-        userId: string,
-        userRoles: Role[],
-    ): Promise<{ id: number; idUsulanJalanStatus: number }> {
-        const verifikator = await this.assertVerifikator(userId, JenisVerifikator.BAPPEDA);
-        const existing = await this.getUsulanOrThrow(idUsulanJalan, null, userRoles);
-        if ((existing.idUsulanJalanStatus as number) !== USULAN_JALAN_STATUS.VERIFIKASI_BAPPEDA) {
-            throw new BadRequestException('Usulan is not in verifikasi BAPPEDA stage');
-        }
-
-        const result = await this.repository.update(idUsulanJalan, {
-            idVerifikatorBappeda: verifikator.id,
-            verifiedBappedaAt: new Date(),
-            idUsulanJalanStatus: USULAN_JALAN_STATUS.DISETUJUI,
-        });
-
-        return { id: idUsulanJalan, idUsulanJalanStatus: result.idUsulanJalanStatus };
-    }
-
-    async reject(
-        idUsulanJalan: number,
-        rejectReason: string,
-        userId: string,
-        userRoles: Role[],
-    ): Promise<{ id: number; idUsulanJalanStatus: number }> {
-        if (!userRoles.includes(Role.VERIFIKATOR)) {
-            throw new ForbiddenException('Only verifikator can reject usulan');
-        }
-        await this.verifikatorService.checkVerifikatorType(Number(userId));
-        await this.getUsulanOrThrow(idUsulanJalan, null, userRoles);
-
-        const result = await this.repository.update(idUsulanJalan, {
-            idUsulanJalanStatus: USULAN_JALAN_STATUS.DITOLAK,
-            rejectReason,
-            rejectedAt: new Date(),
-            idRejectVerif: Number(userId),
-        });
-
-        return { id: idUsulanJalan, idUsulanJalanStatus: result.idUsulanJalanStatus };
-    }
-
-    async getRejectInfo(idUsulanJalan: number): Promise<Record<string, unknown> | null> {
-        const usulan = await this.repository.findById(idUsulanJalan);
-        if (!usulan) {
-            return null;
-        }
         return {
-            idUsulanJalan: usulan.id,
-            rejectReason: usulan.rejectReason,
-            rejectedAt: usulan.rejectedAt,
-            rejectVerifikator: usulan.rejectVerifikator,
+        data,
+        page,
+        amount,
+        total,
+        totalPages,
         };
     }
 
-    async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<Record<string, unknown>> {
-        const isOpdOnly = userRoles.includes(Role.OPD) && !userRoles.includes(Role.ADMIN) && !userRoles.includes(Role.SUPERADMIN) && !userRoles.includes(Role.VERIFIKATOR);
-        const usulan = await this.repository.findById(id, isOpdOnly ? userIdOpd : null);
-        if (!usulan) {
-            throw new NotFoundException(`Usulan jalan with id ${id} not found`);
-        }
-        return usulan;
-    }
-
-    async findAll(query: UsulanJalanListQuery, userIdOpd: number | null, userRoles: Role[]) {
-        const isOpdOnly = userRoles.includes(Role.OPD) && !userRoles.includes(Role.ADMIN) && !userRoles.includes(Role.SUPERADMIN) && !userRoles.includes(Role.VERIFIKATOR);
-        return this.repository.findAll(query, isOpdOnly ? userIdOpd : null);
-    }
-
-    async delete(idUsulanJalan: number, userIdOpd: number | null, userRoles: Role[]): Promise<boolean> {
-        const existing = await this.getUsulanOrThrow(idUsulanJalan, userIdOpd, userRoles);
-        if ((existing.idUsulanJalanStatus as number) !== USULAN_JALAN_STATUS.DRAFT) {
-            throw new BadRequestException('Only draft usulan can be deleted');
-        }
-        return this.repository.softDelete(idUsulanJalan);
-    }
-
-    private mergeReviewRuangLingkup(
-        existing: Record<string, unknown>[],
-        review: Record<string, unknown>[],
-    ): Record<string, unknown>[] {
-        if (!review.length) {
-            return existing;
+    async createIndex(dto: CreateUsulanJalanStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+            // Validate that user has idOpd (must be OPD user)
+        if (!userIdOpd) {
+            throw new ForbiddenException('User is not sync to an opd');
         }
 
-        const reviewMap = new Map<number, Record<string, unknown>>();
-        for (const rl of review) {
-            reviewMap.set(rl.id as number, rl);
-        }
+        const idOpd = userIdOpd;
 
-        return existing.map((rl) => {
-            const reviewRl = reviewMap.get(rl.id as number);
-            if (!reviewRl) {
-                return rl;
+        // Validate idJalanJenisPemeliharaan based on idAsbJenis
+        let idJalanJenisPemeliharaan: number | null = null;
+        if (dto.idAsbJenis === 1) {
+            // If idAsbJenis is 1 (Pembangunan), idJalanJenisPemeliharaan must be null
+            idJalanJenisPemeliharaan = null;
+        } else if (dto.idAsbJenis === 2) {
+            // If idAsbJenis is 2 (Pemeliharaan), idJalanJenisPemeliharaan is required
+            if (!dto.idJalanJenisPemeliharaan) {
+                throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)');
             }
+            idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
+        }
 
-            const existingHspk = (rl.data_hspk as Record<string, unknown>[]) ?? [];
-            const reviewHspk = (reviewRl.data_hspk as Record<string, unknown>[]) ?? [];
-            const hspkMap = new Map<number, Record<string, unknown>>();
-            for (const h of reviewHspk) {
-                hspkMap.set(h.id_hspk as number, h);
-            }
-
-            const mergedHspk = existingHspk.map((h) => {
-                const rev = hspkMap.get(h.id_hspk as number);
-                return rev ? { ...h, ...rev } : h;
-            });
-
-            return { ...rl, data_hspk: mergedHspk };
+        // Create with status 1 (Input Informasi Usulan Jalan)
+        const usulanJalan = await this.repository.create({
+            idOpd,
+            idAsbJenis: dto.idAsbJenis,
+            idJalanJenisPemeliharaan,
+            idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan ?? null,
+            idKabkota: dto.idKabkota,
+            idKecamatan: dto.idKecamatan,
+            idKelurahan: dto.idKelurahan,
+            isIncludePpn: true,
+            tahunAnggaran: dto.tahunAnggaran,
+            namaUsulan: dto.namaUsulan,
+            alamat: dto.alamat ?? null,
+            idUsulanJalanStatus: 1,
         });
+
+        await this.mainDashboardRepository.create({
+            idUsulan: usulanJalan.id,
+            idJenisUsulan: ID_JENIS_USULAN_JALAN,
+            idAsbStatus: 1,
+            namaUsulan: usulanJalan.namaUsulan,
+            tahunAnggaran: usulanJalan.tahunAnggaran ?? null,
+        });
+
+        return {
+            id: usulanJalan.id,
+            status: usulanJalan.usulanJalanStatus,
+        };
+    }
+
+    async updateIndex(dto: UpdateUsulanJalanStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Check permissions
+        const isAdmin = userRoles.includes(Role.ADMIN);
+        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isOpd = userRoles.includes(Role.OPD);
+
+        // Verify existence and ownership
+        let existingUsulanJalan: UsulanJalanWithRelationsDto | null = null;
+
+        if (isAdmin || isSuperAdmin) {
+            existingUsulanJalan = await this.repository.findById(dto.id);
+        } else if (isOpd) {
+            if (!userIdOpd) {
+                throw new ForbiddenException('OPD user has no associated OPD');
+            }
+            existingUsulanJalan = await this.repository.findById(dto.id, userIdOpd);
+        } else {
+            throw new ForbiddenException('User is not authorized to update this Usulan Jalan');
+        }
+
+        if (!existingUsulanJalan) {
+            throw new NotFoundException(`Usulan Jalan with id ${dto.id} not found or access denied`);
+        }
+
+        // Validate idJalanJenisPemeliharaan based on idAsbJenis
+        let idJalanJenisPemeliharaan: number | null = null;
+        if (dto.idAsbJenis === 1) {
+            // If idAsbJenis is 1 (Pembangunan), idJalanJenisPemeliharaan must be null
+            idJalanJenisPemeliharaan = null;
+        } else if (dto.idAsbJenis === 2) {
+            // If idAsbJenis is 2 (Pemeliharaan), idJalanJenisPemeliharaan is required
+            if (!dto.idJalanJenisPemeliharaan) {
+                throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)');
+            }
+            idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
+        }
+
+        // Prepare update data
+        const updateData: any = {
+            id: dto.id,
+            idAsbJenis: dto.idAsbJenis,
+            idJalanJenisPemeliharaan,
+            idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan ?? null,
+            idKabkota: dto.idKabkota,
+            idKecamatan: dto.idKecamatan,
+            idKelurahan: dto.idKelurahan,
+            isIncludePpn: true,
+            tahunAnggaran: dto.tahunAnggaran,
+            namaUsulan: dto.namaUsulan,
+            alamat: dto.alamat ?? null,
+            idUsulanJalanStatus: 1,
+        };
+
+        // idOpd is not allowed to be updated from request body, it comes from UserContext
+
+        // Update Usulan Jalan
+        const updatedUsulanJalan = await this.repository.update(dto.id, updateData);
+
+        await this.mainDashboardRepository.updateByUsulan(dto.id, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 1,
+            namaUsulan: updatedUsulanJalan.namaUsulan,
+            tahunAnggaran: updatedUsulanJalan.tahunAnggaran ?? null,
+        });
+
+        return {
+            id: updatedUsulanJalan.id,
+            status: updatedUsulanJalan.usulanJalanStatus,
+        };
+    }
+
+    async storeInformasi(dto: StoreInformasiUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Check permissions
+        const isAdmin = userRoles.includes(Role.ADMIN);
+        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isOpd = userRoles.includes(Role.OPD);
+
+        // Validate that user has idOpd (must be OPD user or admin)
+        if (!userIdOpd && !isAdmin && !isSuperAdmin) {
+            throw new ForbiddenException('User is not sync to an opd');
+        }
+
+        // Verify existence and ownership
+        let existingUsulanJalan: UsulanJalanWithRelationsDto | null = null;
+
+        if (isAdmin || isSuperAdmin) {
+            existingUsulanJalan = await this.repository.findById(dto.idUsulanJalan);
+        } else if (isOpd) {
+            if (!userIdOpd) {
+                throw new ForbiddenException('OPD user has no associated OPD');
+            }
+            existingUsulanJalan = await this.repository.findById(dto.idUsulanJalan, userIdOpd);
+        } else {
+            throw new ForbiddenException('User is not authorized to update this Usulan Jalan');
+        }
+
+        if (!existingUsulanJalan) {
+            throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found or access denied`);
+        }
+
+            // Step 1: Always delete all JalanSpesifikasiDesain records for this Usulan Jalan to ensure clean state
+        await this.jalanSpesifikasiDesainService.deleteByUsulanJalanId(dto.idUsulanJalan);
+        await this.jalanSaluranSpesifikasiSmkkService.deleteByUsulanJalanId(dto.idUsulanJalan);
+
+            // Validate that idJalanJenisPerkerasan is set (required for generating uraian)
+        if (!existingUsulanJalan.idJalanJenisPerkerasan) {
+            throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in storeIndex first');
+        }
+
+        if (!existingUsulanJalan.jalanJenisPerkerasan) {
+            throw new NotFoundException('JalanJenisPerkerasan relation not found');
+        }
+
+            // Step 2: Create JalanSpesifikasiDesain records for each ruang lingkup and hspk
+            // Collect all tinggi values for MIN/MAX calculation and calculate total harga
+        const tinggiValues: number[] = [];
+        let totalHarga = 0;
+        for (const ruangLingkup of dto.data_ruang_lingkup) {
+            for (const hspk of ruangLingkup.data_hspk) {
+                const createSpesifikasiDto = new CreateJalanSpesifikasiDesainDto();
+                createSpesifikasiDto.id_usulan_jalan = dto.idUsulanJalan;
+                createSpesifikasiDto.id_ruang_lingkup = ruangLingkup.id;
+                createSpesifikasiDto.id_hspk = hspk.id_hspk;
+                createSpesifikasiDto.spasi = hspk.spasi;
+                createSpesifikasiDto.tinggi = hspk.tinggi;
+
+                // volume and harga_spec will be calculated in the service layer
+                const createdSpesifikasi = await this.jalanSpesifikasiDesainService.create(createSpesifikasiDto, dto.lebar);
+                tinggiValues.push(hspk.tinggi);
+                totalHarga += createdSpesifikasi.harga_spec;
+            }
+        }
+        
+            // Apply PPN if is_include_ppn is true
+        if (existingUsulanJalan.isIncludePpn) {
+            const persentasePpn = await this.ppnGlobalService.getLatestPersentasePPn();
+            if (persentasePpn !== null) {
+                totalHarga = totalHarga * (100 + persentasePpn) / 100;
+            }
+        }
+
+            // Step 3: Generate uraian, spesifikasi, satuan, and deskripsiDesain automatically
+        const jenisPerkerasan = existingUsulanJalan.jalanJenisPerkerasan.jenis;
+        const uraian = await this.generateUraianUsulanJalanUseCase.execute(jenisPerkerasan, dto.lebar);
+        
+        const idJenisPerkerasan = existingUsulanJalan.idJalanJenisPerkerasan;
+        const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(tinggiValues, idJenisPerkerasan);
+
+            // Satuan is always "m^1"
+        const satuan = 'm^1';
+
+            // deskripsiDesain is always empty string
+        const deskripsiDesain = '';
+
+            // Calculate biaya_smkk = totalHarga * latest SMKK Global persentase
+        const biayaSmkk = await this.calculateBiayaSmkkUseCase.execute(totalHarga);
+
+            // Step 4: Update Usulan Jalan with new information and status 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
+        const updatedUsulanJalan = await this.repository.update(dto.idUsulanJalan, {
+            uraian,
+            spesifikasi,
+            satuan,
+            deskripsiDesain,
+            lebar: dto.lebar,
+            totalHarga,
+            biayaSmkk,
+            idRekening: dto.idRekening,
+            idUsulanJalanStatus: 2, // Input Ruang Lingkup dan Spesifikasi Jalan
+        });
+
+            // Step 5: Create JalanSaluranSpesifikasiSmkk records if data_smkk is provided
+            if (dto.data_smkk && dto.data_smkk.length > 0) {
+                for (const smkk of dto.data_smkk) {
+                    // Get jalan_saluran_smkk to get pengali and id_jenis_usulan
+                    const komponenSmkk = await this.jalanSaluranSmkkService.findById(smkk.id_smkk);
+                    if (!komponenSmkk) {
+                        throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+                    }
+
+                    if (!komponenSmkk.id_jenis_usulan) {
+                        throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no id_jenis_usulan`);
+                    }
+
+                    if (!komponenSmkk.pengali) {
+                        throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`);
+                    }
+
+                    // Validate jumlah from DTO
+                    if (!smkk.jumlah || smkk.jumlah <= 0) {
+                        throw new BadRequestException(`Jumlah must be provided and greater than 0 for SMKK with id ${smkk.id_smkk}`);
+                    }
+
+                    // Calculate harga_spec = biaya_smkk * komponen_smkk.pengali
+                    const hargaSpec = biayaSmkk! * komponenSmkk.pengali;
+
+                    console.log('hargaSpec', hargaSpec);
+
+                    // jumlah_barang is now taken from DTO
+                    const jumlahBarang = smkk.jumlah;
+
+                    console.log('jumlahBarang', jumlahBarang);
+
+                    // Calculate harga_satuan = harga_spec / jumlah_barang
+                    const hargaSatuan = hargaSpec / jumlahBarang;
+
+                    console.log('hargaSatuan', hargaSatuan);
+
+                    const createSpesifikasiSmkkDto: CreateJalanSaluranSpesifikasiSmkkDto = {
+                        id_jenis_usulan: komponenSmkk.id_jenis_usulan,
+                        id_usulan: dto.idUsulanJalan,
+                        id_jalan_saluran_smkk: smkk.id_smkk,
+                        harga_spec: hargaSpec,
+                        jumlah_barang: jumlahBarang,
+                        harga_satuan: hargaSatuan,
+                    };
+
+                    await this.jalanSaluranSpesifikasiSmkkService.create(createSpesifikasiSmkkDto);
+                }
+            }
+
+        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 2,
+            namaUsulan: updatedUsulanJalan.namaUsulan,
+            tahunAnggaran: updatedUsulanJalan.tahunAnggaran ?? null,
+        });
+
+        return {
+            id: updatedUsulanJalan.id,
+            status: updatedUsulanJalan.usulanJalanStatus,
+        };
+    }
+
+    async updateUsulanJalan(dto: UpdateUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Check existence and permission
+        const usulanJalan = await this.findById(dto.id, userIdOpd, userRoles);
+        if (!usulanJalan) {
+            throw new NotFoundException(`Usulan Jalan with id ${dto.id} not found`);
+        }
+
+        // Update all fields
+        const updateData: any = {};
+
+        // idOpd is not allowed to be updated from request body, it comes from UserContext
+        if (dto.idUsulanJalanStatus !== undefined) updateData.idUsulanJalanStatus = dto.idUsulanJalanStatus;
+        if (dto.idAsbJenis !== undefined) updateData.idAsbJenis = dto.idAsbJenis;
+        if (dto.idJalanJenisPemeliharaan !== undefined) updateData.idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan ?? null;
+        if (dto.idJalanJenisPerkerasan !== undefined) updateData.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan ?? null;
+        if (dto.idRekening !== undefined) updateData.idRekening = dto.idRekening;
+        if (dto.idRekeningReview !== undefined) updateData.idRekeningReview = dto.idRekeningReview;
+        if (dto.idKabkota !== undefined) updateData.idKabkota = dto.idKabkota ?? null;
+        if (dto.idKecamatan !== undefined) updateData.idKecamatan = dto.idKecamatan ?? null;
+        if (dto.idKelurahan !== undefined) updateData.idKelurahan = dto.idKelurahan ?? null;
+        if (dto.isIncludePpn !== undefined) updateData.isIncludePpn = dto.isIncludePpn;
+        if (dto.tahunAnggaran !== undefined) updateData.tahunAnggaran = dto.tahunAnggaran;
+        if (dto.namaUsulan !== undefined) updateData.namaUsulan = dto.namaUsulan;
+        if (dto.alamat !== undefined) updateData.alamat = dto.alamat ?? null;
+        if (dto.uraian !== undefined) updateData.uraian = dto.uraian;
+        if (dto.spesifikasi !== undefined) updateData.spesifikasi = dto.spesifikasi;
+        if (dto.satuan !== undefined) updateData.satuan = dto.satuan;
+        if (dto.deskripsiDesain !== undefined) updateData.deskripsiDesain = dto.deskripsiDesain;
+
+        const updated = await this.repository.update(dto.id, updateData);
+
+        return {
+            id: updated.id,
+            status: updated.usulanJalanStatus,
+        };
+    }
+
+    async deleteUsulanJalan(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }> {
+        // Check existence and permission
+        const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+        if (!usulanJalan) {
+        throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+        }
+
+        await this.repository.delete(id);
+
+        return { id };
+    }
+
+    async verifyIndex(dto: VerifyIndexUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Check verificator type - only ADBANG
+        if (userRoles.includes(Role.VERIFIKATOR)) {
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            if (!verificatorType) {
+                throw new NotFoundException(`User not sync with verifikator`);
+            }
+
+            if (verificatorType !== JenisVerifikator.ADBANG) {
+                throw new ForbiddenException(`Only ADBANG can verify index usulan jalan`);
+            }
+        }
+
+        // Check existence
+        const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+        if (!usulanJalan) {
+            throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
+        }
+
+        // Check that status is 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
+        if (usulanJalan.idUsulanJalanStatus !== 2) {
+            throw new BadRequestException(`Usulan Jalan must be in status 2 (Input Ruang Lingkup dan Spesifikasi Jalan) to verify index`);
+        }
+
+        // Validate idJalanJenisPemeliharaan based on idAsbJenis
+        let idJalanJenisPemeliharaan: number | null = null;
+        if (dto.idAsbJenis === 1) {
+            // If idAsbJenis is 1 (Pembangunan), idJalanJenisPemeliharaan must be null
+            idJalanJenisPemeliharaan = null;
+        } else if (dto.idAsbJenis === 2) {
+            // If idAsbJenis is 2 (Pemeliharaan), idJalanJenisPemeliharaan is required
+            if (!dto.idJalanJenisPemeliharaan) {
+                throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)');
+            }
+            idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
+        }
+
+        // Update with all fields from DTO (same as createIndex)
+        const updated = await this.repository.update(dto.idUsulanJalan, {
+            idAsbJenis: dto.idAsbJenis,
+            idJalanJenisPemeliharaan,
+            idJalanJenisPerkerasan: dto.idJalanJenisPerkerasan ?? null,
+            idKabkota: dto.idKabkota,
+            idKecamatan: dto.idKecamatan,
+            idKelurahan: dto.idKelurahan,
+            tahunAnggaran: dto.tahunAnggaran,
+            namaUsulan: dto.namaUsulan,
+            alamat: dto.alamat ?? null,
+            idUsulanJalanStatus: 5, // Verifikasi Informasi Usulan Jalan
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 5,
+            namaUsulan: updated.namaUsulan,
+            tahunAnggaran: updated.tahunAnggaran ?? null,
+        });
+
+        return {
+            id: updated.id,
+            status: updated.usulanJalanStatus,
+        };
+    }
+
+    async verifyInformasi(dto: VerifyInformasiUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Check verificator type - only ADBANG
+        if (userRoles.includes(Role.VERIFIKATOR)) {
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            if (!verificatorType) {
+                throw new NotFoundException(`User not sync with verifikator`);
+            }
+
+            if (verificatorType !== JenisVerifikator.ADBANG) {
+                throw new ForbiddenException(`Only ADBANG can verify informasi usulan jalan`);
+            }
+        }
+
+        // Check existence
+        const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+        if (!usulanJalan) {
+            throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
+        }
+
+        // Check that status is 5 (Verifikasi Informasi Usulan Jalan)
+        if (usulanJalan.idUsulanJalanStatus !== 5) {
+            throw new BadRequestException(`Usulan Jalan must be in status 5 (Verifikasi Informasi Usulan Jalan) to verify informasi`);
+        }
+
+        await this.jalanSpesifikasiDesainReviewService.deleteByUsulanJalanId(dto.idUsulanJalan);
+
+        if (!usulanJalan.idJalanJenisPerkerasan) {
+            throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in verifyIndex first');
+        }
+
+        if (!usulanJalan.jalanJenisPerkerasan) {
+            throw new NotFoundException('JalanJenisPerkerasan relation not found');
+        }
+        const jenisPerkerasan = usulanJalan.jalanJenisPerkerasan.jenis;
+        const idJalanJenisPerkerasanToUse = usulanJalan.idJalanJenisPerkerasan;
+
+        const tinggiReviewValues: number[] = [];
+        let totalHargaReview = 0;
+        const lebarReview = dto.lebar !== undefined ? dto.lebar : (usulanJalan.lebar ?? 0);
+        for (const ruangLingkup of dto.data_ruang_lingkup) {
+            for (const hspk of ruangLingkup.data_hspk) {
+                const createReviewDto = new CreateJalanSpesifikasiDesainReviewDto();
+                createReviewDto.id_usulan_jalan = dto.idUsulanJalan;
+                createReviewDto.id_ruang_lingkup = ruangLingkup.id;
+                createReviewDto.id_hspk = hspk.id_hspk;
+                createReviewDto.spasi_review = hspk.spasi_review;
+                createReviewDto.tinggi_review = hspk.tinggi_review;
+
+                const createdReview = await this.jalanSpesifikasiDesainReviewService.create(createReviewDto, lebarReview);
+                tinggiReviewValues.push(hspk.tinggi_review);
+                totalHargaReview += createdReview.harga_spec_review;
+            }
+        }
+
+        if (usulanJalan.isIncludePpn) {
+            const persentasePpn = await this.ppnGlobalService.getLatestPersentasePPn();
+            if (persentasePpn !== null) {
+                totalHargaReview = totalHargaReview * (100 + persentasePpn) / 100;
+            }
+        }
+
+        const uraian = await this.generateUraianUsulanJalanUseCase.execute(jenisPerkerasan, lebarReview);
+        const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(tinggiReviewValues, idJalanJenisPerkerasanToUse);
+        const satuan = 'm^1';
+        const deskripsiDesain = '';
+
+        // Calculate biaya_smkk = totalHargaReview * latest SMKK Global persentase
+        const biayaSmkk = await this.calculateBiayaSmkkUseCase.execute(totalHargaReview);
+
+        const updateData: any = {
+            idUsulanJalanStatus: 6,
+            uraian,
+            spesifikasi,
+            satuan,
+            deskripsiDesain,
+            totalHarga: totalHargaReview,
+            biayaSmkk,
+        };
+
+        if (dto.lebar !== undefined) {
+            updateData.lebar = dto.lebar;
+        }
+
+        const updated = await this.repository.update(dto.idUsulanJalan, updateData);
+
+        // Create JalanSaluranSpesifikasiSmkkReview records if data_smkk is provided
+        if (dto.data_smkk && dto.data_smkk.length > 0) {
+            for (const smkk of dto.data_smkk) {
+                // Get jalan_saluran_smkk to get pengali and id_jenis_usulan
+                const komponenSmkk = await this.jalanSaluranSmkkService.findById(smkk.id_smkk);
+                if (!komponenSmkk) {
+                    throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+                }
+
+                if (!komponenSmkk.id_jenis_usulan) {
+                    throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no id_jenis_usulan`);
+                }
+
+                if (!komponenSmkk.pengali) {
+                    throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`);
+                }
+
+                // Validate jumlah from DTO
+                if (!smkk.jumlah || smkk.jumlah <= 0) {
+                    throw new BadRequestException(`Jumlah must be provided and greater than 0 for SMKK with id ${smkk.id_smkk}`);
+                }
+
+                // Calculate harga_spec = biaya_smkk * komponen_smkk.pengali
+                const hargaSpec = biayaSmkk! * komponenSmkk.pengali;
+
+                // jumlah_barang is now taken from DTO
+                const jumlahBarang = smkk.jumlah;
+
+                // Calculate harga_satuan = harga_spec / jumlah_barang
+                const hargaSatuan = hargaSpec / jumlahBarang;
+
+                const createSpesifikasiSmkkReviewDto: CreateJalanSaluranSpesifikasiSmkkReviewDto = {
+                    id_jenis_usulan: komponenSmkk.id_jenis_usulan,
+                    id_usulan: dto.idUsulanJalan,
+                    id_jalan_saluran_smkk: smkk.id_smkk,
+                    harga_spec: hargaSpec,
+                    jumlah_barang: jumlahBarang,
+                    harga_satuan: hargaSatuan,
+                };
+
+                await this.jalanSaluranSpesifikasiSmkkReviewService.create(createSpesifikasiSmkkReviewDto);
+            }
+        }
+
+        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 6,
+            namaUsulan: updated.namaUsulan,
+            tahunAnggaran: updated.tahunAnggaran ?? null,
+        });
+
+        return {
+            id: updated.id,
+            status: updated.usulanJalanStatus,
+        };
+    }
+
+    async verifyAdbang(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Check verificator type - only ADBANG
+        if (userRoles.includes(Role.VERIFIKATOR)) {
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            if (!verificatorType) {
+                throw new NotFoundException(`User not sync with verifikator`);
+            }
+
+            if (verificatorType !== JenisVerifikator.ADBANG) {
+                throw new ForbiddenException(`Only ADBANG can approve at this stage`);
+            }
+        }
+
+            // Check existence
+        const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+        if (!usulanJalan) {
+            throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+        }
+
+            // Check that status is 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)
+        if (usulanJalan.idUsulanJalanStatus !== 6) {
+            throw new BadRequestException(`Usulan Jalan must be in status 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan) to verify adbang`);
+        }
+
+            // Update status to 7 (Verifikasi Adbang) and set verificator
+        const updated = await this.repository.update(id, {
+            idUsulanJalanStatus: 7,
+            idVerifikatorAdbang: Number(userId),
+            verifikatorAdbangReviewAt: new Date(),
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(id, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 7,
+            namaUsulan: updated.namaUsulan,
+            tahunAnggaran: updated.tahunAnggaran ?? null,
+        });
+
+        return {
+            id: updated.id,
+            status: updated.usulanJalanStatus,
+        };
+    }
+
+    async verifyBpkad(dto: VerifyBpkadUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Check verificator type - only BPKAD
+        if (userRoles.includes(Role.VERIFIKATOR)) {
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            if (!verificatorType) {
+                throw new NotFoundException(`User not sync with verifikator`);
+            }
+
+            if (verificatorType !== JenisVerifikator.BPKAD) {
+                throw new ForbiddenException(`Only BPKAD can approve at this stage`);
+            }
+        }
+
+            // Check existence
+        const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+        if (!usulanJalan) {
+            throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
+        }
+
+            // Check that status is 7 (Verifikasi Adbang)
+        if (usulanJalan.idUsulanJalanStatus !== 7) {
+            throw new BadRequestException(
+                `Usulan Jalan must be in status 7 (Verifikasi Adbang) before verifying BPKAD. Current status: ${usulanJalan.idUsulanJalanStatus}`
+            );
+        }
+
+            // Check that ADBANG verified first
+        if (!usulanJalan.idVerifikatorAdbang) {
+            throw new ForbiddenException(`ADBANG must verify first`);
+        }
+
+            // Re-read Usulan Jalan data before update to prevent race condition
+        const usulanJalanBeforeUpdate = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+        if (!usulanJalanBeforeUpdate) {
+            throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
+        }
+
+            // Re-validate status before update (race condition protection)
+        if (usulanJalanBeforeUpdate.idUsulanJalanStatus !== 7) {
+            throw new BadRequestException(
+                `Usulan Jalan status has changed. Expected status 7, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
+            );
+        }
+
+            // Prepare update data
+        const updateData: any = {
+            idUsulanJalanStatus: 8, // Verifikasi Bpkad
+            idVerifikatorBpkad: Number(userId),
+            verifikatorBpkadReviewAt: new Date(),
+            idRekeningReview: dto.idRekeningReview,
+        };
+
+            // Update status to 8 (Verifikasi Bpkad), set verificator, and update rekening review
+        const updated = await this.repository.update(dto.idUsulanJalan, updateData);
+
+        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 8,
+            namaUsulan: updated.namaUsulan,
+            tahunAnggaran: updated.tahunAnggaran ?? null,
+        });
+
+        return {
+            id: updated.id,
+            status: updated.usulanJalanStatus,
+        };
+    }
+
+    async verifyBappeda(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Check verificator type - only BAPPEDA
+        if (userRoles.includes(Role.VERIFIKATOR)) {
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            if (!verificatorType) {
+                throw new NotFoundException(`User not sync with verifikator`);
+            }
+
+            if (verificatorType !== JenisVerifikator.BAPPEDA) {
+                throw new ForbiddenException(`Only BAPPEDA can approve at this stage`);
+            }
+        }
+
+            // Check existence
+        const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+        if (!usulanJalan) {
+            throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+        }
+
+            // Check that status is 8 (Verifikasi Bpkad)
+        if (usulanJalan.idUsulanJalanStatus !== 8) {
+            throw new BadRequestException(
+                `Usulan Jalan must be in status 8 (Verifikasi Bpkad) before verifying BAPPEDA. Current status: ${usulanJalan.idUsulanJalanStatus}`
+            );
+        }
+
+            // Check that ADBANG and BPKAD verified first
+        if (!usulanJalan.idVerifikatorAdbang || !usulanJalan.idVerifikatorBpkad) {
+            throw new ForbiddenException(`ADBANG and BPKAD must verify first`);
+        }
+
+            // Re-read Usulan Jalan data before update to prevent race condition
+        const usulanJalanBeforeUpdate = await this.findById(id, userIdOpd, userRoles);
+        if (!usulanJalanBeforeUpdate) {
+            throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+        }
+
+            // Re-validate status before update (race condition protection)
+        if (usulanJalanBeforeUpdate.idUsulanJalanStatus !== 8) {
+            throw new BadRequestException(
+                `Usulan Jalan status has changed. Expected status 8, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
+            );
+        }
+
+            // Update status to 3 (Memenuhi Syarat - Final approved) and set verificator
+        const updated = await this.repository.update(id, {
+            idUsulanJalanStatus: 3,
+            idVerifikatorBappeda: Number(userId),
+            verifikatorBappedaReviewAt: new Date(),
+        });
+
+        return {
+            id: updated.id,
+            status: updated.usulanJalanStatus,
+        };
+    }
+
+    async reject(id: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Check existence
+        const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+        if (!usulanJalan) {
+            throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+        }
+
+        // Validate status flow: reject can only be done on status 2 or 5-8 (VERIFICATION)
+        const allowedStatuses = [2, 5, 6, 7, 8];
+        if (!allowedStatuses.includes(usulanJalan.idUsulanJalanStatus)) {
+            throw new BadRequestException(
+                `Usulan Jalan can only be rejected when in status 2 or 5-8 (VERIFICATION). Current status: ${usulanJalan.idUsulanJalanStatus}`
+            );
+        }
+
+        // Status 2: hanya Adbang, ADMIN, atau SUPERADMIN yang boleh menolak
+        if (usulanJalan.idUsulanJalanStatus === 2) {
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            if (!isAdmin && !isSuperAdmin) {
+                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+                if (!verificatorType) throw new NotFoundException(`User not sync with verifikator`);
+                if (verificatorType !== JenisVerifikator.ADBANG) {
+                    throw new ForbiddenException(`Only ADBANG verifikator, ADMIN, or SUPERADMIN can reject Usulan Jalan in status 2`);
+                }
+            }
+        }
+
+        // Re-read Usulan Jalan data before update to prevent race condition
+        const usulanJalanBeforeUpdate = await this.findById(id, userIdOpd, userRoles);
+        if (!usulanJalanBeforeUpdate) {
+            throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+        }
+
+        // Re-validate status before update (race condition protection)
+        if (!allowedStatuses.includes(usulanJalanBeforeUpdate.idUsulanJalanStatus)) {
+            throw new BadRequestException(
+                `Usulan Jalan status has changed. Expected status 2 or 5-8, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
+            );
+        }
+
+            // Update status to 4 (Tidak Memenuhi Syarat - Rejected)
+        const updated = await this.repository.update(id, {
+            idUsulanJalanStatus: 4,
+            idRejectVerif: Number(userId),
+            rejectReason: rejectReason,
+            rejectVerifikatorReviewAt: new Date(),
+        });
+
+        await this.mainDashboardRepository.updateByUsulan(id, ID_JENIS_USULAN_JALAN, {
+            idAsbStatus: 4,
+            rejectInfo: rejectReason,
+            namaUsulan: updated.namaUsulan,
+            tahunAnggaran: updated.tahunAnggaran ?? null,
+        });
+
+        return {
+            id: updated.id,
+            status: updated.usulanJalanStatus,
+        };
+    }
+
+    async getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<RejectInfoDto | null> {
+        // Check if user is ADMIN or SUPERADMIN
+        const isAdmin = userRoles.includes(Role.ADMIN);
+        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
+
+        let rejectInfo: RejectInfoDto | null;
+
+        if (isAdmin || isSuperAdmin || isVerifikator) {
+            // ADMIN/SUPERADMIN/VERIFIKATOR can access ALL Usulan Jalan without OPD filter
+            rejectInfo = await this.repository.getRejectInfo(id);
+        } else {
+            // For OPD users
+            const isOpd = userRoles.includes(Role.OPD);
+
+            if (isOpd) {
+                // OPD users must have an idOpd
+                if (!userIdOpd) {
+                    throw new ForbiddenException('OPD user has no associated OPD');
+                }
+
+                // Fetch with OPD filter
+                rejectInfo = await this.repository.getRejectInfo(id, userIdOpd);
+            } else {
+                throw new ForbiddenException('User is not authorized to access reject info');
+            }
+        }
+
+        if (!rejectInfo) {
+            throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+        }
+
+            // Check if Usulan Jalan has been rejected
+        if (!rejectInfo.rejectVerifId || !rejectInfo.rejectedAt) {
+            throw new BadRequestException('Usulan Jalan is not in rejected status');
+        }
+
+            // Get verifikator info if rejectVerifikator exists
+        if (rejectInfo.rejectVerifikator) {
+            const verifikator = await this.verifikatorService.findByUserId(rejectInfo.rejectVerifikator.id);
+            if (verifikator && verifikator.user) {
+                rejectInfo.verifikator = {
+                    id: verifikator.id,
+                    idUser: verifikator.idUser,
+                    jenisVerifikator: verifikator.jenisVerifikator,
+                    verifikator: verifikator.verifikator,
+                    user: {
+                        id: verifikator.user.id,
+                        username: verifikator.user.username,
+                    },
+                };
+            }
+        }
+
+        return rejectInfo;
+    }
+
+    async getAnalytics(userIdOpd: number | null, userRoles: Role[], filter?: GetUsulanJalanAnalyticsFilterDto): Promise<UsulanJalanAnalyticsDto> {
+        // Check permissions
+        const isAdmin = userRoles.includes(Role.ADMIN);
+        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
+
+        if (isAdmin || isSuperAdmin || isVerifikator) {
+            // ADMIN/SUPERADMIN/VERIFIKATOR can access ALL without OPD filter
+            return await this.repository.getAnalytics(undefined, filter);
+        } else {
+            // For OPD users
+            const isOpd = userRoles.includes(Role.OPD);
+
+            if (isOpd) {
+                // OPD users must have an idOpd
+                if (!userIdOpd) {
+                    throw new ForbiddenException('OPD user has no associated OPD');
+                }
+
+                // Fetch with OPD filter
+                return await this.repository.getAnalytics(userIdOpd, filter);
+            } else {
+                throw new ForbiddenException('User is not authorized to access Usulan Jalan analytics');
+            }
+        }
     }
 }
+
+

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { validationSchema } from './config/validation';
@@ -40,20 +41,29 @@ import { StandardKlasifikasiModule } from './presentation/standard_klasifikasi/s
 import { KecamatanModule } from './presentation/kecamatan/kecamatan.module';
 import { KelurahanModule } from './presentation/kelurahan/kelurahan.module';
 import { JalanJenisPerkerasanModule } from './presentation/jalan_jenis_perkerasan/jalan_jenis_perkerasan.module';
+import { UsulanJalanStatusModule } from './presentation/usulan_jalan_status/usulan_jalan_status.module';
+import { UsulanJalanModule } from './presentation/usulan_jalan/usulan_jalan.module';
+import { UsulanSaluranModule } from './presentation/usulan_saluran/usulan_saluran.module';
 import { JalanJenisPemeliharaanModule } from './presentation/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.module';
+import { PpnGlobalModule } from './presentation/ppn_global/ppn_global.module';
+import { SmkkGlobalModule } from './presentation/smkk_global/smkk_global.module';
+import { JalanKebijakanModule } from './presentation/jalan_kebijakan/jalan_kebijakan.module';
+import { JenisUsulanModule } from './presentation/jenis_usulan/jenis_usulan.module';
 import { JalanSaluranRuangLingkupModule } from './presentation/jalan_saluran_ruang_lingkup/jalan_saluran_ruang_lingkup.module';
 import { JalanSaluranSmkkModule } from './presentation/jalan_saluran_smkk/jalan_saluran_smkk.module';
 import { HspkModule } from './presentation/hspk/hspk.module';
-import { UsulanJalanModule } from './presentation/usulan_jalan/usulan_jalan.module';
-import { UsulanSaluranModule } from './presentation/usulan_saluran/usulan_saluran.module';
+import { MainDashboardModule } from './presentation/main_dashboard/main_dashboard.module';
 
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
 import { DataSourceOptions } from 'typeorm';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 // import module lain sesuai kebutuhan
 
 @Module({
+    controllers: [AppController],
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
@@ -62,28 +72,44 @@ import { DataSourceOptions } from 'typeorm';
         }),
         TypeOrmModule.forRootAsync({
             useFactory: (config: ConfigService): DataSourceOptions => {
+                const dbType = config.get<'postgres' | 'mysql'>('db.type') || 'postgres';
                 const url = config.get<string | undefined>('db.url');
 
-                // If DB_URL is set (production) → use connection string
-                if (url) {
+                if (!url) {
+                    throw new Error('Database URL not configured. Set DB_URL in .env');
+                }
+
+                // Common configuration for both databases
+                const commonConfig = {
+                    url,
+                    entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.js,.ts}'],
+                    synchronize: false,
+                    migrationsRun: false,
+                    namingStrategy: new SnakeNamingStrategy(),
+                    logging: ['error', 'warn'] as ('error' | 'warn')[],
+                };
+
+                // MySQL Configuration
+                if (dbType === 'mysql') {
                     return {
-                        type: 'postgres',
-                        url,
-                        entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.js,.ts}'],
-                        synchronize: false,
-                        migrationsRun: false,
-                        migrations: [__dirname + '/migrations/*{.js,.ts}'],
+                        ...commonConfig,
+                        type: 'mysql',
+                        migrations: [__dirname + '/migrations/mysql/*{.js,.ts}'],
+                        timezone: '+07:00', // Asia/Jakarta
+                        charset: 'utf8mb4',
                     };
                 }
 
-                // Otherwise (development) → use host/port/etc
+                // PostgreSQL Configuration (default)
+                const isRender = config.get<boolean>('db.isRender');
                 return {
+                    ...commonConfig,
                     type: 'postgres',
-                    url: config.get('db.url'),
-                    entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.ts,.js}'],
-                    synchronize: false, // always false in production
-                    migrationsRun: false,
-                    migrations: [__dirname + '/migrations/*{.js,.ts}'],
+                    ssl: isRender ? { rejectUnauthorized: false } : false,
+                    migrations: [__dirname + '/migrations/postgres/*{.js,.ts}'],
+                    extra: {
+                        options: '-c timezone=Asia/Jakarta'
+                    },
                 };
             },
             inject: [ConfigService],
@@ -125,16 +151,38 @@ import { DataSourceOptions } from 'typeorm';
         KecamatanModule,
         KelurahanModule,
         JalanJenisPerkerasanModule,
+        UsulanJalanStatusModule,
+        UsulanJalanModule,
+        UsulanSaluranModule,
         JalanJenisPemeliharaanModule,
+        PpnGlobalModule,
+        SmkkGlobalModule,
+        JalanKebijakanModule,
+        JenisUsulanModule,
         JalanSaluranRuangLingkupModule,
         JalanSaluranSmkkModule,
         HspkModule,
-        UsulanJalanModule,
-        UsulanSaluranModule,
+        MainDashboardModule,
+        ThrottlerModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => [
+                {
+                    ttl: config.get<number>('throttler.ttl', 60000), 
+                    limit: config.get<number>('throttler.limit', 100), 
+                },
+            ],
+        }),
         // other modules...
     ],
     providers: [
-        { provide: APP_INTERCEPTOR, useClass: ResponseCaptureInterceptor },
+        { 
+            provide: APP_INTERCEPTOR, 
+            useClass: ResponseCaptureInterceptor 
+        },
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
     ],
 })
 export class AppModule { }

@@ -1,18 +1,21 @@
-import { IsArray, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsNumber, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class StoreBpnsDto {
     @IsNumber()
-    id_asb: number;
-
-    @IsOptional()
-    @IsNumber()
-    id_asb_bipek_nonstd?: number;
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
+    id_asb!: number;
 
     @IsArray()
+    @IsNotEmpty()
     @IsNumber({}, { each: true })
-    komponen_nonstd: number[];
+    @Transform(({ value }) => Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    komponen_nonstd!: number[];
 
     @IsArray()
+    @IsNotEmpty()
     @IsNumber({}, { each: true })
-    bobot_nonstd: number[];
+    @Transform(({ value }) => Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    bobot_nonstd!: number[];
 }

@@ -1,66 +1,262 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { PaginationQueryDto } from '../../common/dto/pagination_query.dto';
-import { ResponseDto } from '../../common/dto/response.dto';
-import { toErrorResponseDto, toResponseDto } from '../../common/utils/controller_response.util';
-import { Role } from '../../domain/user/user_role.enum';
-import { JalanJenisPerkerasanService } from '../../domain/jalan_jenis_perkerasan/jalan_jenis_perkerasan.service';
-import { CreateJalanJenisPerkerasanDto } from './dto/create_jalan_jenis_perkerasan.dto';
-import { UpdateJalanJenisPerkerasanDto } from './dto/update_jalan_jenis_perkerasan.dto';
-import { DeleteJalanJenisPerkerasanDto } from './dto/delete_jalan_jenis_perkerasan.dto';
+import {
+    Controller,
+    Post,
+    Get,
+    Put,
+    Delete,
+    Body,
+    HttpStatus,
+    HttpException,
+    Query,
+} from "@nestjs/common";
+import { JalanJenisPerkerasanService } from "../../domain/jalan_jenis_perkerasan/jalan_jenis_perkerasan.service";
+import { Roles } from "../../common/decorators/roles.decorator";
+import { CreateJalanJenisPerkerasanDto } from "./dto/create_jalan_jenis_perkerasan.dto";
+import { UpdateJalanJenisPerkerasanDto } from "./dto/update_jalan_jenis_perkerasan.dto";
+import { DeleteJalanJenisPerkerasanDto } from "./dto/delete_jalan_jenis_perkerasan.dto";
+import { GetJalanJenisPerkerasanDto } from "./dto/get_jalan_jenis_perkerasan.dto";
+import { GetJalanJenisPerkerasanDetailDto } from "./dto/get_jalan_jenis_perkerasan_detail.dto";
+import { ResponseDto } from "../../common/dto/response.dto";
+import { Role } from "../../domain/user/user_role.enum";
 
-@Controller('jalan-jenis-perkerasan')
-@Roles(Role.SUPERADMIN, Role.ADMIN)
+@Controller("jalan-jenis-perkerasan")
+@Roles(Role.SUPERADMIN)
 export class JalanJenisPerkerasanController {
-    constructor(private readonly service: JalanJenisPerkerasanService) {}
+    constructor(private readonly jalanJenisPerkerasanService: JalanJenisPerkerasanService) { }
 
     @Post()
+    @Roles(Role.SUPERADMIN)
     async create(@Body() dto: CreateJalanJenisPerkerasanDto): Promise<ResponseDto> {
         try {
-            const data = await this.service.create(dto);
-            return toResponseDto(data, 'Jalan jenis perkerasan created', HttpStatus.CREATED);
+            const jalanJenisPerkerasan = await this.jalanJenisPerkerasanService.create(dto);
+
+            return {
+                status: "success",
+                responseCode: HttpStatus.CREATED,
+                message: "Jalan Jenis Perkerasan created",
+                data: jalanJenisPerkerasan,
+            };
         } catch (error) {
-            return toErrorResponseDto(error);
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+
+                if (typeof response === "string") {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(", ");
+                    } else {
+                        message = resObj.message ?? "Error";
+                    }
+                }
+
+                return {
+                    status: "error",
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: "error",
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: "Internal server error",
+                data: null,
+            };
         }
     }
 
     @Put()
-    async update(@Body() dto: UpdateJalanJenisPerkerasanDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN)
+    async updateJalanJenisPerkerasan(@Body() dto: UpdateJalanJenisPerkerasanDto): Promise<ResponseDto> {
         try {
-            const data = await this.service.update(dto);
-            return toResponseDto(data, 'Jalan jenis perkerasan updated');
+            const jalanJenisPerkerasan = await this.jalanJenisPerkerasanService.update(dto);
+
+            return {
+                status: "success",
+                responseCode: HttpStatus.OK,
+                message: "Jalan Jenis Perkerasan updated",
+                data: jalanJenisPerkerasan,
+            };
         } catch (error) {
-            return toErrorResponseDto(error);
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+
+                if (typeof response === "string") {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(", ");
+                    } else {
+                        message = resObj.message ?? "Error";
+                    }
+                }
+
+                return {
+                    status: "error",
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: "error",
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: "Internal server error",
+                data: null,
+            };
         }
     }
 
     @Delete()
-    async delete(@Body() dto: DeleteJalanJenisPerkerasanDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN)
+    async deleteJalanJenisPerkerasan(@Body() dto: DeleteJalanJenisPerkerasanDto): Promise<ResponseDto> {
         try {
-            const data = await this.service.delete(dto);
-            return toResponseDto(data, 'Jalan jenis perkerasan deleted');
+            const deleted = await this.jalanJenisPerkerasanService.delete(dto.id);
+
+            return {
+                status: "success",
+                responseCode: HttpStatus.OK,
+                message: "Jalan Jenis Perkerasan deleted",
+                data: deleted,
+            };
         } catch (error) {
-            return toErrorResponseDto(error);
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+
+                if (typeof response === "string") {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(", ");
+                    } else {
+                        message = resObj.message ?? "Error";
+                    }
+                }
+
+                return {
+                    status: "error",
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: "error",
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: "Internal server error",
+                data: null,
+            };
         }
     }
 
     @Get()
-    async findAll(@Query() dto: PaginationQueryDto): Promise<ResponseDto> {
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getJalanJenisPerkerasans(@Query() dto: GetJalanJenisPerkerasanDto): Promise<ResponseDto> {
         try {
-            const data = await this.service.findAll(dto);
-            return toResponseDto(data, 'Jalan jenis perkerasan list retrieved');
+            const result = await this.jalanJenisPerkerasanService.findAll(dto);
+
+            return {
+                status: "success",
+                responseCode: HttpStatus.OK,
+                message: "Jalan Jenis Perkerasan list retrieved",
+                data: result,
+            };
         } catch (error) {
-            return toErrorResponseDto(error);
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+
+                if (typeof response === "string") {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(", ");
+                    } else {
+                        message = resObj.message ?? "Error";
+                    }
+                }
+
+                return {
+                    status: "error",
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: "error",
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: "Internal server error",
+                data: null,
+            };
         }
     }
 
-    @Get(':id')
-    async findById(@Param('id', ParseIntPipe) id: number): Promise<ResponseDto> {
+    @Get("detail")
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getJalanJenisPerkerasanDetail(@Query() dto: GetJalanJenisPerkerasanDetailDto): Promise<ResponseDto> {
         try {
-            const data = await this.service.findById(id);
-            return toResponseDto(data, 'Jalan jenis perkerasan detail retrieved');
+            const jalanJenisPerkerasan = await this.jalanJenisPerkerasanService.findById(dto.id);
+
+            return {
+                status: "success",
+                responseCode: HttpStatus.OK,
+                message: "Jalan Jenis Perkerasan detail retrieved",
+                data: jalanJenisPerkerasan,
+            };
         } catch (error) {
-            return toErrorResponseDto(error);
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+
+                if (typeof response === "string") {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(", ");
+                    } else {
+                        message = resObj.message ?? "Error";
+                    }
+                }
+
+                return {
+                    status: "error",
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: "error",
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: "Internal server error",
+                data: null,
+            };
         }
     }
 }
+

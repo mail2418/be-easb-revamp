@@ -1,9 +1,10 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsInt, IsOptional, IsString, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class DownloadDocumentsByAsbDto {
     @IsInt()
-    @Type(() => Number)
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
     idAsb: number;
 
     @IsOptional()

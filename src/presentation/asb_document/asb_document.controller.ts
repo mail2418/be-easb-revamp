@@ -19,6 +19,7 @@ import { DocumentSpec } from '../../domain/asb_document/document_spec.enum';
 import { DownloadDocumentsByAsbDto } from './dto/download_documents_by_asb.dto';
 import { GetAsbDocumentByAsbDto } from './dto/get_asb_document_by_asb.dto';
 import { UserContext } from 'src/common/types/user-context.type';
+import { ResponseDto } from '../../common/dto/response.dto';
 
 @Controller('asb-document')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -30,12 +31,13 @@ export class AsbDocumentController {
     async getByAsb(
         @Query() dto: GetAsbDocumentByAsbDto,
         @Req() req: Request,
-    ) {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.service.getByAsb(dto, user.idOpd, user.roles[0]);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'Documents by ASB retrieved successfully',
                 data: result,
             };
@@ -48,12 +50,13 @@ export class AsbDocumentController {
     async findBySpec(
         @Query('spec') spec: DocumentSpec,
         @Req() req: Request,
-    ) {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.service.findBySpec(spec, user.idOpd, user.roles[0]);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbDocument list by spec retrieved successfully',
                 data: result,
             };

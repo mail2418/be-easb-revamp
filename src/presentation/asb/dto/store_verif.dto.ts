@@ -1,7 +1,9 @@
 import { IsNumber, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class StoreVerifDto {
     @IsNumber()
     @IsNotEmpty()
-    id_asb: number;
+    @Transform(({ value }) => parseInt(value, 10))
+    id_asb!: number;
 }

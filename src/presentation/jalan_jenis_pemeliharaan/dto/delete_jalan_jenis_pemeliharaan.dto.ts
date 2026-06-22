@@ -1,2 +1,7 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
-export class DeleteJalanJenisPemeliharaanDto { @IsNumber() @IsNotEmpty() id!: number; }
+import { IsNotEmpty, IsNumber } from "class-validator";
+
+export class DeleteJalanJenisPemeliharaanDto {
+    @IsNotEmpty()
+    @IsNumber()
+    id!: number;
+}

@@ -1,12 +1,17 @@
-import { IsNumber } from "class-validator";
-import { Type } from "class-transformer";
+import { IsNumber, IsNotEmpty, Min, Max } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class GetAsbByMonthYearDto {
     @IsNumber()
-    @Type(() => Number)
-    month: number;
+    @IsNotEmpty()
+    @Min(1)
+    @Max(12)
+    @Transform(({ value }) => parseInt(value, 10))
+    month!: number;
 
     @IsNumber()
-    @Type(() => Number)
-    year: number;
+    @IsNotEmpty()
+    @Min(2000)
+    @Transform(({ value }) => parseInt(value, 10))
+    year!: number;
 }

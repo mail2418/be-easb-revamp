@@ -1,19 +1,25 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { Transform } from "class-transformer";
+
 export class UpdateJalanJenisPemeliharaanDto {
-    @IsNumber() @IsNotEmpty() id!: number;
-    @IsString()
     @IsNotEmpty()
-    tingkat_pemeliharaan!: string;
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    id!: number;
 
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    jenis_pemeliharaan!: string;
+    tingkat_pemeliharaan?: string;
 
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    ruang_lingkup!: string;
+    jenis_pemeliharaan?: string;
 
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    deskripsi!: string;
+    ruang_lingkup?: string;
+
+    @IsOptional()
+    @IsString()
+    deskripsi?: string;
 }

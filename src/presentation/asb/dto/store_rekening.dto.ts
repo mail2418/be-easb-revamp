@@ -1,9 +1,14 @@
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class StoreRekeningDto {
     @IsNumber()
-    id_asb: number;
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
+    id_asb!: number;
 
     @IsNumber()
-    id_rekening: number;
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
+    id_rekening!: number;
 }

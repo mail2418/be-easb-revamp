@@ -167,7 +167,7 @@ export class AsbKlasifikasiController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
     async getAsbKlasifikasis(@Query() dto: GetAsbKlasifikasisDto): Promise<ResponseDto> {
         try {
             const result = await this.asbKlasifikasiService.findAll(dto);
@@ -214,7 +214,7 @@ export class AsbKlasifikasiController {
     }
 
     @Get('detail')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
     async getAsbKlasifikasiDetail(@Query() dto: GetAsbKlasifikasiDetailDto): Promise<ResponseDto> {
         try {
             const asbKlasifikasi = await this.asbKlasifikasiService.findById(dto.id);

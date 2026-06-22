@@ -1,18 +1,16 @@
-import { IsNumber, IsOptional, Min, IsString } from 'class-validator';
+import { IsNumber, IsOptional, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetProvincesDto {
+    @IsOptional()
     @IsNumber()
     @Min(1)
-    @Transform(({ value }) => parseInt(value, 10))
-    page!: number;
-
-    @IsNumber()
-    @Min(1)
-    @Transform(({ value }) => parseInt(value, 10))
-    amount!: number;
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    page?: number;
 
     @IsOptional()
-    @IsString()
-    search?: string;
+    @IsNumber()
+    @Min(1)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    amount?: number;
 }

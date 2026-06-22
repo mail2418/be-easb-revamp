@@ -18,89 +18,77 @@ export class AsbBipekNonStdRepositoryImpl extends AsbBipekNonStdRepository {
     }
 
     async create(dto: CreateAsbBipekNonStdDto): Promise<AsbBipekNonStd> {
-        try {
-            const ormEntity = this.repository.create(dto);
-
-            const saved = await this.repository.save(ormEntity);
-            return plainToInstance(AsbBipekNonStd, saved);
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = this.repository.create(dto);
+        const saved = await this.repository.save(ormEntity);
+        return plainToInstance(AsbBipekNonStd, saved);
     }
 
     async update(dto: UpdateAsbBipekNonStdDto): Promise<AsbBipekNonStd> {
-        try {
-            const existing = await this.repository.findOne({
-                where: { id: dto.id },
-            });
-            if (!existing) {
-                throw new Error(`AsbBipekNonStd with id ${dto.id} not found`);
-            }
-
-            const updateData: Partial<AsbBipekNonStdOrmEntity> = {};
-
-            if (dto.files !== undefined) {
-                updateData.files = dto.files;
-            }
-            if (dto.idAsb !== undefined) {
-                updateData.idAsb = dto.idAsb;
-            }
-            if (dto.idAsbKomponenBangunanNonStd !== undefined) {
-                updateData.idAsbKomponenBangunanNonstd = dto.idAsbKomponenBangunanNonStd;
-            }
-            if (dto.bobotInput !== undefined) {
-                updateData.bobotInput = dto.bobotInput;
-            }
-            if (dto.jumlahBobot !== undefined) {
-                updateData.jumlahBobot = dto.jumlahBobot;
-            }
-            if (dto.rincianHarga !== undefined) {
-                updateData.rincianHarga = dto.rincianHarga;
-            }
-
-            await this.repository.update(dto.id, updateData);
-
-            const updated = await this.repository.findOne({
-                where: { id: dto.id },
-            });
-            return plainToInstance(AsbBipekNonStd, updated);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findOne({
+            where: { id: dto.id },
+        });
+        if (!existing) {
+            throw new Error(`AsbBipekNonStd with id ${dto.id} not found`);
         }
+
+        const updateData: Partial<AsbBipekNonStdOrmEntity> = {};
+
+        if (dto.files !== undefined) {
+            updateData.files = dto.files;
+        }
+        if (dto.idAsb !== undefined) {
+            updateData.idAsb = dto.idAsb;
+        }
+        if (dto.idAsbKomponenBangunanNonStd !== undefined) {
+            updateData.idAsbKomponenBangunanNonstd = dto.idAsbKomponenBangunanNonStd;
+        }
+        if (dto.bobotInput !== undefined) {
+            updateData.bobotInput = dto.bobotInput;
+        }
+        if (dto.jumlahBobot !== undefined) {
+            updateData.jumlahBobot = dto.jumlahBobot;
+        }
+        if (dto.rincianHarga !== undefined) {
+            updateData.rincianHarga = dto.rincianHarga;
+        }
+
+        await this.repository.update(dto.id, updateData);
+
+        const updated = await this.repository.findOne({
+            where: { id: dto.id },
+        });
+        return plainToInstance(AsbBipekNonStd, updated);
     }
 
     async delete(id: number): Promise<void> {
-        try {
-            const result = await this.repository.softDelete(id);
-            if (result.affected === 0) {
-                throw new Error(`AsbBipekNonStd with id ${id} not found`);
-            }
-        } catch (error) {
-            throw error;
+        const result = await this.repository.softDelete(id);
+        if (result.affected === 0) {
+            throw new Error(`AsbBipekNonStd with id ${id} not found`);
         }
     }
 
     async findById(id: number): Promise<AsbBipekNonStd | null> {
-        try {
-            const entity = await this.repository.findOne({ where: { id } });
-            return entity ? plainToInstance(AsbBipekNonStd, entity) : null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repository.findOne({ where: { id } });
+        return entity ? plainToInstance(AsbBipekNonStd, entity) : null;
     }
 
-    async findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBipekNonStd[], number]> {
-        try {
-            const [entities, total] = await this.repository.findAndCount({
-                where: { idAsb },
-                skip: (page - 1) * amount,
-                take: amount,
-                order: { id: 'DESC' }
-            });
-            const domainEntities = entities.map((e) => plainToInstance(AsbBipekNonStd, e));
-            return [domainEntities, total];
-        } catch (error) {
-            throw error;
+    async findByAsb(idAsb: number, page?: number, amount?: number): Promise<[AsbBipekNonStd[], number]> {
+        const queryOptions: any = {
+            where: { idAsb },
+            order: { id: 'DESC' }
+        };
+
+        if (page !== undefined && amount !== undefined) {
+            queryOptions.skip = (page - 1) * amount;
+            queryOptions.take = amount;
         }
+
+        const [entities, total] = await this.repository.findAndCount(queryOptions);
+        const domainEntities = entities.map((e) => plainToInstance(AsbBipekNonStd, e));
+        return [domainEntities, total];
+    }
+
+    async deleteByAsbId(idAsb: number): Promise<void> {
+        await this.repository.softDelete({ idAsb });
     }
 }

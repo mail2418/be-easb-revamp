@@ -2,17 +2,20 @@ import { IsNumber, Min, IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetVerifikatorsDto {
-    @IsNumber()
-    @Min(1)
-    @Transform(({ value }) => parseInt(value, 10))
-    page!: number;
+    // Pagination
+        @IsOptional()
+        @IsNumber()
+        @Min(1)
+        @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+        page?: number;
+    
+        @IsOptional()
+        @IsNumber()
+        @Min(1)
+        @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+        amount?: number;
 
-    @IsNumber()
-    @Min(1)
-    @Transform(({ value }) => parseInt(value, 10))
-    amount!: number;
-
-    @IsOptional()
-    @IsString()
-    search?: string;
+        @IsOptional()
+        @IsString()
+        search?: string;
 }

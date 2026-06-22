@@ -1,11 +1,13 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class UpdateJalanJenisPerkerasanDto {
-    @IsNumber()
     @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
     id!: number;
 
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    jenis_perkerasan!: string;
+    jenis_perkerasan?: string;
 }

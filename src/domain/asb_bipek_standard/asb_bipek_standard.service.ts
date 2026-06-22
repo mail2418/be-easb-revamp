@@ -9,4 +9,5 @@ export abstract class AsbBipekStandardService {
     abstract delete(id: number): Promise<void>;
     abstract getById(id: number): Promise<AsbBipekStandard>;
     abstract getByAsb(dto: GetAsbBipekStandardByAsbDto): Promise<{ data: AsbBipekStandard[], total: number, page: number, amount: number, totalPages: number }>;
+    abstract deleteByAsbId(idAsb: number): Promise<void>;
 }

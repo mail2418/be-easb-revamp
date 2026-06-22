@@ -1,0 +1,10 @@
+export class JalanSpesifikasiDesainReview {
+    id!: number;
+    id_usulan_jalan!: number;
+    id_ruang_lingkup!: number;
+    id_hspk!: number;
+    volume_review!: number;
+    spasi_review!: number;
+    tinggi_review!: number;
+    harga_spec_review!: number;
+}

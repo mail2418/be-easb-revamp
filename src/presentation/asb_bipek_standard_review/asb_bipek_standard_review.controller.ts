@@ -12,6 +12,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
 import { AsbBipekStandardReviewService } from '../../domain/asb_bipek_standard_review/asb_bipek_standard_review.service';
 import { GetAsbBipekStandardReviewByAsbDto } from './dto/get_asb_bipek_standard_review_by_asb.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
 
 @Controller('asb-bipek-standard-review')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -20,11 +21,12 @@ export class AsbBipekStandardReviewController {
     constructor(private readonly service: AsbBipekStandardReviewService) { }
 
     @Get('get-by-asb')
-    async getByAsb(@Query() dto: GetAsbBipekStandardReviewByAsbDto) {
+    async getByAsb(@Query() dto: GetAsbBipekStandardReviewByAsbDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getByAsb(dto);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'ASB Bipek Standard Review list retrieved successfully',
                 data: result,
             };

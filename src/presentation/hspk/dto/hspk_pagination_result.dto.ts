@@ -4,6 +4,7 @@ export class HspkPaginationResultDto {
     data!: Hspk[];
     total!: number;
     page!: number;
-    amount!: number;
+    limit!: number;
     totalPages!: number;
 }
+

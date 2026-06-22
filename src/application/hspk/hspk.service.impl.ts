@@ -1,69 +1,127 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import type { Express } from 'express';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import * as ExcelJS from 'exceljs';
+import { Express } from 'express';
 import { HspkService } from '../../domain/hspk/hspk.service';
 import { HspkRepository } from '../../domain/hspk/hspk.repository';
-import { GetHspksDto } from '../../presentation/hspk/dto/get_hspks.dto';
+import { Hspk } from '../../domain/hspk/hspk.entity';
 import { CreateHspkDto } from '../../presentation/hspk/dto/create_hspk.dto';
 import { UpdateHspkDto } from '../../presentation/hspk/dto/update_hspk.dto';
-import { DeleteHspkDto } from '../../presentation/hspk/dto/delete_hspk.dto';
-import { GetHspkDetailDto } from '../../presentation/hspk/dto/get_hspk_detail.dto';
-import { GetHspkByRuangLingkupDto } from '../../presentation/hspk/dto/get_hspk_by_ruang_lingkup.dto';
-import { BulkHspkDto } from '../../presentation/hspk/dto/bulk_hspk.dto';
-import { buildHspkTemplateBuffer, parseHspkBulkFile } from '../../common/utils/excel_template.util';
+import { GetHspkDto } from '../../presentation/hspk/dto/get_hspk.dto';
+import { HspkPaginationResultDto } from '../../presentation/hspk/dto/hspk_pagination_result.dto';
+import { CreateBulkHspkResultDto } from '../../presentation/hspk/dto/create_bulk_hspk_result.dto';
+import { ValidateExcelFileUseCase } from './use_cases/validate_excel_file.use_case';
+import { ValidateExcelHeadersUseCase } from './use_cases/validate_excel_headers.use_case';
+import { ParseExcelDataUseCase } from './use_cases/parse_excel_data.use_case';
+import { GenerateExcelTemplateUseCase } from './use_cases/generate_excel_template.use_case';
 
 @Injectable()
 export class HspkServiceImpl implements HspkService {
-    constructor(private readonly repository: HspkRepository) {}
+    constructor(
+        private readonly hspkRepository: HspkRepository,
+        private readonly validateExcelFileUseCase: ValidateExcelFileUseCase,
+        private readonly validateExcelHeadersUseCase: ValidateExcelHeadersUseCase,
+        private readonly parseExcelDataUseCase: ParseExcelDataUseCase,
+        private readonly generateExcelTemplateUseCase: GenerateExcelTemplateUseCase,
+    ) {}
 
-    async create(dto: CreateHspkDto, tahunAnggaran = new Date().getFullYear()) {
-        return this.repository.create(dto, tahunAnggaran);
-    }
-
-    async update(dto: UpdateHspkDto) {
-        if (!(await this.repository.findById(dto.id))) {
-            throw new NotFoundException(`HSPK with id ${dto.id} not found`);
+    async create(dto: CreateHspkDto): Promise<Hspk> {
+        const existing = await this.hspkRepository.findByNoMataPembayaranAndTahun(dto.no_mata_pembayaran, dto.tahun_anggaran);
+        if (existing) {
+            throw new ConflictException(
+                `Hspk with no_mata_pembayaran ${dto.no_mata_pembayaran} and tahun_anggaran ${dto.tahun_anggaran} already exists`
+            );
         }
-        return this.repository.update(dto);
+        return await this.hspkRepository.create(dto);
     }
 
-    async delete(dto: DeleteHspkDto) {
-        if (!(await this.repository.findById(dto.id))) {
-            throw new NotFoundException(`HSPK with id ${dto.id} not found`);
+    async update(dto: UpdateHspkDto): Promise<Hspk> {
+        const existing = await this.hspkRepository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`Hspk with id ${dto.id} not found`);
         }
-        return this.repository.delete(dto.id);
+
+        const targetNo = dto.no_mata_pembayaran ?? existing.no_mata_pembayaran;
+        const targetTahun = dto.tahun_anggaran ?? existing.tahun_anggaran;
+
+        if (targetNo !== existing.no_mata_pembayaran || targetTahun !== existing.tahun_anggaran) {
+            const duplicate = await this.hspkRepository.findByNoMataPembayaranAndTahun(targetNo, targetTahun);
+            if (duplicate && duplicate.id !== dto.id) {
+                throw new ConflictException(
+                    `Hspk with no_mata_pembayaran ${targetNo} and tahun_anggaran ${targetTahun} already exists`
+                );
+            }
+        }
+
+        return await this.hspkRepository.update(dto);
     }
 
-    async findAll(dto: GetHspksDto) {
-        const result = await this.repository.findAll(dto);
+    async delete(id: number): Promise<boolean> {
+        const existing = await this.hspkRepository.findById(id);
+        if (!existing) {
+            throw new NotFoundException(`Hspk with id ${id} not found`);
+        }
+        return await this.hspkRepository.delete(id);
+    }
+
+    async findById(id: number): Promise<Hspk | null> {
+        return await this.hspkRepository.findById(id);
+    }
+
+    async findAll(dto: GetHspkDto): Promise<HspkPaginationResultDto> {
+        const result = await this.hspkRepository.findAll(dto);
         return {
-            ...result,
-            page: dto.page,
-            amount: dto.amount,
-            totalPages: Math.ceil(result.total / dto.amount) || 1,
+            data: result.data,
+            total: result.total,
+            page: dto.page ?? 1,
+            limit: dto.amount ?? result.total,
+            totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
         };
     }
 
-    async findById(dto: GetHspkDetailDto) {
-        const item = await this.repository.findById(dto.id);
-        if (!item) throw new NotFoundException(`HSPK with id ${dto.id} not found`);
-        return item;
+    async findByNoMataPembayaranAndTahun(no_mata_pembayaran: string, tahun_anggaran: number): Promise<Hspk | null> {
+        return await this.hspkRepository.findByNoMataPembayaranAndTahun(no_mata_pembayaran, tahun_anggaran);
     }
 
-    async findByRuangLingkup(dto: GetHspkByRuangLingkupDto) {
-        return this.repository.findByRuangLingkup(dto.id_ruang_lingkup);
+    async findByRuangLingkup(id_ruang_lingkup: number, tahun_anggaran?: number): Promise<Hspk[]> {
+        return await this.hspkRepository.findByRuangLingkup(id_ruang_lingkup, tahun_anggaran);
     }
 
-    async bulkImport(dto: BulkHspkDto, file: Express.Multer.File) {
-        if (!file) throw new BadRequestException('file is required');
-        const rows = await parseHspkBulkFile(file);
-        if (!rows.length) throw new BadRequestException('No valid rows found in file');
-        const imported = await this.repository.bulkCreate(
-            rows.map((row) => ({ ...row, tahun_anggaran: dto.tahun_anggaran })),
-        );
-        return { imported };
+    async createBulk(file: Express.Multer.File): Promise<CreateBulkHspkResultDto> {
+        this.validateExcelFileUseCase.execute(file);
+
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(file.buffer as any);
+        this.validateExcelHeadersUseCase.execute(workbook);
+
+        const rows = await this.parseExcelDataUseCase.execute(file);
+
+        const conflictingKeys: string[] = [];
+        for (const row of rows) {
+            const existing = await this.hspkRepository.findByNoMataPembayaranAndTahun(
+                row.no_mata_pembayaran,
+                row.tahun_anggaran,
+            );
+            if (existing) {
+                conflictingKeys.push(`no_mata_pembayaran "${row.no_mata_pembayaran}" (tahun_anggaran ${row.tahun_anggaran})`);
+            }
+        }
+        if (conflictingKeys.length > 0) {
+            throw new ConflictException(
+                `HSPK already exists: ${[...new Set(conflictingKeys)].join('; ')}`,
+            );
+        }
+
+        const created = await this.hspkRepository.bulkCreate(rows);
+        const result = new CreateBulkHspkResultDto();
+        result.created = created.length;
+        result.data = created;
+        return result;
     }
 
-    async generateTemplate() {
-        return buildHspkTemplateBuffer();
+    async downloadTemplate(): Promise<{ buffer: Buffer; filename: string }> {
+        const buffer = await this.generateExcelTemplateUseCase.execute();
+        const filename = `HSPK_Template_${new Date().getFullYear()}.xlsx`;
+        return { buffer, filename };
     }
 }
+

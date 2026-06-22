@@ -12,6 +12,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
 import { AsbDetailService } from '../../domain/asb_detail/asb_detail.service';
 import { GetAsbDetailByAsbDto } from './dto/get_asb_detail_by_asb.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
 
 @Controller('asb-detail')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -20,11 +21,12 @@ export class AsbDetailController {
     constructor(private readonly service: AsbDetailService) { }
 
     @Get('get-by-asb')
-    async getByAsb(@Query() dto: GetAsbDetailByAsbDto) {
+    async getByAsb(@Query() dto: GetAsbDetailByAsbDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getByAsb(dto);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'ASB Detail list retrieved successfully',
                 data: result,
             };

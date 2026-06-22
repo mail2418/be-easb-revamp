@@ -10,7 +10,7 @@ export abstract class AsbDetailRepository {
     abstract delete(id: number): Promise<void>;
     abstract findById(id: number): Promise<AsbDetail | null>;
     abstract findByFileType(files: Files): Promise<AsbDetail[]>;
-    abstract findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbDetail[], number]>;
+    abstract findByAsb(idAsb: number, page?: number, amount?: number): Promise<[AsbDetail[], number]>;
     abstract getAsbDetailWithRelation(idAsb: number): Promise<AsbDetailWithRelationDto[]>;
     abstract deleteByIds(ids: number[]): Promise<void>;
     abstract deleteByAsbId(idAsb: number): Promise<void>;

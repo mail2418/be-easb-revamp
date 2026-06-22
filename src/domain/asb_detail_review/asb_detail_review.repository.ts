@@ -10,4 +10,5 @@ export abstract class AsbDetailReviewRepository {
     abstract findById(id: number): Promise<AsbDetailReview | null>;
     abstract findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbDetailReview[], number]>;
     abstract getAsbDetailReviewWithRelation(idAsb: number): Promise<AsbDetailReviewWithRelationDto[]>;
+    abstract deleteByAsbId(idAsb: number): Promise<void>;
 }

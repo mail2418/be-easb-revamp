@@ -25,6 +25,7 @@ import { GetAsbBpsGalleryStdListDto } from './dto/get_asb_bps_gallery_std_list.d
 import { GetAsbBpsGalleryStdListFilterDto } from './dto/get_asb_bps_gallery_std_list_filter.dto';
 import { GetAsbBpsGalleryStdDetailDto } from './dto/get_asb_bps_gallery_std_detail.dto';
 import { AsbBpsGalleryStdPaginationResultDto } from './dto/asb_bps_gallery_std_pagination_result.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
 import type { Express } from 'express';
 
 @Controller('asb-bps-gallery-std')
@@ -38,7 +39,7 @@ export class AsbBpsGalleryStdController {
     async create(
         @Body() dto: CreateAsbBpsGalleryStdDto,
         @UploadedFile() file: Express.Multer.File,
-    ) {
+    ): Promise<ResponseDto> {
         try {
             if (!file) {
                 throw new HttpException('File is required', HttpStatus.BAD_REQUEST);
@@ -46,7 +47,8 @@ export class AsbBpsGalleryStdController {
 
             const result = await this.service.create(dto, file);
             return {
-                statusCode: HttpStatus.CREATED,
+                status: 'success',
+                responseCode: HttpStatus.CREATED,
                 message: 'AsbBpsGallery created successfully',
                 data: result,
             };
@@ -59,24 +61,27 @@ export class AsbBpsGalleryStdController {
     async findAll(
         @Query() paginationDto: GetAsbBpsGalleryStdListDto,
         @Query() filterDto: GetAsbBpsGalleryStdListFilterDto,
-    ) {
+    ): Promise<ResponseDto<AsbBpsGalleryStdPaginationResultDto>> {
         try {
+            const page = paginationDto.page ?? 1;
+            const amount = paginationDto.amount ?? 10;
             const result = await this.service.findAll(
-                paginationDto.page,
-                paginationDto.amount,
+                page,
+                amount,
                 filterDto,
             );
 
             const response: AsbBpsGalleryStdPaginationResultDto = {
                 data: result.data,
                 total: result.total,
-                page: paginationDto.page,
-                amount: paginationDto.amount,
-                totalPages: Math.ceil(result.total / paginationDto.amount),
+                page,
+                amount,
+                totalPages: Math.ceil(result.total / amount),
             };
 
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbBpsGallery list retrieved successfully',
                 data: response,
             };
@@ -86,11 +91,12 @@ export class AsbBpsGalleryStdController {
     }
 
     @Get('detail')
-    async findOne(@Query() dto: GetAsbBpsGalleryStdDetailDto) {
+    async findOne(@Query() dto: GetAsbBpsGalleryStdDetailDto): Promise<ResponseDto> {
         try {
             const result = await this.service.findById(dto.id);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbBpsGallery detail retrieved successfully',
                 data: result,
             };
@@ -104,11 +110,12 @@ export class AsbBpsGalleryStdController {
     async update(
         @Body() dto: UpdateAsbBpsGalleryStdDto,
         @UploadedFile() file?: Express.Multer.File,
-    ) {
+    ): Promise<ResponseDto> {
         try {
             const result = await this.service.update(dto.id, dto, file);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbBpsGallery updated successfully',
                 data: result,
             };
@@ -118,11 +125,12 @@ export class AsbBpsGalleryStdController {
     }
 
     @Delete()
-    async remove(@Body() dto: DeleteAsbBpsGalleryStdDto) {
+    async remove(@Body() dto: DeleteAsbBpsGalleryStdDto): Promise<ResponseDto> {
         try {
             await this.service.delete(dto.id);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbBpsGallery deleted successfully',
             };
         } catch (error) {
@@ -131,11 +139,12 @@ export class AsbBpsGalleryStdController {
     }
 
     @Get('by-komponen-bangunan-std')
-    async findByKomponenBangunan(@Query('id') id: number) {
+    async findByKomponenBangunan(@Query('id') id: number): Promise<ResponseDto> {
         try {
             const result = await this.service.findByKomponenBangunanStdId(id);
             return {
-                statusCode: HttpStatus.OK,
+                status: 'success',
+                responseCode: HttpStatus.OK,
                 message: 'AsbBpsGallery list by komponen bangunan retrieved successfully',
                 data: result,
             };

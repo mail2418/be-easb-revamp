@@ -8,6 +8,7 @@ export abstract class KabKotaRepository {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<KabKota | null>;
     abstract findByKode(kode: string): Promise<KabKota | null>;
+    abstract findByNama(nama: string): Promise<KabKota | null>;
     abstract findByProvinceId(provinceId: number): Promise<KabKota[]>;
     abstract findAll(pagination: GetKabKotasDto): Promise<{ data: KabKota[], total: number }>;
 }

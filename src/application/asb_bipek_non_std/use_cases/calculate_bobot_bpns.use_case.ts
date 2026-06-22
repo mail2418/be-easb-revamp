@@ -86,11 +86,11 @@ export class CalculateBobotBPNSUseCase {
                     bobotAcuan = kompBangProsList[i].avg || 0;
                 }
 
-                const bobot = (bobotInputs[i] / 100) * (bobotAcuan / 100);
+                const bobot = (bobotInputs[i] / 100) * bobotAcuan;
 
                 const asbBipekNonStd = {
                     idAsb,
-                    idAsbKomponenBangunanNonStd: komponenIds[i],
+                    idAsbKomponenBangunanNonstd: komponenIds[i],
                     bobotInput: bobotInputs[i],
                     calculationMethod: calculationMethod,
                     bobotInputProsentase: bobotInputs[i],

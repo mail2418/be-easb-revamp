@@ -11,4 +11,5 @@ export abstract class AsbBipekStandardReviewService {
     abstract getById(id: number): Promise<AsbBipekStandardReview>;
     abstract getByAsb(dto: GetAsbBipekStandardReviewByAsbDto): Promise<{ data: AsbBipekStandardReview[], total: number, page: number, amount: number, totalPages: number }>;
     abstract getBpsWithRelationByAsb(dto: GetAsbBipekStandardReviewByAsbDto): Promise<{ data: BpsReviewWithRelationsDto[], total: number, page: number, amount: number, totalPages: number }>;
+    abstract deleteByAsbId(idAsb: number): Promise<void>;
 }

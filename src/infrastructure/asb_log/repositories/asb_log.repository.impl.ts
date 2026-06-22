@@ -16,26 +16,18 @@ export class AsbLogRepositoryImpl extends AsbLogRepository {
     }
 
     async create(log: string, idUser: number): Promise<AsbLog> {
-        try {
-            const ormEntity = this.repository.create({
-                log,
-                idUser,
-            });
+        const ormEntity = this.repository.create({
+            log,
+            idUser,
+        });
 
-            const saved = await this.repository.save(ormEntity);
-            return plainToInstance(AsbLog, saved);
-        } catch (error) {
-            throw error;
-        }
+        const saved = await this.repository.save(ormEntity);
+        return plainToInstance(AsbLog, saved);
     }
 
     async findById(id: number): Promise<AsbLog | null> {
-        try {
-            const entity = await this.repository.findOne({ where: { id } });
-            return entity ? plainToInstance(AsbLog, entity) : null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repository.findOne({ where: { id } });
+        return entity ? plainToInstance(AsbLog, entity) : null;
     }
 
     async findByUser(
@@ -43,21 +35,17 @@ export class AsbLogRepositoryImpl extends AsbLogRepository {
         page: number,
         amount: number,
     ): Promise<[AsbLog[], number]> {
-        try {
-            const [entities, total] = await this.repository.findAndCount({
-                where: { idUser },
-                order: { createdAt: 'DESC' },
-                skip: (page - 1) * amount,
-                take: amount,
-            });
+        const [entities, total] = await this.repository.findAndCount({
+            where: { idUser },
+            order: { createdAt: 'DESC' },
+            skip: (page - 1) * amount,
+            take: amount,
+        });
 
-            const domainEntities = entities.map((e) =>
-                plainToInstance(AsbLog, e),
-            );
-            return [domainEntities, total];
-        } catch (error) {
-            throw error;
-        }
+        const domainEntities = entities.map((e) =>
+            plainToInstance(AsbLog, e),
+        );
+        return [domainEntities, total];
     }
 
     async findByAsb(
@@ -65,53 +53,41 @@ export class AsbLogRepositoryImpl extends AsbLogRepository {
         page: number,
         amount: number,
     ): Promise<[AsbLog[], number]> {
-        try {
-            const [entities, total] = await this.repository.findAndCount({
-                where: { idAsb },
-                order: { createdAt: 'DESC' },
-                skip: (page - 1) * amount,
-                take: amount,
-            });
+        const [entities, total] = await this.repository.findAndCount({
+            where: { idAsb },
+            order: { createdAt: 'DESC' },
+            skip: (page - 1) * amount,
+            take: amount,
+        });
 
-            const domainEntities = entities.map((e) =>
-                plainToInstance(AsbLog, e),
-            );
-            return [domainEntities, total];
-        } catch (error) {
-            throw error;
-        }
+        const domainEntities = entities.map((e) =>
+            plainToInstance(AsbLog, e),
+        );
+        return [domainEntities, total];
     }
 
     async findAll(
         page: number,
         amount: number,
     ): Promise<[AsbLog[], number]> {
-        try {
-            const [entities, total] = await this.repository.findAndCount({
-                order: { createdAt: 'DESC' },
-                skip: (page - 1) * amount,
-                take: amount,
-            });
+        const [entities, total] = await this.repository.findAndCount({
+            order: { createdAt: 'DESC' },
+            skip: (page - 1) * amount,
+            take: amount,
+        });
 
-            const domainEntities = entities.map((e) =>
-                plainToInstance(AsbLog, e),
-            );
-            return [domainEntities, total];
-        } catch (error) {
-            throw error;
-        }
+        const domainEntities = entities.map((e) =>
+            plainToInstance(AsbLog, e),
+        );
+        return [domainEntities, total];
     }
 
     async findRecent(limit: number): Promise<AsbLog[]> {
-        try {
-            const entities = await this.repository.find({
-                order: { createdAt: 'DESC' },
-                take: limit,
-            });
+        const entities = await this.repository.find({
+            order: { createdAt: 'DESC' },
+            take: limit,
+        });
 
-            return entities.map((e) => plainToInstance(AsbLog, e));
-        } catch (error) {
-            throw error;
-        }
+        return entities.map((e) => plainToInstance(AsbLog, e));
     }
 }

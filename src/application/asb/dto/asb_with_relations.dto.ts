@@ -1,3 +1,5 @@
+import { Expose, Transform } from 'class-transformer';
+
 export class AsbWithRelationsDto {
     id: number;
     idAsbJenis: number;
@@ -7,10 +9,13 @@ export class AsbWithRelationsDto {
     idRekening: number | null;
     idRekeningReview: number | null;
     idKabkota: number | null;
+    idKecamatan: number | null;
+    idKelurahan: number | null;
     idAsbKlasifikasi: number | null;
     idVerifikatorAdpem: number | null;
     idVerifikatorBPKAD: number | null;
     idVerifikatorBappeda: number | null;
+    rejectVerifId: number | null;
     tahunAnggaran: number | null;
     namaAsb: string;
     alamat: string | null;
@@ -20,11 +25,23 @@ export class AsbWithRelationsDto {
     verifiedAdpemAt: Date | null;
     verifiedBpkadAt: Date | null;
     verifiedBappedaAt: Date | null;
+    rejectedAt: Date | null;
     rejectReason: string | null;
     shst: number | null;
     perencanaanKonstruksi: number | null;
     pengawasanKonstruksi: number | null;
     managementKonstruksi: number | null;
+    @Expose()
+    @Transform(({ value }) => (value != null ? Number(value) : null))
+    penyesuaianPerencanaanKonstruksi: number | null;
+
+    @Expose()
+    @Transform(({ value }) => (value != null ? Number(value) : null))
+    penyesuaianPengawasanKonstruksi: number | null;
+
+    @Expose()
+    @Transform(({ value }) => (value != null ? Number(value) : null))
+    penyesuaianManagementKonstruksi: number | null;
     pengelolaanKegiatan: number | null;
     luasTotalBangunan: number | null;
     koefisienLantaiTotal: number | null;
@@ -42,6 +59,18 @@ export class AsbWithRelationsDto {
         id: number;
         nama: string;
         idProvinsi: number;
+    } | null;
+
+    kecamatan?: {
+        id: number;
+        namaKecamatan: string;
+        idKabkota: number;
+    } | null;
+
+    kelurahan?: {
+        id: number;
+        namaKelurahan: string;
+        idKecamatan: number;
     } | null;
 
     asbStatus?: {
@@ -85,10 +114,151 @@ export class AsbWithRelationsDto {
         username: string;
     } | null;
 
-    asbDetails?: any[];
-    asbDetailReviews?: any[];
-    asbBipekStandards?: any[];
-    asbBipekStandardReviews?: any[];
-    asbBipekNonStds?: any[];
-    asbBipekNonStdReviews?: any[];
+    rejectVerifikator?: {
+        id: number;
+        username: string;
+    } | null;
+
+    asbDetails?: Array<{
+        id: number;
+        idAsb: number | null;
+        files: string;
+        idAsbLantai: number | null;
+        idAsbFungsiRuang: number | null;
+        asbFungsiRuangKoef: number | null;
+        lantaiKoef: number | null;
+        luas: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbLantai?: {
+            id: number;
+            lantai: string;
+            type: string;
+            koef: number;
+            idSatuan: number;
+        } | null;
+        asbFungsiRuang?: {
+            id: number;
+            nama_fungsi_ruang: string;
+            koef: number;
+            isActive: boolean;
+        } | null;
+    }>;
+
+    asbDetailReviews?: Array<{
+        id: number;
+        idAsbDetail: number | null;
+        files: string;
+        idAsbLantai: number | null;
+        idAsbFungsiRuang: number | null;
+        idAsb: number | null;
+        asbFungsiRuangKoef: number | null;
+        lantaiKoef: number | null;
+        luas: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbLantai?: {
+            id: number;
+            lantai: string;
+            type: string;
+            koef: number;
+            idSatuan: number;
+        } | null;
+        asbFungsiRuang?: {
+            id: number;
+            nama_fungsi_ruang: string;
+            koef: number;
+            isActive: boolean;
+        } | null;
+    }>;
+
+    asbBipekStandards?: Array<{
+        id: number;
+        idAsb: number | null;
+        files: string;
+        idAsbKomponenBangunanStd: number | null;
+        bobotInput: number | null;
+        calculationMethod: string | null;
+        jumlahBobot: number | null;
+        rincianHarga: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbKomponenBangunanStd?: {
+            id: number;
+            komponen: string;
+            files: string;
+            idAsbJenis: number;
+            idAsbTipeBangunan: number;
+        } | null;
+    }>;
+
+    asbBipekStandardReviews?: Array<{
+        id: number;
+        idAsbBipekStandard: number | null;
+        idAsbKomponenBangunanStd: number | null;
+        idAsb: number | null;
+        files: string;
+        bobotInput: number | null;
+        calculationMethod: string | null;
+        jumlahBobot: number | null;
+        rincianHarga: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbKomponenBangunanStd?: {
+            id: number;
+            komponen: string;
+            files: string;
+            idAsbJenis: number;
+            idAsbTipeBangunan: number;
+        } | null;
+    }>;
+
+    asbBipekNonStds?: Array<{
+        id: number;
+        idAsb: number | null;
+        files: string;
+        idAsbKomponenBangunanNonstd: number | null;
+        bobotInput: number | null;
+        bobotInputProsentase: number | null;
+        calculationMethod: string | null;
+        jumlahBobot: number | null;
+        rincianHarga: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbKomponenBangunanNonstd?: {
+            id: number;
+            komponen: string;
+            files: string;
+            idAsbJenis: number;
+            idAsbTipeBangunan: number;
+        } | null;
+    }>;
+
+    asbBipekNonStdReviews?: Array<{
+        id: number;
+        idAsbBipekNonStd: number;
+        idAsbKomponenBangunanNonstd: number | null;
+        idAsb: number | null;
+        files: string;
+        bobotInput: number | null;
+        calculationMethod: string | null;
+        bobotInputProsentase: number | null;
+        jumlahBobot: number | null;
+        rincianHarga: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbKomponenBangunanNonstd?: {
+            id: number;
+            komponen: string;
+            files: string;
+            idAsbJenis: number;
+            idAsbTipeBangunan: number;
+        } | null;
+    }>;
 }

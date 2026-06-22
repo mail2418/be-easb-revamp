@@ -18,98 +18,76 @@ export class AsbKomponenBangunanProsNonstdServiceImpl implements AsbKomponenBang
     ) { }
 
     async create(dto: CreateAsbKomponenBangunanProsNonstdDto): Promise<AsbKomponenBangunanProsNonstd> {
-        try {
-            this.validateStatisticalRangeUseCase.execute(dto.min || 0, dto.avgMin || 0, dto.avg || 0, dto.avgMax || 0, dto.max || 0);
-            const entity = await this.repository.create(dto);
-            return entity;
-        } catch (error) {
-            throw error;
-        }
+        this.validateStatisticalRangeUseCase.execute(dto.min || 0, dto.avgMin || 0, dto.avg || 0, dto.avgMax || 0, dto.max || 0);
+        const entity = await this.repository.create(dto);
+        return entity;
     }
 
     async update(dto: UpdateAsbKomponenBangunanProsNonstdDto): Promise<AsbKomponenBangunanProsNonstd> {
-        try {
-            const existing = await this.repository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`AsbKomponenBangunanProsNonstd with id ${dto.id} not found`);
-            }
-
-            // Prepare updated values (use existing if not provided)
-            const newMin = dto.min !== undefined ? dto.min : existing.min;
-            const newAvgMin = dto.avgMin !== undefined ? dto.avgMin : existing.avgMin;
-            const newAvg = dto.avg !== undefined ? dto.avg : existing.avg;
-            const newAvgMax = dto.avgMax !== undefined ? dto.avgMax : existing.avgMax;
-            const newMax = dto.max !== undefined ? dto.max : existing.max;
-
-            this.validateStatisticalRangeUseCase.execute(newMin, newAvgMin, newAvg, newAvgMax, newMax);
-
-            const updateData: Partial<AsbKomponenBangunanProsNonstd> = {
-                idAsbKomponenBangunanNonstd: dto.idAsbKomponenBangunanNonstd,
-                min: dto.min,
-                avgMin: dto.avgMin,
-                avg: dto.avg,
-                avgMax: dto.avgMax,
-                max: dto.max,
-            };
-
-            // Remove undefined values
-            Object.keys(updateData).forEach(key => {
-                if (updateData[key as keyof typeof updateData] === undefined) {
-                    delete updateData[key as keyof typeof updateData];
-                }
-            });
-
-            const updated = await this.repository.update(dto.id, updateData);
-            return updated;
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`AsbKomponenBangunanProsNonstd with id ${dto.id} not found`);
         }
+
+        // Prepare updated values (use existing if not provided)
+        const newMin = dto.min !== undefined ? dto.min : existing.min;
+        const newAvgMin = dto.avgMin !== undefined ? dto.avgMin : existing.avgMin;
+        const newAvg = dto.avg !== undefined ? dto.avg : existing.avg;
+        const newAvgMax = dto.avgMax !== undefined ? dto.avgMax : existing.avgMax;
+        const newMax = dto.max !== undefined ? dto.max : existing.max;
+
+        this.validateStatisticalRangeUseCase.execute(newMin, newAvgMin, newAvg, newAvgMax, newMax);
+
+        const updateData: Partial<AsbKomponenBangunanProsNonstd> = {
+            idAsbKomponenBangunanNonstd: dto.idAsbKomponenBangunanNonstd,
+            min: dto.min,
+            avgMin: dto.avgMin,
+            avg: dto.avg,
+            avgMax: dto.avgMax,
+            max: dto.max,
+        };
+
+        // Remove undefined values
+        Object.keys(updateData).forEach(key => {
+            if (updateData[key as keyof typeof updateData] === undefined) {
+                delete updateData[key as keyof typeof updateData];
+            }
+        });
+
+        const updated = await this.repository.update(dto.id, updateData);
+        return updated;
     }
 
     async delete(dto: DeleteAsbKomponenBangunanProsNonstdDto): Promise<boolean> {
-        try {
-            const existing = await this.repository.findById(dto.id);
-            if (!existing) {
-                throw new NotFoundException(`AsbKomponenBangunanProsNonstd with id ${dto.id} not found`);
-            }
-            return await this.repository.delete(dto.id);
-        } catch (error) {
-            throw error;
+        const existing = await this.repository.findById(dto.id);
+        if (!existing) {
+            throw new NotFoundException(`AsbKomponenBangunanProsNonstd with id ${dto.id} not found`);
         }
+        return await this.repository.delete(dto.id);
     }
 
     async getAll(pagination: GetAsbKomponenBangunanProsNonstdListDto): Promise<AsbKomponenBangunanProsNonstdPaginationResult> {
-        try {
-            const result = await this.repository.findAll(pagination);
-            return {
-                komponenBangunanProsList: result.data,
-                total: result.total,
-                page: pagination.page,
-                amount: pagination.amount,
-                totalPages: Math.ceil(result.total / pagination.amount)
-            };
-        } catch (error) {
-            throw error;
-        }
+        const result = await this.repository.findAll(pagination);
+        const page = pagination.page ?? 1;
+        const amount = pagination.amount ?? result.total;
+        return {
+            komponenBangunanProsList: result.data,
+            total: result.total,
+            page,
+            amount,
+            totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
+        };
     }
 
     async getDetail(dto: GetAsbKomponenBangunanProsNonstdDetailDto): Promise<AsbKomponenBangunanProsNonstd> {
-        try {
-            const entity = await this.repository.findById(dto.id);
-            if (!entity) {
-                throw new NotFoundException(`AsbKomponenBangunanProsNonstd with id ${dto.id} not found`);
-            }
-            return entity;
-        } catch (error) {
-            throw error;
+        const entity = await this.repository.findById(dto.id);
+        if (!entity) {
+            throw new NotFoundException(`AsbKomponenBangunanProsNonstd with id ${dto.id} not found`);
         }
+        return entity;
     }
 
     async findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd | null> {
-        try {
-            return await this.repository.findByKomponenBangunanNonstdId(id);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repository.findByKomponenBangunanNonstdId(id);
     }
 }

@@ -20,11 +20,14 @@ import { VerifyBpnsDto } from './dto/verify_bpns.dto';
 import { VerifyRekeningDto } from './dto/verify_rekening.dto';
 import { UserContext } from '../../common/types/user-context.type';
 import { StoreVerifDto } from './dto/store_verif.dto';
+import { StorePenyesuaianDto } from './dto/store_penyesuaian.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
+import { GetAsbAnalyticsFilterDto } from 'src/application/asb/dto/get_asb_analytics_filter.dto';
 import { VerifyBpsDto } from './dto/verify_bps.dto';
 import { VerifyPekerjaanDto } from './dto/verify_pekerjaan.dto';
 import { VerifyDto } from './dto/verify.dto';
 import { RejectDto } from './dto/reject.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
 
 @Controller('asb')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -36,7 +39,7 @@ export class AsbController {
     async findAll(
         @Query() dto: FindAllAsbDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.findAll(dto, user.idOpd, user.roles);
@@ -86,7 +89,7 @@ export class AsbController {
     async findById(
         @Query('id', ParseIntPipe) id: number,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: AsbWithRelationsDto }> {
+    ): Promise<ResponseDto<AsbWithRelationsDto>> {
         const user = req.user as UserContext;
 
         const asb = await this.asbService.findById(id, user.idOpd, user.roles);
@@ -104,7 +107,7 @@ export class AsbController {
     async getAsbByMonthYear(
         @Query() dto: GetAsbByMonthYearDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: { date: string; count: number }[] }> {
+    ): Promise<ResponseDto<{ date: string; count: number }[]>> {
         const user = req.user as UserContext;
 
         const data = await this.asbService.getAsbByMonthYear(dto, user.idOpd, user.roles);
@@ -122,7 +125,7 @@ export class AsbController {
     async getAsbByMonthYearStatus(
         @Query() dto: GetAsbByMonthYearDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: { asbStatus: string; amount: number }[] }> {
+    ): Promise<ResponseDto<{ asbStatus: string; amount: number }[]>> {
         const user = req.user as UserContext;
 
         const data = await this.asbService.getAsbByMonthYearStatus(dto, user.idOpd, user.roles);
@@ -135,14 +138,63 @@ export class AsbController {
         };
     }
 
+    @Get('get-asb-analytic')
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getAsbAnalytic(
+        @Query() filter: GetAsbAnalyticsFilterDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
+        try {
+            const user = req.user as UserContext;
+            const data = await this.asbService.getAsbAnalytics(user.idOpd, user.roles, filter);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB analytics retrieved successfully',
+                data,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
     @Post('store-index')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async storeIndex(
         @Body() dto: CreateAsbStoreIndexDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
-            console.log("Dto: ", dto);
             const user = req.user as UserContext;
             const result = await this.asbService.createIndex(dto, user.idOpd, user.roles, user.username);
 
@@ -187,11 +239,11 @@ export class AsbController {
     }
 
     @Put('store-index')
-    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async updateIndex(
         @Body() dto: UpdateAsbStoreIndexDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.updateIndex(dto, user.idOpd, user.roles);
@@ -241,7 +293,7 @@ export class AsbController {
     async deleteAsb(
         @Body() dto: DeleteAsbDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.deleteAsb(dto.id_asb, user.idOpd, user.roles);
@@ -291,7 +343,7 @@ export class AsbController {
     async storeLantai(
         @Body() dto: UpdateAsbStoreLantaiDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeLantai(dto, user.idOpd, user.roles);
@@ -341,7 +393,7 @@ export class AsbController {
     async storeBps(
         @Body() dto: StoreBpsDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeBps(dto, user.idOpd, user.roles);
@@ -391,7 +443,7 @@ export class AsbController {
     async storeBpns(
         @Body() dto: StoreBpnsDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeBpns(dto, user.idOpd, user.roles);
@@ -441,7 +493,7 @@ export class AsbController {
     async storeRekening(
         @Body() dto: StoreRekeningDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeRekening(dto, user.idOpd, user.roles);
@@ -491,7 +543,7 @@ export class AsbController {
     async storeVerif(
         @Body() dto: StoreVerifDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeVerif(dto, user.idOpd, user.roles);
@@ -536,12 +588,62 @@ export class AsbController {
         }
     }
 
+    @Put('store-penyesuaian')
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async storePenyesuaian(
+        @Body() dto: StorePenyesuaianDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.storePenyesuaian(dto, user.userId, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB penyesuaian stored successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
     @Put('verify-lantai')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async verifyLantai(
         @Body() dto: VerifyLantaiDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verifyLantai(dto, user.userId, user.idOpd, user.roles);
@@ -591,7 +693,7 @@ export class AsbController {
     async verifyBps(
         @Body() dto: VerifyBpsDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verifyBps(dto, user.userId, user.idOpd, user.roles);
@@ -641,7 +743,7 @@ export class AsbController {
     async verifyBpns(
         @Body() dto: VerifyBpnsDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verifyBpns(dto, user.userId, user.idOpd, user.roles);
@@ -691,7 +793,7 @@ export class AsbController {
     async verifyRekening(
         @Body() dto: VerifyRekeningDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verifyRekening(dto, user.userId, user.idOpd, user.roles);
@@ -741,7 +843,7 @@ export class AsbController {
     async verifyPekerjaan(
         @Body() dto: VerifyPekerjaanDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verifyPekerjaan(dto, user.userId, user.idOpd, user.roles);
@@ -791,7 +893,7 @@ export class AsbController {
     async verify(
         @Body() dto: VerifyDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.verify(dto.id_asb, user.userId, user.idOpd, user.roles);
@@ -841,15 +943,65 @@ export class AsbController {
     async reject(
         @Body() dto: RejectDto,
         @Req() req: Request,
-    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+    ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.reject(dto.id_asb, dto.reject_reason, user.idOpd, user.roles);
+            const result = await this.asbService.reject(dto.id_asb, dto.reject_reason, user.userId, user.idOpd, user.roles);
 
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,
                 message: 'ASB rejected successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Get('reject-info')
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getRejectInfo(
+        @Query('id', ParseIntPipe) id: number,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.getRejectInfo(id, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Reject info retrieved successfully',
                 data: result,
             };
         } catch (error) {

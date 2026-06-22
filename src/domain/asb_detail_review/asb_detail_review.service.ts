@@ -11,4 +11,7 @@ export abstract class AsbDetailReviewService {
     abstract getById(id: number): Promise<AsbDetailReview>;
     abstract getByAsb(dto: GetAsbDetailReviewByAsbDto): Promise<{ data: AsbDetailReview[], total: number, page: number, amount: number, totalPages: number }>;
     abstract getAsbDetailReviewWithRelation(idAsb: number): Promise<AsbDetailReviewWithRelationDto[]>;
+    abstract deleteByAsbId(idAsb: number): Promise<void>;
+    abstract calculateKoefLantaiTotal(idAsb: number, luasTotal: number): Promise<number>;
+    abstract calculateKoefFungsiRuangTotal(idAsb: number, luasTotal: number): Promise<number>;
 }

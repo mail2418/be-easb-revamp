@@ -1,27 +1,36 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateHspkDto {
-    @IsNumber()
     @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
     id!: number;
 
+    @IsOptional()
     @IsNumber()
-    @IsNotEmpty()
-    id_ruang_lingkup!: number;
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    id_ruang_lingkup?: number;
 
-    @IsString()
-    @IsNotEmpty()
-    no_mata_pembayaran!: string;
-
-    @IsString()
-    @IsNotEmpty()
-    satuan!: string;
-
+    @IsOptional()
     @IsNumber()
-    @IsNotEmpty()
-    harga_satuan!: number;
+    @Min(2000)
+    @Max(2100)
+    @Transform(({ value }) => (value !== undefined && value !== null && value !== '' ? parseInt(value, 10) : undefined))
+    tahun_anggaran?: number;
 
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    uraian!: string;
+    no_mata_pembayaran?: string;
+
+    @IsOptional()
+    @IsString()
+    satuan?: string;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    harga_satuan?: number;
 }
+

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { AsbLantaiRepository } from '../../../domain/asb_lantai/asb_lantai.repository';
 import { AsbLantai } from '../../../domain/asb_lantai/asb_lantai.entity';
 import { AsbLantaiOrmEntity } from '../orm/asb_lantai.orm_entity';
@@ -9,84 +9,75 @@ import { UpdateAsbLantaiDto } from '../../../presentation/asb_lantai/dto/update_
 import { GetAsbLantaisDto } from '../../../presentation/asb_lantai/dto/get_asb_lantais.dto';
 import { plainToInstance } from 'class-transformer';
 import { AsbLantaiPaginationResultDto } from 'src/presentation/asb_lantai/dto/asb_lantai_pagination_result.dto';
-import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
     constructor(@InjectRepository(AsbLantaiOrmEntity) private readonly repo: Repository<AsbLantaiOrmEntity>) { }
 
     async create(dto: CreateAsbLantaiDto): Promise<AsbLantai> {
-        try {
-            const newEntity = await this.repo.save({
-                lantai: dto.lantai,
-                type: dto.type,
-                koef: dto.koef,
-                idSatuan: dto.id_satuan,
-            });
-            return newEntity;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = this.repo.create({
+            lantai: dto.lantai,
+            type: dto.type,
+            koef: dto.koef,
+            idSatuan: dto.id_satuan,
+        });
+        const newEntity = await this.repo.save(ormEntity);
+        return newEntity;
     }
 
     async update(dto: UpdateAsbLantaiDto): Promise<AsbLantai> {
-        try {
-            const { id, id_satuan, ...rest } = dto;
-            await this.repo.update(id, { ...rest, idSatuan: id_satuan });
-            const updatedEntity = await this.repo.findOne({ where: { id } });
-            return updatedEntity!;
-        } catch (error) {
-            throw error;
-        }
+        const updateData: Partial<AsbLantaiOrmEntity> = {
+            lantai: dto.lantai,
+            type: dto.type,
+            koef: dto.koef,
+            idSatuan: dto.id_satuan,
+        };
+        await this.repo.update(dto.id, updateData);
+        const updatedEntity = await this.repo.findOne({ where: { id: dto.id } });
+        return updatedEntity!;
     }
 
     async delete(id: number): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(id).then(() => true).catch(() => false);
     }
 
     async findById(id: number): Promise<AsbLantai | null> {
-        try {
-            const entity = await this.repo.findOne({ where: { id } });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo
+            .createQueryBuilder('asb_lantai')
+            .select(['asb_lantai.id', 'asb_lantai.lantai', 'asb_lantai.koef'])
+            .where('asb_lantai.id = :id', { id })
+            .getOne();
+        return entity || null;
     }
 
     async findAll(pagination: GetAsbLantaisDto): Promise<AsbLantaiPaginationResultDto> {
-        try {
-            const qb = this.repo.createQueryBuilder('asb_lantai');
+        const findOptions: any = {
+            order: { id: 'DESC' }
+        };
 
-            applyIlikeSearch(qb, 'asb_lantai', ['lantai'], pagination.search);
+        if (pagination.search) {
+            const q = ILike(`%${pagination.search}%`);
+            findOptions.where = [{ lantai: q }, { type: q }];
+        }
 
-            const [data, total] = await qb
-                .orderBy('asb_lantai.id', 'DESC')
-                .skip((pagination.page - 1) * pagination.amount)
-                .take(pagination.amount)
-                .getManyAndCount();
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            findOptions.skip = (pagination.page - 1) * pagination.amount;
+            findOptions.take = pagination.amount;
+        }
 
-            return {
-                data,
-                total,
-                page: pagination.page,
-                limit: pagination.amount,
-                totalPages: Math.ceil(total / pagination.amount)
-            }
-        } catch (error) {
-            throw error;
+        const [data, total] = await this.repo.findAndCount(findOptions);
+
+        return {
+            data,
+            total,
+            page: pagination.page ?? 1,
+            limit: pagination.amount ?? total,
+            totalPages: pagination.amount ? Math.ceil(total / pagination.amount) : 1
         }
     }
 
     async findByLantai(lantai: string): Promise<AsbLantai | null> {
-        try {
-            const entity = await this.repo.findOne({ where: { lantai } });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo.findOne({ where: { lantai } });
+        return entity || null;
     }
 }

@@ -3,6 +3,8 @@ import { Opd } from '../opd/opd.entity';
 import { AsbStatus } from '../asb_status/asb_status.entity';
 import { AsbJenis } from '../asb_jenis/asb_jenis.entity';
 import { User } from '../user/user.entity';
+import { Kecamatan } from '../kecamatan/kecamatan.entity';
+import { Kelurahan } from '../kelurahan/kelurahan.entity';
 import { AsbDetail } from '../asb_detail/asb_detail.entity';
 import { AsbDetailReview } from '../asb_detail_review/asb_detail_review.entity';
 import { AsbBipekStandard } from '../asb_bipek_standard/asb_bipek_standard.entity';
@@ -23,10 +25,13 @@ export class Asb {
     idRekening: number | null;
     idRekeningReview: number | null;
     idKabkota: number | null;
+    idKecamatan: number | null;
+    idKelurahan: number | null;
     idAsbKlasifikasi: number | null;
     idVerifikatorAdpem: number | null;
     idVerifikatorBPKAD: number | null;
     idVerifikatorBappeda: number | null;
+    rejectVerifId: number | null;
 
     // Core fields
     tahunAnggaran: number | null;
@@ -38,6 +43,7 @@ export class Asb {
     verifiedAdpemAt: Date | null;
     verifiedBpkadAt: Date | null;
     verifiedBappedaAt: Date | null;
+    rejectedAt: Date | null;
     rejectReason: string | null;
 
     // Double/numeric fields
@@ -45,6 +51,9 @@ export class Asb {
     perencanaanKonstruksi: number | null;
     pengawasanKonstruksi: number | null;
     managementKonstruksi: number | null;
+    penyesuaianPerencanaanKonstruksi: number | null;
+    penyesuaianPengawasanKonstruksi: number | null;
+    penyesuaianManagementKonstruksi: number | null;
     pengelolaanKegiatan: number | null;
     luasTotalBangunan: number | null;
     koefisienLantaiTotal: number | null;
@@ -59,12 +68,15 @@ export class Asb {
 
     // Relations
     kabkota?: KabKota | null;
+    kecamatan?: Kecamatan | null;
+    kelurahan?: Kelurahan | null;
     opd?: Opd;
     asbStatus?: AsbStatus;
     asbJenis?: AsbJenis;
     verifikatorAdpem?: User | null;
     verifikatorBPKAD?: User | null;
     verifikatorBappeda?: User | null;
+    rejectVerifikator?: User | null;
 
     // OneToMany Relations
     asbDetails?: AsbDetail[];

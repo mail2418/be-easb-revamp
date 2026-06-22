@@ -1,0 +1,77 @@
+{
+	"info": {
+		"_postman_id": "jalan-spesifikasi-desain-module-collection",
+		"name": "Jalan Spesifikasi Desain Module API Collection",
+		"description": "API collection for Jalan Spesifikasi Desain (Road Design Specification) module - manages design specification records for Usulan Jalan entries",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		},
+		{
+			"key": "api_prefix",
+			"value": "api/dev/v1",
+			"type": "string",
+			"description": "API prefix (api/dev/v1 for development, api/v1 for production)"
+		}
+	],
+	"item": [
+		{
+			"name": "Jalan Spesifikasi Desain",
+			"item": [
+				{
+					"name": "Get Jalan Spesifikasi Desain by Usulan Jalan",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/jalan-spesifikasi-desain/get-by-usulan-jalan?idUsulanJalan=1&page=1&amount=10",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "jalan-spesifikasi-desain", "get-by-usulan-jalan"],
+							"query": [
+								{
+									"key": "idUsulanJalan",
+									"value": "1",
+									"description": "ID of the Usulan Jalan to get design specifications for"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional, minimum 1)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Number of items per page (optional, minimum 1)"
+								}
+							]
+						},
+						"description": "Get all Jalan Spesifikasi Desain records for a specific Usulan Jalan with pagination. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for retrieving Jalan Spesifikasi Desain records"
+		}
+	]
+}

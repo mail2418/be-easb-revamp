@@ -20,73 +20,52 @@ export class StandardKlasifikasiRepositoryImpl extends StandardKlasifikasiReposi
     }
 
     async create(dto: CreateStandardKlasifikasiDto): Promise<StandardKlasifikasi> {
-        try {
-            const ormEntity = plainToInstance(StandardKlasifikasiOrmEntity, dto);
-            const newEntity = await this.repo.save(ormEntity);
-            return newEntity;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = plainToInstance(StandardKlasifikasiOrmEntity, dto);
+        const newEntity = await this.repo.save(ormEntity);
+        return newEntity;
     }
 
     async update(dto: UpdateStandardKlasifikasiDto): Promise<StandardKlasifikasi> {
-        try {
-            const { id, ...updateData } = dto;
-            await this.repo.update(id, updateData);
-            const updatedEntity = await this.repo.findOne({ where: { id } });
-            return updatedEntity!;
-        } catch (error) {
-            throw error;
-        }
+        const { id, ...updateData } = dto;
+        await this.repo.update(id, updateData);
+        const updatedEntity = await this.repo.findOne({ where: { id } });
+        return updatedEntity!;
     }
 
     async delete(dto: DeleteStandardKlasifikasiDto): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(dto.id)
-                .then(() => true)
-                .catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(dto.id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findAll(dto: GetStandardKlasifikasisDto): Promise<{ data: StandardKlasifikasi[]; total: number }> {
-        try {
-            const queryBuilder = this.repo.createQueryBuilder("standard_klasifikasi");
+        const queryBuilder = this.repo.createQueryBuilder("standard_klasifikasi");
 
-            // Apply filters
-            if (dto.id_asb_klasifikasi) {
-                queryBuilder.andWhere("standard_klasifikasi.id_asb_klasifikasi = :id_asb_klasifikasi", {
-                    id_asb_klasifikasi: dto.id_asb_klasifikasi
-                });
-            }
-            if (dto.id_kabkota) {
-                queryBuilder.andWhere("standard_klasifikasi.id_kabkota = :id_kabkota", {
-                    id_kabkota: dto.id_kabkota
-                });
-            }
-
-            // Pagination
-            const skip = (dto.page - 1) * dto.amount;
-            queryBuilder.skip(skip).take(dto.amount);
-
-            // Order
-            queryBuilder.orderBy("standard_klasifikasi.id", "DESC");
-
-            const [data, total] = await queryBuilder.getManyAndCount();
-
-            return { data, total };
-        } catch (error) {
-            throw error;
+        if (dto.id_asb_klasifikasi) {
+            queryBuilder.andWhere("standard_klasifikasi.id_asb_klasifikasi = :id_asb_klasifikasi", {
+                id_asb_klasifikasi: dto.id_asb_klasifikasi
+            });
         }
+        if (dto.id_kabkota) {
+            queryBuilder.andWhere("standard_klasifikasi.id_kabkota = :id_kabkota", {
+                id_kabkota: dto.id_kabkota
+            });
+        }
+
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? 10;
+        const skip = (page - 1) * amount;
+        queryBuilder.skip(skip).take(amount);
+
+        queryBuilder.orderBy("standard_klasifikasi.id", "DESC");
+
+        const [data, total] = await queryBuilder.getManyAndCount();
+
+        return { data, total };
     }
 
     async findById(id: number): Promise<StandardKlasifikasi | null> {
-        try {
-            const entity = await this.repo.findOne({ where: { id } });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo.findOne({ where: { id } });
+        return entity || null;
     }
 }

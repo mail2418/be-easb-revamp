@@ -10,75 +10,57 @@ export class KelurahanRepositoryImpl implements KelurahanRepository {
     constructor(@InjectRepository(KelurahanOrmEntity) private readonly repo: Repository<KelurahanOrmEntity>) { }
 
     async create(kelurahan: Partial<Kelurahan>): Promise<Kelurahan> {
-        try {
-            const kelurahanOrm = this.repo.create(kelurahan);
-            const newKelurahan = await this.repo.save(kelurahanOrm);
-            return newKelurahan;
-        } catch (error) {
-            throw error;
-        }
+        const kelurahanOrm = this.repo.create(kelurahan);
+        const newKelurahan = await this.repo.save(kelurahanOrm);
+        return newKelurahan;
     }
 
     async update(id: number, kelurahan: Partial<Kelurahan>): Promise<Kelurahan> {
-        try {
-            await this.repo.update(id, kelurahan);
-            const updatedKelurahan = await this.repo.findOne({ where: { id } });
-            return updatedKelurahan!;
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.update(id, kelurahan);
+        const updatedKelurahan = await this.repo.findOne({ where: { id } });
+        return updatedKelurahan!;
     }
 
     async delete(id: number): Promise<void> {
-        try {
-            await this.repo.softDelete(id);
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.softDelete(id);
     }
 
     async findById(id: number): Promise<Kelurahan | null> {
-        try {
-            const kelurahan = await this.repo.findOne({ where: { id } });
-            return kelurahan || null;
-        } catch (error) {
-            throw error;
-        }
+        const kelurahan = await this.repo
+            .createQueryBuilder('kelurahan')
+            .select(['kelurahan.id', 'kelurahan.nama_kelurahan', 'kelurahan.id_kecamatan'])
+            .where('kelurahan.id = :id', { id })
+            .getOne();
+        return kelurahan || null;
     }
 
-    async findAll(page: number, amount: number, filter?: any): Promise<{ data: Kelurahan[]; total: number }> {
-        try {
-            const queryBuilder = this.repo.createQueryBuilder('kelurahan');
+    async findAll(page: number | undefined, amount: number | undefined, filter?: any): Promise<{ data: Kelurahan[]; total: number }> {
+        const queryBuilder = this.repo.createQueryBuilder('kelurahan');
 
-            if (filter?.idKecamatan) {
-                queryBuilder.andWhere('kelurahan.id_kecamatan = :idKecamatan', { idKecamatan: filter.idKecamatan });
-            }
-
-            if (filter?.search) {
-                queryBuilder.andWhere('kelurahan.nama_kelurahan ILIKE :search', { search: `%${filter.search}%` });
-            }
-
-            const [data, total] = await queryBuilder
-                .skip((page - 1) * amount)
-                .take(amount)
-                .orderBy('kelurahan.nama_kelurahan', 'ASC')
-                .getManyAndCount();
-
-            return { data, total };
-        } catch (error) {
-            throw error;
+        if (filter?.idKecamatan) {
+            queryBuilder.andWhere('kelurahan.id_kecamatan = :idKecamatan', { idKecamatan: filter.idKecamatan });
         }
+
+        if (filter?.search) {
+            queryBuilder.andWhere('kelurahan.nama_kelurahan ILIKE :search', { search: `%${filter.search}%` });
+        }
+
+        if (page !== undefined && amount !== undefined) {
+            queryBuilder.skip((page - 1) * amount).take(amount);
+        }
+
+        const [data, total] = await queryBuilder
+            .orderBy('kelurahan.nama_kelurahan', 'ASC')
+            .getManyAndCount();
+
+        return { data, total };
     }
 
     async findByKecamatanId(idKecamatan: number): Promise<Kelurahan[]> {
-        try {
-            const kelurahans = await this.repo.find({
-                where: { idKecamatan },
-                order: { namaKelurahan: 'ASC' }
-            });
-            return kelurahans;
-        } catch (error) {
-            throw error;
-        }
+        const kelurahans = await this.repo.find({
+            where: { idKecamatan },
+            order: { namaKelurahan: 'ASC' }
+        });
+        return kelurahans;
     }
 }

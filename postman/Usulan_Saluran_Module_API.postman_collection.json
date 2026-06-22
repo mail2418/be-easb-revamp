@@ -1,0 +1,440 @@
+{
+	"info": {
+		"_postman_id": "usulan-saluran-module-collection-v1",
+		"name": "Usulan Saluran Module API Collection",
+		"description": "Complete API collection for Usulan Saluran (Channel/Drainage Proposal) module with all CRUD, verification, and rejection endpoints. Note: idOpd is automatically extracted from UserContext (JWT token), so it should not be included in request body.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		},
+		{
+			"key": "api_prefix",
+			"value": "api/dev/v1",
+			"type": "string",
+			"description": "API prefix (api/dev/v1 for development, api/v1 for production)"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get Analytics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/analytics?bulan=1&tahun=2024",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "analytics"],
+							"query": [
+								{
+									"key": "bulan",
+									"value": "1",
+									"description": "Month (1-12), optional"
+								},
+								{
+									"key": "tahun",
+									"value": "2024",
+									"description": "Year (minimum 2000), optional"
+								}
+							]
+						},
+						"description": "Get analytics data for usulan saluran. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Usulan Saluran",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran?page=1&amount=10&idUsulanSaluranStatus=1&tahunAnggaran=2024&namaUsulanSaluran=&idKabkota=&idKecamatan=&idKelurahan=&idTipeSaluran=",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								},
+								{
+									"key": "idUsulanSaluranStatus",
+									"value": "1",
+									"description": "Filter by status ID (optional)"
+								},
+								{
+									"key": "tahunAnggaran",
+									"value": "2024",
+									"description": "Filter by tahun anggaran (optional)"
+								},
+								{
+									"key": "namaUsulanSaluran",
+									"value": "",
+									"description": "Search by name (optional)"
+								},
+								{
+									"key": "idKabkota",
+									"value": "",
+									"description": "Filter by kabkota ID (optional)"
+								},
+								{
+									"key": "idKecamatan",
+									"value": "",
+									"description": "Filter by kecamatan ID (optional)"
+								},
+								{
+									"key": "idKelurahan",
+									"value": "",
+									"description": "Filter by kelurahan ID (optional)"
+								},
+								{
+									"key": "idTipeSaluran",
+									"value": "",
+									"description": "Filter by tipe saluran ID (optional)"
+								}
+							]
+						},
+						"description": "Get all usulan saluran with optional filters and pagination. OPD users only see their own data. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Usulan Saluran by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/id?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "id"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID of the usulan saluran"
+								}
+							]
+						},
+						"description": "Get a specific usulan saluran by ID. OPD users can only see their own data. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reject Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/reject-info?id=1",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "reject-info"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID of the usulan saluran"
+								}
+							]
+						},
+						"description": "Get rejection information for a usulan saluran. Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for querying and retrieving usulan saluran data"
+		},
+		{
+			"name": "CRUD Operations",
+			"item": [
+				{
+					"name": "Store Index",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idAsbJenis\": 1,\n    \"idTipeSaluran\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Saluran Drainase\",\n    \"alamat\": \"Jl. Contoh No. 123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/store-index",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "store-index"]
+						},
+						"description": "Create a new usulan saluran index. This creates a basic usulan saluran record with status 1 (Input Informasi). idAsbJenis: 1=Pembangunan, 2=Pemeliharaan. idTipeSaluran is required. alamat is optional. Note: idOpd is automatically extracted from UserContext (JWT token). Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Index",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"idAsbJenis\": 1,\n    \"idTipeSaluran\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Saluran Drainase (Updated)\",\n    \"alamat\": \"Jl. Contoh No. 123 (Updated)\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/store-index",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "store-index"]
+						},
+						"description": "Update usulan saluran index. OPD users can only update their own data. All fields except id are optional. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Store Informasi",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanSaluran\": 1,\n    \"lebar\": 5.5,\n    \"idRekening\": 1,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi\": 100,\n                    \"tinggi\": 150\n                }\n            ]\n        }\n    ],\n    \"data_smkk\": [\n        {\n            \"id_smkk\": 1,\n            \"jumlah\": 10\n        }\n    ],\n    \"keteranganTambahan\": \"Catatan tambahan dari OPD\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/store-informasi",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "store-informasi"]
+						},
+						"description": "Store informasi usulan saluran including lebar, idRekening, data_ruang_lingkup with HSPK data, data_smkk, and keteranganTambahan. Volume, harga_spec, and SMKK values are calculated automatically. Requires OPD, ADMIN, or SUPERADMIN role.\n\nRequest body:\n- idUsulanSaluran (number, required)\n- lebar (number, required)\n- idRekening (number, required)\n- data_ruang_lingkup (array, required): [{ id, data_hspk: [{ id_hspk, spasi, tinggi }] }]\n- data_smkk (array, optional): [{ id_smkk, jumlah }]\n- keteranganTambahan (string, optional)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Usulan Saluran",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"idUsulanSaluranStatus\": 2,\n    \"idAsbJenis\": 1,\n    \"idTipeSaluran\": 1,\n    \"idRekening\": 1,\n    \"idRekeningReview\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"isIncludePpn\": true,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Saluran Drainase\",\n    \"alamat\": \"Jl. Contoh No. 123\",\n    \"uraian\": \"1 m^1 Drainase Lebar 5 meter\",\n    \"spesifikasi\": \"Tebal saluran 150-200 mm; Dengan tipe Drainase\",\n    \"satuan\": \"m^1\",\n    \"deskripsiDesain\": \"\",\n    \"keteranganTambahan\": \"Keterangan tambahan\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/update",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "update"]
+						},
+						"description": "Update usulan saluran. All fields are optional except id. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Usulan Saluran",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanSaluran\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran"]
+						},
+						"description": "Delete a usulan saluran by ID. OPD users can only delete their own data. Requires OPD, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for creating, updating, and deleting usulan saluran"
+		},
+		{
+			"name": "Verification Operations",
+			"item": [
+				{
+					"name": "Verify Index",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanSaluran\": 1,\n    \"idAsbJenis\": 1,\n    \"idTipeSaluran\": 1,\n    \"idKabkota\": 1,\n    \"idKecamatan\": 1,\n    \"idKelurahan\": 1,\n    \"tahunAnggaran\": 2024,\n    \"namaUsulan\": \"Pembangunan Saluran Drainase\",\n    \"alamat\": \"Jl. Contoh No. 123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/verify-index",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "verify-index"]
+						},
+						"description": "Verify usulan saluran index by ADBANG verifikator. Changes status from 2 to 5 (Verifikasi Informasi). Usulan must be in status 2. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Informasi",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanSaluran\": 1,\n    \"lebar\": 5.5,\n    \"data_ruang_lingkup\": [\n        {\n            \"id\": 1,\n            \"data_hspk\": [\n                {\n                    \"id_hspk\": 1,\n                    \"spasi_review\": 100,\n                    \"tinggi_review\": 150\n                }\n            ]\n        }\n    ],\n    \"data_smkk\": [\n        {\n            \"id_smkk\": 1,\n            \"jumlah\": 10\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/verify-informasi",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "verify-informasi"]
+						},
+						"description": "Verify informasi usulan saluran by ADBANG. Changes status from 5 to 6 (Verifikasi Ruang Lingkup & Spesifikasi). lebar is optional. data_ruang_lingkup uses spasi_review and tinggi_review. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify ADBANG",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanSaluran\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/verify-adbang",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "verify-adbang"]
+						},
+						"description": "Approve usulan saluran by ADBANG. Changes status to 7 (Verifikasi Adbang). Usulan must be in status 6. Requires VERIFIKATOR (ADBANG), ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify BPKAD",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanSaluran\": 1,\n    \"idRekeningReview\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/verify-bpkad",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "verify-bpkad"]
+						},
+						"description": "Approve usulan saluran by BPKAD and set rekening review. Changes status to 8 (Verifikasi BPKAD). Usulan must be in status 7. ADBANG must have verified first. Requires VERIFIKATOR (BPKAD), ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify BAPPEDA",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanSaluran\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/verify-bappeda",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "verify-bappeda"]
+						},
+						"description": "Approve usulan saluran by BAPPEDA. Changes status to 3 (Memenuhi Syarat - Final approved). Usulan must be in status 8. ADBANG and BPKAD must have verified first. Requires VERIFIKATOR (BAPPEDA), ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Usulan Saluran",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idUsulanSaluran\": 1,\n    \"rejectReason\": \"Data tidak lengkap\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/usulan-saluran/reject",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "usulan-saluran", "reject"]
+						},
+						"description": "Reject usulan saluran with a reason. Can only reject when in status 5, 6, 7, or 8. Changes status to 4 (Tidak Memenuhi Syarat). Requires VERIFIKATOR, ADMIN, or SUPERADMIN role."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for verifying and rejecting usulan saluran by different verifikators (ADBANG, BPKAD, BAPPEDA)"
+		}
+	]
+}

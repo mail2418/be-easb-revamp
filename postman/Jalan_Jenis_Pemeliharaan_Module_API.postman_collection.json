@@ -1,0 +1,230 @@
+{
+	"info": {
+		"_postman_id": "jalan-jenis-pemeliharaan-collection-001",
+		"name": "Jalan Jenis Pemeliharaan Module",
+		"description": "API collection for Jalan Jenis Pemeliharaan (Road Maintenance Type) module - Master data for types of road maintenance",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Jalan Jenis Pemeliharaan (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-pemeliharaan?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-pemeliharaan"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all jalan jenis pemeliharaan with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Jenis Pemeliharaan list retrieved\",\n  \"data\": {\n    \"data\": [\n      {\n        \"id\": 1,\n        \"jenis_pemeliharaan\": \"Rutin\",\n        \"createdAt\": \"...\",\n        \"updatedAt\": \"...\"\n      }\n    ],\n    \"page\": 1,\n    \"amount\": 10,\n    \"total\": 3,\n    \"totalPages\": 1\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Jalan Jenis Pemeliharaan (without pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-pemeliharaan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-pemeliharaan"]
+						},
+						"description": "Get all jalan jenis pemeliharaan without pagination (returns all records).\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Jalan Jenis Pemeliharaan Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-pemeliharaan/detail?id=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-pemeliharaan", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Jalan Jenis Pemeliharaan ID"
+								}
+							]
+						},
+						"description": "Get single jalan jenis pemeliharaan detail by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Jenis Pemeliharaan detail retrieved\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis_pemeliharaan\": \"Rutin\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read-only endpoints accessible by all roles"
+		},
+		{
+			"name": "CRUD Endpoints (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create Jalan Jenis Pemeliharaan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis_pemeliharaan\": \"Rutin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-pemeliharaan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-pemeliharaan"]
+						},
+						"description": "Create new jalan jenis pemeliharaan.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"jenis_pemeliharaan\": \"string\" // Required - Nama jenis pemeliharaan\n}\n```\n\n**Common Values**:\n- \"Rutin\" (Routine Maintenance)\n- \"Periodik\" (Periodic Maintenance)\n- \"Berkala\" (Scheduled Maintenance)\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"Jalan Jenis Pemeliharaan created\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis_pemeliharaan\": \"Rutin\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Periodik",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jenis_pemeliharaan\": \"Periodik\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-pemeliharaan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-pemeliharaan"]
+						},
+						"description": "Create jenis pemeliharaan Periodik (Periodic Maintenance).\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Jalan Jenis Pemeliharaan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"jenis_pemeliharaan\": \"Rutin (Updated)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-pemeliharaan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-pemeliharaan"]
+						},
+						"description": "Update existing jalan jenis pemeliharaan.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number,                // Required - ID to update\n  \"jenis_pemeliharaan\": string // Optional - New jenis pemeliharaan name\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Jenis Pemeliharaan updated\",\n  \"data\": {\n    \"id\": 1,\n    \"jenis_pemeliharaan\": \"Rutin (Updated)\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Jalan Jenis Pemeliharaan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/jalan-jenis-pemeliharaan",
+							"host": ["{{baseUrl}}"],
+							"path": ["jalan-jenis-pemeliharaan"]
+						},
+						"description": "Soft delete jalan jenis pemeliharaan.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number  // Required - ID to delete\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Jalan Jenis Pemeliharaan deleted\",\n  \"data\": true\n}\n```\n\n**Note**: This is a soft delete. The record will be marked as deleted but not removed from database."
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update, Delete operations - Only accessible by SUPERADMIN"
+		}
+	]
+}
+

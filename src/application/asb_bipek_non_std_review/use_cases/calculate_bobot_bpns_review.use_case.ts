@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AsbKomponenBangunanProsNonstdRepository } from '../../../domain/asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.repository';
 import { AsbDetailService } from '../../../domain/asb_detail/asb_detail.service';
 import { AsbBipekNonStdReviewService } from '../../../domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
@@ -20,12 +20,15 @@ export class CalculateBobotBPNSReviewUseCase {
         komponenIds: number[],
         bobotInputs: number[],
         shst: number,
-        totalLantai: number
-    ): Promise<number> {
+        totalLantai: number,
+        koefisienLantaiTotal: number,
+        koefisienFungsiRuangTotal: number,
+        luasTotalBangunan: number,
+        bobotTotalBps: number
+    ): Promise<number[]> {
         let jumlahBobot = 0;
         let kompBangProsList: AsbKomponenBangunanProsNonstd[] = [];
         let calculationMethod: CalculationMethod;
-
         // Set calculation method
         if (totalLantai <= 2) {
             calculationMethod = CalculationMethod.AVG_MIN;
@@ -43,6 +46,10 @@ export class CalculateBobotBPNSReviewUseCase {
             if (bobotInputs[i]) {
                 const asbKompBangPros = await this.asbKomponenBangunanProsNonstdRepository
                     .findByKomponenBangunanNonstdId(komponenIds[i]);
+
+                if (asbKompBangPros === null) {
+                    throw new NotFoundException("ASB is missing required asbKompBangPros data for Jakon lookup");
+                }
 
                 if (asbKompBangPros) {
                     kompBangProsList[i] = asbKompBangPros;
@@ -63,25 +70,10 @@ export class CalculateBobotBPNSReviewUseCase {
             }
         }
 
-        // Calculate KTL, KFB, LTB from AsbDetail
-        const asbDetails = await this.asbDetailService.getByAsb({
-            idAsb,
-            page: 1,
-            amount: 100
-        });
+        jumlahBobot = jumlahBobot > 1.5 * bobotTotalBps ? 1.5 * bobotTotalBps : jumlahBobot;
 
-        let KTL = 0;
-        let KFB = 0;
-        let LTB = 0;
-
-        for (const detail of asbDetails.data) {
-            KTL += detail.lantaiKoef || 0;
-            KFB += detail.asbFungsiRuangKoef || 0;
-            LTB += detail.luas || 0;
-        }
-
-        // Calculate BPNS Review
-        const BPNSReview = jumlahBobot * shst * (KTL / LTB) * (KFB / LTB) * LTB;
+        // Calculate BPNS
+        const BPNSReview = jumlahBobot * shst * koefisienLantaiTotal * koefisienFungsiRuangTotal * luasTotalBangunan;
 
         // Loop 2: Create and save AsbBipekNonStd records
         for (let i = 0; i < komponenIds.length; i++) {
@@ -98,11 +90,14 @@ export class CalculateBobotBPNSReviewUseCase {
                     bobotAcuan = kompBangProsList[i].avg || 0;
                 }
 
-                const bobot = (bobotInputs[i] / 100) * (bobotAcuan / 100);
+                const bobot = (bobotInputs[i] / 100) * bobotAcuan;
+
+                // Use optional chaining to safely access idAsbBipekNonStd[i] - it may not exist if arrays are mismatched
+                const idAsbBipekNonStdValue = idAsbBipekNonStd[i] ?? null;
 
                 const asbBipekNonStdReview = {
                     idAsb: idAsb,
-                    idAsbBipekNonStd: idAsbBipekNonStd[i],
+                    idAsbBipekNonStd: idAsbBipekNonStdValue,
                     idAsbKomponenBangunanNonstd: komponenIds[i],
                     bobotInput: bobotInputs[i],
                     calculationMethod: calculationMethod,
@@ -116,6 +111,6 @@ export class CalculateBobotBPNSReviewUseCase {
             }
         }
 
-        return BPNSReview;
+        return [BPNSReview, jumlahBobot];
     }
 }

@@ -18,8 +18,8 @@ export class AsbBipekNonStdReviewOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: 'id_asb_bipek_non_std', type: 'int' })
-    idAsbBipekNonStd: number;
+    @Column({ name: 'id_asb_bipek_non_std', type: 'int', nullable: true })
+    idAsbBipekNonStd: number | null;
 
     @Column({
         name: 'id_asb_komponen_bangunan_nonstd',
@@ -53,15 +53,15 @@ export class AsbBipekNonStdReviewOrmEntity {
     @Column({ name: 'rincian_harga', type: 'float', nullable: true })
     rincianHarga: number | null;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt: Date;
 
     @DeleteDateColumn({
         name: 'deleted_at',
-        type: 'timestamptz',
+        type: 'timestamp',
         nullable: true,
     })
     deletedAt: Date | null;

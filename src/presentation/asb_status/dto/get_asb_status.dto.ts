@@ -1,16 +1,18 @@
-import { IsNumber, Min, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetAsbStatusDto {
+    @IsOptional()
     @IsNumber()
     @Min(1)
-    @Transform(({ value }) => parseInt(value, 10))
-    page!: number;
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    page?: number;
 
+    @IsOptional()
     @IsNumber()
     @Min(1)
-    @Transform(({ value }) => parseInt(value, 10))
-    amount!: number;
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    amount?: number;
 
     @IsOptional()
     @IsString()

@@ -1,0 +1,28 @@
+import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, ValidateNested, ArrayMinSize } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { DataRuangLingkupReviewDto } from '../../usulan_jalan/dto/data_ruang_lingkup_review.dto';
+import { DataSmkkDto } from '../../usulan_jalan/dto/data_smkk.dto';
+
+export class VerifyInformasiUsulanSaluranDto {
+    @IsInt()
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
+    idUsulanSaluran!: number;
+
+    @IsNumber()
+    @IsOptional()
+    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    lebar?: number;
+
+    @IsArray()
+    @ArrayMinSize(1)
+    @ValidateNested({ each: true })
+    @Type(() => DataRuangLingkupReviewDto)
+    data_ruang_lingkup!: DataRuangLingkupReviewDto[];
+
+    @IsArray()
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => DataSmkkDto)
+    data_smkk?: DataSmkkDto[];
+}

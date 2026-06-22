@@ -1,0 +1,253 @@
+{
+	"info": {
+		"_postman_id": "main-dashboard-module-collection-v1",
+		"name": "Main Dashboard Module API Collection",
+		"description": "API collection for Main Dashboard module. This module aggregates data from all types of usulan (Gedung, Jalan, Saluran) for display in the main dashboard. Returns id_usulan, id_jenis_usulan, id_asb_status, nama_usulan, reject_info, tahunAnggaran, and createdAt.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT access token obtained from login"
+		},
+		{
+			"key": "api_prefix",
+			"value": "api/dev/v1",
+			"type": "string",
+			"description": "API prefix (api/dev/v1 for development, api/v1 for production)"
+		}
+	],
+	"item": [
+		{
+			"name": "Get Main Dashboard",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_prefix}}/main-dashboard?search=&tahunAnggaran=&page=1&limit=10",
+					"host": ["{{base_url}}"],
+					"path": ["{{api_prefix}}", "main-dashboard"],
+					"query": [
+						{
+							"key": "search",
+							"value": "",
+							"description": "Wildcard search for nama_usulan (optional, case-insensitive)",
+							"disabled": false
+						},
+						{
+							"key": "tahunAnggaran",
+							"value": "",
+							"description": "Filter by tahun anggaran (optional, minimum: 2000)",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Page number for pagination (optional, default: 1, minimum: 1)",
+							"disabled": false
+						},
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Number of items per page (optional, default: 10, minimum: 1)",
+							"disabled": false
+						}
+					]
+				},
+				"description": "Get all main dashboard entries with optional search, tahunAnggaran filter, and pagination. Results are ordered by createdAt DESC. Returns data from all types of usulan (Gedung, Jalan, Saluran). Requires OPD, VERIFIKATOR, ADMIN, or SUPERADMIN role.\n\n**Query Parameters:**\n- `search` (optional): Wildcard search for nama_usulan (case-insensitive)\n- `tahunAnggaran` (optional): Filter by budget year (integer, minimum: 2000)\n- `page` (optional): Page number for pagination (default: 1, minimum: 1)\n- `limit` (optional): Number of items per page (default: 10, minimum: 1)"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_prefix}}/main-dashboard?search=&tahunAnggaran=&page=1&limit=10",
+							"host": ["{{base_url}}"],
+							"path": ["{{api_prefix}}", "main-dashboard"],
+							"query": [
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "tahunAnggaran",
+									"value": ""
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"success\",\n    \"responseCode\": 200,\n    \"message\": \"Main Dashboard list retrieved successfully\",\n    \"data\": {\n        \"data\": [\n            {\n                \"id\": 1,\n                \"idUsulan\": 1,\n                \"idJenisUsulan\": 1,\n                \"idAsbStatus\": 1,\n                \"namaUsulan\": \"Pembangunan Gedung A\",\n                \"rejectInfo\": null,\n                \"tahunAnggaran\": 2025,\n                \"createdAt\": \"2024-01-15T10:30:00.000Z\"\n            },\n            {\n                \"id\": 2,\n                \"idUsulan\": 2,\n                \"idJenisUsulan\": 2,\n                \"idAsbStatus\": 2,\n                \"namaUsulan\": \"Pembangunan Jalan Raya\",\n                \"rejectInfo\": \"Tidak memenuhi syarat teknis\",\n                \"tahunAnggaran\": 2025,\n                \"createdAt\": \"2024-01-14T09:20:00.000Z\"\n            }\n        ],\n        \"total\": 100,\n        \"page\": 1,\n        \"limit\": 10,\n        \"totalPages\": 10\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Get Main Dashboard with Search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_prefix}}/main-dashboard?search=gedung&tahunAnggaran=&page=1&limit=10",
+					"host": ["{{base_url}}"],
+					"path": ["{{api_prefix}}", "main-dashboard"],
+					"query": [
+						{
+							"key": "search",
+							"value": "gedung",
+							"description": "Wildcard search for nama_usulan (case-insensitive)"
+						},
+						{
+							"key": "tahunAnggaran",
+							"value": "",
+							"description": "Filter by tahun anggaran (optional, minimum: 2000)",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Page number for pagination"
+						},
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Number of items per page"
+						}
+					]
+				},
+				"description": "Get main dashboard entries filtered by search term. The search parameter performs a wildcard (LIKE) search on nama_usulan field (case-insensitive)."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Main Dashboard by Tahun Anggaran",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_prefix}}/main-dashboard?tahunAnggaran=2025&page=1&limit=10",
+					"host": ["{{base_url}}"],
+					"path": ["{{api_prefix}}", "main-dashboard"],
+					"query": [
+						{
+							"key": "tahunAnggaran",
+							"value": "2025",
+							"description": "Filter by tahun anggaran (minimum: 2000)"
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Page number for pagination"
+						},
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Number of items per page"
+						}
+					]
+				},
+				"description": "Get main dashboard entries filtered by tahun anggaran (budget year). This filter allows you to retrieve all usulan entries for a specific budget year. Results are ordered by createdAt DESC."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Main Dashboard with Search and Tahun Anggaran",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_prefix}}/main-dashboard?search=gedung&tahunAnggaran=2025&page=1&limit=10",
+					"host": ["{{base_url}}"],
+					"path": ["{{api_prefix}}", "main-dashboard"],
+					"query": [
+						{
+							"key": "search",
+							"value": "gedung",
+							"description": "Wildcard search for nama_usulan (case-insensitive)"
+						},
+						{
+							"key": "tahunAnggaran",
+							"value": "2025",
+							"description": "Filter by tahun anggaran (minimum: 2000)"
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Page number for pagination"
+						},
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Number of items per page"
+						}
+					]
+				},
+				"description": "Get main dashboard entries filtered by both search term and tahun anggaran. This combines the search filter (wildcard on nama_usulan) with the tahun anggaran filter. Results are ordered by createdAt DESC."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Main Dashboard - Pagination",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_prefix}}/main-dashboard?page=2&limit=20",
+					"host": ["{{base_url}}"],
+					"path": ["{{api_prefix}}", "main-dashboard"],
+					"query": [
+						{
+							"key": "page",
+							"value": "2",
+							"description": "Page number"
+						},
+						{
+							"key": "limit",
+							"value": "20",
+							"description": "Items per page"
+						}
+					]
+				},
+				"description": "Get main dashboard entries with pagination. Results are ordered by createdAt DESC."
+			},
+			"response": []
+		}
+	]
+}
+

@@ -6,16 +6,19 @@ import { GetShstDetailDto } from "../../presentation/shst/dto/get_shst_detail.dt
 import { GetShstFileDto } from "../../presentation/shst/dto/get_shst_file.dto";
 import { Shst } from "./shst.entity";
 import { ShstsPaginationResultDto } from "../../presentation/shst/dto/shsts_pagination_result.dto";
+import { CreateShstResultDto } from "../../presentation/shst/dto/create_shst_result.dto";
 import { GetShstNominalDto } from '../../application/shst/dto/get_shst_nominal.dto';
+import { ShstWithRelationsDto } from '../../application/shst/dto/shst_with_relations.dto';
 
 export abstract class ShstService {
-    abstract create(dto: CreateShstDto, file: Express.Multer.File): Promise<Shst>;
+    abstract create(dto: CreateShstDto, file: Express.Multer.File): Promise<CreateShstResultDto>;
     abstract delete(dto: GetShstDetailDto): Promise<boolean>;
     abstract updateNominal(dto: UpdateNominalShstDto): Promise<Shst>;
     abstract findAll(dto: GetShstDto): Promise<ShstsPaginationResultDto>;
-    abstract findById(dto: GetShstDetailDto): Promise<Shst>;
+    abstract findById(dto: GetShstDetailDto): Promise<ShstWithRelationsDto>;
     abstract getFilePath(dto: GetShstFileDto): Promise<string>;
     abstract downloadFile(dto: GetShstFileDto): Promise<{ filePath: string; downloadUrl: string }>;
+    abstract downloadTemplate(): Promise<{ buffer: Buffer; filename: string }>;
     abstract getNominal(dto: GetShstNominalDto): Promise<number>;
     abstract generateTemplate(): Promise<Buffer>;
 }

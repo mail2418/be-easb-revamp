@@ -1,0 +1,433 @@
+{
+	"info": {
+		"_postman_id": "usulan-jalan-status-collection-001",
+		"name": "Usulan Jalan Status",
+		"description": "API collection for Usulan Jalan Status module - Master data for road proposal status workflow",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Query Endpoints",
+			"item": [
+				{
+					"name": "Get All Usulan Jalan Status (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status?page=1&amount=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (optional)"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"description": "Items per page (optional)"
+								}
+							]
+						},
+						"description": "Get all usulan jalan status with optional pagination.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Status Flow**:\n```\n1. Input Informasi Usulan Jalan\n   ↓\n2. Input Ruang Lingkup dan Spesifikasi Jalan\n   ↓\n5. Verifikasi Informasi Usulan Jalan (ADBANG)\n   ↓\n6. Verifikasi Ruang Lingkup dan Spesifikasi Jalan (ADBANG)\n   ↓\n7. Verifikasi Adbang\n   ↓\n8. Verifikasi Bpkad\n   ↓\n9. Verifikasi Bappeda\n   ↓\n3. Memenuhi Syarat (APPROVED)\n\nAny rejection → 4. Tidak Memenuhi Syarat (REJECTED)\n```\n\n**Response**:\n```json\n{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"status\": \"Input Informasi Usulan Jalan\",\n      \"createdAt\": \"...\",\n      \"updatedAt\": \"...\"\n    }\n  ],\n  \"page\": 1,\n  \"amount\": 10,\n  \"total\": 9,\n  \"totalPages\": 1\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Usulan Jalan Status (without pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Get all usulan jalan status without pagination (returns all records).\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Use Case**: Get complete status list for dropdown/select options in frontend."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Usulan Jalan Status Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status/detail?id=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Status ID"
+								}
+							]
+						},
+						"description": "Get single usulan jalan status detail by ID.\n\n**Roles**: OPD, VERIFIKATOR, ADMIN, SUPERADMIN\n\n**Response**:\n```json\n{\n  \"id\": 1,\n  \"status\": \"Input Informasi Usulan Jalan\",\n  \"createdAt\": \"...\",\n  \"updatedAt\": \"...\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Read-only endpoints accessible by all roles"
+		},
+		{
+			"name": "CRUD Endpoints (SUPERADMIN Only)",
+			"item": [
+				{
+					"name": "Create - Input Informasi",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Input Informasi Usulan Jalan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Create new usulan jalan status.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"status\": \"string\"  // Required - Status name\n}\n```\n\n**Status ID Reference**:\n| ID | Status | Description | Who Can Trigger |\n|----|--------|-------------|----------------|\n| 1 | Input Informasi Usulan Jalan | Initial form entry | OPD |\n| 2 | Input Ruang Lingkup dan Spesifikasi Jalan | Scope & spec entry | OPD |\n| 3 | Memenuhi Syarat | Approved (final) | System |\n| 4 | Tidak Memenuhi Syarat | Rejected (final) | System |\n| 5 | Verifikasi Informasi Usulan Jalan | Info verification | ADBANG |\n| 6 | Verifikasi Ruang Lingkup dan Spesifikasi Jalan | Scope verification | ADBANG |\n| 7 | Verifikasi Adbang | Adbang approval | ADBANG |\n| 8 | Verifikasi Bpkad | Bpkad approval | BPKAD |\n| 9 | Verifikasi Bappeda | Bappeda approval | BAPPEDA |\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 201,\n  \"message\": \"Usulan Jalan Status created\",\n  \"data\": {\n    \"id\": 1,\n    \"status\": \"Input Informasi Usulan Jalan\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Input Ruang Lingkup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Input Ruang Lingkup dan Spesifikasi Jalan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Create scope and specification input status.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Memenuhi Syarat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Memenuhi Syarat\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Create approved (qualified) status - Final success state.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Tidak Memenuhi Syarat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Tidak Memenuhi Syarat\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Create rejected (not qualified) status - Final rejection state.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Verifikasi Informasi",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Verifikasi Informasi Usulan Jalan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Create information verification status - ADBANG verifies basic info.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Verifikasi Ruang Lingkup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Verifikasi Ruang Lingkup dan Spesifikasi Jalan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Create scope verification status - ADBANG verifies technical specs.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Verifikasi Adbang",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Verifikasi Adbang\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Create Adbang approval status - ADBANG gives final approval.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Verifikasi Bpkad",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Verifikasi Bpkad\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Create Bpkad approval status - BPKAD (Finance) approval.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Create - Verifikasi Bappeda",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Verifikasi Bappeda\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Create Bappeda approval status - BAPPEDA (Development Planning) final approval.\n\n**Role**: SUPERADMIN only"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Usulan Jalan Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"status\": \"Input Informasi Usulan Jalan (Updated)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Update existing usulan jalan status.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number,      // Required - ID to update\n  \"status\": string   // Optional - New status name\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Usulan Jalan Status updated\",\n  \"data\": {\n    \"id\": 1,\n    \"status\": \"Input Informasi Usulan Jalan (Updated)\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}\n```\n\n**Warning**: Changing status names may break existing workflow logic. Use with caution!"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Usulan Jalan Status",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usulan-jalan-status",
+							"host": ["{{baseUrl}}"],
+							"path": ["usulan-jalan-status"]
+						},
+						"description": "Soft delete usulan jalan status.\n\n**Role**: SUPERADMIN only\n\n**Body**:\n```json\n{\n  \"id\": number  // Required - ID to delete\n}\n```\n\n**Response**:\n```json\n{\n  \"status\": \"success\",\n  \"responseCode\": 200,\n  \"message\": \"Usulan Jalan Status deleted\",\n  \"data\": true\n}\n```\n\n**Warning**: Deleting status that are in use by usulan jalan records may cause foreign key errors. Ensure no records reference this status before deletion."
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update, Delete operations - Only accessible by SUPERADMIN"
+		}
+	]
+}
+
