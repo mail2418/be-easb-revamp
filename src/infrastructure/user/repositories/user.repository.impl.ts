@@ -12,6 +12,7 @@ import { DeleteUserByAdminDto } from 'src/presentation/users/dto/delete_user_by_
 import { GetUsersDto } from 'src/presentation/users/dto/get_users.dto';
 import { GetUserDetailDto } from 'src/presentation/users/dto/get_user_detail.dto';
 import { plainToInstance } from 'class-transformer';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class UserRepositoryImpl implements UserRepository {
@@ -94,13 +95,29 @@ export class UserRepositoryImpl implements UserRepository {
 
     async getUsers(pagination: GetUsersDto): Promise<{ data: User[], total: number }> {
         try {
-            const [users, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
+            const qb = this.repo.createQueryBuilder('user');
+
+            applyIlikeSearch(qb, 'user', ['username'], pagination.search);
+
+            if (pagination.role) {
+                qb.andWhere(':role = ANY(user.roles)', { role: pagination.role });
+            }
+
+            const [users, total] = await qb
+                .orderBy('user.id', 'DESC')
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
 
             return { data: users, total };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updatePasswordHash(id: number, passwordHash: string): Promise<void> {
+        try {
+            await this.repo.update(id, { passwordHash });
         } catch (error) {
             throw error;
         }

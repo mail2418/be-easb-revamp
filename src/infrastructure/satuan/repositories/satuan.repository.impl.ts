@@ -7,6 +7,7 @@ import { SatuanOrmEntity } from '../orm/satuan.orm_entity';
 import { CreateSatuanDto } from '../../../presentation/satuan/dto/create_satuan.dto';
 import { GetSatuansDto } from '../../../presentation/satuan/dto/get_satuans.dto';
 import { plainToInstance } from 'class-transformer';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class SatuanRepositoryImpl implements SatuanRepository {
@@ -63,14 +64,15 @@ export class SatuanRepositoryImpl implements SatuanRepository {
 
     async findAll(pagination: GetSatuansDto): Promise<{ data: Satuan[], total: number }> {
         try {
-            const [satuans, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            }).catch((error) => {
-                console.error('Error fetching satuans:', error);
-                throw error;
-            });
+            const qb = this.repo.createQueryBuilder('satuan');
+
+            applyIlikeSearch(qb, 'satuan', ['satuan'], pagination.search);
+
+            const [satuans, total] = await qb
+                .orderBy('satuan.id', 'DESC')
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
 
             return { data: satuans, total };
         } catch (error) {

@@ -1,4 +1,4 @@
-import { IsNumber, Min, IsOptional } from 'class-validator';
+import { IsNumber, Min, IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetAsbJakonListDto {
@@ -13,4 +13,8 @@ export class GetAsbJakonListDto {
     amount!: number;
 
     // optional filters could be added here
+
+    @IsOptional()
+    @IsString()
+    search?: string;
 }

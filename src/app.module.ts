@@ -39,6 +39,13 @@ import { VerifikatorModule } from './presentation/verifikator/verifikator.module
 import { StandardKlasifikasiModule } from './presentation/standard_klasifikasi/standard_klasifikasi.module';
 import { KecamatanModule } from './presentation/kecamatan/kecamatan.module';
 import { KelurahanModule } from './presentation/kelurahan/kelurahan.module';
+import { JalanJenisPerkerasanModule } from './presentation/jalan_jenis_perkerasan/jalan_jenis_perkerasan.module';
+import { JalanJenisPemeliharaanModule } from './presentation/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.module';
+import { JalanSaluranRuangLingkupModule } from './presentation/jalan_saluran_ruang_lingkup/jalan_saluran_ruang_lingkup.module';
+import { JalanSaluranSmkkModule } from './presentation/jalan_saluran_smkk/jalan_saluran_smkk.module';
+import { HspkModule } from './presentation/hspk/hspk.module';
+import { UsulanJalanModule } from './presentation/usulan_jalan/usulan_jalan.module';
+import { UsulanSaluranModule } from './presentation/usulan_saluran/usulan_saluran.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -116,7 +123,14 @@ import { DataSourceOptions } from 'typeorm';
         StandardKlasifikasiModule,
         AsbJakonModule,
         KecamatanModule,
-        KelurahanModule
+        KelurahanModule,
+        JalanJenisPerkerasanModule,
+        JalanJenisPemeliharaanModule,
+        JalanSaluranRuangLingkupModule,
+        JalanSaluranSmkkModule,
+        HspkModule,
+        UsulanJalanModule,
+        UsulanSaluranModule,
         // other modules...
     ],
     providers: [

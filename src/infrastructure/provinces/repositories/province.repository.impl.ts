@@ -7,6 +7,7 @@ import { ProvinceOrmEntity } from '../orm/province.orm_entity';
 import { CreateProvinceDto } from 'src/presentation/provinces/dto/create_province.dto';
 import { GetProvincesDto } from 'src/presentation/provinces/dto/get_provinces.dto';
 import { plainToInstance } from 'class-transformer';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class ProvinceRepositoryImpl implements ProvinceRepository {
@@ -64,14 +65,15 @@ export class ProvinceRepositoryImpl implements ProvinceRepository {
 
     async findAll(pagination: GetProvincesDto): Promise<{ data: Province[], total: number }> {
         try {
-            const [provinces, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            }).catch((error) => {
-                console.error('Error fetching provinces:', error);
-                throw error;
-            });
+            const qb = this.repo.createQueryBuilder('province');
+
+            applyIlikeSearch(qb, 'province', ['nama'], pagination.search);
+
+            const [provinces, total] = await qb
+                .orderBy('province.id', 'DESC')
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
 
             return { data: provinces, total };
         } catch (error) {

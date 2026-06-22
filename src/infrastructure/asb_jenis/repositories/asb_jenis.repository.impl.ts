@@ -7,6 +7,7 @@ import { AsbJenisOrmEntity } from "../orm/asb_jenis.orm_entity";
 import { CreateAsbJenisDto } from "../../../presentation/asb_jenis/dto/create_asb_jenis.dto";
 import { UpdateAsbJenisDto } from "../../../presentation/asb_jenis/dto/update_asb_jenis.dto";
 import { GetAsbJenisDto } from "../../../presentation/asb_jenis/dto/get_asb_jenis.dto";
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 import { plainToInstance } from "class-transformer";
 
@@ -63,11 +64,15 @@ export class AsbJenisRepositoryImpl implements AsbJenisRepository {
 
   async findAll(dto: GetAsbJenisDto): Promise<{ data: AsbJenis[], total: number }> {
     try {
-      const [data, total] = await this.repo.findAndCount({
-        skip: (dto.page - 1) * dto.amount,
-        take: dto.amount,
-        order: { id: "DESC" }
-      });
+      const qb = this.repo.createQueryBuilder('asb_jenis');
+
+      applyIlikeSearch(qb, 'asb_jenis', ['jenis'], dto.search);
+
+      const [data, total] = await qb
+        .orderBy('asb_jenis.id', 'DESC')
+        .skip((dto.page - 1) * dto.amount)
+        .take(dto.amount)
+        .getManyAndCount();
 
       return { data, total };
     } catch (error) {

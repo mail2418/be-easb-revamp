@@ -9,6 +9,7 @@ import { UpdateAsbLantaiDto } from '../../../presentation/asb_lantai/dto/update_
 import { GetAsbLantaisDto } from '../../../presentation/asb_lantai/dto/get_asb_lantais.dto';
 import { plainToInstance } from 'class-transformer';
 import { AsbLantaiPaginationResultDto } from 'src/presentation/asb_lantai/dto/asb_lantai_pagination_result.dto';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
@@ -16,8 +17,12 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
 
     async create(dto: CreateAsbLantaiDto): Promise<AsbLantai> {
         try {
-            const ormEntity = plainToInstance(AsbLantaiOrmEntity, dto);
-            const newEntity = await this.repo.save(ormEntity);
+            const newEntity = await this.repo.save({
+                lantai: dto.lantai,
+                type: dto.type,
+                koef: dto.koef,
+                idSatuan: dto.id_satuan,
+            });
             return newEntity;
         } catch (error) {
             throw error;
@@ -26,8 +31,9 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
 
     async update(dto: UpdateAsbLantaiDto): Promise<AsbLantai> {
         try {
-            await this.repo.update(dto.id, dto);
-            const updatedEntity = await this.repo.findOne({ where: { id: dto.id } });
+            const { id, id_satuan, ...rest } = dto;
+            await this.repo.update(id, { ...rest, idSatuan: id_satuan });
+            const updatedEntity = await this.repo.findOne({ where: { id } });
             return updatedEntity!;
         } catch (error) {
             throw error;
@@ -53,11 +59,15 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
 
     async findAll(pagination: GetAsbLantaisDto): Promise<AsbLantaiPaginationResultDto> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
+            const qb = this.repo.createQueryBuilder('asb_lantai');
+
+            applyIlikeSearch(qb, 'asb_lantai', ['lantai'], pagination.search);
+
+            const [data, total] = await qb
+                .orderBy('asb_lantai.id', 'DESC')
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
 
             return {
                 data,

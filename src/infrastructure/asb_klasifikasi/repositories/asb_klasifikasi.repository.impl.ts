@@ -7,6 +7,7 @@ import { AsbKlasifikasi } from '../../../domain/asb_klasifikasi/asb_klasifikasi.
 import { AsbKlasifikasiOrmEntity } from '../orm/asb_klasifikasi.orm_entity';
 import { CreateAsbKlasifikasiDto } from '../../../presentation/asb_klasifikasi/dto/create_asb_klasifikasi.dto';
 import { GetAsbKlasifikasisDto } from '../../../presentation/asb_klasifikasi/dto/get_asb_klasifikasis.dto';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class AsbKlasifikasiRepositoryImpl implements AsbKlasifikasiRepository {
@@ -54,12 +55,16 @@ export class AsbKlasifikasiRepositoryImpl implements AsbKlasifikasiRepository {
 
     async findAll(pagination: GetAsbKlasifikasisDto): Promise<{ data: AsbKlasifikasi[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' },
-                relations: ['asbTipeBangunan']
-            });
+            const qb = this.repo.createQueryBuilder('asb_klasifikasi')
+                .leftJoinAndSelect('asb_klasifikasi.asbTipeBangunan', 'asbTipeBangunan');
+
+            applyIlikeSearch(qb, 'asb_klasifikasi', ['klasifikasi'], pagination.search);
+
+            const [data, total] = await qb
+                .orderBy('asb_klasifikasi.id', 'DESC')
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
 
             return { data, total };
         } catch (error) {

@@ -7,6 +7,7 @@ import { AsbTipeBangunanOrmEntity } from "../orm/asb_tipe_bangunan.orm_entity";
 import { CreateAsbTipeBangunanDto } from "../../../presentation/asb_tipe_bangunan/dto/create_asb_tipe_bangunan.dto";
 import { UpdateAsbTipeBangunanDto } from "../../../presentation/asb_tipe_bangunan/dto/update_asb_tipe_bangunan.dto";
 import { GetAsbTipeBangunanDto } from "../../../presentation/asb_tipe_bangunan/dto/get_asb_tipe_bangunan.dto";
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 import { plainToInstance } from "class-transformer";
 
@@ -63,11 +64,15 @@ export class AsbTipeBangunanRepositoryImpl implements AsbTipeBangunanRepository 
 
     async findAll(dto: GetAsbTipeBangunanDto): Promise<{ data: AsbTipeBangunan[], total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (dto.page - 1) * dto.amount,
-                take: dto.amount,
-                order: { id: "DESC" }
-            });
+            const qb = this.repo.createQueryBuilder('asb_tipe_bangunan');
+
+            applyIlikeSearch(qb, 'asb_tipe_bangunan', ['tipe_bangunan'], dto.search);
+
+            const [data, total] = await qb
+                .orderBy('asb_tipe_bangunan.id', 'DESC')
+                .skip((dto.page - 1) * dto.amount)
+                .take(dto.amount)
+                .getManyAndCount();
 
             return { data, total };
         } catch (error) {

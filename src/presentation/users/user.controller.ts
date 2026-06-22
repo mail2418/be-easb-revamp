@@ -11,7 +11,9 @@ import {
     Patch,
     Delete,
     Query,
+    Req,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { UserService } from '../../domain/user/user.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CreateUserDto } from './dto/create_user.dto';
@@ -21,8 +23,10 @@ import { DeleteUserDto } from './dto/delete_user.dto';
 import { DeleteUserByAdminDto } from './dto/delete_user_by_admin.dto';
 import { GetUsersDto } from './dto/get_users.dto';
 import { GetUserDetailDto } from './dto/get_user_detail.dto';
+import { ChangePasswordDto } from './dto/change_password.dto';
 import { ResponseDto } from '../../common/dto/response.dto';
 import { Role } from 'src/domain/user/user_role.enum';
+import { UserContext } from 'src/common/types/user-context.type';
 
 @Controller('users')
 export class UserController {
@@ -370,6 +374,62 @@ export class UserController {
                 responseCode: HttpStatus.OK,
                 message: 'User detail retrieved',
                 data: user,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    @Patch('change-password')
+    async changePassword(
+        @Body() dto: ChangePasswordDto,
+        @Req() req: Request,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
+        try {
+            const caller = req.user as UserContext;
+            await this.userService.changePassword(
+                dto,
+                Number(caller.userId),
+                caller.roles as Role[],
+            );
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Password changed successfully',
+                data: null,
             };
         } catch (error) {
             if (error instanceof HttpException) {

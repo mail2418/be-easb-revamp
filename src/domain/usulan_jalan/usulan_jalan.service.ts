@@ -1,9 +1,74 @@
-import { UsulanJalan } from './usulan_jalan.entity';
+import { Role } from '../user/user_role.enum';
+import { UsulanJalanListQuery, UsulanJalanListResult } from './usulan_jalan.repository';
 
 export abstract class UsulanJalanService {
-    abstract create(usulan: Partial<UsulanJalan>): Promise<UsulanJalan>;
-    abstract findById(id: number): Promise<UsulanJalan>;
-    abstract findAll(page: number, amount: number): Promise<{ data: UsulanJalan[]; total: number; page: number; amount: number; totalPages: number }>;
-    abstract update(id: number, usulan: Partial<UsulanJalan>): Promise<UsulanJalan>;
-    abstract delete(id: number): Promise<boolean>;
+    abstract storeIndex(
+        dto: Record<string, unknown>,
+        userIdOpd: number | null,
+        userRoles: Role[],
+        isUpdate: boolean,
+    ): Promise<{ id: number }>;
+
+    abstract storeInformasi(
+        dto: Record<string, unknown>,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; idUsulanJalanStatus: number }>;
+
+    abstract verifyIndex(
+        dto: Record<string, unknown>,
+        userId: string,
+        userRoles: Role[],
+    ): Promise<{ id: number; idUsulanJalanStatus: number }>;
+
+    abstract verifyInformasi(
+        dto: Record<string, unknown>,
+        userId: string,
+        userRoles: Role[],
+    ): Promise<{ id: number; idUsulanJalanStatus: number }>;
+
+    abstract verifyAdbang(
+        idUsulanJalan: number,
+        userId: string,
+        userRoles: Role[],
+    ): Promise<{ id: number; idUsulanJalanStatus: number }>;
+
+    abstract verifyBpkad(
+        dto: Record<string, unknown>,
+        userId: string,
+        userRoles: Role[],
+    ): Promise<{ id: number; idUsulanJalanStatus: number }>;
+
+    abstract verifyBappeda(
+        idUsulanJalan: number,
+        userId: string,
+        userRoles: Role[],
+    ): Promise<{ id: number; idUsulanJalanStatus: number }>;
+
+    abstract reject(
+        idUsulanJalan: number,
+        rejectReason: string,
+        userId: string,
+        userRoles: Role[],
+    ): Promise<{ id: number; idUsulanJalanStatus: number }>;
+
+    abstract getRejectInfo(idUsulanJalan: number): Promise<Record<string, unknown> | null>;
+
+    abstract findById(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<Record<string, unknown>>;
+
+    abstract findAll(
+        query: UsulanJalanListQuery,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<UsulanJalanListResult>;
+
+    abstract delete(
+        idUsulanJalan: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<boolean>;
 }

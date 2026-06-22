@@ -7,6 +7,7 @@ import { KabKotaOrmEntity } from '../orm/kabkota.orm_entity';
 import { CreateKabKotaDto } from 'src/presentation/kabkota/dto/create_kabkota.dto';
 import { GetKabKotasDto } from 'src/presentation/kabkota/dto/get_kabkotas.dto';
 import { plainToInstance } from 'class-transformer';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class KabKotaRepositoryImpl implements KabKotaRepository {
@@ -78,11 +79,15 @@ export class KabKotaRepositoryImpl implements KabKotaRepository {
 
     async findAll(pagination: GetKabKotasDto): Promise<{ data: KabKota[], total: number }> {
         try {
-            const [kabkotas, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
+            const qb = this.repo.createQueryBuilder('kabkota');
+
+            applyIlikeSearch(qb, 'kabkota', ['nama', 'kode'], pagination.search);
+
+            const [kabkotas, total] = await qb
+                .orderBy('kabkota.id', 'DESC')
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
 
             return { data: kabkotas, total };
         } catch (error) {

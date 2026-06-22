@@ -7,6 +7,7 @@ import { AsbKomponenBangunanNonstdOrmEntity } from '../orm/asb_komponen_bangunan
 import { CreateAsbKomponenBangunanNonstdDto } from '../../../presentation/asb_komponen_bangunan_nonstd/dto/create_asb_komponen_bangunan_nonstd.dto';
 import { GetAsbKomponenBangunanNonstdsDto } from '../../../presentation/asb_komponen_bangunan_nonstd/dto/get_asb_komponen_bangunan_nonstds.dto';
 import { plainToInstance } from 'class-transformer';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class AsbKomponenBangunanNonstdRepositoryImpl implements AsbKomponenBangunanNonstdRepository {
@@ -67,11 +68,16 @@ export class AsbKomponenBangunanNonstdRepositoryImpl implements AsbKomponenBangu
 
     async findAll(pagination: GetAsbKomponenBangunanNonstdsDto): Promise<{ data: AsbKomponenBangunanNonstd[], total: number }> {
         try {
-            const [items, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
+            const qb = this.repo.createQueryBuilder('asb_komponen_bangunan_nonstd');
+
+            applyIlikeSearch(qb, 'asb_komponen_bangunan_nonstd', ['komponen'], pagination.search);
+
+            const [items, total] = await qb
+                .orderBy('asb_komponen_bangunan_nonstd.id', 'DESC')
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
+
             return { data: items, total };
         } catch (error) {
             throw error;

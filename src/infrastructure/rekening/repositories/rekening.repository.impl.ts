@@ -8,6 +8,7 @@ import { CreateRekeningDto } from '../../../presentation/rekening/dto/create_rek
 import { UpdateRekeningDto } from '../../../presentation/rekening/dto/update_rekening.dto';
 import { GetRekeningsDto } from '../../../presentation/rekening/dto/get_rekenings.dto';
 import { plainToInstance } from 'class-transformer';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class RekeningRepositoryImpl implements RekeningRepository {
@@ -15,7 +16,12 @@ export class RekeningRepositoryImpl implements RekeningRepository {
 
     async create(rekening: CreateRekeningDto): Promise<Rekening> {
         try {
-            const ormEntity = plainToInstance(RekeningOrmEntity, rekening);
+            const now = new Date();
+            const ormEntity = plainToInstance(RekeningOrmEntity, {
+                ...rekening,
+                bulan: now.getMonth() + 1,
+                tahun: now.getFullYear(),
+            });
             const newEntity = await this.repo.save(ormEntity);
             return newEntity;
         } catch (error) {
@@ -54,7 +60,7 @@ export class RekeningRepositoryImpl implements RekeningRepository {
         try {
             const entity = await this.repo
                 .createQueryBuilder('rekening')
-                .where('rekening.rekening_kode LIKE :rekeningKode', { rekeningKode: `%${rekeningKode}%` })
+                .where('rekening.rekening_kode = :rekeningKode', { rekeningKode })
                 .getOne();
             return entity || null;
         } catch (error) {
@@ -64,11 +70,15 @@ export class RekeningRepositoryImpl implements RekeningRepository {
 
     async findAll(pagination: GetRekeningsDto): Promise<{ data: Rekening[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
+            const qb = this.repo.createQueryBuilder('rekening');
+
+            applyIlikeSearch(qb, 'rekening', ['rekening_kode', 'rekening_uraian'], pagination.search);
+
+            const [data, total] = await qb
+                .orderBy('rekening.id', 'DESC')
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
 
             return { data, total };
         } catch (error) {

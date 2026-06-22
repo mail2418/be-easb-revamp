@@ -6,6 +6,7 @@ import { AsbFungsiRuang } from '../../../domain/asb_fungsi_ruang/asb_fungsi_ruan
 import { AsbFungsiRuangOrmEntity } from '../orm/asb_fungsi_ruang.orm_entity';
 import { CreateAsbFungsiRuangDto } from '../../../presentation/asb_fungsi_ruang/dto/create_asb_fungsi_ruang.dto';
 import { GetAsbFungsiRuangsDto } from 'src/presentation/asb_fungsi_ruang/dto/get_asb_fungsi_ruangs.dto';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
@@ -51,11 +52,15 @@ export class AsbFungsiRuangRepositoryImpl implements AsbFungsiRuangRepository {
 
     async findAll(pagination: GetAsbFungsiRuangsDto): Promise<{ data: AsbFungsiRuang[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
+            const qb = this.repo.createQueryBuilder('asb_fungsi_ruang');
+
+            applyIlikeSearch(qb, 'asb_fungsi_ruang', ['nama_fungsi_ruang'], pagination.search);
+
+            const [data, total] = await qb
+                .orderBy('asb_fungsi_ruang.id', 'DESC')
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
 
             return { data, total };
         } catch (error) {

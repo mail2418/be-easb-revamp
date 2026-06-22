@@ -1,4 +1,4 @@
-import { IsNumber, Min } from 'class-validator';
+import { IsNumber, Min, IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetAsbStatusDto {
@@ -11,4 +11,8 @@ export class GetAsbStatusDto {
     @Min(1)
     @Transform(({ value }) => parseInt(value, 10))
     amount!: number;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
 }

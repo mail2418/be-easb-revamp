@@ -9,6 +9,7 @@ import { UpdateOpdDto } from '../../../presentation/opd/dto/update_opd.dto';
 import { DeleteOpdDto } from '../../../presentation/opd/dto/delete_opd.dto';
 import { GetOpdsDto } from '../../../presentation/opd/dto/get_opds.dto';
 import { plainToInstance } from 'class-transformer';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class OpdRepositoryImpl implements OpdRepository {
@@ -53,11 +54,15 @@ export class OpdRepositoryImpl implements OpdRepository {
 
     async findAll(pagination: GetOpdsDto): Promise<{ data: Opd[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
+            const qb = this.repo.createQueryBuilder('opd');
+
+            applyIlikeSearch(qb, 'opd', ['opd', 'alias'], pagination.search);
+
+            const [data, total] = await qb
+                .orderBy('opd.id', 'DESC')
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
 
             return { data, total };
         } catch (error) {

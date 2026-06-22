@@ -17,5 +17,6 @@ export abstract class ShstService {
     abstract getFilePath(dto: GetShstFileDto): Promise<string>;
     abstract downloadFile(dto: GetShstFileDto): Promise<{ filePath: string; downloadUrl: string }>;
     abstract getNominal(dto: GetShstNominalDto): Promise<number>;
+    abstract generateTemplate(): Promise<Buffer>;
 }
 

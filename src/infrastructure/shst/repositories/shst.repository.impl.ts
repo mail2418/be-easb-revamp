@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Brackets, Repository } from "typeorm";
 import { ShstRepository } from "../../../domain/shst/shst.repository";
 import { Shst } from "../../../domain/shst/shst.entity";
 import { ShstOrmEntity } from "../orm/shst.orm_entity";
@@ -67,6 +67,16 @@ export class ShstRepositoryImpl extends ShstRepository {
             }
             if (dto.id_kabkota) {
                 queryBuilder.andWhere("shst.id_kabkota = :id_kabkota", { id_kabkota: dto.id_kabkota });
+            }
+
+            const searchTerm = dto.search?.trim();
+            if (searchTerm) {
+                queryBuilder.andWhere(
+                    new Brackets((sub) => {
+                        sub.where("CAST(shst.tahun AS TEXT) ILIKE :searchTahun", { searchTahun: `%${searchTerm}%` })
+                            .orWhere("CAST(shst.nominal AS TEXT) ILIKE :searchNominal", { searchNominal: `%${searchTerm}%` });
+                    }),
+                );
             }
 
             // Pagination

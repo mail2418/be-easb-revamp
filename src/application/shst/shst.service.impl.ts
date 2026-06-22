@@ -12,6 +12,7 @@ import { ShstsPaginationResultDto } from "../../presentation/shst/dto/shsts_pagi
 import { ValidateShstForeignKeysUseCase } from "./use_cases/validate_shst_foreign_keys.use_case";
 import { HandleShstFileUseCase } from "./use_cases/handle_shst_file.use_case";
 import { GetShstNominalDto } from './dto/get_shst_nominal.dto';
+import { buildShstTemplateBuffer } from '../../common/utils/excel_template.util';
 
 @Injectable()
 export class ShstServiceImpl extends ShstService {
@@ -167,5 +168,9 @@ export class ShstServiceImpl extends ShstService {
         } catch (error) {
             throw error;
         }
+    }
+
+    async generateTemplate(): Promise<Buffer> {
+        return buildShstTemplateBuffer();
     }
 }

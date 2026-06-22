@@ -273,7 +273,7 @@ Implement the repository interface:
 
 ```typescript
 // src/infrastructure/example/repositories/example.repository.impl.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ExampleRepository } from '../../../domain/example/example.repository';
@@ -301,7 +301,10 @@ export class ExampleRepositoryImpl implements ExampleRepository {
         try {
             await this.repo.update(id, data);
             const updatedExample = await this.repo.findOne({ where: { id } });
-            return updatedExample!;
+            if (!updatedExample) {
+                throw new NotFoundException(`Example with id ${id} not found`);
+            }
+            return updatedExample;
         } catch (error) {
             throw error;
         }
@@ -309,7 +312,8 @@ export class ExampleRepositoryImpl implements ExampleRepository {
 
     async delete(id: number): Promise<boolean> {
         try {
-            return await this.repo.softDelete(id).then(() => true).catch(() => false);
+            const result = await this.repo.softDelete(id);
+            return (result.affected ?? 0) > 0;
         } catch (error) {
             throw error;
         }
@@ -792,6 +796,7 @@ export class CreateExampleTable1234567890 implements MigrationInterface {
                         name: 'name',
                         type: 'varchar',
                         length: '255',
+                        isUnique: true,
                     },
                     {
                         name: 'description',
@@ -822,6 +827,17 @@ export class CreateExampleTable1234567890 implements MigrationInterface {
             }),
             true,
         );
+
+        await queryRunner.query(`
+            DO $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'set_examples_updated_at') THEN
+                    CREATE TRIGGER set_examples_updated_at
+                    BEFORE UPDATE ON "examples"
+                    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+                END IF;
+            END $$;
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

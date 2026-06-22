@@ -7,6 +7,7 @@ import { AsbStatusOrmEntity } from "../orm/asb_status.orm_entity";
 import { CreateAsbStatusDto } from "../../../presentation/asb_status/dto/create_asb_status.dto";
 import { UpdateAsbStatusDto } from "../../../presentation/asb_status/dto/update_asb_status.dto";
 import { GetAsbStatusDto } from "../../../presentation/asb_status/dto/get_asb_status.dto";
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 import { plainToInstance } from "class-transformer";
 
@@ -66,11 +67,15 @@ export class AsbStatusRepositoryImpl implements AsbStatusRepository {
 
   async findAll(dto: GetAsbStatusDto): Promise<{ data: AsbStatus[], total: number }> {
     try {
-      const [data, total] = await this.repo.findAndCount({
-        skip: (dto.page - 1) * dto.amount,
-        take: dto.amount,
-        order: { id: "DESC" }
-      });
+      const qb = this.repo.createQueryBuilder('asb_status');
+
+      applyIlikeSearch(qb, 'asb_status', ['status'], dto.search);
+
+      const [data, total] = await qb
+        .orderBy('asb_status.id', 'DESC')
+        .skip((dto.page - 1) * dto.amount)
+        .take(dto.amount)
+        .getManyAndCount();
 
       return { data, total };
     } catch (error) {

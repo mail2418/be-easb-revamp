@@ -6,6 +6,7 @@ import { DeleteUserDto } from 'src/presentation/users/dto/delete_user.dto';
 import { DeleteUserByAdminDto } from 'src/presentation/users/dto/delete_user_by_admin.dto';
 import { GetUsersDto } from 'src/presentation/users/dto/get_users.dto';
 import { GetUserDetailDto } from 'src/presentation/users/dto/get_user_detail.dto';
+import { ChangePasswordDto } from 'src/presentation/users/dto/change_password.dto';
 
 export abstract class UserRepository {
     abstract findByUsername(username: string): Promise<User | null>;
@@ -17,4 +18,5 @@ export abstract class UserRepository {
     abstract deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean>;
     abstract getUsers(pagination: GetUsersDto): Promise<{ data: User[], total: number }>;
     abstract getUserDetail(user: GetUserDetailDto): Promise<User | null>;
+    abstract updatePasswordHash(id: number, passwordHash: string): Promise<void>;
 }

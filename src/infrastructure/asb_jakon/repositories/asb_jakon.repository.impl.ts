@@ -12,6 +12,7 @@ import { GetAsbJakonDetailDto } from 'src/presentation/asb_jakon/dto/get_asb_jak
 import { AsbJakonType } from 'src/domain/asb_jakon/asb_jakon_type.enum';
 import { Injectable } from '@nestjs/common';
 import { GetJakonByPriceRangeDto } from 'src/application/asb_jakon/dto/get_jakon_by_price_range.dto';
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 @Injectable()
 export class AsbJakonRepositoryImpl implements AsbJakonRepository {
@@ -61,10 +62,15 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
 
     async findAll(pagination: GetAsbJakonListDto): Promise<{ data: AsbJakon[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-            });
+            const qb = this.repo.createQueryBuilder('asb_jakon');
+
+            applyIlikeSearch(qb, 'asb_jakon', ['nama', 'spec', 'type', 'satuan'], pagination.search);
+
+            const [data, total] = await qb
+                .skip((pagination.page - 1) * pagination.amount)
+                .take(pagination.amount)
+                .getManyAndCount();
+
             return { data, total };
         } catch (error) {
             throw error;

@@ -1,9 +1,29 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UsulanJalanRepository } from '../../../domain/usulan_jalan/usulan_jalan.repository';
+import { UsulanJalanRepository, UsulanJalanListQuery, UsulanJalanListResult } from '../../../domain/usulan_jalan/usulan_jalan.repository';
 import { UsulanJalanOrmEntity } from '../orm/usulan_jalan.orm_entity';
-import { UsulanJalan } from 'src/domain/usulan_jalan/usulan_jalan.entity';
+
+const RELATIONS = [
+    'opd',
+    'usulanJalanStatus',
+    'asbJenis',
+    'jalanJenisPemeliharaan',
+    'jalanJenisPerkerasan',
+    'jalanJenisPerkerasanReview',
+    'rekening',
+    'rekeningReview',
+    'kabkota',
+    'kecamatan',
+    'kelurahan',
+    'verifikatorAdbang',
+    'verifikatorAdbang.user',
+    'verifikatorBpkad',
+    'verifikatorBpkad.user',
+    'verifikatorBappeda',
+    'verifikatorBappeda.user',
+    'rejectVerifikator',
+] as const;
 
 @Injectable()
 export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
@@ -12,33 +32,69 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         private readonly repo: Repository<UsulanJalanOrmEntity>,
     ) {}
 
-    async create(data: Partial<UsulanJalanOrmEntity>): Promise<UsulanJalan> {
-        const entity = this.repo.create(data);
-        return await this.repo.save(entity);
+    private toDto(entity: UsulanJalanOrmEntity): Record<string, unknown> {
+        const rejectVerifikator = entity.rejectVerifikator
+            ? { id: entity.rejectVerifikator.id, username: (entity.rejectVerifikator as { username?: string }).username }
+            : null;
+
+        return {
+            ...entity,
+            rejectVerifikator,
+        };
     }
 
-    async update(id: number, usulan: Partial<UsulanJalanOrmEntity>): Promise<UsulanJalan> {
-        await this.repo.update(id, usulan);
-        const updated = await this.findById(id);
-        if (!updated) throw new NotFoundException('Usulan jalan tidak ditemukan');
-        return updated;
+    async create(data: Record<string, unknown>): Promise<{ id: number }> {
+        const entity = this.repo.create(data as Partial<UsulanJalanOrmEntity>);
+        const saved = await this.repo.save(entity);
+        return { id: saved.id };
     }
 
-    async delete(id: number): Promise<boolean> {
+    async update(id: number, data: Record<string, unknown>): Promise<{ id: number; idUsulanJalanStatus: number }> {
+        await this.repo.update(id, data as Parameters<Repository<UsulanJalanOrmEntity>['update']>[1]);
+        const updated = await this.repo.findOne({ where: { id } });
+        return { id, idUsulanJalanStatus: updated?.idUsulanJalanStatus ?? 0 };
+    }
+
+    async softDelete(id: number): Promise<boolean> {
         const result = await this.repo.softDelete(id);
-        return result.affected ? true : false;
+        return (result.affected ?? 0) > 0;
     }
 
-    async findById(id: number): Promise<UsulanJalan | null> {
-        return this.repo.findOne({ where: { id } });
+    async findById(id: number, idOpd?: number | null): Promise<Record<string, unknown> | null> {
+        const where: { id: number; idOpd?: number } = { id };
+        if (idOpd) {
+            where.idOpd = idOpd;
+        }
+
+        const entity = await this.repo.findOne({ where, relations: [...RELATIONS] });
+        return entity ? this.toDto(entity) : null;
     }
 
-    async findAll(page: number, limit: number): Promise<{ data: UsulanJalan[]; total: number }> {
-        const [data, total] = await this.repo.findAndCount({
-            skip: (page - 1) * limit,
-            take: limit,
-            order: { id: 'DESC' },
+    async findAll(query: UsulanJalanListQuery, idOpd?: number | null): Promise<UsulanJalanListResult> {
+        const page = query.page ?? 1;
+        const amount = query.amount ?? 10;
+        const where: Record<string, unknown> = {};
+
+        if (idOpd) {
+            where.idOpd = idOpd;
+        }
+        if (query.tahunAnggaran) {
+            where.tahunAnggaran = query.tahunAnggaran;
+        }
+
+        const [entities, total] = await this.repo.findAndCount({
+            where,
+            relations: [...RELATIONS],
+            skip: (page - 1) * amount,
+            take: amount,
+            order: { createdAt: 'DESC' },
         });
-        return { data, total };
+
+        return {
+            data: entities.map((e) => this.toDto(e)),
+            total,
+            totalPages: Math.ceil(total / amount) || 1,
+            page,
+        };
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { VerifikatorRepository } from '../../../domain/verifikator/verifikator.repository';
 import { Verifikator } from '../../../domain/verifikator/verifikator.entity';
 import { VerifikatorOrmEntity } from '../orm/verifikator.orm_entity';
@@ -67,14 +67,26 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
         }
     }
 
-    async findAll(page: number, limit: number): Promise<{ data: Verifikator[]; total: number }> {
+    async findAll(page: number, limit: number, search?: string): Promise<{ data: Verifikator[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (page - 1) * limit,
-                take: limit,
-                order: { id: 'DESC' },
-                relations: ['user']
-            });
+            const qb = this.repo.createQueryBuilder('verifikator')
+                .leftJoinAndSelect('verifikator.user', 'user');
+
+            const searchTerm = search?.trim();
+            if (searchTerm) {
+                qb.andWhere(
+                    new Brackets((sub) => {
+                        sub.where('verifikator.verifikator ILIKE :searchVerifikator', { searchVerifikator: `%${searchTerm}%` })
+                            .orWhere('CAST(verifikator.jenisVerifikator AS TEXT) ILIKE :searchJenis', { searchJenis: `%${searchTerm}%` });
+                    }),
+                );
+            }
+
+            const [data, total] = await qb
+                .orderBy('verifikator.id', 'DESC')
+                .skip((page - 1) * limit)
+                .take(limit)
+                .getManyAndCount();
 
             return { data, total };
         } catch (error) {

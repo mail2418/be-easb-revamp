@@ -12,6 +12,7 @@ import { DeleteUserByAdminDto } from 'src/presentation/users/dto/delete_user_by_
 import { GetUsersDto } from 'src/presentation/users/dto/get_users.dto';
 import { GetUserDetailDto } from 'src/presentation/users/dto/get_user_detail.dto';
 import { UsersPaginationResult } from 'src/presentation/users/dto/users_pagination.dto';
+import { ChangePasswordDto } from 'src/presentation/users/dto/change_password.dto';
 import bcrypt from 'bcryptjs';
 import { Role } from 'src/domain/user/user_role.enum';
 
@@ -288,6 +289,56 @@ export class UserServiceImpl implements UserService {
                 throw error;
             }
             throw new InternalServerErrorException('Failed to get user detail');
+        }
+    }
+
+    async changePassword(
+        dto: ChangePasswordDto,
+        callerUserId: number,
+        callerRoles: Role[],
+    ): Promise<void> {
+        try {
+            const caller = await this.userRepo.findById(callerUserId);
+            if (!caller) {
+                throw new NotFoundException('Caller user not found');
+            }
+
+            const passwordValid = await bcrypt.compare(
+                dto.currentPassword,
+                caller.passwordHash ?? '',
+            );
+            if (!passwordValid) {
+                throw new ForbiddenException('Wrong current password');
+            }
+
+            const target = await this.userRepo.findById(dto.userId);
+            if (!target) {
+                throw new NotFoundException('User not found');
+            }
+
+            const isSuperadmin = callerRoles.includes(Role.SUPERADMIN);
+            const isAdmin = callerRoles.includes(Role.ADMIN);
+
+            if (!isSuperadmin && !isAdmin) {
+                throw new ForbiddenException('Not allowed to change user password');
+            }
+
+            if (!isSuperadmin) {
+                const targetHasPrivilegedRole = target.roles.some((role) =>
+                    [Role.SUPERADMIN, Role.ADMIN].includes(role),
+                );
+                if (targetHasPrivilegedRole) {
+                    throw new ForbiddenException('Admin cannot change password for admin or superadmin users');
+                }
+            }
+
+            const passwordHash = bcrypt.hashSync(dto.newPassword);
+            await this.userRepo.updatePasswordHash(target.id, passwordHash);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException('Failed to change password');
         }
     }
 }

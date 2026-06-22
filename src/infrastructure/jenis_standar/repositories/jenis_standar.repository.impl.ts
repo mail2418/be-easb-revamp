@@ -7,6 +7,7 @@ import { JenisStandarOrmEntity } from "../orm/jenis_standar.orm_entity";
 import { CreateJenisStandarDto } from "../../../presentation/jenis_standar/dto/create_jenis_standar.dto";
 import { UpdateJenisStandarDto } from "../../../presentation/jenis_standar/dto/update_jenis_standar.dto";
 import { GetJenisStandarDto } from "../../../presentation/jenis_standar/dto/get_jenis_standar.dto";
+import { applyIlikeSearch } from 'src/common/utils/search_query.util';
 
 import { plainToInstance } from "class-transformer";
 
@@ -66,11 +67,15 @@ export class JenisStandarRepositoryImpl implements JenisStandarRepository {
 
   async findAll(dto: GetJenisStandarDto): Promise<{ data: JenisStandar[], total: number }> {
     try {
-      const [data, total] = await this.repo.findAndCount({
-        skip: (dto.page - 1) * dto.amount,
-        take: dto.amount,
-        order: { id: "DESC" }
-      });
+      const qb = this.repo.createQueryBuilder('jenis_standar');
+
+      applyIlikeSearch(qb, 'jenis_standar', ['jenis'], dto.search);
+
+      const [data, total] = await qb
+        .orderBy('jenis_standar.id', 'DESC')
+        .skip((dto.page - 1) * dto.amount)
+        .take(dto.amount)
+        .getManyAndCount();
 
       return { data, total };
     } catch (error) {
