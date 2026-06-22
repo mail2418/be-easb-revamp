@@ -1,8 +1,9 @@
-import { ConflictException, ForbiddenException, HttpException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, HttpException, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException, forwardRef } from '@nestjs/common';
 import { UserRepository } from '../../domain/user/user.repository';
 import { User } from '../../domain/user/user.entity';
 import { ValidateUserUseCase } from './use_cases/validate_user.use_case';
 import { UserService } from 'src/domain/user/user.service';
+import { UserProfileService } from '../../domain/user_profile/user_profile.service';
 import { LoginDto } from 'src/presentation/auth/dto/login.dto';
 import { CreateUserDto } from 'src/presentation/users/dto/create_user.dto';
 import { UpdateUserDto } from 'src/presentation/users/dto/update_user.dto';
@@ -21,7 +22,11 @@ export class UserServiceImpl implements UserService {
     private readonly validateUserUseCase: ValidateUserUseCase;
     private readonly SALT_ROUNDS = 12;
 
-    constructor(private readonly userRepo: UserRepository) {
+    constructor(
+        private readonly userRepo: UserRepository,
+        @Inject(forwardRef(() => UserProfileService))
+        private readonly profileService: UserProfileService,
+    ) {
         this.validateUserUseCase = new ValidateUserUseCase(userRepo);
     }
 
@@ -38,6 +43,7 @@ export class UserServiceImpl implements UserService {
 
             // create user
             const newUser = await this.userRepo.create(userDto);
+            await this.profileService.ensureProfileForUser(newUser.id, newUser.username);
 
             const { passwordHash: _, ...safe } = newUser as any;
             return safe as User;
@@ -68,6 +74,7 @@ export class UserServiceImpl implements UserService {
 
             // create user
             const newUser = await this.userRepo.create(userDto);
+            await this.profileService.ensureProfileForUser(newUser.id, newUser.username);
 
             const { passwordHash: _, ...safe } = newUser as any;
             safe.passwordHash = undefined;
@@ -101,6 +108,14 @@ export class UserServiceImpl implements UserService {
             }
             throw new InternalServerErrorException('Failed to find user by username');
         }
+    }
+
+    async recordFailedLogin(userId: number, maxAttempts: number, lockoutMinutes: number): Promise<void> {
+        await this.userRepo.recordFailedLogin(userId, maxAttempts, lockoutMinutes);
+    }
+
+    async resetFailedLogin(userId: number): Promise<void> {
+        await this.userRepo.resetFailedLogin(userId);
     }
 
     async findById(id: number): Promise<User | null> {

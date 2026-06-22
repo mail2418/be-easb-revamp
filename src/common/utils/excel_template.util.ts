@@ -20,6 +20,7 @@ export async function buildHspkTemplateBuffer(): Promise<Buffer> {
 
 export async function parseHspkBulkFile(
     file: Express.Multer.File,
+    tahunAnggaran: number = new Date().getFullYear(),
 ): Promise<CreateHspkDto[]> {
     const workbook = new Workbook();
     await workbook.xlsx.load(file.buffer as any);
@@ -41,6 +42,7 @@ export async function parseHspkBulkFile(
             satuan,
             harga_satuan: harga,
             uraian,
+            tahun_anggaran: tahunAnggaran,
         });
     });
     return rows;

@@ -25,6 +25,7 @@ Dependencies point **inward**: outer layers depend on abstractions defined in th
 | Request ID | [`CorrelationIdMiddleware`](../src/common/middleware/correlation_id.middleware.ts), [`LoggerMiddleware`](../src/common/middleware/request_logger.middleware.ts) |
 | Config | [`src/config/`](../src/config/) — `configuration.ts`, Joi `validationSchema` |
 | Rate limiting | [`ThrottlerModule`](../src/app.module.ts), global `ThrottlerGuard` |
+| SSRF prevention | [`safe_fetch.util.ts`](../src/common/utils/safe_fetch.util.ts) — use for any future user-supplied URL fetch |
 
 ## Bootstrap
 

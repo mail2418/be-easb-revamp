@@ -38,8 +38,24 @@ export class AuthService {
     ) { }
 
     async validateUser(dto: LoginDto): Promise<User> {
-        const user = await this.userService.validateUser(dto); // lakukan bcrypt.compare di use case
-        if (!user) throw new UnauthorizedException('Invalid credentials');
+        const existing = await this.userService.findByUsername(dto.username);
+        if (!existing) {
+            throw new UnauthorizedException('Invalid credentials');
+        }
+
+        if (existing.lockedUntil && existing.lockedUntil.getTime() > Date.now()) {
+            throw new UnauthorizedException('Invalid credentials');
+        }
+
+        const user = await this.userService.validateUser(dto);
+        if (!user) {
+            const maxAttempts = parseInt(process.env.LOGIN_MAX_FAILED_ATTEMPTS ?? '5', 10);
+            const lockoutMinutes = parseInt(process.env.LOGIN_LOCKOUT_MINUTES ?? '15', 10);
+            await this.userService.recordFailedLogin(existing.id, maxAttempts, lockoutMinutes);
+            throw new UnauthorizedException('Invalid credentials');
+        }
+
+        await this.userService.resetFailedLogin(user.id);
         return user;
     }
 

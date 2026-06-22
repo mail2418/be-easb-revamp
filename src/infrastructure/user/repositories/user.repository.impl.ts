@@ -107,4 +107,33 @@ export class UserRepositoryImpl implements UserRepository {
         await this.repo.update({ id: userId }, { passwordHash });
         await this.repo.increment({ id: userId }, 'refreshTokenVersion', 1);
     }
+
+    async recordFailedLogin(userId: number, maxAttempts: number, lockoutMinutes: number): Promise<void> {
+        const user = await this.repo.findOne({ where: { id: userId } });
+        if (!user) return;
+
+        const attempts = (user.failedLoginAttempts ?? 0) + 1;
+        const lockedUntil =
+            attempts >= maxAttempts
+                ? new Date(Date.now() + lockoutMinutes * 60 * 1000)
+                : user.lockedUntil;
+
+        await this.repo.update(
+            { id: userId },
+            {
+                failedLoginAttempts: attempts,
+                lockedUntil,
+            },
+        );
+    }
+
+    async resetFailedLogin(userId: number): Promise<void> {
+        await this.repo.update(
+            { id: userId },
+            {
+                failedLoginAttempts: 0,
+                lockedUntil: null,
+            },
+        );
+    }
 }

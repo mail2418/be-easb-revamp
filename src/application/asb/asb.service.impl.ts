@@ -260,7 +260,10 @@ export class AsbServiceImpl implements AsbService {
         }
 
         // Create ASB
-        const asb = await this.repository.create(dto);
+        const createData: CreateAsbStoreIndexDto = { ...dto };
+        if (dto.idKecamatan) createData.idKecamatan = dto.idKecamatan;
+        if (dto.idKelurahan) createData.idKelurahan = dto.idKelurahan;
+        const asb = await this.repository.create(createData);
 
         // Get ASB
         const asbData = await this.repository.findById(asb.id);
@@ -279,7 +282,11 @@ export class AsbServiceImpl implements AsbService {
             username: username
         }
 
-        const asbDocs = await this.asbDocumentService.generateSuratPermohonan(suratPermohonanDto);
+        try {
+            await this.asbDocumentService.generateSuratPermohonan(suratPermohonanDto);
+        } catch (error) {
+            console.error(`Failed to generate surat permohonan for ASB ${asbData.id}:`, error);
+        }
 
         await this.mainDashboardRepository.create({
             idUsulan: asb.id,
@@ -721,7 +728,9 @@ export class AsbServiceImpl implements AsbService {
         });
 
         if (!perencanaanKonstruksi) {
-            throw new NotFoundException("ASB is missing required perencanaanKonstruksi data for Jakon lookup");
+            throw new NotFoundException(
+                `Data Jakon perencanaan tidak ditemukan untuk jenis ${asb.idAsbJenis}, tipe bangunan ${asb.idAsbTipeBangunan}, klasifikasi ${asb.idAsbKlasifikasi}. Hubungi administrator untuk melengkapi master Jakon.`,
+            );
         }
 
         const nominalPerencanaanKonstruksi = perencanaanKonstruksi.standard;

@@ -4,12 +4,13 @@ import { AsbKomponenBangunanNonstdController } from './asb_komponen_bangunan_non
 import { AsbKomponenBangunanNonstdServiceImpl } from '../../application/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.service.impl';
 import { AsbKomponenBangunanNonstdRepositoryImpl } from '../../infrastructure/asb_komponen_bangunan_nonstd/repositories/asb_komponen_bangunan_nonstd.repository.impl';
 import { AsbKomponenBangunanNonstdOrmEntity } from '../../infrastructure/asb_komponen_bangunan_nonstd/orm/asb_komponen_bangunan_nonstd.orm_entity';
+import { AsbKomponenBangunanProsNonstdOrmEntity } from '../../infrastructure/asb_komponen_bangunan_pros_nonstd/orm/asb_komponen_bangunan_pros_nonstd.orm_entity';
 import { AsbKomponenBangunanNonstdService } from '../../domain/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.service';
 import { AsbKomponenBangunanNonstdRepository } from '../../domain/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.repository';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AsbKomponenBangunanNonstdOrmEntity]),
+        TypeOrmModule.forFeature([AsbKomponenBangunanNonstdOrmEntity, AsbKomponenBangunanProsNonstdOrmEntity]),
     ],
     controllers: [AsbKomponenBangunanNonstdController],
     providers: [

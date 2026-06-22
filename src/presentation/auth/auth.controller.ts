@@ -10,6 +10,13 @@ import { Roles, ROLES_KEY } from 'src/common/decorators/roles.decorator';
 import { RevokeAllDto } from './dto/revoke_all.dto';
 import { Throttle } from '@nestjs/throttler';
 
+const REFRESH_COOKIE_OPTIONS = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict' as const,
+    path: '/',
+};
+
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
@@ -26,12 +33,8 @@ export class AuthController {
         const user = await this.authService.validateUser(dto);
         const token = await this.authService.login(user);
 
-        // SET refresh token via HttpOnly cookie
         res.cookie('refreshToken', token.refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            path: '/',
+            ...REFRESH_COOKIE_OPTIONS,
             maxAge: token.maxAgeRefresh,
         });
 
@@ -59,10 +62,7 @@ export class AuthController {
         const tokens = await this.authService.rotateTokens({ id: user.sub, username: user.username, roles: user.roles } as any);
 
         res.cookie('refreshToken', tokens.refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            path: '/',
+            ...REFRESH_COOKIE_OPTIONS,
             maxAge: tokens.maxAgeRefresh,
         });
 
@@ -71,7 +71,7 @@ export class AuthController {
 
     @Post('logout')
     async logout(@Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
-        res.clearCookie('refreshToken', { path: '/' });
+        res.clearCookie('refreshToken', REFRESH_COOKIE_OPTIONS);
         return { status: 'success', responseCode: 200, message: 'Logged out', data: null };
     }
 
@@ -80,7 +80,7 @@ export class AuthController {
     async revokeAll(@Body() revokeDto: RevokeAllDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
         await this.authService.revokeAllRefreshTokens(revokeDto);
 
-        res.clearCookie('refreshToken', { path: '/' });
+        res.clearCookie('refreshToken', REFRESH_COOKIE_OPTIONS);
         return { status: 'success', responseCode: 200, message: 'All refresh tokens revoked', data: null };
     }
 }

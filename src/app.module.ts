@@ -7,6 +7,7 @@ import configuration from './config/configuration';
 
 import { AuthModule } from './presentation/auth/auth.module';
 import { UserModule } from './presentation/users/user.module';
+import { UserProfileModule } from './presentation/user_profile/user_profile.module';
 import { ProvinceModule } from './presentation/provinces/province.module';
 import { KabKotaModule } from './presentation/kabkota/kabkota.module';
 import { SatuanModule } from './presentation/satuan/satuan.module';
@@ -53,6 +54,8 @@ import { JalanSaluranRuangLingkupModule } from './presentation/jalan_saluran_rua
 import { JalanSaluranSmkkModule } from './presentation/jalan_saluran_smkk/jalan_saluran_smkk.module';
 import { HspkModule } from './presentation/hspk/hspk.module';
 import { MainDashboardModule } from './presentation/main_dashboard/main_dashboard.module';
+import { HealthModule } from './presentation/health/health.module';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -116,6 +119,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
         }),
         AuthModule,
         UserModule,
+        UserProfileModule,
         ProvinceModule,
         KabKotaModule,
         SatuanModule,
@@ -163,6 +167,13 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
         JalanSaluranSmkkModule,
         HspkModule,
         MainDashboardModule,
+        HealthModule,
+        PrometheusModule.register({
+            path: '/metrics',
+            defaultMetrics: {
+                enabled: true,
+            },
+        }),
         ThrottlerModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (config: ConfigService) => [

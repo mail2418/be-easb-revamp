@@ -1,0 +1,53 @@
+# Test / CI overlay — isolated project name, non-default ports, ephemeral-friendly DB.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.test.yml --profile postgres up -d
+#   docker compose -f docker-compose.yml -f docker-compose.test.yml --profile postgres --profile backend up -d --build
+#
+# Tear down including volumes:
+#   docker compose -f docker-compose.yml -f docker-compose.test.yml --profile postgres down -v
+
+name: easb-test
+
+services:
+  backend:
+    image: easb-backend:test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: easb-backend-test
+    restart: 'no'
+    ports:
+      - '${BACKEND_PORT:-3001}:3000'
+    env_file:
+      - ${ENV_FILE:-.env.docker.test}
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+      mysql:
+        condition: service_healthy
+        required: false
+
+  postgres:
+    container_name: easb-postgres-test
+    restart: 'no'
+    ports:
+      - '${POSTGRES_PORT:-5433}:5432'
+    volumes:
+      - easb_postgres_test_data:/var/lib/postgresql/data
+
+  mysql:
+    container_name: easb-mysql-test
+    restart: 'no'
+    ports:
+      - '${MYSQL_PORT:-3307}:3306'
+    volumes:
+      - easb_mysql_test_data:/var/lib/mysql
+
+volumes:
+  easb_postgres_test_data:
+  easb_mysql_test_data:
+
+networks:
+  easb-net:
+    name: easb-net-test

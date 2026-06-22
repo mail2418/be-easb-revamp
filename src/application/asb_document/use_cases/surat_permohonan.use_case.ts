@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { escapeHtml } from 'src/common/utils/escape_html.util';
 import * as puppeteer from 'puppeteer';
 import { SuratPermohonanDto } from 'src/presentation/asb_document/dto/surat_permohonan,dto';
 
@@ -170,25 +171,25 @@ export class SuratPermohonanUseCase {
             <td class="col-no">1.</td>
             <td class="col-label">OPD</td>
             <td class="col-colon">:</td>
-            <td class="col-value">${data.opd}</td>
+            <td class="col-value">${escapeHtml(data.opd)}</td>
         </tr>
         <tr>
             <td class="col-no">2.</td>
             <td class="col-label">Nama Kegiatan</td>
             <td class="col-colon">:</td>
-            <td class="col-value">${data.nama_asb}</td>
+            <td class="col-value">${escapeHtml(data.nama_asb)}</td>
         </tr>
         <tr>
             <td class="col-no">3.</td>
             <td class="col-label">Jenis Kegiatan</td>
             <td class="col-colon">:</td>
-            <td class="col-value">${data.asb_jenis}</td>
+            <td class="col-value">${escapeHtml(data.asb_jenis)}</td>
         </tr>
         <tr>
             <td class="col-no">4.</td>
             <td class="col-label">Lokasi</td>
             <td class="col-colon">:</td>
-            <td class="col-value">${data.alamat}</td>
+            <td class="col-value">${escapeHtml(data.alamat)}</td>
         </tr>
     </table>
 
@@ -200,7 +201,7 @@ export class SuratPermohonanUseCase {
         <tr>
             <td style="width:20%;">Diusulkan oleh</td>
             <td style="width:2%;">:</td>
-            <td>${data.username}</td>
+            <td>${escapeHtml(data.username)}</td>
         </tr>
         <tr>
             <td>Pada tanggal</td>

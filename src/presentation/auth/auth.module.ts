@@ -10,10 +10,6 @@ import { RefreshJwtStrategy } from 'src/application/auth/refresh.strategy';
 import { JwtAuthGuard } from 'src/common/guards/jwt_auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { APP_GUARD } from '@nestjs/core';
-import { UserService } from 'src/domain/user/user.service';
-import { UserServiceImpl } from 'src/application/user/user.service.impl';
-import { UserRepositoryImpl } from 'src/infrastructure/user/repositories/user.repository.impl';
-import { UserRepository } from 'src/domain/user/user.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserOrmEntity } from 'src/infrastructure/user/orm/user.orm_entity';
 import { AuthRepository } from 'src/application/auth/auth.repository';
@@ -44,16 +40,6 @@ import { OpdModule } from '../opd/opd.module';
         RefreshJwtStrategy,
         { provide: APP_GUARD, useClass: JwtAuthGuard },
         { provide: APP_GUARD, useClass: RolesGuard },
-        UserServiceImpl,
-        {
-            provide: UserService,
-            useExisting: UserServiceImpl,
-        },
-        UserRepositoryImpl,
-        {
-            provide: UserRepository,
-            useExisting: UserRepositoryImpl,
-        },
         AuthRepository,
     ],
     exports: [AuthService],

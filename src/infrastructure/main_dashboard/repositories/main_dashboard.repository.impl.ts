@@ -17,6 +17,7 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
         search: string | undefined,
         tahunAnggaran: number | undefined,
         idJenisUsulan: number | undefined,
+        idOpd: number | undefined,
         page: number,
         limit: number,
     ): Promise<{ data: MainDashboard[]; total: number }> {
@@ -29,7 +30,7 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
             .take(limit);
 
         const whereConditions: string[] = [];
-        const whereParams: any = {};
+        const whereParams: Record<string, string | number> = {};
 
         if (search) {
             whereConditions.push('LOWER(main_dashboard.namaUsulan) LIKE :search');
@@ -44,6 +45,30 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
         if (idJenisUsulan !== undefined) {
             whereConditions.push('main_dashboard.idJenisUsulan = :idJenisUsulan');
             whereParams.idJenisUsulan = idJenisUsulan;
+        }
+
+        if (idOpd !== undefined) {
+            whereConditions.push(`(
+                (main_dashboard.idJenisUsulan = 1 AND EXISTS (
+                    SELECT 1 FROM asb a
+                    WHERE a.id = main_dashboard.idUsulan
+                      AND a.id_opd = :idOpd
+                      AND a.deleted_at IS NULL
+                ))
+                OR (main_dashboard.idJenisUsulan = 2 AND EXISTS (
+                    SELECT 1 FROM usulan_jalan uj
+                    WHERE uj.id = main_dashboard.idUsulan
+                      AND uj.id_opd = :idOpd
+                      AND uj.deleted_at IS NULL
+                ))
+                OR (main_dashboard.idJenisUsulan = 3 AND EXISTS (
+                    SELECT 1 FROM usulan_saluran us
+                    WHERE us.id = main_dashboard.idUsulan
+                      AND us.id_opd = :idOpd
+                      AND us.deleted_at IS NULL
+                ))
+            )`);
+            whereParams.idOpd = idOpd;
         }
 
         if (whereConditions.length > 0) {
@@ -68,6 +93,16 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
     }
 
     async create(data: { idUsulan: number; idJenisUsulan: number; idAsbStatus: number; namaUsulan: string; rejectInfo?: string | null; tahunAnggaran?: number | null }): Promise<MainDashboard> {
+        const existing = await this.repo.findOne({
+            where: {
+                idUsulan: data.idUsulan,
+                idJenisUsulan: data.idJenisUsulan,
+            },
+        });
+        if (existing) {
+            return plainToInstance(MainDashboard, existing);
+        }
+
         const entity = this.repo.create(data);
         const saved = await this.repo.save(entity);
         return plainToInstance(MainDashboard, saved);

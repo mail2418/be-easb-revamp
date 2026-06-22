@@ -5,6 +5,8 @@ import { CalculationMethod } from '../../../domain/asb_bipek_standard/calculatio
 import { AsbKomponenBangunanProsStd } from 'src/domain/asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.entity';
 import { AsbDetailService } from 'src/domain/asb_detail/asb_detail.service';
 import { Files } from 'src/domain/asb_detail/files.enum';
+import { resolveKomponenPros } from '../../asb_komponen_bangunan_pros/default_komponen_pros';
+import { getBobotAcuanFromPros } from '../../asb_bipek_standard/use_cases/komponen_pros.helpers';
 
 @Injectable()
 export class CalculateBobotBPSReviewUseCase {
@@ -26,7 +28,7 @@ export class CalculateBobotBPSReviewUseCase {
         luasTotalBangunan: number
     ): Promise<number[]> {
         let jumlahBobot = 0;
-        let kompBangProsList: AsbKomponenBangunanProsStd[] = [];
+        let kompBangProsList: Array<AsbKomponenBangunanProsStd | ReturnType<typeof resolveKomponenPros>> = [];
         let calculationMethod: CalculationMethod;
 
         // Set calculation method
@@ -43,25 +45,14 @@ export class CalculateBobotBPSReviewUseCase {
         // Loop 1: Calculate jumlah_bobot
         for (let i = 0; i < komponenIds.length; i++) {
             if (bobotInputs[i]) {
-                const asbKompBangPros = await this.asbKomponenBangunanProsStdRepository
-                    .findByKomponenBangunanStdId(komponenIds[i]);
-
-                if (asbKompBangPros) {
-                    kompBangProsList[i] = asbKompBangPros;
-                    let bobotAcuan = 0;
-
-                    if (calculationMethod === CalculationMethod.AVG_MIN) {
-                        bobotAcuan = asbKompBangPros.avgMin || 0;
-                    } else if (calculationMethod === CalculationMethod.AVG_MAX) {
-                        bobotAcuan = asbKompBangPros.avgMax || 0;
-                    } else if (calculationMethod === CalculationMethod.MAX) {
-                        bobotAcuan = asbKompBangPros.max || 0;
-                    } else {
-                        bobotAcuan = asbKompBangPros.avg || 0;
-                    }
-
-                    jumlahBobot += (bobotInputs[i] / 100) * bobotAcuan;
-                }
+                const pros = resolveKomponenPros(
+                    await this.asbKomponenBangunanProsStdRepository.findByKomponenBangunanStdId(
+                        komponenIds[i],
+                    ),
+                );
+                kompBangProsList[i] = pros;
+                const bobotAcuan = getBobotAcuanFromPros(pros, calculationMethod);
+                jumlahBobot += (bobotInputs[i] / 100) * bobotAcuan;
             }
         }
 
@@ -73,17 +64,7 @@ export class CalculateBobotBPSReviewUseCase {
         // Loop 2: Create and save AsbBipekStandard records
         for (let i = 0; i < komponenIds.length; i++) {
             if (bobotInputs[i] && kompBangProsList[i]) {
-                let bobotAcuan = 0;
-
-                if (calculationMethod === CalculationMethod.AVG_MIN) {
-                    bobotAcuan = kompBangProsList[i].avgMin || 0;
-                } else if (calculationMethod === CalculationMethod.AVG_MAX) {
-                    bobotAcuan = kompBangProsList[i].avgMax || 0;
-                } else if (calculationMethod === CalculationMethod.MAX) {
-                    bobotAcuan = kompBangProsList[i].max || 0;
-                } else {
-                    bobotAcuan = kompBangProsList[i].avg || 0;
-                }
+                const bobotAcuan = getBobotAcuanFromPros(kompBangProsList[i], calculationMethod);
 
                 const bobot = (bobotInputs[i] / 100) * bobotAcuan;
 

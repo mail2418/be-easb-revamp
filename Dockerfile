@@ -20,5 +20,5 @@ RUN npm ci --omit=dev && npm cache clean --force
 # Copy compiled application (includes dist/migrations/*)
 COPY --from=builder /app/dist ./dist
 
-EXPOSE 3005
+EXPOSE 3000
 CMD ["node", "dist/main"]

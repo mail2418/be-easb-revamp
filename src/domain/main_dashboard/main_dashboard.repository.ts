@@ -5,6 +5,7 @@ export abstract class MainDashboardRepository {
         search: string | undefined,
         tahunAnggaran: number | undefined,
         idJenisUsulan: number | undefined,
+        idOpd: number | undefined,
         page: number,
         limit: number,
     ): Promise<{ data: MainDashboard[]; total: number }>;

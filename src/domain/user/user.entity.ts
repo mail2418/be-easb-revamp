@@ -6,4 +6,6 @@ export class User {
   passwordHash?: string; // jangan expose keluar layer
   roles!: Role[];
   refreshTokenVersion!: number;
+  failedLoginAttempts!: number;
+  lockedUntil!: Date | null;
 }

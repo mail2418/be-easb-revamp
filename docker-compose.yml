@@ -1,0 +1,193 @@
+# Base stack for Samarta ASB backend infrastructure.
+# Pick an overlay and profiles — see docs/docker-compose.md
+#
+#   dev:  docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile postgres up -d
+#   prod: docker compose -f docker-compose.yml -f docker-compose.prod.yml --profile mysql --profile backend --profile nginx --profile observability up -d
+#   test: docker compose -f docker-compose.yml -f docker-compose.test.yml --profile postgres up -d
+
+name: easb
+
+services:
+  backend:
+    image: ${BACKEND_IMAGE:-easb-backend:local}
+    container_name: easb-backend
+    restart: unless-stopped
+    env_file:
+      - ${ENV_FILE:-.env}
+    volumes:
+      - easb-uploads:/app/public
+    networks:
+      - easb-net
+    profiles:
+      - backend
+
+  mysql:
+    image: mysql:8.0
+    container_name: easb-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - easb_mysql_data:/var/lib/mysql
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    networks:
+      - easb-net
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    profiles:
+      - mysql
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: easb-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-easb}
+    volumes:
+      - easb_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - easb-net
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-easb}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - postgres
+
+  nginx:
+    image: nginx:alpine
+    container_name: easb-nginx
+    restart: unless-stopped
+    ports:
+      - '${NGINX_HTTP_PORT:-80}:80'
+      - '${NGINX_HTTPS_PORT:-443}:443'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - easb-net
+    profiles:
+      - nginx
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: easb-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=15d'
+    networks:
+      - easb-net
+    profiles:
+      - observability
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: easb-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-changeme}
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - '${GRAFANA_PORT:-3006}:3000'
+    networks:
+      - easb-net
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+    profiles:
+      - observability
+
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: easb-loki
+    restart: unless-stopped
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./observability/loki/loki.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    networks:
+      - easb-net
+    profiles:
+      - observability
+
+  promtail:
+    image: grafana/promtail:3.0.0
+    container_name: easb-promtail
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - ./observability/promtail/promtail.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    networks:
+      - easb-net
+    depends_on:
+      - loki
+    profiles:
+      - observability
+
+  tempo:
+    image: grafana/tempo:2.4.1
+    container_name: easb-tempo
+    restart: unless-stopped
+    command: -config.file=/etc/tempo/tempo.yml
+    volumes:
+      - ./observability/tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+      - tempo-data:/tmp/tempo
+    networks:
+      - easb-net
+    profiles:
+      - observability
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: easb-cadvisor
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks:
+      - easb-net
+    profiles:
+      - observability
+
+volumes:
+  easb-uploads:
+  easb_mysql_data:
+  easb_postgres_data:
+  prometheus-data:
+  grafana-data:
+  loki-data:
+  tempo-data:
+
+networks:
+  easb-net:
+    name: easb-net
+    driver: bridge

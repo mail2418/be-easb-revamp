@@ -152,4 +152,8 @@ export class ShstServiceImpl extends ShstService {
     async getNominal(dto: GetShstNominalDto): Promise<number> {
         return await this.shstRepository.getNominal(dto);
     }
+
+    async generateTemplate(): Promise<Buffer> {
+        return this.generateExcelTemplateUseCase.execute();
+    }
 }

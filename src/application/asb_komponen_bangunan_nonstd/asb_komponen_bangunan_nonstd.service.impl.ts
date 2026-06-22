@@ -1,4 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { AsbKomponenBangunanNonstdService } from '../../domain/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.service';
 import { AsbKomponenBangunanNonstdRepository } from '../../domain/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.repository';
 import { AsbKomponenBangunanNonstd } from '../../domain/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.entity';
@@ -8,13 +10,28 @@ import { DeleteAsbKomponenBangunanNonstdDto } from '../../presentation/asb_kompo
 import { GetAsbKomponenBangunanNonstdsDto } from '../../presentation/asb_komponen_bangunan_nonstd/dto/get_asb_komponen_bangunan_nonstds.dto';
 import { GetAsbKomponenBangunanNonstdDetailDto } from '../../presentation/asb_komponen_bangunan_nonstd/dto/get_asb_komponen_bangunan_nonstd_detail.dto';
 import { AsbKomponenBangunanNonstdsPaginationResult } from '../../presentation/asb_komponen_bangunan_nonstd/dto/asb_komponen_bangunan_nonstd_pagination_result.dto';
+import { AsbKomponenBangunanProsNonstdOrmEntity } from '../../infrastructure/asb_komponen_bangunan_pros_nonstd/orm/asb_komponen_bangunan_pros_nonstd.orm_entity';
+import { DEFAULT_KOMPONEN_PROS } from '../asb_komponen_bangunan_pros/default_komponen_pros';
 
 @Injectable()
 export class AsbKomponenBangunanNonstdServiceImpl implements AsbKomponenBangunanNonstdService {
-    constructor(private readonly repository: AsbKomponenBangunanNonstdRepository) { }
+    constructor(
+        private readonly repository: AsbKomponenBangunanNonstdRepository,
+        @InjectRepository(AsbKomponenBangunanProsNonstdOrmEntity)
+        private readonly prosRepository: Repository<AsbKomponenBangunanProsNonstdOrmEntity>,
+    ) { }
 
     async create(dto: CreateAsbKomponenBangunanNonstdDto): Promise<AsbKomponenBangunanNonstd> {
         const entity = await this.repository.create(dto);
+        const existingPros = await this.prosRepository.findOne({
+            where: { idAsbKomponenBangunanNonstd: entity.id },
+        });
+        if (!existingPros) {
+            await this.prosRepository.save({
+                idAsbKomponenBangunanNonstd: entity.id,
+                ...DEFAULT_KOMPONEN_PROS,
+            });
+        }
         return entity;
     }
 

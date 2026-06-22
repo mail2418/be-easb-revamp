@@ -35,6 +35,12 @@ export class UserOrmEntity {
   @Column({ name: 'refresh_token_version', type: 'int', default: 0 })
   refreshTokenVersion!: number;
 
+  @Column({ name: 'failed_login_attempts', type: 'int', default: 0 })
+  failedLoginAttempts!: number;
+
+  @Column({ name: 'locked_until', type: 'timestamp', nullable: true })
+  lockedUntil!: Date | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date;
 

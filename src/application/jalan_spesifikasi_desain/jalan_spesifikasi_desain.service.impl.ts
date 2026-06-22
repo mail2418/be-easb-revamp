@@ -28,11 +28,13 @@ export class JalanSpesifikasiDesainServiceImpl implements JalanSpesifikasiDesain
             if (!usulanJalan) {
                 throw new NotFoundException(`Usulan Jalan with id ${dto.id_usulan_jalan} not found`);
             }
-            if (!usulanJalan.lebar) {
+            if (usulanJalan.lebar == null) {
                 throw new NotFoundException(`Usulan Jalan with id ${dto.id_usulan_jalan} has no lebar`);
             }
             lebarValue = usulanJalan.lebar;
         }
+
+        const resolvedLebar = lebarValue;
 
         // Get HSPK to get harga_satuan and satuan
         const hspk = await this.hspkService.findById(dto.id_hspk);
@@ -47,7 +49,7 @@ export class JalanSpesifikasiDesainServiceImpl implements JalanSpesifikasiDesain
         // Calculate volume based on satuan from HSPK
         const volume = await this.calculateVolumeUseCase.execute(
             dto.id_hspk,
-            lebarValue,
+            resolvedLebar,
             dto.tinggi,
             dto.spasi,
         );

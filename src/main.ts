@@ -1,9 +1,13 @@
+import { startOtel } from './observability/otel';
+startOtel();
+
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, Logger, ClassSerializerInterceptor, RequestMethod } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggerMiddleware } from './common/middleware/request_logger.middleware';
 import { CorrelationIdMiddleware } from './common/middleware/correlation_id.middleware';
+import { MetricsMiddleware } from './observability/metrics.middleware';
 import { HttpExceptionFilter } from './common/filters/http_exception.filter';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -106,11 +110,17 @@ async function bootstrap() {
 
     // Middleware (order matters)
     app.use(CorrelationIdMiddleware());
+    app.use(MetricsMiddleware());
     app.use(LoggerMiddleware());
 
     const apiPrefix = process.env.NODE_ENV === 'production' ? 'api/v1' : 'api/dev/v1';
     app.setGlobalPrefix(apiPrefix, {
-        exclude: [{ path: '/', method: RequestMethod.GET }],
+        exclude: [
+            { path: '/', method: RequestMethod.GET },
+            { path: 'health', method: RequestMethod.GET },
+            { path: 'health/ready', method: RequestMethod.GET },
+            { path: 'metrics', method: RequestMethod.GET },
+        ],
     });
 
     const port = config.get('port', 3000);

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { trace } from '@opentelemetry/api';
 import pino from 'pino';
 
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
@@ -123,6 +124,9 @@ function sanitizeResponseBody(
 export function LoggerMiddleware() {
     return (req: Request, res: Response, next: NextFunction) => {
         const start = Date.now();
+        const spanContext = trace.getActiveSpan()?.spanContext();
+        const traceId = spanContext?.traceId;
+        const spanId = spanContext?.spanId;
         
         // Capture response body by intercepting res.json()
         const originalJson = res.json.bind(res);
@@ -150,12 +154,14 @@ export function LoggerMiddleware() {
         res.on('finish', () => {
             const duration = Date.now() - start;
             const responseDTO = (res.locals as any).responseDto;
-            
+
             logger.info({
                 ts: new Date().toISOString(),
                 method: req.method,
                 path: req.originalUrl,
                 correlationId: req['correlationId'],
+                trace_id: traceId,
+                span_id: spanId,
                 appStatusCode: res.statusCode,
                 appStatusMessage: res.statusMessage,
                 responseBody: responseDTO ? sanitizeResponseBody(responseDTO) : "DTO not captured",

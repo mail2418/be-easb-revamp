@@ -1,0 +1,56 @@
+# Production overlay — pre-built image, reverse proxy, observability.
+#
+# Full VPS stack (MySQL):
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+#     --env-file .env.production \
+#     --profile mysql --profile backend --profile nginx --profile observability up -d
+#
+# Full VPS stack (Postgres):
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+#     --env-file .env.production \
+#     --profile postgres --profile backend --profile nginx --profile observability up -d
+
+services:
+  backend:
+    image: ${BACKEND_IMAGE:?Set BACKEND_IMAGE in .env.production}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+      mysql:
+        condition: service_healthy
+        required: false
+
+  postgres:
+    restart: unless-stopped
+    ports: []
+
+  mysql:
+    restart: unless-stopped
+    ports: []
+
+  nginx:
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_started
+        required: false
+
+  prometheus:
+    restart: unless-stopped
+
+  grafana:
+    restart: unless-stopped
+
+  loki:
+    restart: unless-stopped
+
+  promtail:
+    restart: unless-stopped
+
+  tempo:
+    restart: unless-stopped
+
+  cadvisor:
+    restart: unless-stopped

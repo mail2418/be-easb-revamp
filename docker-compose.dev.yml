@@ -1,0 +1,33 @@
+# Development overlay — databases exposed to localhost; backend optional in Docker.
+#
+# Postgres only (run NestJS on host with npm run start:dev):
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile postgres up -d
+#
+# Postgres + backend container:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile postgres --profile backend up -d --build
+#
+# MySQL instead of Postgres:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile mysql up -d
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: easb-backend:dev
+    restart: unless-stopped
+    ports:
+      - '${BACKEND_PORT:-3001}:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+      mysql:
+        condition: service_healthy
+        required: false
+
+  postgres:
+    restart: unless-stopped
+
+  mysql:
+    restart: unless-stopped

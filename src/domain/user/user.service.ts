@@ -23,4 +23,6 @@ export abstract class UserService {
     abstract getUsers(pagination: GetUsersDto): Promise<UsersPaginationResult>
     abstract getUserDetail(user: GetUserDetailDto): Promise<User>
     abstract changeUserPassword(authenticatedUserId: number, dto: ChangeUserPasswordDto): Promise<User>
+    abstract recordFailedLogin(userId: number, maxAttempts: number, lockoutMinutes: number): Promise<void>
+    abstract resetFailedLogin(userId: number): Promise<void>
 }

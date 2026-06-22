@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { escapeHtml } from 'src/common/utils/escape_html.util';
 import { KertasKerjaDto } from 'src/presentation/asb_document/dto/kertas_kerja.dto'
 import * as puppeteer from 'puppeteer';
 
@@ -57,12 +58,12 @@ export class KertasKerjaUseCase {
                     <!-- LEFT CONTENT -->
                     <div style="flex:1; padding-right:10px;">
                         Dicetak melalui Aplikasi eASB ${new Date().getFullYear()} - 
-                        Diajukan oleh ${data.dataAsb.opd?.opd} | ${data.usernameOpd} - 
-                        Disetujui oleh AdPem: ${data.dataAsb.verifikatorAdpem?.username || '-'} 
+                        Diajukan oleh ${escapeHtml(data.dataAsb.opd?.opd)} | ${escapeHtml(data.usernameOpd)} - 
+                        Disetujui oleh AdPem: ${escapeHtml(data.dataAsb.verifikatorAdpem?.username || '-')} 
                         pada ${formattedVerifiedAdpemAt || '-'} | 
-                        Disetujui oleh BPKAD: ${data.dataAsb.verifikatorBPKAD?.username || '-'} 
+                        Disetujui oleh BPKAD: ${escapeHtml(data.dataAsb.verifikatorBPKAD?.username || '-')} 
                         pada ${formattedVerifiedBpkadAt || '-'} | 
-                        Disetujui oleh Bappeda: ${data.dataAsb.verifikatorBappeda?.username || '-'} 
+                        Disetujui oleh Bappeda: ${escapeHtml(data.dataAsb.verifikatorBappeda?.username || '-')} 
                         pada ${formattedVerifiedBappedaAt || '-'}
                     </div>
 
@@ -127,7 +128,7 @@ export class KertasKerjaUseCase {
             return `
                 <tr>
                     <td class="text-center">${i + 1}</td>
-                    <td>${row.komponen}</td>
+                    <td>${escapeHtml(row.komponen)}</td>
                     <td class="text-right">
                         ${bobot} %
                     </td>
@@ -152,7 +153,7 @@ export class KertasKerjaUseCase {
             return `
                 <tr>
                     <td class="text-center">${i + 1}</td>
-                    <td>${row.komponen}</td>
+                    <td>${escapeHtml(row.komponen)}</td>
                     <td class="text-right">
                         ${bobot} %
                     </td>
@@ -188,9 +189,9 @@ export class KertasKerjaUseCase {
 ` : '';
 
         // Helper to safely access nested properties
-        const getOpd = (d: any) => d.opd?.opd ?? '';
-        const getNama = (d: any) => d.namaAsb ?? ''; // Changed from nama to namaAsb based on entity
-        const getKlasifikasi = (d: any) => d.asbKlasifikasi?.klasifikasi ?? '';
+        const getOpd = (d: any) => escapeHtml(d.opd?.opd ?? '');
+        const getNama = (d: any) => escapeHtml(d.namaAsb ?? '');
+        const getKlasifikasi = (d: any) => escapeHtml(d.asbKlasifikasi?.klasifikasi ?? '');
 
         const asbDetailsReview = dataAsbDetailReview.map((detail, i: number) => `
             <tr>

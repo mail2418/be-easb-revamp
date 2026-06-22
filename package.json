@@ -19,8 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d src/data_source.ts",
-    "migration:create": "npm run typeorm -- migration:create src/migrations/InitSchema",
-    "migration:generate": "npm run typeorm -- migration:generate src/migrations/Auto -p",
+    "migration:create": "npm run typeorm -- migration:create src/migrations/postgres/Migration",
+    "migration:generate": "npm run typeorm -- migration:generate src/migrations/postgres/Auto -p",
     "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
     "migration:show": "npm run typeorm -- migration:show",
@@ -36,7 +36,14 @@
     "migration:mysql:show": "npm run typeorm:mysql -- migration:show",
     "migration:mysql:create": "npm run typeorm:mysql -- migration:create",
     "migration:mysql:generate": "npm run typeorm:mysql -- migration:generate src/migrations/mysql/Auto -p",
-    "db:test": "ts-node -r tsconfig-paths/register src/scripts/test-db-connection.ts"
+    "db:test": "ts-node -r tsconfig-paths/register src/scripts/test-db-connection.ts",
+    "docker:dev:postgres": "docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile postgres up -d",
+    "docker:dev:mysql": "docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile mysql up -d",
+    "docker:dev:up": "docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile postgres --profile backend up -d --build",
+    "docker:prod:up": "docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production --profile mysql --profile backend --profile nginx --profile observability up -d",
+    "docker:test:up": "docker compose -f docker-compose.yml -f docker-compose.test.yml --env-file .env.docker.test --profile postgres up -d --build",
+    "docker:test:down": "docker compose -f docker-compose.yml -f docker-compose.test.yml --profile postgres down -v",
+    "docker:down": "docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile postgres --profile backend down"
   },
   "dependencies": {
     "@nestjs/cli": "^11.0.0",
@@ -46,9 +53,18 @@
     "@nestjs/jwt": "^11.0.1",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/terminus": "^11.1.1",
     "@nestjs/throttler": "^6.4.0",
     "@nestjs/typeorm": "^11.0.0",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/auto-instrumentations-node": "^0.77.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.219.0",
+    "@opentelemetry/resources": "^2.8.0",
+    "@opentelemetry/sdk-node": "^0.219.0",
+    "@opentelemetry/sdk-trace-base": "^2.8.0",
+    "@opentelemetry/semantic-conventions": "^1.41.1",
     "@types/puppeteer": "^5.4.7",
+    "@willsoto/nestjs-prometheus": "^6.1.0",
     "archiver": "^7.0.1",
     "bcryptjs": "^3.0.2",
     "class-transformer": "^0.5.1",
@@ -64,6 +80,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.16.3",
     "pino": "^10.1.0",
+    "prom-client": "^15.1.3",
     "puppeteer": "^24.32.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
@@ -108,6 +125,9 @@
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"

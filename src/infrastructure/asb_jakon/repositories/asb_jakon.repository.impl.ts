@@ -171,6 +171,26 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
                 .getOne();
         }
 
+        if (!entity) {
+            entity = await this.repo
+                .createQueryBuilder('asb_jakon')
+                .select(['asb_jakon.id', 'asb_jakon.standard', 'asb_jakon.price_from', 'asb_jakon.price_to'])
+                .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
+                    id_asb_klasifikasi: dto.id_asb_klasifikasi
+                })
+                .andWhere('asb_jakon.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
+                    id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+                })
+                .andWhere('asb_jakon.id_asb_jenis = :id_asb_jenis', {
+                    id_asb_jenis: dto.id_asb_jenis
+                })
+                .andWhere('asb_jakon.type = :type', {
+                    type: dto.type
+                })
+                .orderBy('asb_jakon.price_to', 'DESC')
+                .getOne();
+        }
+
         return entity || null;
     }
 
