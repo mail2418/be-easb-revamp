@@ -120,6 +120,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         env:
           BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ needs.build-and-push.outputs.image_name_lc }}:${{ github.ref_name }}
+          DEPLOY_BRANCH: ${{ github.ref_name }}
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           VPS_HEALTH_URL: ${{ secrets.VPS_HEALTH_URL }}
@@ -129,7 +130,7 @@ jobs:
           username: ${{ steps.vps.outputs.user }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
-          envs: BACKEND_IMAGE,GHCR_TOKEN,GHCR_USERNAME,VPS_HEALTH_URL,VPS_PROJECT_PATH
+          envs: BACKEND_IMAGE,DEPLOY_BRANCH,GHCR_TOKEN,GHCR_USERNAME,VPS_HEALTH_URL,VPS_PROJECT_PATH
           script: |
             set -euo pipefail
             cd "$VPS_PROJECT_PATH"
@@ -142,6 +143,53 @@ jobs:
 
             echo "Deploying from: $(pwd)"
 
+            # Sync compose/config from git without touching untracked .env.production.
+            ENV_BACKUP=""
+            if [ -f .env.production ]; then
+              ENV_BACKUP="$(mktemp)"
+              cp .env.production "$ENV_BACKUP"
+            fi
+
+            sync_deploy_files() {
+              local paths=(
+                docker-compose.yml
+                docker-compose.prod.yml
+                nginx
+                observability
+              )
+
+              if [ ! -d .git ]; then
+                echo "::warning::$VPS_PROJECT_PATH is not a git repo; skipping compose sync."
+                echo "::warning::Ensure docker-compose.prod.yml declares easb-net as external: true."
+                return 0
+              fi
+
+              echo "Syncing deploy files from origin/${DEPLOY_BRANCH}..."
+              git fetch origin "$DEPLOY_BRANCH" --depth=1
+
+              if ! git show-ref --verify --quiet "refs/remotes/origin/$DEPLOY_BRANCH"; then
+                echo "::error::Remote branch origin/$DEPLOY_BRANCH not found on VPS."
+                exit 1
+              fi
+
+              git checkout "origin/$DEPLOY_BRANCH" -- "${paths[@]}"
+            }
+
+            sync_deploy_files
+
+            if [ -n "$ENV_BACKUP" ]; then
+              if [ ! -f .env.production ]; then
+                cp "$ENV_BACKUP" .env.production
+              fi
+              rm -f "$ENV_BACKUP"
+            fi
+
+            if ! grep -q 'external:[[:space:]]*true' docker-compose.prod.yml; then
+              echo "::error::docker-compose.prod.yml is missing 'external: true' for easb-net."
+              echo "::error::Run: git fetch origin $DEPLOY_BRANCH && git checkout origin/$DEPLOY_BRANCH -- docker-compose.prod.yml"
+              exit 1
+            fi
+
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
             docker pull "$BACKEND_IMAGE"
 
@@ -149,10 +197,11 @@ jobs:
             export ENV_FILE=.env.production
             COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production"
 
-            # Ensure shared network exists (prod uses external easb-net — do not let compose remove it).
+            # Shared network must exist and stay external so compose never tries to remove it
+            # while nginx/postgres/backend containers are still attached.
             docker network inspect easb-net >/dev/null 2>&1 || docker network create easb-net
 
-            # Roll only the backend container with the new GHCR image.
+            # Backend-only roll: do not recreate postgres/nginx or prune the shared network.
             $COMPOSE --profile backend up -d --no-deps --pull never --force-recreate backend
 
             echo "Waiting for postgres..."

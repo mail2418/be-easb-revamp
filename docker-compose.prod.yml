@@ -59,4 +59,5 @@ services:
 
 networks:
   easb-net:
+    name: easb-net
     external: true
