@@ -30,11 +30,7 @@ export class AsbLogRepositoryImpl extends AsbLogRepository {
         return entity ? plainToInstance(AsbLog, entity) : null;
     }
 
-    async findByUser(
-        idUser: number,
-        page: number,
-        amount: number,
-    ): Promise<[AsbLog[], number]> {
+    async findByUser(idUser: number, page: number, amount: number): Promise<[AsbLog[], number]> {
         const [entities, total] = await this.repository.findAndCount({
             where: { idUser },
             order: { createdAt: 'DESC' },
@@ -42,17 +38,11 @@ export class AsbLogRepositoryImpl extends AsbLogRepository {
             take: amount,
         });
 
-        const domainEntities = entities.map((e) =>
-            plainToInstance(AsbLog, e),
-        );
+        const domainEntities = entities.map((e) => plainToInstance(AsbLog, e));
         return [domainEntities, total];
     }
 
-    async findByAsb(
-        idAsb: number,
-        page: number,
-        amount: number,
-    ): Promise<[AsbLog[], number]> {
+    async findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbLog[], number]> {
         const [entities, total] = await this.repository.findAndCount({
             where: { idAsb },
             order: { createdAt: 'DESC' },
@@ -60,25 +50,18 @@ export class AsbLogRepositoryImpl extends AsbLogRepository {
             take: amount,
         });
 
-        const domainEntities = entities.map((e) =>
-            plainToInstance(AsbLog, e),
-        );
+        const domainEntities = entities.map((e) => plainToInstance(AsbLog, e));
         return [domainEntities, total];
     }
 
-    async findAll(
-        page: number,
-        amount: number,
-    ): Promise<[AsbLog[], number]> {
+    async findAll(page: number, amount: number): Promise<[AsbLog[], number]> {
         const [entities, total] = await this.repository.findAndCount({
             order: { createdAt: 'DESC' },
             skip: (page - 1) * amount,
             take: amount,
         });
 
-        const domainEntities = entities.map((e) =>
-            plainToInstance(AsbLog, e),
-        );
+        const domainEntities = entities.map((e) => plainToInstance(AsbLog, e));
         return [domainEntities, total];
     }
 

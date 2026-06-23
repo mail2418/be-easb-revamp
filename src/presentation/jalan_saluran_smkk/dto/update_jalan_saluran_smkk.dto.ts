@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { Transform } from "class-transformer";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateJalanSaluranSmkkDto {
     @IsNotEmpty()
@@ -9,7 +9,7 @@ export class UpdateJalanSaluranSmkkDto {
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     id_jenis_usulan?: number;
 
     @IsOptional()
@@ -26,7 +26,6 @@ export class UpdateJalanSaluranSmkkDto {
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    @Transform(({ value }) => (value ? parseFloat(value) : undefined))
     pengali?: number;
 }
-

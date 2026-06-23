@@ -25,13 +25,11 @@ import { UserContext } from 'src/common/types/user-context.type';
 
 @Controller('verifikators')
 export class VerifikatorController {
-    constructor(private readonly verifikatorService: VerifikatorService) { }
+    constructor(private readonly verifikatorService: VerifikatorService) {}
 
     @Get('check-verifikator-type')
     @Roles(Role.VERIFIKATOR)
-    async checkVerifikatorType(
-        @Req() req: Request
-    ): Promise<ResponseDto> {
+    async checkVerifikatorType(@Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.verifikatorService.checkVerifikatorType(Number(user.userId));

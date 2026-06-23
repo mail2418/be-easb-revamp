@@ -9,7 +9,7 @@ export class AddRejectVerifFieldsToAsb1765705859578 implements MigrationInterfac
                 name: 'reject_verif_id',
                 type: 'int',
                 isNullable: true,
-            })
+            }),
         );
 
         // Add rejected_at column
@@ -19,7 +19,7 @@ export class AddRejectVerifFieldsToAsb1765705859578 implements MigrationInterfac
                 name: 'rejected_at',
                 type: 'timestamptz',
                 isNullable: true,
-            })
+            }),
         );
 
         // Add foreign key constraint for reject_verif_id
@@ -30,7 +30,7 @@ export class AddRejectVerifFieldsToAsb1765705859578 implements MigrationInterfac
                 referencedColumnNames: ['id'],
                 referencedTableName: 'users',
                 onDelete: 'SET NULL',
-            })
+            }),
         );
     }
 
@@ -38,7 +38,7 @@ export class AddRejectVerifFieldsToAsb1765705859578 implements MigrationInterfac
         // Drop foreign key first
         const table = await queryRunner.getTable('asb');
         const foreignKey = table?.foreignKeys.find(
-            (fk) => fk.columnNames.indexOf('reject_verif_id') !== -1
+            (fk) => fk.columnNames.indexOf('reject_verif_id') !== -1,
         );
         if (foreignKey) {
             await queryRunner.dropForeignKey('asb', foreignKey);
@@ -49,4 +49,3 @@ export class AddRejectVerifFieldsToAsb1765705859578 implements MigrationInterfac
         await queryRunner.dropColumn('asb', 'reject_verif_id');
     }
 }
-

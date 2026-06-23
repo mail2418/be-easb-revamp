@@ -26,9 +26,6 @@ import { AsbKomponenBangunanNonstdModule } from '../asb_komponen_bangunan_nonstd
         },
         ValidateStatisticalRangeUseCase,
     ],
-    exports: [
-        AsbKomponenBangunanProsNonstdService,
-        AsbKomponenBangunanProsNonstdRepository,
-    ],
+    exports: [AsbKomponenBangunanProsNonstdService, AsbKomponenBangunanProsNonstdRepository],
 })
-export class AsbKomponenBangunanProsNonstdModule { }
+export class AsbKomponenBangunanProsNonstdModule {}

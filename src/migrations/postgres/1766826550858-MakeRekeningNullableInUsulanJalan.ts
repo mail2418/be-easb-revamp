@@ -133,4 +133,3 @@ export class MakeRekeningNullableInUsulanJalan1766826550858 implements Migration
         `);
     }
 }
-

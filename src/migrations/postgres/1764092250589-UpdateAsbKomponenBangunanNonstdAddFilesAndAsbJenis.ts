@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class UpdateAsbKomponenBangunanNonstdAddFilesAndAsbJenis1764092250589 implements MigrationInterface {
+export class UpdateAsbKomponenBangunanNonstdAddFilesAndAsbJenis1764092250589
+    implements MigrationInterface
+{
     name = 'UpdateAsbKomponenBangunanNonstdAddFilesAndAsbJenis1764092250589';
 
     public async up(queryRunner: QueryRunner): Promise<void> {

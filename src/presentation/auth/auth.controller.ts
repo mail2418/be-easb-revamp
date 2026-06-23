@@ -19,7 +19,7 @@ const REFRESH_COOKIE_OPTIONS = {
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) { }
+    constructor(private authService: AuthService) {}
 
     @Public()
     @Throttle({
@@ -29,7 +29,10 @@ export class AuthController {
         },
     })
     @Post('login')
-    async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async login(
+        @Body() dto: LoginDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         const user = await this.authService.validateUser(dto);
         const token = await this.authService.login(user);
 
@@ -57,16 +60,28 @@ export class AuthController {
     })
     @UseGuards(RefreshJwtAuthGuard)
     @Post('refresh')
-    async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async refresh(
+        @Req() req: Request,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         const user = req.user as any; // { sub, username, roles }
-        const tokens = await this.authService.rotateTokens({ id: user.sub, username: user.username, roles: user.roles } as any);
+        const tokens = await this.authService.rotateTokens({
+            id: user.sub,
+            username: user.username,
+            roles: user.roles,
+        } as any);
 
         res.cookie('refreshToken', tokens.refreshToken, {
             ...REFRESH_COOKIE_OPTIONS,
             maxAge: tokens.maxAgeRefresh,
         });
 
-        return { status: 'success', responseCode: 200, message: 'Token Rotated', data: { accessToken: tokens.accessToken } };
+        return {
+            status: 'success',
+            responseCode: 200,
+            message: 'Token Rotated',
+            data: { accessToken: tokens.accessToken },
+        };
     }
 
     @Post('logout')
@@ -77,10 +92,18 @@ export class AuthController {
 
     @Post('revoke-all')
     @Roles(Role.SUPERADMIN)
-    async revokeAll(@Body() revokeDto: RevokeAllDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async revokeAll(
+        @Body() revokeDto: RevokeAllDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         await this.authService.revokeAllRefreshTokens(revokeDto);
 
         res.clearCookie('refreshToken', REFRESH_COOKIE_OPTIONS);
-        return { status: 'success', responseCode: 200, message: 'All refresh tokens revoked', data: null };
+        return {
+            status: 'success',
+            responseCode: 200,
+            message: 'All refresh tokens revoked',
+            data: null,
+        };
     }
 }

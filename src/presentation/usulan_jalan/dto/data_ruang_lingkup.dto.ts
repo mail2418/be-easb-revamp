@@ -14,4 +14,3 @@ export class DataRuangLingkupDto {
     @Type(() => DataHspkDto)
     data_hspk!: DataHspkDto[];
 }
-

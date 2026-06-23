@@ -1,23 +1,27 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { AsbTipeBangunanService } from "../../domain/asb_tipe_bangunan/asb_tipe_bangunan.service";
-import { AsbTipeBangunanRepository } from "../../domain/asb_tipe_bangunan/asb_tipe_bangunan.repository";
-import { AsbTipeBangunan } from "../../domain/asb_tipe_bangunan/asb_tipe_bangunan.entity";
-import { CreateAsbTipeBangunanDto } from "../../presentation/asb_tipe_bangunan/dto/create_asb_tipe_bangunan.dto";
-import { UpdateAsbTipeBangunanDto } from "../../presentation/asb_tipe_bangunan/dto/update_asb_tipe_bangunan.dto";
-import { DeleteAsbTipeBangunanDto } from "../../presentation/asb_tipe_bangunan/dto/delete_asb_tipe_bangunan.dto";
-import { GetAsbTipeBangunanDto } from "../../presentation/asb_tipe_bangunan/dto/get_asb_tipe_bangunan.dto";
-import { GetAsbTipeBangunanDetailDto } from "../../presentation/asb_tipe_bangunan/dto/get_asb_tipe_bangunan_detail.dto";
-import { AsbTipeBangunanPaginationResultDto } from "../../presentation/asb_tipe_bangunan/dto/asb_tipe_bangunan_pagination_result.dto";
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { AsbTipeBangunanService } from '../../domain/asb_tipe_bangunan/asb_tipe_bangunan.service';
+import { AsbTipeBangunanRepository } from '../../domain/asb_tipe_bangunan/asb_tipe_bangunan.repository';
+import { AsbTipeBangunan } from '../../domain/asb_tipe_bangunan/asb_tipe_bangunan.entity';
+import { CreateAsbTipeBangunanDto } from '../../presentation/asb_tipe_bangunan/dto/create_asb_tipe_bangunan.dto';
+import { UpdateAsbTipeBangunanDto } from '../../presentation/asb_tipe_bangunan/dto/update_asb_tipe_bangunan.dto';
+import { DeleteAsbTipeBangunanDto } from '../../presentation/asb_tipe_bangunan/dto/delete_asb_tipe_bangunan.dto';
+import { GetAsbTipeBangunanDto } from '../../presentation/asb_tipe_bangunan/dto/get_asb_tipe_bangunan.dto';
+import { GetAsbTipeBangunanDetailDto } from '../../presentation/asb_tipe_bangunan/dto/get_asb_tipe_bangunan_detail.dto';
+import { AsbTipeBangunanPaginationResultDto } from '../../presentation/asb_tipe_bangunan/dto/asb_tipe_bangunan_pagination_result.dto';
 
 @Injectable()
 export class AsbTipeBangunanServiceImpl implements AsbTipeBangunanService {
-    constructor(private readonly asbTipeBangunanRepository: AsbTipeBangunanRepository) { }
+    constructor(private readonly asbTipeBangunanRepository: AsbTipeBangunanRepository) {}
 
     async create(dto: CreateAsbTipeBangunanDto): Promise<AsbTipeBangunan> {
         // Check if asb_tipe_bangunan with the same tipe_bangunan already exists
-        const existingAsbTipeBangunan = await this.asbTipeBangunanRepository.findByTipeBangunan(dto.tipe_bangunan);
+        const existingAsbTipeBangunan = await this.asbTipeBangunanRepository.findByTipeBangunan(
+            dto.tipe_bangunan,
+        );
         if (existingAsbTipeBangunan) {
-            throw new ConflictException(`AsbTipeBangunan with tipe_bangunan ${dto.tipe_bangunan} already exists`);
+            throw new ConflictException(
+                `AsbTipeBangunan with tipe_bangunan ${dto.tipe_bangunan} already exists`,
+            );
         }
 
         const newAsbTipeBangunan = await this.asbTipeBangunanRepository.create(dto);
@@ -33,9 +37,12 @@ export class AsbTipeBangunanServiceImpl implements AsbTipeBangunanService {
 
         // If tipe_bangunan is being updated, check for duplicates
         if (dto.tipe_bangunan && dto.tipe_bangunan !== existingAsbTipeBangunan.tipe_bangunan) {
-            const duplicateAsbTipeBangunan = await this.asbTipeBangunanRepository.findByTipeBangunan(dto.tipe_bangunan);
+            const duplicateAsbTipeBangunan =
+                await this.asbTipeBangunanRepository.findByTipeBangunan(dto.tipe_bangunan);
             if (duplicateAsbTipeBangunan) {
-                throw new ConflictException(`AsbTipeBangunan with tipe_bangunan ${dto.tipe_bangunan} already exists`);
+                throw new ConflictException(
+                    `AsbTipeBangunan with tipe_bangunan ${dto.tipe_bangunan} already exists`,
+                );
             }
         }
 
@@ -60,7 +67,7 @@ export class AsbTipeBangunanServiceImpl implements AsbTipeBangunanService {
             total: result.total,
             page: dto.page ?? 1,
             amount: dto.amount ?? result.total,
-            totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
+            totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1,
         };
     }
 

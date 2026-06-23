@@ -9,9 +9,7 @@ export class GenerateFilenameUseCase {
         const nameWithoutExt = path.basename(originalName, ext);
 
         // Sanitize and truncate to 150 chars
-        const sanitized = nameWithoutExt
-            .replace(/[^a-zA-Z0-9-_]/g, '-')
-            .substring(0, 150);
+        const sanitized = nameWithoutExt.replace(/[^a-zA-Z0-9-_]/g, '-').substring(0, 150);
 
         return `${timestamp}-${sanitized}-bps${ext}`;
     }

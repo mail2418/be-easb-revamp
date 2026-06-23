@@ -11,7 +11,7 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
     constructor(
         @InjectRepository(MainDashboardOrmEntity)
         private readonly repo: Repository<MainDashboardOrmEntity>,
-    ) { }
+    ) {}
 
     async findAll(
         search: string | undefined,
@@ -80,19 +80,21 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
             totalQb.where(whereConditions.join(' AND '), whereParams);
         }
 
-        const [entities, total] = await Promise.all([
-            qb.getMany(),
-            totalQb.getCount(),
-        ]);
+        const [entities, total] = await Promise.all([qb.getMany(), totalQb.getCount()]);
 
-        const data = entities.map((entity) =>
-            plainToInstance(MainDashboard, entity),
-        );
+        const data = entities.map((entity) => plainToInstance(MainDashboard, entity));
 
         return { data, total };
     }
 
-    async create(data: { idUsulan: number; idJenisUsulan: number; idAsbStatus: number; namaUsulan: string; rejectInfo?: string | null; tahunAnggaran?: number | null }): Promise<MainDashboard> {
+    async create(data: {
+        idUsulan: number;
+        idJenisUsulan: number;
+        idAsbStatus: number;
+        namaUsulan: string;
+        rejectInfo?: string | null;
+        tahunAnggaran?: number | null;
+    }): Promise<MainDashboard> {
         const existing = await this.repo.findOne({
             where: {
                 idUsulan: data.idUsulan,
@@ -108,8 +110,16 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
         return plainToInstance(MainDashboard, saved);
     }
 
-    async updateByUsulan(idUsulan: number, idJenisUsulan: number, data: { idAsbStatus?: number; namaUsulan?: string; rejectInfo?: string | null; tahunAnggaran?: number | null }): Promise<void> {
+    async updateByUsulan(
+        idUsulan: number,
+        idJenisUsulan: number,
+        data: {
+            idAsbStatus?: number;
+            namaUsulan?: string;
+            rejectInfo?: string | null;
+            tahunAnggaran?: number | null;
+        },
+    ): Promise<void> {
         await this.repo.update({ idUsulan, idJenisUsulan }, data);
     }
 }
-

@@ -10,7 +10,11 @@ export abstract class AsbKomponenBangunanNonstdService {
     abstract create(data: CreateAsbKomponenBangunanNonstdDto): Promise<AsbKomponenBangunanNonstd>;
     abstract update(data: UpdateAsbKomponenBangunanNonstdDto): Promise<AsbKomponenBangunanNonstd>;
     abstract delete(data: DeleteAsbKomponenBangunanNonstdDto): Promise<boolean>;
-    abstract getAll(pagination: GetAsbKomponenBangunanNonstdsDto): Promise<AsbKomponenBangunanNonstdsPaginationResult>;
-    abstract getDetail(data: GetAsbKomponenBangunanNonstdDetailDto): Promise<AsbKomponenBangunanNonstd>;
+    abstract getAll(
+        pagination: GetAsbKomponenBangunanNonstdsDto,
+    ): Promise<AsbKomponenBangunanNonstdsPaginationResult>;
+    abstract getDetail(
+        data: GetAsbKomponenBangunanNonstdDetailDto,
+    ): Promise<AsbKomponenBangunanNonstd>;
     abstract findByKomponen(komponen: string): Promise<AsbKomponenBangunanNonstd | null>;
 }

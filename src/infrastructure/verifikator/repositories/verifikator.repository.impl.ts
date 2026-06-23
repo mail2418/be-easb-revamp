@@ -9,8 +9,8 @@ import { VerifikatorOrmEntity } from '../orm/verifikator.orm_entity';
 export class VerifikatorRepositoryImpl implements VerifikatorRepository {
     constructor(
         @InjectRepository(VerifikatorOrmEntity)
-        private readonly repo: Repository<VerifikatorOrmEntity>
-    ) { }
+        private readonly repo: Repository<VerifikatorOrmEntity>,
+    ) {}
 
     async create(verifikator: Verifikator): Promise<Verifikator> {
         const entity = this.repo.create(verifikator);
@@ -34,7 +34,7 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
     async findById(id: number): Promise<Verifikator | null> {
         const entity = await this.repo.findOne({
             where: { id },
-            relations: ['user']
+            relations: ['user'],
         });
         return entity || null;
     }
@@ -42,12 +42,16 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
     async findByUserId(userId: number): Promise<Verifikator | null> {
         const entity = await this.repo.findOne({
             where: { idUser: userId },
-            relations: ['user']
+            relations: ['user'],
         });
         return entity || null;
     }
 
-    async findAll(page?: number, amount?: number, search?: string): Promise<{ data: Verifikator[]; total: number }> {
+    async findAll(
+        page?: number,
+        amount?: number,
+        search?: string,
+    ): Promise<{ data: Verifikator[]; total: number }> {
         const safePage = Math.max(page ?? 1, 1);
         const safeAmount = Math.max(amount ?? 10, 1); // default 10 items
 
@@ -62,10 +66,7 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
 
         if (search) {
             const q = ILike(`%${search}%`);
-            findOptions.where = [
-                { verifikator: q },
-                { user: { username: q } },
-            ];
+            findOptions.where = [{ verifikator: q }, { user: { username: q } }];
         }
 
         const [data, total] = await this.repo.findAndCount(findOptions);
@@ -73,11 +74,10 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
         return { data, total };
     }
 
-
     async checkVerifikatorType(userId: number): Promise<string | null> {
         const result = await this.repo.findOne({
             where: { idUser: userId },
-            select: ['jenisVerifikator']
+            select: ['jenisVerifikator'],
         });
         return result ? result.jenisVerifikator : null;
     }

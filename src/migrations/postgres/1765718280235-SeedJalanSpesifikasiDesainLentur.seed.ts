@@ -48,4 +48,3 @@ export class SeedJalanSpesifikasiDesainLentur1765718280235 implements MigrationI
         );
     }
 }
-

@@ -22,7 +22,7 @@ export class SeedJenisStandars1770088000010 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
-            `DELETE FROM \`jenis_standars\` WHERE \`jenis\` IN ('SSH', 'HSPK', 'ASB', 'SBU')`
+            `DELETE FROM \`jenis_standars\` WHERE \`jenis\` IN ('SSH', 'HSPK', 'ASB', 'SBU')`,
         );
     }
 }

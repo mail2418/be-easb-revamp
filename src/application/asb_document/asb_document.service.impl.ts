@@ -1,7 +1,4 @@
-import {
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import archiver from 'archiver';
@@ -29,7 +26,7 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
         private readonly saveDocument: SaveDocumentUseCase,
         private readonly deleteDocument: DeleteDocumentUseCase,
         private readonly kertasKerjaUseCase: KertasKerjaUseCase,
-        private readonly suratPermohonanUseCase: SuratPermohonanUseCase
+        private readonly suratPermohonanUseCase: SuratPermohonanUseCase,
     ) {
         super();
         // Ensure upload directory exists on service initialization
@@ -48,12 +45,26 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
         return undefined; // No filter for SUPERADMIN, ADMIN, VERIFIKATOR
     }
 
-    async findBySpec(spec: DocumentSpec, idOpd?: number | null, role?: Role): Promise<AsbDocument[]> {
+    async findBySpec(
+        spec: DocumentSpec,
+        idOpd?: number | null,
+        role?: Role,
+    ): Promise<AsbDocument[]> {
         const opdFilter = role ? this.getOpdFilter(idOpd ?? null, role) : undefined;
         return await this.repository.findBySpec(spec, opdFilter);
     }
 
-    async getByAsb(dto: GetAsbDocumentByAsbDto, idOpd?: number | null, role?: Role): Promise<{ data: AsbDocument[], total: number, page: number, amount: number, totalPages: number }> {
+    async getByAsb(
+        dto: GetAsbDocumentByAsbDto,
+        idOpd?: number | null,
+        role?: Role,
+    ): Promise<{
+        data: AsbDocument[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }> {
         const page = dto.page ?? 1;
         const amount = dto.amount ?? 10;
         const opdFilter = role ? this.getOpdFilter(idOpd ?? null, role) : undefined;
@@ -63,7 +74,7 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
             total,
             page,
             amount,
-            totalPages: Math.ceil(total / amount)
+            totalPages: Math.ceil(total / amount),
         };
     }
 
@@ -76,13 +87,13 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
             // Delete file from disk
             this.deleteDocument.execute(doc.filename);
 
-            // Soft delete from database  
+            // Soft delete from database
             await this.repository.delete(doc.id);
         }
     }
 
     async generateAsbKertasKerja(dto: KertasKerjaDto): Promise<boolean> {
-        const asbDoc = await this.kertasKerjaUseCase.execute(dto)
+        const asbDoc = await this.kertasKerjaUseCase.execute(dto);
         const file: Express.Multer.File = {
             buffer: asbDoc,
             originalname: `${dto.dataAsb.opd?.opd}.pdf`,
@@ -103,7 +114,7 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
     }
 
     async generateSuratPermohonan(dto: SuratPermohonanDto): Promise<boolean> {
-        const asbDoc = await this.suratPermohonanUseCase.execute(dto)
+        const asbDoc = await this.suratPermohonanUseCase.execute(dto);
         const file: Express.Multer.File = {
             buffer: asbDoc,
             originalname: `${dto.opd}_${dto.nama_asb}.pdf`,
@@ -122,7 +133,11 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
         return true;
     }
 
-    async downloadAllByAsbAsZip(idAsb: number, idOpd?: number | null, role?: Role): Promise<{ buffer: Buffer, filename: string }> {
+    async downloadAllByAsbAsZip(
+        idAsb: number,
+        idOpd?: number | null,
+        role?: Role,
+    ): Promise<{ buffer: Buffer; filename: string }> {
         // Get all documents for this ASB with OPD filter
         const opdFilter = role ? this.getOpdFilter(idOpd ?? null, role) : undefined;
         const documents = await this.repository.findByAsbIdAll(idAsb, opdFilter);
@@ -134,7 +149,7 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
         // Create a buffer to store the zip file
         const chunks: Buffer[] = [];
         const archive = archiver('zip', {
-            zlib: { level: 9 } // Maximum compression
+            zlib: { level: 9 }, // Maximum compression
         });
 
         // Listen for archive data
@@ -169,29 +184,32 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
 
         return {
             buffer,
-            filename: `asb_documents_${idAsb}.zip`
+            filename: `asb_documents_${idAsb}.zip`,
         };
     }
 
-    async downloadByAsbAndSpec(idAsb: number, spec: DocumentSpec, idOpd?: number | null, role?: Role): Promise<{ buffer: Buffer, filename: string }> {
+    async downloadByAsbAndSpec(
+        idAsb: number,
+        spec: DocumentSpec,
+        idOpd?: number | null,
+        role?: Role,
+    ): Promise<{ buffer: Buffer; filename: string }> {
         // Get all documents for this ASB with OPD filter
         const opdFilter = role ? this.getOpdFilter(idOpd ?? null, role) : undefined;
         const documents = await this.repository.findByAsbIdAll(idAsb, opdFilter);
 
         // Filter by spec
-        const document = documents.find(doc => doc.spec === spec);
+        const document = documents.find((doc) => doc.spec === spec);
 
         if (!document) {
             throw new NotFoundException(
-                `Document with spec ${spec} not found for ASB with id ${idAsb}`
+                `Document with spec ${spec} not found for ASB with id ${idAsb}`,
             );
         }
 
         // Check if file exists
         if (!fs.existsSync(document.filename)) {
-            throw new NotFoundException(
-                `File not found on disk: ${document.filename}`
-            );
+            throw new NotFoundException(`File not found on disk: ${document.filename}`);
         }
 
         // Read the file
@@ -200,7 +218,7 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
 
         return {
             buffer,
-            filename
+            filename,
         };
     }
 }

@@ -12,7 +12,9 @@ import { AsbLantaiPaginationResultDto } from 'src/presentation/asb_lantai/dto/as
 
 @Injectable()
 export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
-    constructor(@InjectRepository(AsbLantaiOrmEntity) private readonly repo: Repository<AsbLantaiOrmEntity>) { }
+    constructor(
+        @InjectRepository(AsbLantaiOrmEntity) private readonly repo: Repository<AsbLantaiOrmEntity>,
+    ) {}
 
     async create(dto: CreateAsbLantaiDto): Promise<AsbLantai> {
         const ormEntity = this.repo.create({
@@ -38,7 +40,10 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<AsbLantai | null> {
@@ -52,7 +57,7 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
 
     async findAll(pagination: GetAsbLantaisDto): Promise<AsbLantaiPaginationResultDto> {
         const findOptions: any = {
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (pagination.search) {
@@ -72,8 +77,8 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
             total,
             page: pagination.page ?? 1,
             limit: pagination.amount ?? total,
-            totalPages: pagination.amount ? Math.ceil(total / pagination.amount) : 1
-        }
+            totalPages: pagination.amount ? Math.ceil(total / pagination.amount) : 1,
+        };
     }
 
     async findByLantai(lantai: string): Promise<AsbLantai | null> {

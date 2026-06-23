@@ -42,4 +42,4 @@ import { AsbJakonRepository } from 'src/domain/asb_jakon/asb_jakon.repository';
     ],
     exports: [AsbJakonService, AsbJakonRepository, ValidatePriceRangeUseCase],
 })
-export class AsbJakonModule { }
+export class AsbJakonModule {}

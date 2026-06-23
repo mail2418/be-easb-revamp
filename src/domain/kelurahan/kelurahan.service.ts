@@ -10,6 +10,18 @@ export abstract class KelurahanService {
     abstract update(dto: UpdateKelurahanDto): Promise<Kelurahan>;
     abstract delete(dto: DeleteKelurahanDto): Promise<void>;
     abstract getById(dto: GetKelurahanDetailDto): Promise<Kelurahan>;
-    abstract getAll(dto: GetKelurahansDto): Promise<{ data: Kelurahan[]; total: number; page: number; amount: number; totalPages: number }>;
-    abstract getKelurahanByKecamatanId(idKecamatan: number): Promise<{ data: Kelurahan[]; total: number; page: number; amount: number; totalPages: number }>;
+    abstract getAll(dto: GetKelurahansDto): Promise<{
+        data: Kelurahan[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }>;
+    abstract getKelurahanByKecamatanId(idKecamatan: number): Promise<{
+        data: Kelurahan[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }>;
 }

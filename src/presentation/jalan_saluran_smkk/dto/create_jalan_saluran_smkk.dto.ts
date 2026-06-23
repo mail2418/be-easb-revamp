@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsNumber, IsString, IsOptional } from "class-validator";
-import { Transform } from "class-transformer";
+import { IsNotEmpty, IsNumber, IsString, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateJalanSaluranSmkkDto {
     @IsNotEmpty()
@@ -24,4 +24,3 @@ export class CreateJalanSaluranSmkkDto {
     @Transform(({ value }) => parseFloat(value))
     pengali!: number;
 }
-

@@ -38,9 +38,13 @@ export class CreateAsbKomponenBangunanNonstd1764092250588 implements MigrationIn
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_komponen_bangunan_nonstd_updated_at ON "asb_komponen_bangunan_nonstd";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_asb_komponen_bangunan_nonstd_updated_at ON "asb_komponen_bangunan_nonstd";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_nonstd_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_nonstd_komponen";`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_nonstd_komponen";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "asb_komponen_bangunan_nonstd";`);
     }
 }

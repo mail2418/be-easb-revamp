@@ -26,11 +26,11 @@ export class ParseExcelShstUseCase {
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(file.buffer as any);
             const worksheet = workbook.worksheets[0];
-            
+
             if (!worksheet) {
                 throw new BadRequestException('Excel file must contain at least one worksheet');
             }
-            
+
             // Convert worksheet to array of arrays
             const data: any[][] = [];
             worksheet.eachRow((row, rowNumber) => {
@@ -42,13 +42,15 @@ export class ParseExcelShstUseCase {
             });
 
             if (data.length < 2) {
-                throw new BadRequestException('Excel file must contain at least a header row and one data row');
+                throw new BadRequestException(
+                    'Excel file must contain at least a header row and one data row',
+                );
             }
 
             // Get headers from first row
             const headers = data[0] as string[];
             const headerMap: { [key: string]: number } = {};
-            
+
             // Create header map (case-insensitive)
             headers.forEach((header, index) => {
                 if (header) {
@@ -71,9 +73,14 @@ export class ParseExcelShstUseCase {
 
             for (let i = 1; i < data.length; i++) {
                 const row = data[i] as any[];
-                
+
                 // Skip empty rows
-                if (!row || row.every(cell => cell === null || cell === undefined || String(cell).trim() === '')) {
+                if (
+                    !row ||
+                    row.every(
+                        (cell) => cell === null || cell === undefined || String(cell).trim() === '',
+                    )
+                ) {
                     continue;
                 }
 
@@ -90,14 +97,16 @@ export class ParseExcelShstUseCase {
                     }
 
                     // Lookup tipe_bangunan
-                    const tipeBangunan = await this.asbTipeBangunanRepository.findByTipeBangunan(tipeBangunanStr);
+                    const tipeBangunan =
+                        await this.asbTipeBangunanRepository.findByTipeBangunan(tipeBangunanStr);
                     if (!tipeBangunan) {
                         errors.push(`Row ${i + 1}: Tipe bangunan '${tipeBangunanStr}' not found`);
                         continue;
                     }
 
                     // Lookup klasifikasi
-                    const klasifikasi = await this.asbKlasifikasiRepository.findByKlasifikasi(klasifikasiStr);
+                    const klasifikasi =
+                        await this.asbKlasifikasiRepository.findByKlasifikasi(klasifikasiStr);
                     if (!klasifikasi) {
                         errors.push(`Row ${i + 1}: Klasifikasi '${klasifikasiStr}' not found`);
                         continue;
@@ -125,7 +134,9 @@ export class ParseExcelShstUseCase {
                         nominal,
                     });
                 } catch (error) {
-                    errors.push(`Row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                    errors.push(
+                        `Row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                    );
                 }
             }
 
@@ -150,4 +161,3 @@ export class ParseExcelShstUseCase {
         }
     }
 }
-

@@ -32,7 +32,7 @@ import type { Express } from 'express';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.SUPERADMIN)
 export class AsbBpsGalleryStdController {
-    constructor(private readonly service: AsbBpsGalleryStdService) { }
+    constructor(private readonly service: AsbBpsGalleryStdService) {}
 
     @Post()
     @UseInterceptors(FileInterceptor('file'))
@@ -65,11 +65,7 @@ export class AsbBpsGalleryStdController {
         try {
             const page = paginationDto.page ?? 1;
             const amount = paginationDto.amount ?? 10;
-            const result = await this.service.findAll(
-                page,
-                amount,
-                filterDto,
-            );
+            const result = await this.service.findAll(page, amount, filterDto);
 
             const response: AsbBpsGalleryStdPaginationResultDto = {
                 data: result.data,
@@ -167,15 +163,9 @@ export class AsbBpsGalleryStdController {
         }
 
         if (error.code === '23503') {
-            throw new HttpException(
-                'Foreign key constraint violation',
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new HttpException('Foreign key constraint violation', HttpStatus.BAD_REQUEST);
         }
 
-        throw new HttpException(
-            'Internal server error',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

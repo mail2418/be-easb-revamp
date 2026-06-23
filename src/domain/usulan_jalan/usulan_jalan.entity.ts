@@ -78,5 +78,3 @@ export class UsulanJalan {
     verifikatorBappeda?: User | null;
     rejectVerifikator?: User | null;
 }
-
-

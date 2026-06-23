@@ -40,4 +40,3 @@ export class SeedJalanJenisPerkerasan1766231451286 implements MigrationInterface
         );
     }
 }
-

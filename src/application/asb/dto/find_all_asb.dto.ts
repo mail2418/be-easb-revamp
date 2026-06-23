@@ -6,34 +6,34 @@ export class FindAllAsbDto {
     @IsOptional()
     @IsNumber()
     @Min(1)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     page?: number;
 
     @IsOptional()
     @IsNumber()
     @Min(1)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     amount?: number;
 
     // Filters (optional)
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     idAsbJenis?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     idAsbStatus?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     idTipeBangunan?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     tahunAnggaran?: number;
 
     @IsOptional()

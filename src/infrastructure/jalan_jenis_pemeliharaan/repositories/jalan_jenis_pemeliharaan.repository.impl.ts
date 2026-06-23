@@ -1,17 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { ILike, Repository } from "typeorm";
-import { JalanJenisPemeliharaanRepository } from "../../../domain/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.repository";
-import { JalanJenisPemeliharaanOrmEntity } from "../orm/jalan_jenis_pemeliharaan.orm_entity";
-import { JalanJenisPemeliharaan } from "../../../domain/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.entity";
-import { CreateJalanJenisPemeliharaanDto } from "../../../presentation/jalan_jenis_pemeliharaan/dto/create_jalan_jenis_pemeliharaan.dto";
-import { plainToInstance } from "class-transformer";
-import { UpdateJalanJenisPemeliharaanDto } from "../../../presentation/jalan_jenis_pemeliharaan/dto/update_jalan_jenis_pemeliharaan.dto";
-import { GetJalanJenisPemeliharaanDto } from "../../../presentation/jalan_jenis_pemeliharaan/dto/get_jalan_jenis_pemeliharaan.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ILike, Repository } from 'typeorm';
+import { JalanJenisPemeliharaanRepository } from '../../../domain/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.repository';
+import { JalanJenisPemeliharaanOrmEntity } from '../orm/jalan_jenis_pemeliharaan.orm_entity';
+import { JalanJenisPemeliharaan } from '../../../domain/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.entity';
+import { CreateJalanJenisPemeliharaanDto } from '../../../presentation/jalan_jenis_pemeliharaan/dto/create_jalan_jenis_pemeliharaan.dto';
+import { plainToInstance } from 'class-transformer';
+import { UpdateJalanJenisPemeliharaanDto } from '../../../presentation/jalan_jenis_pemeliharaan/dto/update_jalan_jenis_pemeliharaan.dto';
+import { GetJalanJenisPemeliharaanDto } from '../../../presentation/jalan_jenis_pemeliharaan/dto/get_jalan_jenis_pemeliharaan.dto';
 
 @Injectable()
 export class JalanJenisPemeliharaanRepositoryImpl implements JalanJenisPemeliharaanRepository {
-    constructor(@InjectRepository(JalanJenisPemeliharaanOrmEntity) private readonly repo: Repository<JalanJenisPemeliharaanOrmEntity>) { }
+    constructor(
+        @InjectRepository(JalanJenisPemeliharaanOrmEntity)
+        private readonly repo: Repository<JalanJenisPemeliharaanOrmEntity>,
+    ) {}
 
     async create(dto: CreateJalanJenisPemeliharaanDto): Promise<JalanJenisPemeliharaan> {
         const ormEntity = plainToInstance(JalanJenisPemeliharaanOrmEntity, dto);
@@ -27,7 +30,10 @@ export class JalanJenisPemeliharaanRepositoryImpl implements JalanJenisPemelihar
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<JalanJenisPemeliharaan | null> {
@@ -35,9 +41,11 @@ export class JalanJenisPemeliharaanRepositoryImpl implements JalanJenisPemelihar
         return entity || null;
     }
 
-    async findAll(dto: GetJalanJenisPemeliharaanDto): Promise<{ data: JalanJenisPemeliharaan[]; total: number; }> {
+    async findAll(
+        dto: GetJalanJenisPemeliharaanDto,
+    ): Promise<{ data: JalanJenisPemeliharaan[]; total: number }> {
         const findOptions: any = {
-            order: { id: "DESC" }
+            order: { id: 'DESC' },
         };
 
         if (dto.search) {
@@ -59,7 +67,9 @@ export class JalanJenisPemeliharaanRepositoryImpl implements JalanJenisPemelihar
         return { data, total };
     }
 
-    async findByTingkatPemeliharaan(tingkat_pemeliharaan: string): Promise<JalanJenisPemeliharaan | null> {
+    async findByTingkatPemeliharaan(
+        tingkat_pemeliharaan: string,
+    ): Promise<JalanJenisPemeliharaan | null> {
         const entity = await this.repo.findOne({ where: { tingkat_pemeliharaan } });
         return entity || null;
     }

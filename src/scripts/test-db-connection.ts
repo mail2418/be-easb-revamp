@@ -1,9 +1,9 @@
 /**
  * Database Connection Test Script
- * 
+ *
  * Usage:
  *   npx ts-node -r tsconfig-paths/register src/scripts/test-db-connection.ts
- * 
+ *
  * This script tests the database connection based on DB_TYPE environment variable.
  */
 
@@ -59,22 +59,28 @@ async function testConnection() {
     try {
         console.log('\n⏳ Connecting to database...');
         await dataSource.initialize();
-        
+
         console.log('✅ Connection successful!\n');
 
         // Test a simple query
         console.log('📊 Running test query...');
-        
+
         if (dbType === 'mysql') {
-            const result = await dataSource.query('SELECT VERSION() as version, NOW() as server_time');
+            const result = await dataSource.query(
+                'SELECT VERSION() as version, NOW() as server_time',
+            );
             console.log(`   MySQL Version: ${result[0].version}`);
             console.log(`   Server Time: ${result[0].server_time}`);
-            
+
             // Check character set
-            const charsetResult = await dataSource.query("SHOW VARIABLES LIKE 'character_set_database'");
+            const charsetResult = await dataSource.query(
+                "SHOW VARIABLES LIKE 'character_set_database'",
+            );
             console.log(`   Database Charset: ${charsetResult[0]?.Value || 'N/A'}`);
         } else {
-            const result = await dataSource.query('SELECT version() as version, NOW() as server_time');
+            const result = await dataSource.query(
+                'SELECT version() as version, NOW() as server_time',
+            );
             console.log(`   PostgreSQL Version: ${result[0].version}`);
             console.log(`   Server Time: ${result[0].server_time}`);
         }
@@ -82,7 +88,7 @@ async function testConnection() {
         // List existing tables (if any)
         console.log('\n📋 Checking existing tables...');
         let tables: any[];
-        
+
         if (dbType === 'mysql') {
             tables = await dataSource.query('SHOW TABLES');
             const tableCount = tables.length;
@@ -119,13 +125,12 @@ async function testConnection() {
 
         await dataSource.destroy();
         process.exit(0);
-
     } catch (error: any) {
         console.error('\n❌ Connection failed!\n');
         console.error('Error details:');
         console.error(`   Code: ${error.code || 'N/A'}`);
         console.error(`   Message: ${error.message}`);
-        
+
         // Common error hints
         if (error.code === 'ECONNREFUSED') {
             console.error('\n💡 Hint: Make sure the database server is running and accessible.');
@@ -134,7 +139,9 @@ async function testConnection() {
         } else if (error.code === 'ER_BAD_DB_ERROR' || error.code === '3D000') {
             console.error('\n💡 Hint: The database does not exist. Create it first.');
         } else if (error.code === 'ENOTFOUND') {
-            console.error('\n💡 Hint: Cannot resolve the database host. Check the hostname in DB_URL.');
+            console.error(
+                '\n💡 Hint: Cannot resolve the database host. Check the hostname in DB_URL.',
+            );
         }
 
         await dataSource.destroy().catch(() => {});

@@ -1,19 +1,28 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from "typeorm";
-import { AsbKlasifikasiOrmEntity } from "../../asb_klasifikasi/orm/asb_klasifikasi.orm_entity";
-import { KabKotaOrmEntity } from "../../kabkota/orm/kabkota.orm_entity";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
+    ManyToOne,
+    JoinColumn,
+} from 'typeorm';
+import { AsbKlasifikasiOrmEntity } from '../../asb_klasifikasi/orm/asb_klasifikasi.orm_entity';
+import { KabKotaOrmEntity } from '../../kabkota/orm/kabkota.orm_entity';
 
-@Entity("standard_klasifikasi")
+@Entity('standard_klasifikasi')
 export class StandardKlasifikasiOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ type: "varchar", length: 500 })
+    @Column({ type: 'varchar', length: 500 })
     uraian_standard!: string;
 
-    @Column({ type: "varchar", length: 500 })
+    @Column({ type: 'varchar', length: 500 })
     uraian_spek!: string;
 
-    @Column({ type: "decimal", precision: 15, scale: 2 })
+    @Column({ type: 'decimal', precision: 15, scale: 2 })
     inflasi!: number;
 
     @Column()
@@ -23,19 +32,19 @@ export class StandardKlasifikasiOrmEntity {
     id_kabkota!: number;
 
     @ManyToOne(() => AsbKlasifikasiOrmEntity)
-    @JoinColumn({ name: "id_asb_klasifikasi" })
+    @JoinColumn({ name: 'id_asb_klasifikasi' })
     asbKlasifikasi?: AsbKlasifikasiOrmEntity;
 
     @ManyToOne(() => KabKotaOrmEntity)
-    @JoinColumn({ name: "id_kabkota" })
+    @JoinColumn({ name: 'id_kabkota' })
     kabkota?: KabKotaOrmEntity;
 
-    @CreateDateColumn({ type: "timestamp" })
+    @CreateDateColumn({ type: 'timestamp' })
     created_at!: Date;
 
-    @UpdateDateColumn({ type: "timestamp" })
+    @UpdateDateColumn({ type: 'timestamp' })
     updated_at!: Date;
 
-    @DeleteDateColumn({ type: "timestamp", nullable: true })
+    @DeleteDateColumn({ type: 'timestamp', nullable: true })
     deleted_at?: Date;
 }

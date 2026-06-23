@@ -10,4 +10,4 @@ export abstract class OpdRepository {
     abstract findById(id: number): Promise<Opd | null>;
     abstract findAll(pagination: GetOpdsDto): Promise<{ data: Opd[]; total: number }>;
     abstract getOpdByUser(id_user: number): Promise<Opd | null>;
-  }
+}

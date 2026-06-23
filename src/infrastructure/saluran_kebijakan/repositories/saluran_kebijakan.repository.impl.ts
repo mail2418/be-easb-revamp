@@ -1,17 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { SaluranKebijakanRepository } from "../../../domain/saluran_kebijakan/saluran_kebijakan.repository";
-import { SaluranKebijakanOrmEntity } from "../orm/saluran_kebijakan.orm_entity";
-import { SaluranKebijakan } from "../../../domain/saluran_kebijakan/saluran_kebijakan.entity";
-import { CreateSaluranKebijakanDto } from "../../../presentation/saluran_kebijakan/dto/create_saluran_kebijakan.dto";
-import { plainToInstance } from "class-transformer";
-import { UpdateSaluranKebijakanDto } from "../../../presentation/saluran_kebijakan/dto/update_saluran_kebijakan.dto";
-import { GetSaluranKebijakanDto } from "../../../presentation/saluran_kebijakan/dto/get_saluran_kebijakan.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { SaluranKebijakanRepository } from '../../../domain/saluran_kebijakan/saluran_kebijakan.repository';
+import { SaluranKebijakanOrmEntity } from '../orm/saluran_kebijakan.orm_entity';
+import { SaluranKebijakan } from '../../../domain/saluran_kebijakan/saluran_kebijakan.entity';
+import { CreateSaluranKebijakanDto } from '../../../presentation/saluran_kebijakan/dto/create_saluran_kebijakan.dto';
+import { plainToInstance } from 'class-transformer';
+import { UpdateSaluranKebijakanDto } from '../../../presentation/saluran_kebijakan/dto/update_saluran_kebijakan.dto';
+import { GetSaluranKebijakanDto } from '../../../presentation/saluran_kebijakan/dto/get_saluran_kebijakan.dto';
 
 @Injectable()
 export class SaluranKebijakanRepositoryImpl implements SaluranKebijakanRepository {
-    constructor(@InjectRepository(SaluranKebijakanOrmEntity) private readonly repo: Repository<SaluranKebijakanOrmEntity>) { }
+    constructor(
+        @InjectRepository(SaluranKebijakanOrmEntity)
+        private readonly repo: Repository<SaluranKebijakanOrmEntity>,
+    ) {}
 
     async create(dto: CreateSaluranKebijakanDto): Promise<SaluranKebijakan> {
         const ormEntity = plainToInstance(SaluranKebijakanOrmEntity, dto);
@@ -27,7 +30,10 @@ export class SaluranKebijakanRepositoryImpl implements SaluranKebijakanRepositor
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<SaluranKebijakan | null> {
@@ -35,15 +41,24 @@ export class SaluranKebijakanRepositoryImpl implements SaluranKebijakanRepositor
         return entity || null;
     }
 
-    async findByKabkotaBulanTahun(idKabkota: number, bulan: number, tahun: number): Promise<SaluranKebijakan | null> {
-        const entity = await this.repo.findOne({ where: { idKabkota, bulan, tahun }, relations: ['kabkota'] });
+    async findByKabkotaBulanTahun(
+        idKabkota: number,
+        bulan: number,
+        tahun: number,
+    ): Promise<SaluranKebijakan | null> {
+        const entity = await this.repo.findOne({
+            where: { idKabkota, bulan, tahun },
+            relations: ['kabkota'],
+        });
         return entity || null;
     }
 
-    async findAll(dto: GetSaluranKebijakanDto): Promise<{ data: SaluranKebijakan[]; total: number }> {
+    async findAll(
+        dto: GetSaluranKebijakanDto,
+    ): Promise<{ data: SaluranKebijakan[]; total: number }> {
         const findOptions: any = {
-            order: { id: "DESC" },
-            relations: ['kabkota']
+            order: { id: 'DESC' },
+            relations: ['kabkota'],
         };
 
         if (dto.page !== undefined && dto.amount !== undefined) {

@@ -7,5 +7,3 @@ export class UsulanJalanListResultDto {
     total!: number;
     totalPages!: number;
 }
-
-

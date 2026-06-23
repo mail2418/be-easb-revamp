@@ -21,5 +21,9 @@ export abstract class AsbBpsGalleryNonstdRepository {
         filters?: GetAsbBpsGalleryNonstdListFilterDto,
     ): Promise<[AsbBpsGalleryNonstd[], number]>;
     abstract findByKomponenBangunanNonstdId(id: number): Promise<AsbBpsGalleryNonstd[]>;
-    abstract findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBpsGalleryNonstd[], number]>;
+    abstract findByAsb(
+        idAsb: number,
+        page: number,
+        amount: number,
+    ): Promise<[AsbBpsGalleryNonstd[], number]>;
 }

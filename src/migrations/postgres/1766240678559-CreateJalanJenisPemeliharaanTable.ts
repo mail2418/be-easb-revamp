@@ -174,4 +174,3 @@ export class CreateJalanJenisPemeliharaanTable1766240678559 implements Migration
         `);
     }
 }
-

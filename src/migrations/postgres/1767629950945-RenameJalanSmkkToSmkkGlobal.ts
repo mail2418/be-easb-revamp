@@ -27,4 +27,3 @@ export class RenameJalanSmkkToSmkkGlobal1767629950945 implements MigrationInterf
         `);
     }
 }
-

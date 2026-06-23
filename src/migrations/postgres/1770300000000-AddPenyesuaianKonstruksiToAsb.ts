@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddPenyesuaianKonstruksiToAsb1770300000000 implements MigrationInterface {
     name = 'AddPenyesuaianKonstruksiToAsb1770300000000';

@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
-import { Transform } from "class-transformer";
+import { IsNotEmpty, IsNumber } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateJalanSpesifikasiDesainReviewDto {
     @IsNotEmpty()

@@ -25,10 +25,13 @@ export class HspkServiceImpl implements HspkService {
     ) {}
 
     async create(dto: CreateHspkDto): Promise<Hspk> {
-        const existing = await this.hspkRepository.findByNoMataPembayaranAndTahun(dto.no_mata_pembayaran, dto.tahun_anggaran);
+        const existing = await this.hspkRepository.findByNoMataPembayaranAndTahun(
+            dto.no_mata_pembayaran,
+            dto.tahun_anggaran,
+        );
         if (existing) {
             throw new ConflictException(
-                `Hspk with no_mata_pembayaran ${dto.no_mata_pembayaran} and tahun_anggaran ${dto.tahun_anggaran} already exists`
+                `Hspk with no_mata_pembayaran ${dto.no_mata_pembayaran} and tahun_anggaran ${dto.tahun_anggaran} already exists`,
             );
         }
         return await this.hspkRepository.create(dto);
@@ -44,10 +47,13 @@ export class HspkServiceImpl implements HspkService {
         const targetTahun = dto.tahun_anggaran ?? existing.tahun_anggaran;
 
         if (targetNo !== existing.no_mata_pembayaran || targetTahun !== existing.tahun_anggaran) {
-            const duplicate = await this.hspkRepository.findByNoMataPembayaranAndTahun(targetNo, targetTahun);
+            const duplicate = await this.hspkRepository.findByNoMataPembayaranAndTahun(
+                targetNo,
+                targetTahun,
+            );
             if (duplicate && duplicate.id !== dto.id) {
                 throw new ConflictException(
-                    `Hspk with no_mata_pembayaran ${targetNo} and tahun_anggaran ${targetTahun} already exists`
+                    `Hspk with no_mata_pembayaran ${targetNo} and tahun_anggaran ${targetTahun} already exists`,
                 );
             }
         }
@@ -74,12 +80,18 @@ export class HspkServiceImpl implements HspkService {
             total: result.total,
             page: dto.page ?? 1,
             limit: dto.amount ?? result.total,
-            totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
+            totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1,
         };
     }
 
-    async findByNoMataPembayaranAndTahun(no_mata_pembayaran: string, tahun_anggaran: number): Promise<Hspk | null> {
-        return await this.hspkRepository.findByNoMataPembayaranAndTahun(no_mata_pembayaran, tahun_anggaran);
+    async findByNoMataPembayaranAndTahun(
+        no_mata_pembayaran: string,
+        tahun_anggaran: number,
+    ): Promise<Hspk | null> {
+        return await this.hspkRepository.findByNoMataPembayaranAndTahun(
+            no_mata_pembayaran,
+            tahun_anggaran,
+        );
     }
 
     async findByRuangLingkup(id_ruang_lingkup: number, tahun_anggaran?: number): Promise<Hspk[]> {
@@ -102,7 +114,9 @@ export class HspkServiceImpl implements HspkService {
                 row.tahun_anggaran,
             );
             if (existing) {
-                conflictingKeys.push(`no_mata_pembayaran "${row.no_mata_pembayaran}" (tahun_anggaran ${row.tahun_anggaran})`);
+                conflictingKeys.push(
+                    `no_mata_pembayaran "${row.no_mata_pembayaran}" (tahun_anggaran ${row.tahun_anggaran})`,
+                );
             }
         }
         if (conflictingKeys.length > 0) {
@@ -124,4 +138,3 @@ export class HspkServiceImpl implements HspkService {
         return { buffer, filename };
     }
 }
-

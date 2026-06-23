@@ -35,10 +35,15 @@ export class CreateJalanRuangLingkupPerkerasanKaku1765690669119 implements Migra
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jalan_ruang_lingkup_perkerasan_kaku_updated_at ON "jalan_ruang_lingkup_perkerasan_kaku";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_ruang_lingkup_perkerasan_kaku_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_ruang_lingkup_perkerasan_kaku_jenis";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jalan_ruang_lingkup_perkerasan_kaku_updated_at ON "jalan_ruang_lingkup_perkerasan_kaku";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_ruang_lingkup_perkerasan_kaku_deleted";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_ruang_lingkup_perkerasan_kaku_jenis";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_ruang_lingkup_perkerasan_kaku";`);
     }
 }
-

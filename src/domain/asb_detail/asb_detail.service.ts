@@ -11,7 +11,13 @@ export abstract class AsbDetailService {
     abstract delete(id: number): Promise<void>;
     abstract getById(id: number): Promise<AsbDetail>;
     abstract getByFileType(files: Files): Promise<AsbDetail[]>;
-    abstract getByAsb(dto: GetAsbDetailByAsbDto): Promise<{ data: AsbDetail[], total: number, page: number, amount: number, totalPages: number }>;
+    abstract getByAsb(dto: GetAsbDetailByAsbDto): Promise<{
+        data: AsbDetail[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }>;
     abstract getAsbDetailWithRelation(idAsb: number): Promise<AsbDetailWithRelationDto[]>;
     abstract deleteByIds(ids: number[]): Promise<void>;
     abstract deleteByAsbId(idAsb: number): Promise<void>;

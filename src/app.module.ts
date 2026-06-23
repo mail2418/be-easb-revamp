@@ -111,7 +111,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
                     ssl: isRender ? { rejectUnauthorized: false } : false,
                     migrations: [__dirname + '/migrations/postgres/*{.js,.ts}'],
                     extra: {
-                        options: '-c timezone=Asia/Jakarta'
+                        options: '-c timezone=Asia/Jakarta',
                     },
                 };
             },
@@ -178,17 +178,17 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
             inject: [ConfigService],
             useFactory: (config: ConfigService) => [
                 {
-                    ttl: config.get<number>('throttler.ttl', 60000), 
-                    limit: config.get<number>('throttler.limit', 100), 
+                    ttl: config.get<number>('throttler.ttl', 60000),
+                    limit: config.get<number>('throttler.limit', 100),
                 },
             ],
         }),
         // other modules...
     ],
     providers: [
-        { 
-            provide: APP_INTERCEPTOR, 
-            useClass: ResponseCaptureInterceptor 
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: ResponseCaptureInterceptor,
         },
         {
             provide: APP_GUARD,
@@ -196,4 +196,4 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
         },
     ],
 })
-export class AppModule { }
+export class AppModule {}

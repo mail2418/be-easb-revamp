@@ -31,7 +31,7 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 @Controller('hspks')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class HspkController {
-    constructor(private readonly hspkService: HspkService) { }
+    constructor(private readonly hspkService: HspkService) {}
 
     @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Post('bulk')
@@ -352,7 +352,10 @@ export class HspkController {
         @Query('tahun_anggaran', ParseIntPipe) tahun_anggaran: number,
     ): Promise<ResponseDto> {
         try {
-            const hspk = await this.hspkService.findByNoMataPembayaranAndTahun(no_mata_pembayaran, tahun_anggaran);
+            const hspk = await this.hspkService.findByNoMataPembayaranAndTahun(
+                no_mata_pembayaran,
+                tahun_anggaran,
+            );
 
             if (!hspk) {
                 return {
@@ -416,7 +419,10 @@ export class HspkController {
                 const parsed = Number.parseInt(tahunAnggaranRaw, 10);
                 tahun_anggaran = Number.isNaN(parsed) ? undefined : parsed;
             }
-            const hspks = await this.hspkService.findByRuangLingkup(id_ruang_lingkup, tahun_anggaran);
+            const hspks = await this.hspkService.findByRuangLingkup(
+                id_ruang_lingkup,
+                tahun_anggaran,
+            );
 
             return {
                 status: 'success',
@@ -459,4 +465,3 @@ export class HspkController {
         }
     }
 }
-

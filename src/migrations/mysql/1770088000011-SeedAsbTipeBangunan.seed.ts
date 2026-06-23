@@ -9,7 +9,7 @@ export class SeedAsbTipeBangunan1770088000011 implements MigrationInterface {
             { tipe_bangunan: 'Rumah Negara' },
             { tipe_bangunan: 'Pagar Gedung Negara' },
             { tipe_bangunan: 'Pagar Rumah Negara' },
-            { tipe_bangunan: 'Bangunan Non-Standard' }
+            { tipe_bangunan: 'Bangunan Non-Standard' },
         ];
 
         for (const tipeBangunan of asbTipeBangunans) {
@@ -23,7 +23,7 @@ export class SeedAsbTipeBangunan1770088000011 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
-            `DELETE FROM \`asb_tipe_bangunan\` WHERE \`tipe_bangunan\` IN ('Gedung Negara', 'Rumah Negara', 'Pagar Gedung Negara', 'Pagar Rumah Negara', 'Bangunan Non-Standard')`
+            `DELETE FROM \`asb_tipe_bangunan\` WHERE \`tipe_bangunan\` IN ('Gedung Negara', 'Rumah Negara', 'Pagar Gedung Negara', 'Pagar Rumah Negara', 'Bangunan Non-Standard')`,
         );
     }
 }

@@ -6,13 +6,12 @@ export class GetAsbAnalyticsFilterDto {
     @IsNumber()
     @Min(1)
     @Max(12)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     bulan?: number;
 
     @IsOptional()
     @IsNumber()
     @Min(2000)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     tahun?: number;
 }
-

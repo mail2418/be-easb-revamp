@@ -72,4 +72,4 @@ import { MainDashboardModule } from '../main_dashboard/main_dashboard.module';
     controllers: [AsbController],
     exports: [AsbService],
 })
-export class AsbModule { }
+export class AsbModule {}

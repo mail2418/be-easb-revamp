@@ -19,7 +19,7 @@ export class AsbKomponenBangunanStdServiceImpl implements AsbKomponenBangunanStd
         private readonly repository: AsbKomponenBangunanStdRepository,
         @InjectRepository(AsbKomponenBangunanProsStdOrmEntity)
         private readonly prosRepository: Repository<AsbKomponenBangunanProsStdOrmEntity>,
-    ) { }
+    ) {}
 
     async create(dto: CreateAsbKomponenBangunanStdDto): Promise<AsbKomponenBangunanStd> {
         const entity = await this.repository.create(dto);
@@ -48,7 +48,7 @@ export class AsbKomponenBangunanStdServiceImpl implements AsbKomponenBangunanStd
         };
 
         // Remove undefined values
-        Object.keys(updateData).forEach(key => {
+        Object.keys(updateData).forEach((key) => {
             if (updateData[key as keyof typeof updateData] === undefined) {
                 delete updateData[key as keyof typeof updateData];
             }
@@ -66,14 +66,16 @@ export class AsbKomponenBangunanStdServiceImpl implements AsbKomponenBangunanStd
         return await this.repository.delete(dto.id);
     }
 
-    async getAll(pagination: GetAsbKomponenBangunanStdsDto): Promise<AsbKomponenBangunanStdsPaginationResult> {
+    async getAll(
+        pagination: GetAsbKomponenBangunanStdsDto,
+    ): Promise<AsbKomponenBangunanStdsPaginationResult> {
         const result = await this.repository.findAll(pagination);
         return {
             komponenBangunans: result.data,
             total: result.total,
             page: pagination.page ?? 1,
             amount: pagination.amount ?? result.total,
-            totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1
+            totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1,
         };
     }
 

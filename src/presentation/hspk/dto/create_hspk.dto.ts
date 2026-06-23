@@ -32,4 +32,3 @@ export class CreateHspkDto {
     @IsString()
     uraian?: string | null;
 }
-

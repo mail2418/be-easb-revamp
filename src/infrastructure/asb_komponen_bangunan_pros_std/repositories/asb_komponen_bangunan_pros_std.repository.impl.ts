@@ -9,11 +9,13 @@ import { GetAsbKomponenBangunanProsStdListDto } from '../../../presentation/asb_
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
-export class AsbKomponenBangunanProsStdRepositoryImpl implements AsbKomponenBangunanProsStdRepository {
+export class AsbKomponenBangunanProsStdRepositoryImpl
+    implements AsbKomponenBangunanProsStdRepository
+{
     constructor(
         @InjectRepository(AsbKomponenBangunanProsStdOrmEntity)
-        private readonly repo: Repository<AsbKomponenBangunanProsStdOrmEntity>
-    ) { }
+        private readonly repo: Repository<AsbKomponenBangunanProsStdOrmEntity>,
+    ) {}
 
     async create(data: CreateAsbKomponenBangunanProsStdDto): Promise<AsbKomponenBangunanProsStd> {
         const entity = plainToInstance(AsbKomponenBangunanProsStdOrmEntity, data);
@@ -21,14 +23,18 @@ export class AsbKomponenBangunanProsStdRepositoryImpl implements AsbKomponenBang
         return saved;
     }
 
-    async update(id: number, data: Partial<AsbKomponenBangunanProsStd>): Promise<AsbKomponenBangunanProsStd> {
+    async update(
+        id: number,
+        data: Partial<AsbKomponenBangunanProsStd>,
+    ): Promise<AsbKomponenBangunanProsStd> {
         await this.repo.update(id, data);
         const updated = await this.repo.findOne({ where: { id } });
         return updated!;
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id)
+        return await this.repo
+            .softDelete(id)
             .then(() => true)
             .catch(() => false);
     }
@@ -36,16 +42,27 @@ export class AsbKomponenBangunanProsStdRepositoryImpl implements AsbKomponenBang
     async findById(id: number): Promise<AsbKomponenBangunanProsStd | null> {
         const entity = await this.repo
             .createQueryBuilder('asb_komponen_bangunan_pros_std')
-            .select(['asb_komponen_bangunan_pros_std.id', 'asb_komponen_bangunan_pros_std.avgMin', 'asb_komponen_bangunan_pros_std.avgMax', 'asb_komponen_bangunan_pros_std.max', 'asb_komponen_bangunan_pros_std.avg'])
+            .select([
+                'asb_komponen_bangunan_pros_std.id',
+                'asb_komponen_bangunan_pros_std.avgMin',
+                'asb_komponen_bangunan_pros_std.avgMax',
+                'asb_komponen_bangunan_pros_std.max',
+                'asb_komponen_bangunan_pros_std.avg',
+            ])
             .where('asb_komponen_bangunan_pros_std.id = :id', { id })
             .getOne();
         return entity || null;
     }
 
-    async findAll(pagination: GetAsbKomponenBangunanProsStdListDto): Promise<{ data: AsbKomponenBangunanProsStd[], total: number }> {
+    async findAll(
+        pagination: GetAsbKomponenBangunanProsStdListDto,
+    ): Promise<{ data: AsbKomponenBangunanProsStd[]; total: number }> {
         const queryBuilder = this.repo
             .createQueryBuilder('asb_komponen_bangunan_pros_std')
-            .leftJoinAndSelect('asb_komponen_bangunan_pros_std.asbKomponenBangunanStd', 'komponen_std')
+            .leftJoinAndSelect(
+                'asb_komponen_bangunan_pros_std.asbKomponenBangunanStd',
+                'komponen_std',
+            )
             .orderBy('asb_komponen_bangunan_pros_std.id', 'DESC');
 
         if (pagination.search) {
@@ -66,7 +83,13 @@ export class AsbKomponenBangunanProsStdRepositoryImpl implements AsbKomponenBang
     async findByKomponenBangunanStdId(id: number): Promise<AsbKomponenBangunanProsStd | null> {
         return await this.repo
             .createQueryBuilder('asb_komponen_bangunan_pros_std')
-            .select(['asb_komponen_bangunan_pros_std.id', 'asb_komponen_bangunan_pros_std.avgMin', 'asb_komponen_bangunan_pros_std.avgMax', 'asb_komponen_bangunan_pros_std.max', 'asb_komponen_bangunan_pros_std.avg'])
+            .select([
+                'asb_komponen_bangunan_pros_std.id',
+                'asb_komponen_bangunan_pros_std.avgMin',
+                'asb_komponen_bangunan_pros_std.avgMax',
+                'asb_komponen_bangunan_pros_std.max',
+                'asb_komponen_bangunan_pros_std.avg',
+            ])
             .where('asb_komponen_bangunan_pros_std.id_asb_komponen_bangunan_std = :id', { id })
             .getOne();
     }

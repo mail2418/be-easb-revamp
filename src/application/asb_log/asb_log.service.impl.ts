@@ -26,11 +26,7 @@ export class AsbLogServiceImpl extends AsbLogService {
         page: number,
         amount: number,
     ): Promise<{ data: AsbLog[]; total: number }> {
-        const [data, total] = await this.repository.findByUser(
-            idUser,
-            page,
-            amount,
-        );
+        const [data, total] = await this.repository.findByUser(idUser, page, amount);
         return { data, total };
     }
 
@@ -39,18 +35,11 @@ export class AsbLogServiceImpl extends AsbLogService {
         page: number,
         amount: number,
     ): Promise<{ data: AsbLog[]; total: number }> {
-        const [data, total] = await this.repository.findByAsb(
-            idAsb,
-            page,
-            amount,
-        );
+        const [data, total] = await this.repository.findByAsb(idAsb, page, amount);
         return { data, total };
     }
 
-    async getAllLogs(
-        page: number,
-        amount: number,
-    ): Promise<{ data: AsbLog[]; total: number }> {
+    async getAllLogs(page: number, amount: number): Promise<{ data: AsbLog[]; total: number }> {
         const [data, total] = await this.repository.findAll(page, amount);
         return { data, total };
     }

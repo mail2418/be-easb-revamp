@@ -1,11 +1,4 @@
-import {
-    Controller,
-    Get,
-    Query,
-    UseGuards,
-    HttpStatus,
-    HttpException,
-} from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, HttpStatus, HttpException } from '@nestjs/common';
 import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -18,7 +11,7 @@ import { ResponseDto } from '../../common/dto/response.dto';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
 export class AsbBipekStandardController {
-    constructor(private readonly service: AsbBipekStandardService) { }
+    constructor(private readonly service: AsbBipekStandardService) {}
 
     @Get('get-by-asb')
     async getByAsb(@Query() dto: GetAsbBipekStandardByAsbDto): Promise<ResponseDto> {
@@ -45,15 +38,9 @@ export class AsbBipekStandardController {
         }
 
         if (error.code === '23503') {
-            throw new HttpException(
-                'Foreign key constraint violation',
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new HttpException('Foreign key constraint violation', HttpStatus.BAD_REQUEST);
         }
 
-        throw new HttpException(
-            'Internal server error',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

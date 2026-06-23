@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
  * Add timestamp columns (created_at, updated_at, deleted_at) to shst table
- * 
+ *
  * This migration adds the missing timestamp columns to match PostgreSQL schema.
  * The shst table was created in InitialSchema without these columns, but they
  * exist in PostgreSQL and are required for proper soft delete functionality.

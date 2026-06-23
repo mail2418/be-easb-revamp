@@ -1,6 +1,6 @@
 export class AsbFungsiRuang {
-  id!: number;
-  nama_fungsi_ruang!: string;
-  koef!: number;
-  isActive!: boolean;
+    id!: number;
+    nama_fungsi_ruang!: string;
+    koef!: number;
+    isActive!: boolean;
 }

@@ -26,9 +26,6 @@ import { KabKotaModule } from '../kabkota/kabkota.module';
             useClass: StandardKlasifikasiRepositoryImpl,
         },
     ],
-    exports: [
-        StandardKlasifikasiService,
-        StandardKlasifikasiRepository,
-    ],
+    exports: [StandardKlasifikasiService, StandardKlasifikasiRepository],
 })
-export class StandardKlasifikasiModule { }
+export class StandardKlasifikasiModule {}

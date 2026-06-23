@@ -17,7 +17,10 @@ import { UsulanSaluranModule } from '../usulan_saluran/usulan_saluran.module';
     ],
     providers: [
         { provide: SaluranSpesifikasiDesainService, useClass: SaluranSpesifikasiDesainServiceImpl },
-        { provide: SaluranSpesifikasiDesainRepository, useClass: SaluranSpesifikasiDesainRepositoryImpl },
+        {
+            provide: SaluranSpesifikasiDesainRepository,
+            useClass: SaluranSpesifikasiDesainRepositoryImpl,
+        },
         CalculateVolumeSaluranSpesifikasiDesainUseCase,
     ],
     exports: [SaluranSpesifikasiDesainService],

@@ -38,7 +38,9 @@ export class CreateJalanKebijakanTable1766321582108 implements MigrationInterfac
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_kebijakan_kabkota_bulan_tahun";`);
-        await queryRunner.query(`ALTER TABLE "jalan_kebijakan" DROP CONSTRAINT IF EXISTS "fk_jalan_kebijakan_kabkota";`);
+        await queryRunner.query(
+            `ALTER TABLE "jalan_kebijakan" DROP CONSTRAINT IF EXISTS "fk_jalan_kebijakan_kabkota";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_kebijakan";`);
     }
 }

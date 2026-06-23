@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class MoveLebarFromSpesifikasiDesainToUsulanJalan1766594192219 implements MigrationInterface {
+export class MoveLebarFromSpesifikasiDesainToUsulanJalan1766594192219
+    implements MigrationInterface
+{
     name = 'MoveLebarFromSpesifikasiDesainToUsulanJalan1766594192219';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -55,4 +57,3 @@ export class MoveLebarFromSpesifikasiDesainToUsulanJalan1766594192219 implements
         `);
     }
 }
-

@@ -5,13 +5,55 @@ export class SeedJalanSaluranSmkkNew1767891146385 implements MigrationInterface 
 
     private readonly rows = [
         // 3 komponen dengan id_jenis_usulan = 2 (Jalan)
-        { id_jenis_usulan: 2, no_mata_pembayaran: 'SSH.1', uraian: 'Helm Safety', satuan: 'Buah', harga_satuan: 0, pengali: 0.3 },
-        { id_jenis_usulan: 2, no_mata_pembayaran: 'SSH.2', uraian: 'Rompi Safety', satuan: 'Buah', harga_satuan: 0, pengali: 0.2 },
-        { id_jenis_usulan: 2, no_mata_pembayaran: 'SSH.3', uraian: 'Sepatu Safety', satuan: 'Pasang', harga_satuan: 0, pengali: 0.5 },
+        {
+            id_jenis_usulan: 2,
+            no_mata_pembayaran: 'SSH.1',
+            uraian: 'Helm Safety',
+            satuan: 'Buah',
+            harga_satuan: 0,
+            pengali: 0.3,
+        },
+        {
+            id_jenis_usulan: 2,
+            no_mata_pembayaran: 'SSH.2',
+            uraian: 'Rompi Safety',
+            satuan: 'Buah',
+            harga_satuan: 0,
+            pengali: 0.2,
+        },
+        {
+            id_jenis_usulan: 2,
+            no_mata_pembayaran: 'SSH.3',
+            uraian: 'Sepatu Safety',
+            satuan: 'Pasang',
+            harga_satuan: 0,
+            pengali: 0.5,
+        },
         // 3 komponen dengan id_jenis_usulan = 3 (Saluran)
-        { id_jenis_usulan: 3, no_mata_pembayaran: 'SSH.1', uraian: 'Helm Safety', satuan: 'Buah', harga_satuan: 0, pengali: 0.3 },
-        { id_jenis_usulan: 3, no_mata_pembayaran: 'SSH.2', uraian: 'Rompi Safety', satuan: 'Buah', harga_satuan: 0, pengali: 0.2 },
-        { id_jenis_usulan: 3, no_mata_pembayaran: 'SSH.3', uraian: 'Sepatu Safety', satuan: 'Pasang', harga_satuan: 0, pengali: 0.5 },
+        {
+            id_jenis_usulan: 3,
+            no_mata_pembayaran: 'SSH.1',
+            uraian: 'Helm Safety',
+            satuan: 'Buah',
+            harga_satuan: 0,
+            pengali: 0.3,
+        },
+        {
+            id_jenis_usulan: 3,
+            no_mata_pembayaran: 'SSH.2',
+            uraian: 'Rompi Safety',
+            satuan: 'Buah',
+            harga_satuan: 0,
+            pengali: 0.2,
+        },
+        {
+            id_jenis_usulan: 3,
+            no_mata_pembayaran: 'SSH.3',
+            uraian: 'Sepatu Safety',
+            satuan: 'Pasang',
+            harga_satuan: 0,
+            pengali: 0.5,
+        },
     ];
 
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -20,7 +62,14 @@ export class SeedJalanSaluranSmkkNew1767891146385 implements MigrationInterface 
                 `INSERT INTO "jalan_saluran_smkk" ("id_jenis_usulan", "no_mata_pembayaran", "uraian", "satuan", "harga_satuan", "pengali")
                  VALUES ($1, $2, $3, $4, $5, $6)
                  ON CONFLICT ("id_jenis_usulan", "no_mata_pembayaran", "uraian") DO NOTHING`,
-                [row.id_jenis_usulan, row.no_mata_pembayaran, row.uraian, row.satuan, row.harga_satuan, row.pengali],
+                [
+                    row.id_jenis_usulan,
+                    row.no_mata_pembayaran,
+                    row.uraian,
+                    row.satuan,
+                    row.harga_satuan,
+                    row.pengali,
+                ],
             );
         }
     }

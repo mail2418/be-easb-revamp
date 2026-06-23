@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateKelurahans1764851869231 implements MigrationInterface {
     name = 'CreateKelurahans1764851869231';
@@ -17,8 +17,12 @@ export class CreateKelurahans1764851869231 implements MigrationInterface {
         `);
 
         // Create indexes
-        await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_kelurahans_kecamatan" ON "kelurahans" ("id_kecamatan")`);
-        await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_kelurahans_deleted_at" ON "kelurahans" ("deleted_at")`);
+        await queryRunner.query(
+            `CREATE INDEX IF NOT EXISTS "idx_kelurahans_kecamatan" ON "kelurahans" ("id_kecamatan")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX IF NOT EXISTS "idx_kelurahans_deleted_at" ON "kelurahans" ("deleted_at")`,
+        );
 
         // Add foreign key to kecamatans
         await queryRunner.query(`
@@ -50,11 +54,15 @@ export class CreateKelurahans1764851869231 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Drop trigger
-        await queryRunner.query(`DROP TRIGGER IF EXISTS trigger_set_kelurahans_updated_at ON "kelurahans"`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS trigger_set_kelurahans_updated_at ON "kelurahans"`,
+        );
         await queryRunner.query(`DROP FUNCTION IF EXISTS set_kelurahans_updated_at`);
 
         // Drop foreign key
-        await queryRunner.query(`ALTER TABLE "kelurahans" DROP CONSTRAINT IF EXISTS "fk_kelurahans_kecamatans"`);
+        await queryRunner.query(
+            `ALTER TABLE "kelurahans" DROP CONSTRAINT IF EXISTS "fk_kelurahans_kecamatans"`,
+        );
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_kelurahans_deleted_at"`);

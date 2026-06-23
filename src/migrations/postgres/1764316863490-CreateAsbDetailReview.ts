@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAsbDetailReview1764316863490 implements MigrationInterface {
-    name = 'CreateAsbDetailReview1764316863490'
+    name = 'CreateAsbDetailReview1764316863490';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create table
@@ -24,11 +24,21 @@ export class CreateAsbDetailReview1764316863490 implements MigrationInterface {
         `);
 
         // Create indexes
-        await queryRunner.query(`CREATE INDEX "idx_asb_detail_reviews_files" ON "asb_detail_reviews" ("files")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_detail_reviews_detail" ON "asb_detail_reviews" ("id_asb_detail")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_detail_reviews_lantai" ON "asb_detail_reviews" ("id_asb_lantai")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_detail_reviews_fungsi_ruang" ON "asb_detail_reviews" ("id_asb_fungsi_ruang")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_detail_reviews_deleted_at" ON "asb_detail_reviews" ("deleted_at")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_detail_reviews_files" ON "asb_detail_reviews" ("files")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_detail_reviews_detail" ON "asb_detail_reviews" ("id_asb_detail")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_detail_reviews_lantai" ON "asb_detail_reviews" ("id_asb_lantai")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_detail_reviews_fungsi_ruang" ON "asb_detail_reviews" ("id_asb_fungsi_ruang")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_detail_reviews_deleted_at" ON "asb_detail_reviews" ("deleted_at")`,
+        );
 
         // Add foreign key to asb_detail
         await queryRunner.query(`
@@ -78,13 +88,21 @@ export class CreateAsbDetailReview1764316863490 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Drop trigger
-        await queryRunner.query(`DROP TRIGGER IF EXISTS trigger_set_asb_detail_reviews_updated_at ON "asb_detail_reviews"`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS trigger_set_asb_detail_reviews_updated_at ON "asb_detail_reviews"`,
+        );
         await queryRunner.query(`DROP FUNCTION IF EXISTS set_asb_detail_reviews_updated_at`);
 
         // Drop foreign keys
-        await queryRunner.query(`ALTER TABLE "asb_detail_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_detail_reviews_fungsi_ruang"`);
-        await queryRunner.query(`ALTER TABLE "asb_detail_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_detail_reviews_lantai"`);
-        await queryRunner.query(`ALTER TABLE "asb_detail_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_detail_reviews_detail"`);
+        await queryRunner.query(
+            `ALTER TABLE "asb_detail_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_detail_reviews_fungsi_ruang"`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "asb_detail_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_detail_reviews_lantai"`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "asb_detail_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_detail_reviews_detail"`,
+        );
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_detail_reviews_deleted_at"`);

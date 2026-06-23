@@ -1,17 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { TipeSaluranRepository } from "../../../domain/tipe_saluran/tipe_saluran.repository";
-import { TipeSaluranOrmEntity } from "../orm/tipe_saluran.orm_entity";
-import { Repository } from "typeorm";
-import { TipeSaluran } from "../../../domain/tipe_saluran/tipe_saluran.entity";
-import { CreateTipeSaluranDto } from "../../../presentation/tipe_saluran/dto/create_tipe_saluran.dto";
-import { plainToInstance } from "class-transformer";
-import { UpdateTipeSaluranDto } from "../../../presentation/tipe_saluran/dto/update_tipe_saluran.dto";
-import { GetTipeSaluranDto } from "../../../presentation/tipe_saluran/dto/get_tipe_saluran.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TipeSaluranRepository } from '../../../domain/tipe_saluran/tipe_saluran.repository';
+import { TipeSaluranOrmEntity } from '../orm/tipe_saluran.orm_entity';
+import { Repository } from 'typeorm';
+import { TipeSaluran } from '../../../domain/tipe_saluran/tipe_saluran.entity';
+import { CreateTipeSaluranDto } from '../../../presentation/tipe_saluran/dto/create_tipe_saluran.dto';
+import { plainToInstance } from 'class-transformer';
+import { UpdateTipeSaluranDto } from '../../../presentation/tipe_saluran/dto/update_tipe_saluran.dto';
+import { GetTipeSaluranDto } from '../../../presentation/tipe_saluran/dto/get_tipe_saluran.dto';
 
 @Injectable()
 export class TipeSaluranRepositoryImpl implements TipeSaluranRepository {
-    constructor(@InjectRepository(TipeSaluranOrmEntity) private readonly repo: Repository<TipeSaluranOrmEntity>) {}
+    constructor(
+        @InjectRepository(TipeSaluranOrmEntity)
+        private readonly repo: Repository<TipeSaluranOrmEntity>,
+    ) {}
 
     async create(dto: CreateTipeSaluranDto): Promise<TipeSaluran> {
         const ormEntity = plainToInstance(TipeSaluranOrmEntity, dto);
@@ -27,7 +30,10 @@ export class TipeSaluranRepositoryImpl implements TipeSaluranRepository {
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<TipeSaluran | null> {
@@ -37,7 +43,7 @@ export class TipeSaluranRepositoryImpl implements TipeSaluranRepository {
 
     async findAll(dto: GetTipeSaluranDto): Promise<{ data: TipeSaluran[]; total: number }> {
         const findOptions: any = {
-            order: { id: "DESC" }
+            order: { id: 'DESC' },
         };
 
         if (dto.page !== undefined && dto.amount !== undefined) {

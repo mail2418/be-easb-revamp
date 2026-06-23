@@ -1,9 +1,4 @@
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    CreateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity('main_dashboard')
 export class MainDashboardOrmEntity {
@@ -31,4 +26,3 @@ export class MainDashboardOrmEntity {
     @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
 }
-

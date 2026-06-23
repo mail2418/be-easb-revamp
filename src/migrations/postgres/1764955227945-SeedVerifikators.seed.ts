@@ -7,9 +7,11 @@ export class SeedVerifikators1764955227945 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Validate required environment variable
         const seedPassword = process.env.SEED_DEFAULT_PASSWORD;
-        
+
         if (!seedPassword) {
-            throw new Error('SEED_DEFAULT_PASSWORD environment variable is required for seeding verifikator users');
+            throw new Error(
+                'SEED_DEFAULT_PASSWORD environment variable is required for seeding verifikator users',
+            );
         }
 
         const SALT_ROUNDS = 12; // Industry standard (10 minimum, 12 recommended)
@@ -32,12 +34,12 @@ export class SeedVerifikators1764955227945 implements MigrationInterface {
                  VALUES ($1, $2, $3, DEFAULT, DEFAULT)
                  ON CONFLICT ("username") DO UPDATE SET "updated_at" = NOW()
                  RETURNING "id"`,
-                [data.username, passwordHash, ['verifikator']]
+                [data.username, passwordHash, ['verifikator']],
             );
 
             // If user already existed and ON CONFLICT DO UPDATE happened, userResult might still contain the ID.
             // If ON CONFLICT DO NOTHING was used, it wouldn't return anything if conflict.
-            // But here I used DO UPDATE so it should return. 
+            // But here I used DO UPDATE so it should return.
             // However, to be safe and idempotent if run multiple times, let's fetch ID if not returned.
 
             let userId: number;
@@ -48,7 +50,7 @@ export class SeedVerifikators1764955227945 implements MigrationInterface {
                 // Fallback if RETURNING didn't work (unlikely with DO UPDATE) or logic differs
                 const checkUser = await queryRunner.query(
                     `SELECT "id" FROM "users" WHERE "username" ILIKE $1`,
-                    [data.username]
+                    [data.username],
                 );
                 if (checkUser && checkUser.length > 0) {
                     userId = checkUser[0].id;
@@ -65,39 +67,41 @@ export class SeedVerifikators1764955227945 implements MigrationInterface {
                     "jenis_verifikator" = EXCLUDED."jenis_verifikator",
                     "verifikator" = EXCLUDED."verifikator",
                     "updated_at" = NOW()`,
-                [userId, data.type, data.username]
+                [userId, data.type, data.username],
             );
         }
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const usernames = [
-            'VerifikatorAdbang1', 'VerifikatorAdbang2',
-            'VerifikatorBpkad1', 'VerifikatorBpkad2',
-            'VerifikatorBappeda1', 'VerifikatorBappeda2'
+            'VerifikatorAdbang1',
+            'VerifikatorAdbang2',
+            'VerifikatorBpkad1',
+            'VerifikatorBpkad2',
+            'VerifikatorBappeda1',
+            'VerifikatorBappeda2',
         ];
 
         // 1. Get User IDs
         const users = await queryRunner.query(
             `SELECT "id" FROM "users" WHERE "username" IN ($1, $2, $3, $4, $5, $6)`,
-            usernames
+            usernames,
         );
 
         const userIds = users.map((u: any) => u.id);
 
         if (userIds.length > 0) {
-            // 2. Delete from verifikators 
+            // 2. Delete from verifikators
             // (Actually CASCADE on users delete would handle this, but explicit is fine)
-            await queryRunner.query(
-                `DELETE FROM "verifikators" WHERE "id_user" = ANY($1)`,
-                [userIds]
-            );
+            await queryRunner.query(`DELETE FROM "verifikators" WHERE "id_user" = ANY($1)`, [
+                userIds,
+            ]);
         }
 
         // 3. Delete users
         await queryRunner.query(
             `DELETE FROM "users" WHERE "username" IN ($1, $2, $3, $4, $5, $6)`,
-            usernames
+            usernames,
         );
     }
 }

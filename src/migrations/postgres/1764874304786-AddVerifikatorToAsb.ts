@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddVerifikatorToAsb1764874304786 implements MigrationInterface {
     name = 'AddVerifikatorToAsb1764874304786';

@@ -30,11 +30,14 @@ import { ChangeUserPasswordDto } from './dto/change_user_password.dto';
 
 @Controller('users')
 export class UserController {
-    constructor(private readonly userService: UserService) { }
+    constructor(private readonly userService: UserService) {}
 
     @Roles(Role.SUPERADMIN)
     @Post('create')
-    async create(@Body() dto: CreateUserDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async create(
+        @Body() dto: CreateUserDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         try {
             const user = await this.userService.create(dto);
 
@@ -82,7 +85,10 @@ export class UserController {
 
     @Roles(Role.ADMIN)
     @Post('/admin/create')
-    async createUserByAdmin(@Body() dto: CreateUserDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async createUserByAdmin(
+        @Body() dto: CreateUserDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         try {
             const user = await this.userService.createUserByAdmin(dto);
 
@@ -130,7 +136,10 @@ export class UserController {
 
     @Roles(Role.SUPERADMIN)
     @Patch('update')
-    async updateUser(@Body() dto: UpdateUserDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async updateUser(
+        @Body() dto: UpdateUserDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         try {
             const user = await this.userService.updateUser(dto);
 
@@ -229,7 +238,10 @@ export class UserController {
 
     @Roles(Role.ADMIN)
     @Patch('/admin/update')
-    async updateUserByAdmin(@Body() dto: UpdateUserByAdminDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async updateUserByAdmin(
+        @Body() dto: UpdateUserByAdminDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         try {
             const user = await this.userService.updateUserByAdmin(dto);
 
@@ -276,7 +288,10 @@ export class UserController {
 
     @Roles(Role.SUPERADMIN)
     @Delete('delete')
-    async deleteUser(@Body() dto: DeleteUserDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async deleteUser(
+        @Body() dto: DeleteUserDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         try {
             await this.userService.deleteUser(dto);
 
@@ -323,7 +338,10 @@ export class UserController {
 
     @Roles(Role.ADMIN)
     @Delete('admin/delete')
-    async deleteUserByAdmin(@Body() dto: DeleteUserByAdminDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async deleteUserByAdmin(
+        @Body() dto: DeleteUserByAdminDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         try {
             await this.userService.deleteUserByAdmin(dto);
 
@@ -370,7 +388,10 @@ export class UserController {
 
     @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Get('list')
-    async getUsers(@Query() dto: GetUsersDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async getUsers(
+        @Query() dto: GetUsersDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         try {
             const result = await this.userService.getUsers(dto);
 
@@ -417,7 +438,10 @@ export class UserController {
 
     @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Get('detail')
-    async getUserDetail(@Query() dto: GetUserDetailDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async getUserDetail(
+        @Query() dto: GetUserDetailDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         try {
             const user = await this.userService.getUserDetail(dto);
 

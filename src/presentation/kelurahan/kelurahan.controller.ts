@@ -21,7 +21,7 @@ import { Role } from '../../domain/user/user_role.enum';
 
 @Controller('kelurahans')
 export class KelurahanController {
-    constructor(private readonly kelurahanService: KelurahanService) { }
+    constructor(private readonly kelurahanService: KelurahanService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)
@@ -43,7 +43,9 @@ export class KelurahanController {
                     message = response;
                 } else {
                     const resObj = response as any;
-                    message = Array.isArray(resObj.message) ? resObj.message.join(', ') : resObj.message ?? 'Error';
+                    message = Array.isArray(resObj.message)
+                        ? resObj.message.join(', ')
+                        : (resObj.message ?? 'Error');
                 }
                 return {
                     status: 'error',
@@ -81,7 +83,9 @@ export class KelurahanController {
                     message = response;
                 } else {
                     const resObj = response as any;
-                    message = Array.isArray(resObj.message) ? resObj.message.join(', ') : resObj.message ?? 'Error';
+                    message = Array.isArray(resObj.message)
+                        ? resObj.message.join(', ')
+                        : (resObj.message ?? 'Error');
                 }
                 return {
                     status: 'error',
@@ -119,7 +123,9 @@ export class KelurahanController {
                     message = response;
                 } else {
                     const resObj = response as any;
-                    message = Array.isArray(resObj.message) ? resObj.message.join(', ') : resObj.message ?? 'Error';
+                    message = Array.isArray(resObj.message)
+                        ? resObj.message.join(', ')
+                        : (resObj.message ?? 'Error');
                 }
                 return {
                     status: 'error',
@@ -157,7 +163,9 @@ export class KelurahanController {
                     message = response;
                 } else {
                     const resObj = response as any;
-                    message = Array.isArray(resObj.message) ? resObj.message.join(', ') : resObj.message ?? 'Error';
+                    message = Array.isArray(resObj.message)
+                        ? resObj.message.join(', ')
+                        : (resObj.message ?? 'Error');
                 }
                 return {
                     status: 'error',
@@ -195,7 +203,9 @@ export class KelurahanController {
                     message = response;
                 } else {
                     const resObj = response as any;
-                    message = Array.isArray(resObj.message) ? resObj.message.join(', ') : resObj.message ?? 'Error';
+                    message = Array.isArray(resObj.message)
+                        ? resObj.message.join(', ')
+                        : (resObj.message ?? 'Error');
                 }
                 return {
                     status: 'error',

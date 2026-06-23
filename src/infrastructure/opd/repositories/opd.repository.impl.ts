@@ -25,9 +25,12 @@ export class OpdRepositoryImpl implements OpdRepository {
         const updatedEntity = await this.repo.findOne({ where: { id: dto.id } });
         return updatedEntity!;
     }
-    
+
     async delete(dto: DeleteOpdDto): Promise<boolean> {
-        return await this.repo.softDelete(dto.id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(dto.id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<Opd | null> {
@@ -37,7 +40,7 @@ export class OpdRepositoryImpl implements OpdRepository {
 
     async findAll(pagination: GetOpdsDto): Promise<{ data: Opd[]; total: number }> {
         const findOptions: any = {
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (pagination.search) {

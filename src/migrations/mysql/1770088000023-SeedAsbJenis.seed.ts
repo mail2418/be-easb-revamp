@@ -20,7 +20,7 @@ export class SeedAsbJenis1770088000023 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
-            `DELETE FROM \`asb_jenis\` WHERE \`jenis\` IN ('Pembangunan', 'Pemeliharaan')`
+            `DELETE FROM \`asb_jenis\` WHERE \`jenis\` IN ('Pembangunan', 'Pemeliharaan')`,
         );
     }
 }

@@ -15,9 +15,16 @@ export abstract class UserRepository {
     abstract updateUserByAdmin(user: UpdateUserByAdminDto): Promise<User>;
     abstract deleteUser(user: DeleteUserDto): Promise<boolean>;
     abstract deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean>;
-    abstract getUsers(pagination: GetUsersDto): Promise<{ data: User[], total: number }>;
+    abstract getUsers(pagination: GetUsersDto): Promise<{ data: User[]; total: number }>;
     abstract getUserDetail(user: GetUserDetailDto): Promise<User | null>;
-    abstract updatePasswordHashAndIncrementRefreshTokenVersion(userId: number, passwordHash: string): Promise<void>;
-    abstract recordFailedLogin(userId: number, maxAttempts: number, lockoutMinutes: number): Promise<void>;
+    abstract updatePasswordHashAndIncrementRefreshTokenVersion(
+        userId: number,
+        passwordHash: string,
+    ): Promise<void>;
+    abstract recordFailedLogin(
+        userId: number,
+        maxAttempts: number,
+        lockoutMinutes: number,
+    ): Promise<void>;
     abstract resetFailedLogin(userId: number): Promise<void>;
 }

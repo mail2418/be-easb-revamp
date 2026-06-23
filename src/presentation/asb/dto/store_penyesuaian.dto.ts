@@ -9,16 +9,22 @@ export class StorePenyesuaianDto {
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => (value !== undefined && value !== null && value !== '' ? parseFloat(value) : undefined))
+    @Transform(({ value }) =>
+        value !== undefined && value !== null && value !== '' ? parseFloat(value) : undefined,
+    )
     penyesuaian_perencanaan_konstruksi?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => (value !== undefined && value !== null && value !== '' ? parseFloat(value) : undefined))
+    @Transform(({ value }) =>
+        value !== undefined && value !== null && value !== '' ? parseFloat(value) : undefined,
+    )
     penyesuaian_pengawasan_konstruksi?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => (value !== undefined && value !== null && value !== '' ? parseFloat(value) : undefined))
+    @Transform(({ value }) =>
+        value !== undefined && value !== null && value !== '' ? parseFloat(value) : undefined,
+    )
     penyesuaian_management_konstruksi?: number;
 }

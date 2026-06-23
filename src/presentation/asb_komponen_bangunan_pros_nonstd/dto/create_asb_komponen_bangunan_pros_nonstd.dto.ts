@@ -9,26 +9,36 @@ export class CreateAsbKomponenBangunanProsNonstdDto {
 
     @IsNumber()
     @IsOptional()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     min?: number;
 
     @IsNumber()
     @IsOptional()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     avgMin?: number;
 
     @IsNumber()
     @IsOptional()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     avg?: number;
 
     @IsNumber()
     @IsOptional()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     avgMax?: number;
 
     @IsNumber()
     @IsOptional()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     max?: number;
 }

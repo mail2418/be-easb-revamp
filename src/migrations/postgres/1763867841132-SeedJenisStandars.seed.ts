@@ -22,12 +22,7 @@ export class SeedJenisStandars1763867841132 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        const jenisList = [
-            'SSH',
-            'HSPK',
-            'ASB',
-            'SBU',
-        ];
+        const jenisList = ['SSH', 'HSPK', 'ASB', 'SBU'];
 
         const placeholders = jenisList.map((_, index) => `$${index + 1}`).join(', ');
         await queryRunner.query(

@@ -16,9 +16,6 @@ export abstract class AsbLogService {
         page: number,
         amount: number,
     ): Promise<{ data: AsbLog[]; total: number }>;
-    abstract getAllLogs(
-        page: number,
-        amount: number,
-    ): Promise<{ data: AsbLog[]; total: number }>;
+    abstract getAllLogs(page: number, amount: number): Promise<{ data: AsbLog[]; total: number }>;
     abstract getRecentLogs(limit: number): Promise<AsbLog[]>;
 }

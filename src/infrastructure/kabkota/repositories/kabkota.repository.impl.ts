@@ -10,7 +10,9 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class KabKotaRepositoryImpl implements KabKotaRepository {
-    constructor(@InjectRepository(KabKotaOrmEntity) private readonly repo: Repository<KabKotaOrmEntity>) {}
+    constructor(
+        @InjectRepository(KabKotaOrmEntity) private readonly repo: Repository<KabKotaOrmEntity>,
+    ) {}
 
     async create(kabkota: CreateKabKotaDto): Promise<KabKota> {
         const kabkotaOrm = plainToInstance(KabKotaOrmEntity, kabkota);
@@ -25,7 +27,10 @@ export class KabKotaRepositoryImpl implements KabKotaRepository {
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id) .then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<KabKota | null> {
@@ -50,14 +55,14 @@ export class KabKotaRepositoryImpl implements KabKotaRepository {
     async findByProvinceId(provinceId: number): Promise<KabKota[]> {
         const kabkotas = await this.repo.find({
             where: { provinceId },
-            order: { nama: 'ASC' }
+            order: { nama: 'ASC' },
         });
         return kabkotas;
     }
 
-    async findAll(pagination: GetKabKotasDto): Promise<{ data: KabKota[], total: number }> {
+    async findAll(pagination: GetKabKotasDto): Promise<{ data: KabKota[]; total: number }> {
         const findOptions: any = {
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (pagination.search) {

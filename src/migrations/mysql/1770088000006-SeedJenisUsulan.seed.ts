@@ -4,11 +4,7 @@ export class SeedJenisUsulan1770088000006 implements MigrationInterface {
     name = 'SeedJenisUsulan1770088000006';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        const jenisUsulanData = [
-            { jenis: 'Gedung' },
-            { jenis: 'Jalan' },
-            { jenis: 'Saluran' },
-        ];
+        const jenisUsulanData = [{ jenis: 'Gedung' }, { jenis: 'Jalan' }, { jenis: 'Saluran' }];
 
         for (const item of jenisUsulanData) {
             await queryRunner.query(

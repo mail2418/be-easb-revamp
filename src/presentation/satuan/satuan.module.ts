@@ -8,23 +8,18 @@ import { SatuanService } from '../../domain/satuan/satuan.service';
 import { SatuanRepository } from '../../domain/satuan/satuan.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([SatuanOrmEntity]),
-  ],
-  controllers: [SatuanController],
-  providers: [
-    {
-      provide: SatuanService,
-      useClass: SatuanServiceImpl,
-    },
-    {
-      provide: SatuanRepository,
-      useClass: SatuanRepositoryImpl,
-    },
-  ],
-  exports: [
-    SatuanService,
-    SatuanRepository,
-  ],
+    imports: [TypeOrmModule.forFeature([SatuanOrmEntity])],
+    controllers: [SatuanController],
+    providers: [
+        {
+            provide: SatuanService,
+            useClass: SatuanServiceImpl,
+        },
+        {
+            provide: SatuanRepository,
+            useClass: SatuanRepositoryImpl,
+        },
+    ],
+    exports: [SatuanService, SatuanRepository],
 })
 export class SatuanModule {}

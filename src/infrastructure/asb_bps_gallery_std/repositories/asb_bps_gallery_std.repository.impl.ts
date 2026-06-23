@@ -18,10 +18,7 @@ export class AsbBpsGalleryStdRepositoryImpl extends AsbBpsGalleryStdRepository {
         super();
     }
 
-    async create(
-        dto: CreateAsbBpsGalleryStdDto,
-        filename: string,
-    ): Promise<AsbBpsGalleryStd> {
+    async create(dto: CreateAsbBpsGalleryStdDto, filename: string): Promise<AsbBpsGalleryStd> {
         const ormEntity = this.repository.create({
             idAsbKomponenBangunanStd: dto.idAsbKomponenBangunanStd || null,
             filename: filename,
@@ -87,10 +84,9 @@ export class AsbBpsGalleryStdRepositoryImpl extends AsbBpsGalleryStdRepository {
         const queryBuilder = this.repository.createQueryBuilder('gallery');
 
         if (filters?.idAsbKomponenBangunanStd) {
-            queryBuilder.andWhere(
-                'gallery.idAsbKomponenBangunanStd = :idAsbKomponenBangunanStd',
-                { idAsbKomponenBangunanStd: filters.idAsbKomponenBangunanStd },
-            );
+            queryBuilder.andWhere('gallery.idAsbKomponenBangunanStd = :idAsbKomponenBangunanStd', {
+                idAsbKomponenBangunanStd: filters.idAsbKomponenBangunanStd,
+            });
         }
 
         if (filters?.filename) {
@@ -116,9 +112,7 @@ export class AsbBpsGalleryStdRepositoryImpl extends AsbBpsGalleryStdRepository {
             .take(amount)
             .getManyAndCount();
 
-        const domainEntities = entities.map((e) =>
-            plainToInstance(AsbBpsGalleryStd, e),
-        );
+        const domainEntities = entities.map((e) => plainToInstance(AsbBpsGalleryStd, e));
         return [domainEntities, total];
     }
 
@@ -129,12 +123,16 @@ export class AsbBpsGalleryStdRepositoryImpl extends AsbBpsGalleryStdRepository {
         return entities.map((e) => plainToInstance(AsbBpsGalleryStd, e));
     }
 
-    async findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBpsGalleryStd[], number]> {
+    async findByAsb(
+        idAsb: number,
+        page: number,
+        amount: number,
+    ): Promise<[AsbBpsGalleryStd[], number]> {
         const [entities, total] = await this.repository.findAndCount({
             where: { idAsb },
             skip: (page - 1) * amount,
             take: amount,
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         });
         const domainEntities = entities.map((e) => plainToInstance(AsbBpsGalleryStd, e));
         return [domainEntities, total];

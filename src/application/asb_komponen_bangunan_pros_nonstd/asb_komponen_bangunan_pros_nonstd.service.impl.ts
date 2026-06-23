@@ -11,22 +11,36 @@ import { AsbKomponenBangunanProsNonstdPaginationResult } from '../../presentatio
 import { ValidateStatisticalRangeUseCase } from '../asb_komponen_bangunan_pros_std/use_cases/validate_statistical_range.use_case';
 
 @Injectable()
-export class AsbKomponenBangunanProsNonstdServiceImpl implements AsbKomponenBangunanProsNonstdService {
+export class AsbKomponenBangunanProsNonstdServiceImpl
+    implements AsbKomponenBangunanProsNonstdService
+{
     constructor(
         private readonly repository: AsbKomponenBangunanProsNonstdRepository,
-        private readonly validateStatisticalRangeUseCase: ValidateStatisticalRangeUseCase
-    ) { }
+        private readonly validateStatisticalRangeUseCase: ValidateStatisticalRangeUseCase,
+    ) {}
 
-    async create(dto: CreateAsbKomponenBangunanProsNonstdDto): Promise<AsbKomponenBangunanProsNonstd> {
-        this.validateStatisticalRangeUseCase.execute(dto.min || 0, dto.avgMin || 0, dto.avg || 0, dto.avgMax || 0, dto.max || 0);
+    async create(
+        dto: CreateAsbKomponenBangunanProsNonstdDto,
+    ): Promise<AsbKomponenBangunanProsNonstd> {
+        this.validateStatisticalRangeUseCase.execute(
+            dto.min || 0,
+            dto.avgMin || 0,
+            dto.avg || 0,
+            dto.avgMax || 0,
+            dto.max || 0,
+        );
         const entity = await this.repository.create(dto);
         return entity;
     }
 
-    async update(dto: UpdateAsbKomponenBangunanProsNonstdDto): Promise<AsbKomponenBangunanProsNonstd> {
+    async update(
+        dto: UpdateAsbKomponenBangunanProsNonstdDto,
+    ): Promise<AsbKomponenBangunanProsNonstd> {
         const existing = await this.repository.findById(dto.id);
         if (!existing) {
-            throw new NotFoundException(`AsbKomponenBangunanProsNonstd with id ${dto.id} not found`);
+            throw new NotFoundException(
+                `AsbKomponenBangunanProsNonstd with id ${dto.id} not found`,
+            );
         }
 
         // Prepare updated values (use existing if not provided)
@@ -48,7 +62,7 @@ export class AsbKomponenBangunanProsNonstdServiceImpl implements AsbKomponenBang
         };
 
         // Remove undefined values
-        Object.keys(updateData).forEach(key => {
+        Object.keys(updateData).forEach((key) => {
             if (updateData[key as keyof typeof updateData] === undefined) {
                 delete updateData[key as keyof typeof updateData];
             }
@@ -61,12 +75,16 @@ export class AsbKomponenBangunanProsNonstdServiceImpl implements AsbKomponenBang
     async delete(dto: DeleteAsbKomponenBangunanProsNonstdDto): Promise<boolean> {
         const existing = await this.repository.findById(dto.id);
         if (!existing) {
-            throw new NotFoundException(`AsbKomponenBangunanProsNonstd with id ${dto.id} not found`);
+            throw new NotFoundException(
+                `AsbKomponenBangunanProsNonstd with id ${dto.id} not found`,
+            );
         }
         return await this.repository.delete(dto.id);
     }
 
-    async getAll(pagination: GetAsbKomponenBangunanProsNonstdListDto): Promise<AsbKomponenBangunanProsNonstdPaginationResult> {
+    async getAll(
+        pagination: GetAsbKomponenBangunanProsNonstdListDto,
+    ): Promise<AsbKomponenBangunanProsNonstdPaginationResult> {
         const result = await this.repository.findAll(pagination);
         const page = pagination.page ?? 1;
         const amount = pagination.amount ?? result.total;
@@ -75,19 +93,25 @@ export class AsbKomponenBangunanProsNonstdServiceImpl implements AsbKomponenBang
             total: result.total,
             page,
             amount,
-            totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
+            totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0,
         };
     }
 
-    async getDetail(dto: GetAsbKomponenBangunanProsNonstdDetailDto): Promise<AsbKomponenBangunanProsNonstd> {
+    async getDetail(
+        dto: GetAsbKomponenBangunanProsNonstdDetailDto,
+    ): Promise<AsbKomponenBangunanProsNonstd> {
         const entity = await this.repository.findById(dto.id);
         if (!entity) {
-            throw new NotFoundException(`AsbKomponenBangunanProsNonstd with id ${dto.id} not found`);
+            throw new NotFoundException(
+                `AsbKomponenBangunanProsNonstd with id ${dto.id} not found`,
+            );
         }
         return entity;
     }
 
-    async findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd | null> {
+    async findByKomponenBangunanNonstdId(
+        id: number,
+    ): Promise<AsbKomponenBangunanProsNonstd | null> {
         return await this.repository.findByKomponenBangunanNonstdId(id);
     }
 }

@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsNumber, IsOptional } from "class-validator";
-import { Transform } from "class-transformer";
+import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateJalanSpesifikasiDesainReviewDto {
     @IsNotEmpty()
@@ -9,41 +9,41 @@ export class UpdateJalanSpesifikasiDesainReviewDto {
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     id_usulan_jalan?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     id_ruang_lingkup?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     id_hspk?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    @Transform(({ value }) => (value ? parseFloat(value) : undefined))
     volume_review?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    @Transform(({ value }) => (value ? parseFloat(value) : undefined))
     lebar_review?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    @Transform(({ value }) => (value ? parseFloat(value) : undefined))
     spasi_review?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    @Transform(({ value }) => (value ? parseFloat(value) : undefined))
     tinggi_review?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    @Transform(({ value }) => (value ? parseFloat(value) : undefined))
     harga_spec_review?: number;
 }

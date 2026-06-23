@@ -9,4 +9,3 @@ export abstract class MainDashboardService {
         userRoles: Role[],
     ): Promise<MainDashboardPaginationResultDto>;
 }
-

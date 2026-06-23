@@ -14,7 +14,7 @@ export class CalculateBobotBPSUseCase {
         private readonly asbKomponenBangunanProsStdRepository: AsbKomponenBangunanProsStdRepository,
         private readonly asbDetailService: AsbDetailService,
         private readonly asbBipekStandardService: AsbBipekStandardService,
-    ) { }
+    ) {}
 
     async execute(
         idAsb: number,
@@ -27,7 +27,9 @@ export class CalculateBobotBPSUseCase {
         luasTotalBangunan: number,
     ): Promise<number[]> {
         let jumlahBobot = 0;
-        let kompBangProsList: Array<AsbKomponenBangunanProsStd | ReturnType<typeof resolveKomponenPros>> = [];
+        const kompBangProsList: Array<
+            AsbKomponenBangunanProsStd | ReturnType<typeof resolveKomponenPros>
+        > = [];
         let calculationMethod: CalculationMethod;
 
         // Set calculation method
@@ -58,7 +60,12 @@ export class CalculateBobotBPSUseCase {
         jumlahBobot = jumlahBobot > 1 ? 1 : jumlahBobot;
 
         // Calculate BPS
-        const BPS = jumlahBobot * shst * koefisienLantaiTotal * koefisienFungsiRuangTotal * luasTotalBangunan;
+        const BPS =
+            jumlahBobot *
+            shst *
+            koefisienLantaiTotal *
+            koefisienFungsiRuangTotal *
+            luasTotalBangunan;
 
         // Loop 2: Create and save AsbBipekStandard records
         for (let i = 0; i < komponenIds.length; i++) {
@@ -74,7 +81,7 @@ export class CalculateBobotBPSUseCase {
                     calculationMethod: calculationMethod,
                     jumlahBobot: bobot,
                     rincianHarga: (bobot / jumlahBobot) * BPS,
-                    files: Files.ORIGIN
+                    files: Files.ORIGIN,
                 };
 
                 await this.asbBipekStandardService.create(asbBipekStandard);

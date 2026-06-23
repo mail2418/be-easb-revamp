@@ -28,16 +28,16 @@ export class GenerateExcelTemplateUseCase {
         ]);
 
         // Extract values for dropdowns
-        const tipeBangunanValues = tipeBangunanList.data.map(tb => tb.tipe_bangunan);
-        const jenisValues = jenisList.data.map(j => j.jenis);
+        const tipeBangunanValues = tipeBangunanList.data.map((tb) => tb.tipe_bangunan);
+        const jenisValues = jenisList.data.map((j) => j.jenis);
         const typeValues = Object.values(AsbJakonType);
 
         // Group klasifikasi by tipe bangunan for better validation
         const klasifikasiByTipeBangunan = new Map<number, string[]>();
-        tipeBangunanList.data.forEach(tb => {
+        tipeBangunanList.data.forEach((tb) => {
             const klasifikasis = klasifikasiList.data
-                .filter(k => k.id_asb_tipe_bangunan === tb.id)
-                .map(k => k.klasifikasi);
+                .filter((k) => k.id_asb_tipe_bangunan === tb.id)
+                .map((k) => k.klasifikasi);
             klasifikasiByTipeBangunan.set(tb.id, klasifikasis);
         });
 
@@ -53,12 +53,7 @@ export class GenerateExcelTemplateUseCase {
 
         // Create data upload worksheet with headers
         const dataWorksheet = workbook.addWorksheet(JAKON_DATA_SHEET_NAME);
-        this.createDataWorksheet(
-            dataWorksheet,
-            tipeBangunanValues,
-            jenisValues,
-            typeValues,
-        );
+        this.createDataWorksheet(dataWorksheet, tipeBangunanValues, jenisValues, typeValues);
 
         // Generate buffer
         const buffer = await workbook.xlsx.writeBuffer();
@@ -84,8 +79,12 @@ export class GenerateExcelTemplateUseCase {
         sopData.push([]);
         sopData.push(['1. Buka worksheet "Jakon Data" untuk mengisi data']);
         sopData.push(['2. Isi data pada baris ke-2 dan seterusnya (baris pertama adalah header)']);
-        sopData.push(['3. Gunakan dropdown list yang tersedia untuk kolom: tipe_bangunan, jenis usulan asb, klasifikasi, dan type']);
-        sopData.push(['4. Untuk kolom satuan, isi dengan teks bebas (contoh: Dok., Paket, Unit, dll)']);
+        sopData.push([
+            '3. Gunakan dropdown list yang tersedia untuk kolom: tipe_bangunan, jenis usulan asb, klasifikasi, dan type',
+        ]);
+        sopData.push([
+            '4. Untuk kolom satuan, isi dengan teks bebas (contoh: Dok., Paket, Unit, dll)',
+        ]);
         sopData.push(['5. Untuk kolom priceFrom, priceTo, dan standard, isi dengan angka positif']);
         sopData.push(['6. Pastikan priceTo >= priceFrom']);
         sopData.push(['7. Pastikan semua kolom terisi dengan benar sebelum upload']);
@@ -121,24 +120,9 @@ export class GenerateExcelTemplateUseCase {
             'Text (Dropdown)',
             'Pilih dari: perencanaan, pengawasan, management, pengelolaan',
         ]);
-        sopData.push([
-            'nama',
-            'Nama',
-            'Text',
-            'Nama jasa konstruksi',
-        ]);
-        sopData.push([
-            'spec',
-            'Spesifikasi',
-            'Text',
-            'Spesifikasi detail',
-        ]);
-        sopData.push([
-            'priceFrom',
-            'Harga Dari',
-            'Number',
-            'Angka positif (contoh: 1000000)',
-        ]);
+        sopData.push(['nama', 'Nama', 'Text', 'Nama jasa konstruksi']);
+        sopData.push(['spec', 'Spesifikasi', 'Text', 'Spesifikasi detail']);
+        sopData.push(['priceFrom', 'Harga Dari', 'Number', 'Angka positif (contoh: 1000000)']);
         sopData.push([
             'priceTo',
             'Harga Sampai',
@@ -151,12 +135,7 @@ export class GenerateExcelTemplateUseCase {
             'Text',
             'Isi dengan teks bebas (contoh: Dok., Paket, Unit, dll)',
         ]);
-        sopData.push([
-            'standard',
-            'Standard',
-            'Number',
-            'Angka positif (contoh: 0.15)',
-        ]);
+        sopData.push(['standard', 'Standard', 'Number', 'Angka positif (contoh: 0.15)']);
         sopData.push([]);
 
         // Valid values lists
@@ -181,7 +160,9 @@ export class GenerateExcelTemplateUseCase {
 
         // Klasifikasi (grouped by tipe bangunan)
         sopData.push(['KLASIFIKASI (klasifikasi) - Dikelompokkan berdasarkan Tipe Bangunan:']);
-        sopData.push(['PENTING: Klasifikasi yang dipilih HARUS sesuai dengan tipe_bangunan yang dipilih!']);
+        sopData.push([
+            'PENTING: Klasifikasi yang dipilih HARUS sesuai dengan tipe_bangunan yang dipilih!',
+        ]);
         sopData.push([]);
         tipeBangunanList.forEach((tb) => {
             const klasifikasis = klasifikasiByTipeBangunan.get(tb.id) || [];
@@ -205,14 +186,28 @@ export class GenerateExcelTemplateUseCase {
 
         // Notes
         sopData.push(['CATATAN PENTING:']);
-        sopData.push(['- Pastikan nilai yang diinput sesuai dengan daftar di atas (untuk kolom dengan dropdown)']);
-        sopData.push(['- Nilai harus ditulis persis seperti yang tertera di daftar (untuk kolom dengan dropdown)']);
-        sopData.push(['- PENTING: Klasifikasi yang dipilih HARUS terikat dengan tipe_bangunan yang dipilih']);
-        sopData.push(['- Contoh: Jika tipe_bangunan = "Rumah", maka klasifikasi harus salah satu dari klasifikasi yang terikat dengan "Rumah"']);
-        sopData.push(['- Untuk kolom satuan, isi dengan teks bebas sesuai kebutuhan (contoh: Dok., Paket, Unit, dll)']);
-        sopData.push(['- Untuk priceFrom, priceTo, dan standard, gunakan angka tanpa titik atau koma (contoh: 1000000 atau 0.15)']);
+        sopData.push([
+            '- Pastikan nilai yang diinput sesuai dengan daftar di atas (untuk kolom dengan dropdown)',
+        ]);
+        sopData.push([
+            '- Nilai harus ditulis persis seperti yang tertera di daftar (untuk kolom dengan dropdown)',
+        ]);
+        sopData.push([
+            '- PENTING: Klasifikasi yang dipilih HARUS terikat dengan tipe_bangunan yang dipilih',
+        ]);
+        sopData.push([
+            '- Contoh: Jika tipe_bangunan = "Rumah", maka klasifikasi harus salah satu dari klasifikasi yang terikat dengan "Rumah"',
+        ]);
+        sopData.push([
+            '- Untuk kolom satuan, isi dengan teks bebas sesuai kebutuhan (contoh: Dok., Paket, Unit, dll)',
+        ]);
+        sopData.push([
+            '- Untuk priceFrom, priceTo, dan standard, gunakan angka tanpa titik atau koma (contoh: 1000000 atau 0.15)',
+        ]);
         sopData.push(['- Pastikan priceTo >= priceFrom']);
-        sopData.push(['- Jika data tidak ditemukan di daftar (untuk kolom dengan dropdown), hubungi administrator']);
+        sopData.push([
+            '- Jika data tidak ditemukan di daftar (untuk kolom dengan dropdown), hubungi administrator',
+        ]);
 
         // Add data to worksheet
         sopData.forEach((row, rowIndex) => {
@@ -243,12 +238,12 @@ export class GenerateExcelTemplateUseCase {
             fill: {
                 type: 'pattern' as const,
                 pattern: 'solid' as const,
-                fgColor: { argb: 'FFD9E1F2' }
+                fgColor: { argb: 'FFD9E1F2' },
             },
         };
         // Calculate section rows dynamically
         const sectionRows = [4, 15, 17]; // Row numbers for section headers (LANGKAH-LANGKAH, DESKRIPSI KOLOM, DAFTAR NILAI)
-        sectionRows.forEach(rowNum => {
+        sectionRows.forEach((rowNum) => {
             const cell = worksheet.getCell(rowNum, 1);
             cell.font = sectionStyle.font;
             cell.fill = sectionStyle.fill;
@@ -260,7 +255,7 @@ export class GenerateExcelTemplateUseCase {
             fill: {
                 type: 'pattern' as const,
                 pattern: 'solid' as const,
-                fgColor: { argb: 'FF4472C4' }
+                fgColor: { argb: 'FF4472C4' },
             },
             alignment: { horizontal: 'center' as const, vertical: 'middle' as const },
         };
@@ -274,9 +269,14 @@ export class GenerateExcelTemplateUseCase {
             }
         });
         const typeSectionStart = currentRow;
-        const headerRows = [15, 17 + 2 + tipeBangunanList.length, klasifikasiSectionStart, typeSectionStart];
-        headerRows.forEach(rowNum => {
-            ['A', 'B'].forEach(col => {
+        const headerRows = [
+            15,
+            17 + 2 + tipeBangunanList.length,
+            klasifikasiSectionStart,
+            typeSectionStart,
+        ];
+        headerRows.forEach((rowNum) => {
+            ['A', 'B'].forEach((col) => {
                 const cell = worksheet.getCell(`${col}${rowNum}`);
                 cell.font = headerStyle.font;
                 cell.fill = headerStyle.fill;
@@ -314,7 +314,7 @@ export class GenerateExcelTemplateUseCase {
             cell.fill = {
                 type: 'pattern',
                 pattern: 'solid',
-                fgColor: { argb: 'FF4472C4' }
+                fgColor: { argb: 'FF4472C4' },
             };
             cell.alignment = { horizontal: 'center' as const, vertical: 'middle' as const };
         });

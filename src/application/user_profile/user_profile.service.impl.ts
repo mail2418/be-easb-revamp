@@ -72,7 +72,8 @@ export class UserProfileServiceImpl implements UserProfileService {
 
         await this.profileRepo.ensureForUser(userId, user.username);
 
-        const ext = file.mimetype === 'image/png' ? 'png' : file.mimetype === 'image/webp' ? 'webp' : 'jpg';
+        const ext =
+            file.mimetype === 'image/png' ? 'png' : file.mimetype === 'image/webp' ? 'webp' : 'jpg';
         const uploadDir = this.ensureUploadDir.getUploadDirectory();
         const filename = `user-${userId}.${ext}`;
         const absolutePath = path.join(uploadDir, filename);
@@ -117,7 +118,8 @@ export class UserProfileServiceImpl implements UserProfileService {
     }
 
     private assertCanView(targetUserId: number, requesterId: number, requesterRoles: Role[]): void {
-        const isAdmin = requesterRoles.includes(Role.ADMIN) || requesterRoles.includes(Role.SUPERADMIN);
+        const isAdmin =
+            requesterRoles.includes(Role.ADMIN) || requesterRoles.includes(Role.SUPERADMIN);
         if (targetUserId !== requesterId && !isAdmin) {
             throw new ForbiddenException('Not allowed to view this profile');
         }

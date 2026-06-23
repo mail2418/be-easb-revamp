@@ -19,21 +19,15 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
         super();
     }
 
-    async create(
-        dto: CreateAsbDetailReviewDto,
-    ): Promise<AsbDetailReview> {
+    async create(dto: CreateAsbDetailReviewDto): Promise<AsbDetailReview> {
         // Calculate lantai koef
-        const lantaiKoef = await this.calculateKoefLantaiUseCase.execute(
-            dto.luas,
-            dto.idAsbLantai,
-        );
+        const lantaiKoef = await this.calculateKoefLantaiUseCase.execute(dto.luas, dto.idAsbLantai);
 
         // Calculate fungsi bangunan koef
-        const asbFungsiRuangKoef =
-            await this.calculateKoefFungsiBangunanUseCase.execute(
-                dto.luas,
-                dto.idAsbFungsiRuang,
-            );
+        const asbFungsiRuangKoef = await this.calculateKoefFungsiBangunanUseCase.execute(
+            dto.luas,
+            dto.idAsbFungsiRuang,
+        );
 
         // Create with calculated coefficients
         dto.lantaiKoef = lantaiKoef;
@@ -41,14 +35,10 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
         return await this.repository.create(dto);
     }
 
-    async update(
-        dto: UpdateAsbDetailReviewDto,
-    ): Promise<AsbDetailReview> {
+    async update(dto: UpdateAsbDetailReviewDto): Promise<AsbDetailReview> {
         const existing = await this.repository.findById(dto.id);
         if (!existing) {
-            throw new NotFoundException(
-                `AsbDetailReview with id ${dto.id} not found`,
-            );
+            throw new NotFoundException(`AsbDetailReview with id ${dto.id} not found`);
         }
 
         return await this.repository.update(dto);
@@ -57,9 +47,7 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
     async delete(id: number): Promise<void> {
         const existing = await this.repository.findById(id);
         if (!existing) {
-            throw new NotFoundException(
-                `AsbDetailReview with id ${id} not found`,
-            );
+            throw new NotFoundException(`AsbDetailReview with id ${id} not found`);
         }
 
         await this.repository.delete(id);
@@ -68,14 +56,18 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
     async getById(id: number): Promise<AsbDetailReview> {
         const detailReview = await this.repository.findById(id);
         if (!detailReview) {
-            throw new NotFoundException(
-                `AsbDetailReview with id ${id} not found`,
-            );
+            throw new NotFoundException(`AsbDetailReview with id ${id} not found`);
         }
         return detailReview;
     }
 
-    async getByAsb(dto: GetAsbDetailReviewByAsbDto): Promise<{ data: AsbDetailReview[], total: number, page: number, amount: number, totalPages: number }> {
+    async getByAsb(dto: GetAsbDetailReviewByAsbDto): Promise<{
+        data: AsbDetailReview[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }> {
         const page = dto.page ?? 1;
         const amount = dto.amount ?? 10;
         const [data, total] = await this.repository.findByAsb(dto.idAsb, page, amount);
@@ -84,7 +76,7 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
             total,
             page,
             amount,
-            totalPages: Math.ceil(total / amount)
+            totalPages: Math.ceil(total / amount),
         };
     }
 
@@ -99,14 +91,20 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
     async calculateKoefLantaiTotal(idAsb: number, luasTotal: number): Promise<number> {
         const details = await this.repository.findByAsb(idAsb, 1, 100);
 
-        const totalKoefLantai = details[0].reduce((total, detail) => total + (detail.lantaiKoef || 0), 0);
+        const totalKoefLantai = details[0].reduce(
+            (total, detail) => total + (detail.lantaiKoef || 0),
+            0,
+        );
 
         return Number((totalKoefLantai / luasTotal).toPrecision(3));
     }
 
     async calculateKoefFungsiRuangTotal(idAsb: number, luasTotal: number): Promise<number> {
         const details = await this.repository.findByAsb(idAsb, 1, 100);
-        const totalKoefFungsiRuang = details[0].reduce((total, detail) => total + (detail.asbFungsiRuangKoef || 0), 0);
+        const totalKoefFungsiRuang = details[0].reduce(
+            (total, detail) => total + (detail.asbFungsiRuangKoef || 0),
+            0,
+        );
 
         return Number((totalKoefFungsiRuang / luasTotal).toPrecision(3));
     }

@@ -583,4 +583,3 @@ export class RefactorUsulanJalanTable1766451730810 implements MigrationInterface
         // Note: Foreign keys for old columns would need to be re-added if needed
     }
 }
-

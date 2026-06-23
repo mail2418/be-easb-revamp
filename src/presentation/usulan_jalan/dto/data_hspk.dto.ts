@@ -17,4 +17,3 @@ export class DataHspkDto {
     @Transform(({ value }) => parseFloat(value))
     tinggi!: number;
 }
-

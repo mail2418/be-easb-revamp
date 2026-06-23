@@ -20,9 +20,16 @@ export default () => ({
         },
     },
     cors: {
-        origins: process.env.CORS_ORIGINS ?? 'http://localhost:3000',        
+        origins: process.env.CORS_ORIGINS ?? 'http://localhost:3000',
         credentials: process.env.CORS_CREDENTIALS !== 'false',
-        methods: process.env.CORS_METHODS?.split(',') ?? ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+        methods: process.env.CORS_METHODS?.split(',') ?? [
+            'GET',
+            'POST',
+            'PUT',
+            'DELETE',
+            'OPTIONS',
+            'PATCH',
+        ],
         allowedHeaders: process.env.CORS_ALLOWED_HEADERS?.split(',') ?? [
             'Content-Type',
             'Authorization',

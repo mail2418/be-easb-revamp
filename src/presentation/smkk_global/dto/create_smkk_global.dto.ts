@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
-import { Transform } from "class-transformer";
+import { IsNotEmpty, IsNumber } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateSmkkGlobalDto {
     @IsNotEmpty()
@@ -17,4 +17,3 @@ export class CreateSmkkGlobalDto {
     @Transform(({ value }) => parseFloat(value))
     persentase_smkk!: number;
 }
-

@@ -2,28 +2,28 @@ import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class UpdateAsbLantaiDto {
-  @IsNumber()
-  @IsNotEmpty()
-  @Transform(({ value }) => parseInt(value, 10))
-  id!: number;
+    @IsNumber()
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
+    id!: number;
 
-  @IsString()
-  @IsNotEmpty()
-  @Transform(({ value }) => value?.trim())
-  lantai!: string;
+    @IsString()
+    @IsNotEmpty()
+    @Transform(({ value }) => value?.trim())
+    lantai!: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Transform(({ value }) => value?.trim())
-  type!: string;
+    @IsString()
+    @IsNotEmpty()
+    @Transform(({ value }) => value?.trim())
+    type!: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  @Transform(({ value }) => parseFloat(value))
-  koef!: number;
+    @IsNumber()
+    @IsNotEmpty()
+    @Transform(({ value }) => parseFloat(value))
+    koef!: number;
 
-  @IsNumber()
-  @IsNotEmpty()
-  @Transform(({ value }) => parseInt(value, 10))
-  id_satuan!: number;
+    @IsNumber()
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
+    id_satuan!: number;
 }

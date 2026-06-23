@@ -1,4 +1,4 @@
-import { PpnGlobal } from "../../../domain/ppn_global/ppn_global.entity";
+import { PpnGlobal } from '../../../domain/ppn_global/ppn_global.entity';
 
 export class PpnGlobalPaginationResultDto {
     data!: PpnGlobal[];

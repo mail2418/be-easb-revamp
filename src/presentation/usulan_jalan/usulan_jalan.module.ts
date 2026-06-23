@@ -55,6 +55,4 @@ import { MainDashboardModule } from '../main_dashboard/main_dashboard.module';
     controllers: [UsulanJalanController],
     exports: [UsulanJalanService, UsulanJalanRepository],
 })
-export class UsulanJalanModule { }
-
-
+export class UsulanJalanModule {}

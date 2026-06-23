@@ -20,25 +20,19 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
         super();
     }
 
-    async create(
-        dto: CreateAsbBipekNonStdReviewDto,
-    ): Promise<AsbBipekNonStdReview> {
+    async create(dto: CreateAsbBipekNonStdReviewDto): Promise<AsbBipekNonStdReview> {
         const ormEntity = this.repository.create(dto);
 
         const saved = await this.repository.save(ormEntity);
         return plainToInstance(AsbBipekNonStdReview, saved);
     }
 
-    async update(
-        dto: UpdateAsbBipekNonStdReviewDto,
-    ): Promise<AsbBipekNonStdReview> {
+    async update(dto: UpdateAsbBipekNonStdReviewDto): Promise<AsbBipekNonStdReview> {
         const existing = await this.repository.findOne({
             where: { id: dto.id },
         });
         if (!existing) {
-            throw new Error(
-                `AsbBipekNonStdReview with id ${dto.id} not found`,
-            );
+            throw new Error(`AsbBipekNonStdReview with id ${dto.id} not found`);
         }
 
         const updateData: Partial<AsbBipekNonStdReviewOrmEntity> = {};
@@ -76,23 +70,23 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
     async delete(id: number): Promise<void> {
         const result = await this.repository.softDelete(id);
         if (result.affected === 0) {
-            throw new Error(
-                `AsbBipekNonStdReview with id ${id} not found`,
-            );
+            throw new Error(`AsbBipekNonStdReview with id ${id} not found`);
         }
     }
 
     async findById(id: number): Promise<AsbBipekNonStdReview | null> {
         const entity = await this.repository.findOne({ where: { id } });
-        return entity
-            ? plainToInstance(AsbBipekNonStdReview, entity)
-            : null;
+        return entity ? plainToInstance(AsbBipekNonStdReview, entity) : null;
     }
 
-    async findByAsb(idAsb: number, page?: number, amount?: number): Promise<[AsbBipekNonStdReview[], number]> {
+    async findByAsb(
+        idAsb: number,
+        page?: number,
+        amount?: number,
+    ): Promise<[AsbBipekNonStdReview[], number]> {
         const queryOptions: any = {
             where: { idAsb },
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (page !== undefined && amount !== undefined) {
@@ -105,7 +99,9 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
         return [domainEntities, total];
     }
 
-    async getBpnsWithRelationByAsb(dto: GetAsbBipekNonStdReviewByAsbDto): Promise<[BpnsReviewWithRelationsDto[], number]> {
+    async getBpnsWithRelationByAsb(
+        dto: GetAsbBipekNonStdReviewByAsbDto,
+    ): Promise<[BpnsReviewWithRelationsDto[], number]> {
         const queryBuilder = this.repository
             .createQueryBuilder('asb_bipek_non_std_review')
             .select([
@@ -116,9 +112,12 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
                 'asb_bipek_non_std_review.bobotInput',
                 'asb_bipek_non_std_review.calculationMethod',
                 'asb_bipek_non_std_review.jumlahBobot',
-                'asb_bipek_non_std_review.rincianHarga'
+                'asb_bipek_non_std_review.rincianHarga',
             ])
-            .leftJoinAndSelect('asb_bipek_non_std_review.asbKomponenBangunanNonstd', 'asb_komponen_bangunan_nonstd')
+            .leftJoinAndSelect(
+                'asb_bipek_non_std_review.asbKomponenBangunanNonstd',
+                'asb_komponen_bangunan_nonstd',
+            )
             .where('asb_bipek_non_std_review.idAsb = :idAsb', { idAsb: dto.idAsb })
             .orderBy('asb_bipek_non_std_review.id', 'DESC');
 
@@ -141,7 +140,7 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
             if (e.asbKomponenBangunanNonstd) {
                 dto.asbKomponenBangunanNonstd = {
                     id: e.asbKomponenBangunanNonstd.id,
-                    komponen: e.asbKomponenBangunanNonstd.komponen
+                    komponen: e.asbKomponenBangunanNonstd.komponen,
                 };
             }
             return dto;

@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAsbBpsGalleryNonstd1764511437349 implements MigrationInterface {
-    name = 'CreateAsbBpsGalleryNonstd1764511437349'
+    name = 'CreateAsbBpsGalleryNonstd1764511437349';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create table
@@ -21,8 +21,12 @@ export class CreateAsbBpsGalleryNonstd1764511437349 implements MigrationInterfac
         `);
 
         // Create indexes
-        await queryRunner.query(`CREATE INDEX "idx_asb_bps_gallery_nonstd_komponen_bangunan_nonstd" ON "asb_bps_gallery_nonstd" ("id_asb_komponen_bangunan_nonstd")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_bps_gallery_nonstd_deleted_at" ON "asb_bps_gallery_nonstd" ("deleted_at")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_bps_gallery_nonstd_komponen_bangunan_nonstd" ON "asb_bps_gallery_nonstd" ("id_asb_komponen_bangunan_nonstd")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_bps_gallery_nonstd_deleted_at" ON "asb_bps_gallery_nonstd" ("deleted_at")`,
+        );
 
         // Add foreign key with CASCADE
         await queryRunner.query(`
@@ -48,14 +52,20 @@ export class CreateAsbBpsGalleryNonstd1764511437349 implements MigrationInterfac
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Drop trigger
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_bps_gallery_nonstd_updated_at ON "asb_bps_gallery_nonstd"`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_asb_bps_gallery_nonstd_updated_at ON "asb_bps_gallery_nonstd"`,
+        );
 
         // Drop foreign key
-        await queryRunner.query(`ALTER TABLE "asb_bps_gallery_nonstd" DROP CONSTRAINT IF EXISTS "fk_asb_bps_gallery_nonstd_komponen_bangunan_nonstd"`);
+        await queryRunner.query(
+            `ALTER TABLE "asb_bps_gallery_nonstd" DROP CONSTRAINT IF EXISTS "fk_asb_bps_gallery_nonstd_komponen_bangunan_nonstd"`,
+        );
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bps_gallery_nonstd_deleted_at"`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bps_gallery_nonstd_komponen_bangunan_nonstd"`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_asb_bps_gallery_nonstd_komponen_bangunan_nonstd"`,
+        );
 
         // Drop table
         await queryRunner.query(`DROP TABLE IF EXISTS "asb_bps_gallery_nonstd"`);

@@ -1,23 +1,21 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { ShstRepository } from "../../../domain/shst/shst.repository";
-import { BulkCreateShstDto } from "../../../application/shst/dto/bulk_create_shst.dto";
-import { Shst } from "../../../domain/shst/shst.entity";
-import { ShstOrmEntity } from "../orm/shst.orm_entity";
-import { CreateShstDto } from "../../../presentation/shst/dto/create_shst.dto";
-import { UpdateNominalShstDto } from "../../../presentation/shst/dto/update_nominal_shst.dto";
-import { DeleteShstDto } from "../../../presentation/shst/dto/delete_shst.dto";
-import { GetShstDto } from "../../../presentation/shst/dto/get_shst.dto";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ShstRepository } from '../../../domain/shst/shst.repository';
+import { BulkCreateShstDto } from '../../../application/shst/dto/bulk_create_shst.dto';
+import { Shst } from '../../../domain/shst/shst.entity';
+import { ShstOrmEntity } from '../orm/shst.orm_entity';
+import { CreateShstDto } from '../../../presentation/shst/dto/create_shst.dto';
+import { UpdateNominalShstDto } from '../../../presentation/shst/dto/update_nominal_shst.dto';
+import { DeleteShstDto } from '../../../presentation/shst/dto/delete_shst.dto';
+import { GetShstDto } from '../../../presentation/shst/dto/get_shst.dto';
 import { GetShstNominalDto } from '../../../application/shst/dto/get_shst_nominal.dto';
 
-import { plainToInstance } from "class-transformer";
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ShstRepositoryImpl extends ShstRepository {
-    constructor(
-        @InjectRepository(ShstOrmEntity) private readonly repo: Repository<ShstOrmEntity>,
-    ) {
+    constructor(@InjectRepository(ShstOrmEntity) private readonly repo: Repository<ShstOrmEntity>) {
         super();
     }
 
@@ -28,13 +26,16 @@ export class ShstRepositoryImpl extends ShstRepository {
     }
 
     async bulkCreate(dtos: BulkCreateShstDto[]): Promise<Shst[]> {
-        const ormEntities = dtos.map(dto => plainToInstance(ShstOrmEntity, dto));
+        const ormEntities = dtos.map((dto) => plainToInstance(ShstOrmEntity, dto));
         const savedEntities = await this.repo.save(ormEntities);
         return savedEntities;
     }
 
     async delete(dto: DeleteShstDto): Promise<boolean> {
-        return await this.repo.delete(dto.id).then(() => true).catch(() => false);
+        return await this.repo
+            .delete(dto.id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async updateNominal(dto: UpdateNominalShstDto): Promise<Shst> {
@@ -46,7 +47,7 @@ export class ShstRepositoryImpl extends ShstRepository {
 
     async findAll(dto: GetShstDto): Promise<{ data: Shst[]; total: number }> {
         const queryBuilder = this.repo
-            .createQueryBuilder("shst")
+            .createQueryBuilder('shst')
             .select([
                 'shst.id',
                 'shst.tahun',
@@ -54,32 +55,32 @@ export class ShstRepositoryImpl extends ShstRepository {
                 'shst.id_asb_klasifikasi',
                 'shst.id_kabkota',
                 'shst.nominal',
-                'shst.file'
+                'shst.file',
             ])
-            .leftJoinAndSelect("shst.asbTipeBangunan", "asbTipeBangunan")
-            .leftJoinAndSelect("shst.asbKlasifikasi", "asbKlasifikasi")
-            .leftJoinAndSelect("shst.kabkota", "kabkota");
+            .leftJoinAndSelect('shst.asbTipeBangunan', 'asbTipeBangunan')
+            .leftJoinAndSelect('shst.asbKlasifikasi', 'asbKlasifikasi')
+            .leftJoinAndSelect('shst.kabkota', 'kabkota');
 
         if (dto.tahun) {
-            queryBuilder.andWhere("shst.tahun = :tahun", { tahun: dto.tahun });
+            queryBuilder.andWhere('shst.tahun = :tahun', { tahun: dto.tahun });
         }
         if (dto.id_asb_tipe_bangunan) {
-            queryBuilder.andWhere("shst.id_asb_tipe_bangunan = :id_asb_tipe_bangunan", {
-                id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+            queryBuilder.andWhere('shst.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
+                id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan,
             });
         }
         if (dto.id_asb_klasifikasi) {
-            queryBuilder.andWhere("shst.id_asb_klasifikasi = :id_asb_klasifikasi", {
-                id_asb_klasifikasi: dto.id_asb_klasifikasi
+            queryBuilder.andWhere('shst.id_asb_klasifikasi = :id_asb_klasifikasi', {
+                id_asb_klasifikasi: dto.id_asb_klasifikasi,
             });
         }
         if (dto.id_kabkota) {
-            queryBuilder.andWhere("shst.id_kabkota = :id_kabkota", { id_kabkota: dto.id_kabkota });
+            queryBuilder.andWhere('shst.id_kabkota = :id_kabkota', { id_kabkota: dto.id_kabkota });
         }
 
         if (dto.search) {
             queryBuilder.andWhere(
-                "(asbTipeBangunan.tipe_bangunan ILIKE :search OR asbKlasifikasi.klasifikasi ILIKE :search OR kabkota.nama ILIKE :search)",
+                '(asbTipeBangunan.tipe_bangunan ILIKE :search OR asbKlasifikasi.klasifikasi ILIKE :search OR kabkota.nama ILIKE :search)',
                 { search: `%${dto.search}%` },
             );
         }
@@ -89,7 +90,7 @@ export class ShstRepositoryImpl extends ShstRepository {
             queryBuilder.skip(skip).take(dto.amount);
         }
 
-        queryBuilder.orderBy("shst.id", "DESC");
+        queryBuilder.orderBy('shst.id', 'DESC');
 
         const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -106,7 +107,7 @@ export class ShstRepositoryImpl extends ShstRepository {
                 'shst.id_asb_klasifikasi',
                 'shst.id_kabkota',
                 'shst.nominal',
-                'shst.file'
+                'shst.file',
             ])
             .leftJoinAndSelect('shst.asbTipeBangunan', 'asb_tipe_bangunan')
             .leftJoinAndSelect('shst.asbKlasifikasi', 'asb_klasifikasi')
@@ -117,7 +118,7 @@ export class ShstRepositoryImpl extends ShstRepository {
     }
 
     async findFileById(id: number): Promise<string | null> {
-        const entity = await this.repo.findOne({ where: { id }, select: ["file"] });
+        const entity = await this.repo.findOne({ where: { id }, select: ['file'] });
         return entity?.file || null;
     }
 
@@ -126,13 +127,13 @@ export class ShstRepositoryImpl extends ShstRepository {
             .createQueryBuilder('shst')
             .select(['shst.id', 'shst.nominal'])
             .where('shst.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
-                id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+                id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan,
             })
             .andWhere('shst.id_asb_klasifikasi = :id_asb_klasifikasi', {
-                id_asb_klasifikasi: dto.id_asb_klasifikasi
+                id_asb_klasifikasi: dto.id_asb_klasifikasi,
             })
             .andWhere('shst.id_kabkota = :id_kabkota', {
-                id_kabkota: dto.id_kabkota
+                id_kabkota: dto.id_kabkota,
             })
             .orderBy('shst.id', 'DESC')
             .getOne();

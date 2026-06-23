@@ -53,4 +53,3 @@ export class AddHargaSpecAndTotalHargaFields1766638423722 implements MigrationIn
         `);
     }
 }
-

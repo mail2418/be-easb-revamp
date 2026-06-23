@@ -36,10 +36,13 @@ export class CreateJalanSpesifikasiDesainLentur1765690481125 implements Migratio
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jalan_spesifikasi_desain_lentur_updated_at ON "jalan_spesifikasi_desain_lentur";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_lentur_deleted";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jalan_spesifikasi_desain_lentur_updated_at ON "jalan_spesifikasi_desain_lentur";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_lentur_deleted";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_lentur_spec";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_spesifikasi_desain_lentur";`);
     }
 }
-

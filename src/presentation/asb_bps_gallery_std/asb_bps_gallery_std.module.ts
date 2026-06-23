@@ -57,4 +57,4 @@ import { Express } from 'express';
     ],
     exports: [AsbBpsGalleryStdService],
 })
-export class AsbBpsGalleryStdModule { }
+export class AsbBpsGalleryStdModule {}

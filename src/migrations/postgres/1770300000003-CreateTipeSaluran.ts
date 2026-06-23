@@ -31,7 +31,9 @@ export class CreateTipeSaluran1770300000003 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_tipe_saluran_updated_at ON "tipe_saluran";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_tipe_saluran_updated_at ON "tipe_saluran";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_tipe_saluran_deleted";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "tipe_saluran";`);
     }

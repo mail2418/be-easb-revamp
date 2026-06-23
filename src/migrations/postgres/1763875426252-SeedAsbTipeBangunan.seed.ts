@@ -9,7 +9,7 @@ export class SeedAsbTipeBangunan1763875426252 implements MigrationInterface {
             { tipe_bangunan: 'Rumah Negara' },
             { tipe_bangunan: 'Pagar Gedung Negara' },
             { tipe_bangunan: 'Pagar Rumah Negara' },
-            { tipe_bangunan: 'Bangunan Non-Standard' }
+            { tipe_bangunan: 'Bangunan Non-Standard' },
         ];
 
         for (const tipeBangunan of asbTipeBangunans) {
@@ -28,7 +28,7 @@ export class SeedAsbTipeBangunan1763875426252 implements MigrationInterface {
             'Rumah Negara',
             'Pagar Gedung Negara',
             'Pagar Rumah Negara',
-            'Bangunan Non-Standard'
+            'Bangunan Non-Standard',
         ];
 
         const placeholders = tipeBangunanList.map((_, index) => `$${index + 1}`).join(', ');

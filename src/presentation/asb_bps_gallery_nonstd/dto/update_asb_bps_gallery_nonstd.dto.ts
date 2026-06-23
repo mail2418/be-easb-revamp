@@ -14,18 +14,24 @@ export class UpdateAsbBpsGalleryNonstdDto {
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseInt(value, 10) : undefined,
+    )
     idAsbKomponenBangunanNonstd?: number;
 
     // File is optional for update, handled via @UploadedFile() decorator
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     jumlahBobot?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     rincianHarga?: number;
 }

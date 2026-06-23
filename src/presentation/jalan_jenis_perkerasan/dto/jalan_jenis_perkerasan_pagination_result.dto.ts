@@ -1,4 +1,4 @@
-import { JalanJenisPerkerasan } from "../../../domain/jalan_jenis_perkerasan/jalan_jenis_perkerasan.entity";
+import { JalanJenisPerkerasan } from '../../../domain/jalan_jenis_perkerasan/jalan_jenis_perkerasan.entity';
 
 export class JalanJenisPerkerasanPaginationResultDto {
     data!: JalanJenisPerkerasan[];

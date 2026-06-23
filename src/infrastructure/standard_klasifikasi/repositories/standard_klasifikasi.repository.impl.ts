@@ -1,20 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { StandardKlasifikasiRepository } from "../../../domain/standard_klasifikasi/standard_klasifikasi.repository";
-import { StandardKlasifikasi } from "../../../domain/standard_klasifikasi/standard_klasifikasi.entity";
-import { StandardKlasifikasiOrmEntity } from "../orm/standard_klasifikasi.orm_entity";
-import { CreateStandardKlasifikasiDto } from "../../../presentation/standard_klasifikasi/dto/create_standard_klasifikasi.dto";
-import { UpdateStandardKlasifikasiDto } from "../../../presentation/standard_klasifikasi/dto/update_standard_klasifikasi.dto";
-import { DeleteStandardKlasifikasiDto } from "../../../presentation/standard_klasifikasi/dto/delete_standard_klasifikasi.dto";
-import { GetStandardKlasifikasisDto } from "../../../presentation/standard_klasifikasi/dto/get_standard_klasifikasis.dto";
-import { plainToInstance } from "class-transformer";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { StandardKlasifikasiRepository } from '../../../domain/standard_klasifikasi/standard_klasifikasi.repository';
+import { StandardKlasifikasi } from '../../../domain/standard_klasifikasi/standard_klasifikasi.entity';
+import { StandardKlasifikasiOrmEntity } from '../orm/standard_klasifikasi.orm_entity';
+import { CreateStandardKlasifikasiDto } from '../../../presentation/standard_klasifikasi/dto/create_standard_klasifikasi.dto';
+import { UpdateStandardKlasifikasiDto } from '../../../presentation/standard_klasifikasi/dto/update_standard_klasifikasi.dto';
+import { DeleteStandardKlasifikasiDto } from '../../../presentation/standard_klasifikasi/dto/delete_standard_klasifikasi.dto';
+import { GetStandardKlasifikasisDto } from '../../../presentation/standard_klasifikasi/dto/get_standard_klasifikasis.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class StandardKlasifikasiRepositoryImpl extends StandardKlasifikasiRepository {
     constructor(
         @InjectRepository(StandardKlasifikasiOrmEntity)
-        private readonly repo: Repository<StandardKlasifikasiOrmEntity>
+        private readonly repo: Repository<StandardKlasifikasiOrmEntity>,
     ) {
         super();
     }
@@ -33,22 +33,25 @@ export class StandardKlasifikasiRepositoryImpl extends StandardKlasifikasiReposi
     }
 
     async delete(dto: DeleteStandardKlasifikasiDto): Promise<boolean> {
-        return await this.repo.softDelete(dto.id)
+        return await this.repo
+            .softDelete(dto.id)
             .then(() => true)
             .catch(() => false);
     }
 
-    async findAll(dto: GetStandardKlasifikasisDto): Promise<{ data: StandardKlasifikasi[]; total: number }> {
-        const queryBuilder = this.repo.createQueryBuilder("standard_klasifikasi");
+    async findAll(
+        dto: GetStandardKlasifikasisDto,
+    ): Promise<{ data: StandardKlasifikasi[]; total: number }> {
+        const queryBuilder = this.repo.createQueryBuilder('standard_klasifikasi');
 
         if (dto.id_asb_klasifikasi) {
-            queryBuilder.andWhere("standard_klasifikasi.id_asb_klasifikasi = :id_asb_klasifikasi", {
-                id_asb_klasifikasi: dto.id_asb_klasifikasi
+            queryBuilder.andWhere('standard_klasifikasi.id_asb_klasifikasi = :id_asb_klasifikasi', {
+                id_asb_klasifikasi: dto.id_asb_klasifikasi,
             });
         }
         if (dto.id_kabkota) {
-            queryBuilder.andWhere("standard_klasifikasi.id_kabkota = :id_kabkota", {
-                id_kabkota: dto.id_kabkota
+            queryBuilder.andWhere('standard_klasifikasi.id_kabkota = :id_kabkota', {
+                id_kabkota: dto.id_kabkota,
             });
         }
 
@@ -57,7 +60,7 @@ export class StandardKlasifikasiRepositoryImpl extends StandardKlasifikasiReposi
         const skip = (page - 1) * amount;
         queryBuilder.skip(skip).take(amount);
 
-        queryBuilder.orderBy("standard_klasifikasi.id", "DESC");
+        queryBuilder.orderBy('standard_klasifikasi.id', 'DESC');
 
         const [data, total] = await queryBuilder.getManyAndCount();
 

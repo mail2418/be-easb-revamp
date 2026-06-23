@@ -1,19 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
+} from 'typeorm';
 
-@Entity("asb_status")
+@Entity('asb_status')
 export class AsbStatusOrmEntity {
-  @PrimaryGeneratedColumn()
-  id!: number;
+    @PrimaryGeneratedColumn()
+    id!: number;
 
-  @Column({ type: "varchar", length: 255 })
-  status!: string;
+    @Column({ type: 'varchar', length: 255 })
+    status!: string;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
-  createdAt!: Date;
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+    createdAt!: Date;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
-  updatedAt!: Date;
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+    updatedAt!: Date;
 
-  @DeleteDateColumn({ name: "deleted_at", type: "timestamp", nullable: true })
-  deletedAt?: Date;
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
+    deletedAt?: Date;
 }

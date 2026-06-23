@@ -1,7 +1,9 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class UpdateAsbBipekNonStdReviewIdAsbBipekNonStdNullable1767360368337 implements MigrationInterface {
-    name = 'UpdateAsbBipekNonStdReviewIdAsbBipekNonStdNullable1767360368337'
+export class UpdateAsbBipekNonStdReviewIdAsbBipekNonStdNullable1767360368337
+    implements MigrationInterface
+{
+    name = 'UpdateAsbBipekNonStdReviewIdAsbBipekNonStdNullable1767360368337';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Drop foreign key constraint first
@@ -56,4 +58,3 @@ export class UpdateAsbBipekNonStdReviewIdAsbBipekNonStdNullable1767360368337 imp
         `);
     }
 }
-

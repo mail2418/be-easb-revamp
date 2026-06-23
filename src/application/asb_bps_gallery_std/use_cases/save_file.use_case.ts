@@ -10,7 +10,7 @@ export class SaveFileUseCase {
     constructor(
         private readonly generateFilename: GenerateFilenameUseCase,
         private readonly ensureUploadDir: EnsureUploadDirectoryUseCase,
-    ) { }
+    ) {}
 
     execute(file: Express.Multer.File): string {
         const filename = this.generateFilename.execute(file.originalname);

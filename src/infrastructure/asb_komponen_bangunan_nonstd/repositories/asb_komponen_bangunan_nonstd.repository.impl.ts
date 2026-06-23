@@ -9,11 +9,13 @@ import { GetAsbKomponenBangunanNonstdsDto } from '../../../presentation/asb_komp
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
-export class AsbKomponenBangunanNonstdRepositoryImpl implements AsbKomponenBangunanNonstdRepository {
+export class AsbKomponenBangunanNonstdRepositoryImpl
+    implements AsbKomponenBangunanNonstdRepository
+{
     constructor(
         @InjectRepository(AsbKomponenBangunanNonstdOrmEntity)
-        private readonly repo: Repository<AsbKomponenBangunanNonstdOrmEntity>
-    ) { }
+        private readonly repo: Repository<AsbKomponenBangunanNonstdOrmEntity>,
+    ) {}
 
     async create(data: CreateAsbKomponenBangunanNonstdDto): Promise<AsbKomponenBangunanNonstd> {
         const entity = plainToInstance(AsbKomponenBangunanNonstdOrmEntity, data);
@@ -21,14 +23,18 @@ export class AsbKomponenBangunanNonstdRepositoryImpl implements AsbKomponenBangu
         return saved;
     }
 
-    async update(id: number, data: Partial<AsbKomponenBangunanNonstd>): Promise<AsbKomponenBangunanNonstd> {
+    async update(
+        id: number,
+        data: Partial<AsbKomponenBangunanNonstd>,
+    ): Promise<AsbKomponenBangunanNonstd> {
         await this.repo.update(id, data);
         const updated = await this.repo.findOne({ where: { id } });
         return updated!;
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id)
+        return await this.repo
+            .softDelete(id)
             .then(() => true)
             .catch(() => false);
     }
@@ -44,12 +50,14 @@ export class AsbKomponenBangunanNonstdRepositoryImpl implements AsbKomponenBangu
 
     async findByKomponen(komponen: string): Promise<AsbKomponenBangunanNonstd | null> {
         const entity = await this.repo.findOne({
-            where: { komponen: ILike(`%${komponen}%`) }
+            where: { komponen: ILike(`%${komponen}%`) },
         });
         return entity || null;
     }
 
-    async findAll(pagination: GetAsbKomponenBangunanNonstdsDto): Promise<{ data: AsbKomponenBangunanNonstd[], total: number }> {
+    async findAll(
+        pagination: GetAsbKomponenBangunanNonstdsDto,
+    ): Promise<{ data: AsbKomponenBangunanNonstd[]; total: number }> {
         const where: any = {};
 
         if (pagination.id_asb_jenis !== undefined) {
@@ -66,7 +74,7 @@ export class AsbKomponenBangunanNonstdRepositoryImpl implements AsbKomponenBangu
 
         const findOptions: any = {
             where: Object.keys(where).length > 0 ? where : undefined,
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (pagination.page !== undefined && pagination.amount !== undefined) {

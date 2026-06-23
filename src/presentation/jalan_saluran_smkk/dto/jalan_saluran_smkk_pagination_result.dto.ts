@@ -1,4 +1,4 @@
-import { JalanSaluranSmkk } from "../../../domain/jalan_saluran_smkk/jalan_saluran_smkk.entity";
+import { JalanSaluranSmkk } from '../../../domain/jalan_saluran_smkk/jalan_saluran_smkk.entity';
 
 export class JalanSaluranSmkkPaginationResultDto {
     data!: JalanSaluranSmkk[];
@@ -7,4 +7,3 @@ export class JalanSaluranSmkkPaginationResultDto {
     limit!: number;
     totalPages!: number;
 }
-

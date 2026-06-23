@@ -84,14 +84,26 @@ export class CreateJalanSpesifikasiDesainTable1766325217998 implements Migration
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jalan_spesifikasi_desain_updated_at ON "jalan_spesifikasi_desain";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jalan_spesifikasi_desain_updated_at ON "jalan_spesifikasi_desain";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_hspk";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_ruang_lingkup";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_usulan_jalan";`);
-        await queryRunner.query(`ALTER TABLE "jalan_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_hspk";`);
-        await queryRunner.query(`ALTER TABLE "jalan_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_ruang_lingkup";`);
-        await queryRunner.query(`ALTER TABLE "jalan_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_usulan_jalan";`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_ruang_lingkup";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_usulan_jalan";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_hspk";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_ruang_lingkup";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_usulan_jalan";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_spesifikasi_desain";`);
     }
 }

@@ -20,8 +20,12 @@ export class CreateJalanSpesifikasiDesainKaku1770087536003 implements MigrationI
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP INDEX \`idx_jalan_spesifikasi_desain_kaku_deleted\` ON \`jalan_spesifikasi_desain_kaku\``);
-        await queryRunner.query(`DROP INDEX \`idx_jalan_spesifikasi_desain_kaku_spec\` ON \`jalan_spesifikasi_desain_kaku\``);
+        await queryRunner.query(
+            `DROP INDEX \`idx_jalan_spesifikasi_desain_kaku_deleted\` ON \`jalan_spesifikasi_desain_kaku\``,
+        );
+        await queryRunner.query(
+            `DROP INDEX \`idx_jalan_spesifikasi_desain_kaku_spec\` ON \`jalan_spesifikasi_desain_kaku\``,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS \`jalan_spesifikasi_desain_kaku\``);
     }
 }

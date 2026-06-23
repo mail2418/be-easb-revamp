@@ -1,4 +1,4 @@
-import { UsulanSaluranStatus } from "../../../domain/usulan_saluran_status/usulan_saluran_status.entity";
+import { UsulanSaluranStatus } from '../../../domain/usulan_saluran_status/usulan_saluran_status.entity';
 
 export class UsulanSaluranStatusPaginationResultDto {
     data!: UsulanSaluranStatus[];

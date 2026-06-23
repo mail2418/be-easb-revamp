@@ -32,7 +32,12 @@ import { SuratPermohonanUseCase } from 'src/application/asb_document/use_cases/s
                 if (allowedMimes.includes(file.mimetype)) {
                     cb(null, true);
                 } else {
-                    cb(new Error('Invalid file type. Only documents (PDF, DOC, DOCX) are allowed.'), false);
+                    cb(
+                        new Error(
+                            'Invalid file type. Only documents (PDF, DOC, DOCX) are allowed.',
+                        ),
+                        false,
+                    );
                 }
             },
         }),
@@ -53,8 +58,8 @@ import { SuratPermohonanUseCase } from 'src/application/asb_document/use_cases/s
         SaveDocumentUseCase,
         DeleteDocumentUseCase,
         KertasKerjaUseCase,
-        SuratPermohonanUseCase
+        SuratPermohonanUseCase,
     ],
     exports: [AsbDocumentService],
 })
-export class AsbDocumentModule { }
+export class AsbDocumentModule {}

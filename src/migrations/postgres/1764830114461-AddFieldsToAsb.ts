@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddFieldsToAsb1764830114461 implements MigrationInterface {
     name = 'AddFieldsToAsb1764830114461';

@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAsbJakon1764112396964 implements MigrationInterface {
-    name = 'CreateAsbJakon1764112396964'
+    name = 'CreateAsbJakon1764112396964';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create type enum
@@ -37,12 +37,20 @@ export class CreateAsbJakon1764112396964 implements MigrationInterface {
         `);
 
         // Create indexes
-        await queryRunner.query(`CREATE INDEX "idx_asb_jakon_tipe_bangunan" ON "asb_jakon" ("id_asb_tipe_bangunan")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_jakon_jenis" ON "asb_jakon" ("id_asb_jenis")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_jakon_klasifikasi" ON "asb_jakon" ("id_asb_klasifikasi")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_jakon_tipe_bangunan" ON "asb_jakon" ("id_asb_tipe_bangunan")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_jakon_jenis" ON "asb_jakon" ("id_asb_jenis")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_jakon_klasifikasi" ON "asb_jakon" ("id_asb_klasifikasi")`,
+        );
         await queryRunner.query(`CREATE INDEX "idx_asb_jakon_tahun" ON "asb_jakon" ("tahun")`);
         await queryRunner.query(`CREATE INDEX "idx_asb_jakon_type" ON "asb_jakon" ("type")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_jakon_deleted_at" ON "asb_jakon" ("deleted_at")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_jakon_deleted_at" ON "asb_jakon" ("deleted_at")`,
+        );
 
         // Add foreign keys with CASCADE
         await queryRunner.query(`
@@ -87,9 +95,15 @@ export class CreateAsbJakon1764112396964 implements MigrationInterface {
         await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_jakon_updated_at ON "asb_jakon"`);
 
         // Drop foreign keys
-        await queryRunner.query(`ALTER TABLE "asb_jakon" DROP CONSTRAINT IF EXISTS "fk_asb_jakon_klasifikasi"`);
-        await queryRunner.query(`ALTER TABLE "asb_jakon" DROP CONSTRAINT IF EXISTS "fk_asb_jakon_jenis"`);
-        await queryRunner.query(`ALTER TABLE "asb_jakon" DROP CONSTRAINT IF EXISTS "fk_asb_jakon_tipe_bangunan"`);
+        await queryRunner.query(
+            `ALTER TABLE "asb_jakon" DROP CONSTRAINT IF EXISTS "fk_asb_jakon_klasifikasi"`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "asb_jakon" DROP CONSTRAINT IF EXISTS "fk_asb_jakon_jenis"`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "asb_jakon" DROP CONSTRAINT IF EXISTS "fk_asb_jakon_tipe_bangunan"`,
+        );
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_jakon_deleted_at"`);

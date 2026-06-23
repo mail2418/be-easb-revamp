@@ -32,7 +32,9 @@ export class ParseExcelDataUseCase {
         worksheet.eachRow((row) => {
             if (isFirstRow) {
                 row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-                    headers[colNumber - 1] = String(cell.value ?? '').trim().toLowerCase();
+                    headers[colNumber - 1] = String(cell.value ?? '')
+                        .trim()
+                        .toLowerCase();
                 });
                 isFirstRow = false;
             } else {
@@ -68,24 +70,38 @@ export class ParseExcelDataUseCase {
                     continue;
                 }
 
-                const idRuangLingkup = this.parsePositiveInt(row.id_ruang_lingkup, 'id_ruang_lingkup', rowNumber, errors);
+                const idRuangLingkup = this.parsePositiveInt(
+                    row.id_ruang_lingkup,
+                    'id_ruang_lingkup',
+                    rowNumber,
+                    errors,
+                );
                 if (idRuangLingkup === null) {
                     continue;
                 }
 
-                const ruangLingkup = await this.jalanSaluranRuangLingkupService.findById(idRuangLingkup);
+                const ruangLingkup =
+                    await this.jalanSaluranRuangLingkupService.findById(idRuangLingkup);
                 if (!ruangLingkup) {
                     errors.push(`Row ${rowNumber}: id_ruang_lingkup ${idRuangLingkup} not found`);
                     continue;
                 }
 
-                if (!row.no_mata_pembayaran || typeof row.no_mata_pembayaran !== 'string' || row.no_mata_pembayaran.trim() === '') {
-                    errors.push(`Row ${rowNumber}: no_mata_pembayaran is required and must be a non-empty string`);
+                if (
+                    !row.no_mata_pembayaran ||
+                    typeof row.no_mata_pembayaran !== 'string' ||
+                    row.no_mata_pembayaran.trim() === ''
+                ) {
+                    errors.push(
+                        `Row ${rowNumber}: no_mata_pembayaran is required and must be a non-empty string`,
+                    );
                     continue;
                 }
 
                 if (!row.satuan || typeof row.satuan !== 'string' || row.satuan.trim() === '') {
-                    errors.push(`Row ${rowNumber}: satuan is required and must be a non-empty string`);
+                    errors.push(
+                        `Row ${rowNumber}: satuan is required and must be a non-empty string`,
+                    );
                     continue;
                 }
 
@@ -94,12 +110,21 @@ export class ParseExcelDataUseCase {
                     continue;
                 }
 
-                const hargaSatuan = this.parseNonNegativeNumber(row.harga_satuan, 'harga_satuan', rowNumber, errors);
+                const hargaSatuan = this.parseNonNegativeNumber(
+                    row.harga_satuan,
+                    'harga_satuan',
+                    rowNumber,
+                    errors,
+                );
                 if (hargaSatuan === null) {
                     continue;
                 }
 
-                const tahunAnggaran = this.parseTahunAnggaran(row.tahun_anggaran, rowNumber, errors);
+                const tahunAnggaran = this.parseTahunAnggaran(
+                    row.tahun_anggaran,
+                    rowNumber,
+                    errors,
+                );
                 if (tahunAnggaran === null) {
                     continue;
                 }
@@ -115,7 +140,11 @@ export class ParseExcelDataUseCase {
                 seenInFile.add(dedupeKey);
 
                 let uraian: string | null = null;
-                if (row.uraian !== undefined && row.uraian !== null && String(row.uraian).trim() !== '') {
+                if (
+                    row.uraian !== undefined &&
+                    row.uraian !== null &&
+                    String(row.uraian).trim() !== ''
+                ) {
                     uraian = String(row.uraian).trim();
                 }
 
@@ -131,7 +160,9 @@ export class ParseExcelDataUseCase {
                 }
                 parsedRows.push(dto);
             } catch (error) {
-                errors.push(`Row ${rowNumber}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                errors.push(
+                    `Row ${rowNumber}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                );
             }
         }
 
@@ -168,7 +199,9 @@ export class ParseExcelDataUseCase {
             n = parseInt(s, 10);
         }
         if (isNaN(n) || n < 1) {
-            errors.push(`Row ${rowNumber}: ${field} must be a positive integer. Received: "${value}"`);
+            errors.push(
+                `Row ${rowNumber}: ${field} must be a positive integer. Received: "${value}"`,
+            );
             return null;
         }
         return n;
@@ -191,11 +224,15 @@ export class ParseExcelDataUseCase {
             n = parseInt(s, 10);
         }
         if (isNaN(n)) {
-            errors.push(`Row ${rowNumber}: tahun_anggaran must be a valid integer. Received: "${value}"`);
+            errors.push(
+                `Row ${rowNumber}: tahun_anggaran must be a valid integer. Received: "${value}"`,
+            );
             return null;
         }
         if (n < 2000 || n > 2100) {
-            errors.push(`Row ${rowNumber}: tahun_anggaran must be between 2000 and 2100. Received: ${n}`);
+            errors.push(
+                `Row ${rowNumber}: tahun_anggaran must be between 2000 and 2100. Received: ${n}`,
+            );
             return null;
         }
         return n;
@@ -218,7 +255,9 @@ export class ParseExcelDataUseCase {
             }
             const cleanedStr = raw.replace(/[^\d.-]/g, '');
             if (cleanedStr === '' || cleanedStr === '-' || cleanedStr === '.') {
-                errors.push(`Row ${rowNumber}: ${field} must be a valid number. Received: "${value}"`);
+                errors.push(
+                    `Row ${rowNumber}: ${field} must be a valid number. Received: "${value}"`,
+                );
                 return null;
             }
             n = parseFloat(cleanedStr);

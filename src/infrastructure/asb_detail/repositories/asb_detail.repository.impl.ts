@@ -86,7 +86,7 @@ export class AsbDetailRepositoryImpl extends AsbDetailRepository {
     async findByAsb(idAsb: number, page?: number, amount?: number): Promise<[AsbDetail[], number]> {
         const queryOptions: any = {
             where: { idAsb },
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (page !== undefined && amount !== undefined) {
@@ -108,19 +108,15 @@ export class AsbDetailRepositoryImpl extends AsbDetailRepository {
                 'asb_detail.id_asb_fungsi_ruang',
                 'asb_detail.asb_fungsi_ruang_koef',
                 'asb_detail.lantai_koef',
-                'asb_detail.luas'
+                'asb_detail.luas',
             ])
             .leftJoin('asb_detail.asbLantai', 'asb_lantai')
-            .addSelect([
-                'asb_lantai.id',
-                'asb_lantai.lantai',
-                'asb_lantai.koef'
-            ])
+            .addSelect(['asb_lantai.id', 'asb_lantai.lantai', 'asb_lantai.koef'])
             .leftJoin('asb_detail.asbFungsiRuang', 'asb_fungsi_ruang')
             .addSelect([
                 'asb_fungsi_ruang.id',
                 'asb_fungsi_ruang.nama_fungsi_ruang',
-                'asb_fungsi_ruang.koef'
+                'asb_fungsi_ruang.koef',
             ])
             .where('asb_detail.id_asb = :idAsb', { idAsb })
             .getMany();

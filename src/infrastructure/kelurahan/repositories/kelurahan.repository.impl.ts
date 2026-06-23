@@ -7,7 +7,9 @@ import { KelurahanOrmEntity } from '../orm/kelurahan.orm_entity';
 
 @Injectable()
 export class KelurahanRepositoryImpl implements KelurahanRepository {
-    constructor(@InjectRepository(KelurahanOrmEntity) private readonly repo: Repository<KelurahanOrmEntity>) { }
+    constructor(
+        @InjectRepository(KelurahanOrmEntity) private readonly repo: Repository<KelurahanOrmEntity>,
+    ) {}
 
     async create(kelurahan: Partial<Kelurahan>): Promise<Kelurahan> {
         const kelurahanOrm = this.repo.create(kelurahan);
@@ -34,15 +36,23 @@ export class KelurahanRepositoryImpl implements KelurahanRepository {
         return kelurahan || null;
     }
 
-    async findAll(page: number | undefined, amount: number | undefined, filter?: any): Promise<{ data: Kelurahan[]; total: number }> {
+    async findAll(
+        page: number | undefined,
+        amount: number | undefined,
+        filter?: any,
+    ): Promise<{ data: Kelurahan[]; total: number }> {
         const queryBuilder = this.repo.createQueryBuilder('kelurahan');
 
         if (filter?.idKecamatan) {
-            queryBuilder.andWhere('kelurahan.id_kecamatan = :idKecamatan', { idKecamatan: filter.idKecamatan });
+            queryBuilder.andWhere('kelurahan.id_kecamatan = :idKecamatan', {
+                idKecamatan: filter.idKecamatan,
+            });
         }
 
         if (filter?.search) {
-            queryBuilder.andWhere('kelurahan.nama_kelurahan ILIKE :search', { search: `%${filter.search}%` });
+            queryBuilder.andWhere('kelurahan.nama_kelurahan ILIKE :search', {
+                search: `%${filter.search}%`,
+            });
         }
 
         if (page !== undefined && amount !== undefined) {
@@ -59,7 +69,7 @@ export class KelurahanRepositoryImpl implements KelurahanRepository {
     async findByKecamatanId(idKecamatan: number): Promise<Kelurahan[]> {
         const kelurahans = await this.repo.find({
             where: { idKecamatan },
-            order: { namaKelurahan: 'ASC' }
+            order: { namaKelurahan: 'ASC' },
         });
         return kelurahans;
     }

@@ -11,7 +11,7 @@ export class SaveDocumentUseCase {
     constructor(
         private readonly generateFilename: GenerateDocumentFilenameUseCase,
         private readonly ensureDocumentDir: EnsureDocumentDirectoryUseCase,
-    ) { }
+    ) {}
 
     execute(file: Express.Multer.File, spec: DocumentSpec): string {
         const filename = this.generateFilename.execute(file.originalname, spec);

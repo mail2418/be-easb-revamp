@@ -13,7 +13,7 @@ export class SuratPermohonanUseCase {
             timeZone: 'Asia/Jakarta',
             year: 'numeric',
             month: '2-digit',
-            day: '2-digit'
+            day: '2-digit',
         });
         const date = dateFormatter.format(now);
 
@@ -23,7 +23,7 @@ export class SuratPermohonanUseCase {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
-            hour12: false
+            hour12: false,
         });
         const time = timeFormatter.format(now);
 
@@ -45,8 +45,8 @@ export class SuratPermohonanUseCase {
                 top: '10mm',
                 bottom: '10mm',
                 left: '10mm',
-                right: '10mm'
-            }
+                right: '10mm',
+            },
         });
 
         await browser.close();

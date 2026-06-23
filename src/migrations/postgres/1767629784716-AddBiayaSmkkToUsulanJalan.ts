@@ -19,4 +19,3 @@ export class AddBiayaSmkkToUsulanJalan1767629784716 implements MigrationInterfac
         `);
     }
 }
-

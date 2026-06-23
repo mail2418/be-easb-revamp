@@ -1,17 +1,28 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
-import { JwtAuthGuard } from "../../common/guards/jwt_auth.guard";
-import { RolesGuard } from "../../common/guards/roles.guard";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { Role } from "../../domain/user/user_role.enum";
-import { JenisUsulanService } from "../../domain/jenis_usulan/jenis_usulan.service";
-import { CreateJenisUsulanDto } from "./dto/create_jenis_usulan.dto";
-import { UpdateJenisUsulanDto } from "./dto/update_jenis_usulan.dto";
-import { GetJenisUsulanDto } from "./dto/get_jenis_usulan.dto";
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpStatus,
+    Param,
+    Post,
+    Put,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../domain/user/user_role.enum';
+import { JenisUsulanService } from '../../domain/jenis_usulan/jenis_usulan.service';
+import { CreateJenisUsulanDto } from './dto/create_jenis_usulan.dto';
+import { UpdateJenisUsulanDto } from './dto/update_jenis_usulan.dto';
+import { GetJenisUsulanDto } from './dto/get_jenis_usulan.dto';
 
 @Controller('jenis-usulan')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class JenisUsulanController {
-    constructor(private readonly service: JenisUsulanService) { }
+    constructor(private readonly service: JenisUsulanService) {}
 
     @Post()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
@@ -19,10 +30,10 @@ export class JenisUsulanController {
         try {
             const result = await this.service.create(dto);
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.CREATED,
-                message: "JenisUsulan created successfully",
-                data: result
+                message: 'JenisUsulan created successfully',
+                data: result,
             };
         } catch (error) {
             throw error;
@@ -35,10 +46,10 @@ export class JenisUsulanController {
         try {
             const result = await this.service.update(dto);
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JenisUsulan updated successfully",
-                data: result
+                message: 'JenisUsulan updated successfully',
+                data: result,
             };
         } catch (error) {
             throw error;
@@ -51,9 +62,9 @@ export class JenisUsulanController {
         try {
             await this.service.delete(Number(id));
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JenisUsulan deleted successfully"
+                message: 'JenisUsulan deleted successfully',
             };
         } catch (error) {
             throw error;
@@ -66,10 +77,10 @@ export class JenisUsulanController {
         try {
             const result = await this.service.findById(Number(id));
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JenisUsulan retrieved successfully",
-                data: result
+                message: 'JenisUsulan retrieved successfully',
+                data: result,
             };
         } catch (error) {
             throw error;
@@ -82,10 +93,10 @@ export class JenisUsulanController {
         try {
             const result = await this.service.findAll(dto);
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JenisUsulan list retrieved successfully",
-                data: result
+                message: 'JenisUsulan list retrieved successfully',
+                data: result,
             };
         } catch (error) {
             throw error;

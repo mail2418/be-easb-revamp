@@ -1,4 +1,4 @@
-import { KabKota } from "../kabkota/kabkota.entity";
+import { KabKota } from '../kabkota/kabkota.entity';
 
 export class JalanKebijakan {
     id!: number;

@@ -8,7 +8,9 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class KecamatanRepositoryImpl implements KecamatanRepository {
-    constructor(@InjectRepository(KecamatanOrmEntity) private readonly repo: Repository<KecamatanOrmEntity>) { }
+    constructor(
+        @InjectRepository(KecamatanOrmEntity) private readonly repo: Repository<KecamatanOrmEntity>,
+    ) {}
 
     async create(kecamatan: Partial<Kecamatan>): Promise<Kecamatan> {
         const kecamatanOrm = this.repo.create(kecamatan);
@@ -35,17 +37,23 @@ export class KecamatanRepositoryImpl implements KecamatanRepository {
         return kecamatan || null;
     }
 
-    async findAll(page: number | undefined, amount: number | undefined, filter?: any): Promise<{ data: Kecamatan[]; total: number }> {
+    async findAll(
+        page: number | undefined,
+        amount: number | undefined,
+        filter?: any,
+    ): Promise<{ data: Kecamatan[]; total: number }> {
         const queryBuilder = this.repo.createQueryBuilder('kecamatan');
 
         if (filter?.idKabkota) {
-            queryBuilder.andWhere('kecamatan.id_kabkota = :idKabkota', { idKabkota: filter.idKabkota });
+            queryBuilder.andWhere('kecamatan.id_kabkota = :idKabkota', {
+                idKabkota: filter.idKabkota,
+            });
         }
 
         if (filter?.search) {
             queryBuilder.andWhere(
                 '(kecamatan.nama_kecamatan ILIKE :search OR kecamatan.kode_kecamatan ILIKE :search)',
-                { search: `%${filter.search}%` }
+                { search: `%${filter.search}%` },
             );
         }
 
@@ -63,7 +71,7 @@ export class KecamatanRepositoryImpl implements KecamatanRepository {
     async findByKabkotaId(idKabkota: number): Promise<Kecamatan[]> {
         const kecamatans = await this.repo.find({
             where: { idKabkota },
-            order: { namaKecamatan: 'ASC' }
+            order: { namaKecamatan: 'ASC' },
         });
         return kecamatans;
     }

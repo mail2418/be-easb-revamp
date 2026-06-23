@@ -1,22 +1,22 @@
 import { Express } from 'express';
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as ExcelJS from 'exceljs';
-import { ShstService } from "../../domain/shst/shst.service";
-import { ShstRepository } from "../../domain/shst/shst.repository";
-import { BulkCreateShstDto } from "./dto/bulk_create_shst.dto";
-import { Shst } from "../../domain/shst/shst.entity";
-import { CreateShstDto } from "../../presentation/shst/dto/create_shst.dto";
-import { UpdateNominalShstDto } from "../../presentation/shst/dto/update_nominal_shst.dto";
-import { GetShstDto } from "../../presentation/shst/dto/get_shst.dto";
-import { GetShstDetailDto } from "../../presentation/shst/dto/get_shst_detail.dto";
-import { GetShstFileDto } from "../../presentation/shst/dto/get_shst_file.dto";
-import { ShstsPaginationResultDto } from "../../presentation/shst/dto/shsts_pagination_result.dto";
-import { CreateShstResultDto } from "../../presentation/shst/dto/create_shst_result.dto";
-import { ValidateExcelFileUseCase } from "./use_cases/validate_excel_file.use_case";
-import { ValidateExcelHeadersUseCase } from "./use_cases/validate_excel_headers.use_case";
-import { ParseExcelDataUseCase } from "./use_cases/parse_excel_data.use_case";
-import { HandleShstFileUseCase } from "./use_cases/handle_shst_file.use_case";
-import { GenerateExcelTemplateUseCase } from "./use_cases/generate_excel_template.use_case";
+import { ShstService } from '../../domain/shst/shst.service';
+import { ShstRepository } from '../../domain/shst/shst.repository';
+import { BulkCreateShstDto } from './dto/bulk_create_shst.dto';
+import { Shst } from '../../domain/shst/shst.entity';
+import { CreateShstDto } from '../../presentation/shst/dto/create_shst.dto';
+import { UpdateNominalShstDto } from '../../presentation/shst/dto/update_nominal_shst.dto';
+import { GetShstDto } from '../../presentation/shst/dto/get_shst.dto';
+import { GetShstDetailDto } from '../../presentation/shst/dto/get_shst_detail.dto';
+import { GetShstFileDto } from '../../presentation/shst/dto/get_shst_file.dto';
+import { ShstsPaginationResultDto } from '../../presentation/shst/dto/shsts_pagination_result.dto';
+import { CreateShstResultDto } from '../../presentation/shst/dto/create_shst_result.dto';
+import { ValidateExcelFileUseCase } from './use_cases/validate_excel_file.use_case';
+import { ValidateExcelHeadersUseCase } from './use_cases/validate_excel_headers.use_case';
+import { ParseExcelDataUseCase } from './use_cases/parse_excel_data.use_case';
+import { HandleShstFileUseCase } from './use_cases/handle_shst_file.use_case';
+import { GenerateExcelTemplateUseCase } from './use_cases/generate_excel_template.use_case';
 import { GetShstNominalDto } from './dto/get_shst_nominal.dto';
 import { ShstWithRelationsDto } from './dto/shst_with_relations.dto';
 
@@ -49,14 +49,14 @@ export class ShstServiceImpl extends ShstService {
         const generatedFilename = this.handleFileUseCase.generateFilename(
             file,
             parsedData.namaKabkota,
-            dto.tahun
+            dto.tahun,
         );
 
         // 5. Save file using use case
         const filePath = await this.handleFileUseCase.saveFile(file, generatedFilename);
 
         // 6. Prepare bulk create DTOs
-        const bulkCreateDtos: BulkCreateShstDto[] = parsedData.rows.map(row => ({
+        const bulkCreateDtos: BulkCreateShstDto[] = parsedData.rows.map((row) => ({
             tahun: dto.tahun,
             file: filePath,
             id_asb_tipe_bangunan: row.id_asb_tipe_bangunan,
@@ -110,7 +110,7 @@ export class ShstServiceImpl extends ShstService {
             total: result.total,
             page,
             amount,
-            totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
+            totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0,
         };
     }
 
@@ -135,14 +135,14 @@ export class ShstServiceImpl extends ShstService {
 
         return {
             filePath,
-            downloadUrl: `/public${filePath}`
+            downloadUrl: `/public${filePath}`,
         };
     }
 
     async downloadTemplate(): Promise<{ buffer: Buffer; filename: string }> {
         const buffer = await this.generateExcelTemplateUseCase.execute();
         const filename = `SHST_Template_${new Date().getFullYear()}.xlsx`;
-        
+
         return {
             buffer,
             filename,

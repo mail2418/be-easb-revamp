@@ -9,7 +9,7 @@ export class AddKecamatanKelurahanToAsb1765715279457 implements MigrationInterfa
                 name: 'id_kecamatan',
                 type: 'int',
                 isNullable: true,
-            })
+            }),
         );
 
         // Add id_kelurahan column
@@ -19,7 +19,7 @@ export class AddKecamatanKelurahanToAsb1765715279457 implements MigrationInterfa
                 name: 'id_kelurahan',
                 type: 'int',
                 isNullable: true,
-            })
+            }),
         );
 
         // Check if kecamatans table exists before adding foreign key
@@ -32,7 +32,7 @@ export class AddKecamatanKelurahanToAsb1765715279457 implements MigrationInterfa
                     referencedColumnNames: ['id'],
                     referencedTableName: 'kecamatans',
                     onDelete: 'SET NULL',
-                })
+                }),
             );
         }
 
@@ -46,7 +46,7 @@ export class AddKecamatanKelurahanToAsb1765715279457 implements MigrationInterfa
                     referencedColumnNames: ['id'],
                     referencedTableName: 'kelurahans',
                     onDelete: 'SET NULL',
-                })
+                }),
             );
         }
     }
@@ -54,17 +54,17 @@ export class AddKecamatanKelurahanToAsb1765715279457 implements MigrationInterfa
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Drop foreign keys first (if they exist)
         const table = await queryRunner.getTable('asb');
-        
+
         if (table) {
             const kecamatanForeignKey = table.foreignKeys.find(
-                (fk) => fk.columnNames.indexOf('id_kecamatan') !== -1
+                (fk) => fk.columnNames.indexOf('id_kecamatan') !== -1,
             );
             if (kecamatanForeignKey) {
                 await queryRunner.dropForeignKey('asb', kecamatanForeignKey);
             }
 
             const kelurahanForeignKey = table.foreignKeys.find(
-                (fk) => fk.columnNames.indexOf('id_kelurahan') !== -1
+                (fk) => fk.columnNames.indexOf('id_kelurahan') !== -1,
             );
             if (kelurahanForeignKey) {
                 await queryRunner.dropForeignKey('asb', kelurahanForeignKey);
@@ -76,4 +76,3 @@ export class AddKecamatanKelurahanToAsb1765715279457 implements MigrationInterfa
         await queryRunner.dropColumn('asb', 'id_kecamatan');
     }
 }
-

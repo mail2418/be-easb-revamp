@@ -8,11 +8,13 @@ export class SeedJalanKebijakan1770103100008 implements MigrationInterface {
         // This ensures compatibility even if auto-increment values differ between PostgreSQL and MySQL
         const kabkotas = await queryRunner.query(
             `SELECT id FROM \`kabkotas\` WHERE \`kode\` = ? LIMIT 1`,
-            ['3504'] // Tulungagung
+            ['3504'], // Tulungagung
         );
 
         if (!kabkotas || kabkotas.length === 0) {
-            throw new Error('Kabkota with kode 3504 (Tulungagung) not found. Make sure SeedKabKotas has been run.');
+            throw new Error(
+                'Kabkota with kode 3504 (Tulungagung) not found. Make sure SeedKabKotas has been run.',
+            );
         }
 
         const idKabkota = kabkotas[0].id as number;
@@ -20,13 +22,13 @@ export class SeedJalanKebijakan1770103100008 implements MigrationInterface {
         // Check if record exists before inserting
         const existing = await queryRunner.query(
             `SELECT 1 FROM \`jalan_kebijakan\` WHERE \`id_kabkota\` = ? AND \`bulan\` = ? AND \`tahun\` = ? LIMIT 1`,
-            [idKabkota, 12, 2025]
+            [idKabkota, 12, 2025],
         );
-        
+
         if (!existing || existing.length === 0) {
             await queryRunner.query(
                 `INSERT INTO \`jalan_kebijakan\` (\`id_kabkota\`, \`bulan\`, \`tahun\`, \`nilai_ppn\`, \`nilai_smkk\`, \`suku_bunga\`) VALUES (?, ?, ?, ?, ?, ?)`,
-                [idKabkota, 12, 2025, 0.11, 0.02, 0.08]
+                [idKabkota, 12, 2025, 0.11, 0.02, 0.08],
             );
         }
     }
@@ -35,14 +37,14 @@ export class SeedJalanKebijakan1770103100008 implements MigrationInterface {
         // Get id_kabkota for Tulungagung (kode '3504')
         const kabkotas = await queryRunner.query(
             `SELECT id FROM \`kabkotas\` WHERE \`kode\` = ? LIMIT 1`,
-            ['3504'] // Tulungagung
+            ['3504'], // Tulungagung
         );
 
         if (kabkotas && kabkotas.length > 0) {
             const idKabkota = kabkotas[0].id as number;
             await queryRunner.query(
                 `DELETE FROM \`jalan_kebijakan\` WHERE \`id_kabkota\` = ? AND \`bulan\` = ? AND \`tahun\` = ?`,
-                [idKabkota, 12, 2025]
+                [idKabkota, 12, 2025],
             );
         }
     }

@@ -11,5 +11,3 @@ export class VerifyUsulanJalanDto {
     @Transform(({ value }) => parseInt(value, 10))
     idUsulanJalan!: number;
 }
-
-

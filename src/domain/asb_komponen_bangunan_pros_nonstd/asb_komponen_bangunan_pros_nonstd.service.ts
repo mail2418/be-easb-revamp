@@ -7,10 +7,20 @@ import { AsbKomponenBangunanProsNonstdPaginationResult } from '../../presentatio
 import { AsbKomponenBangunanProsNonstd } from './asb_komponen_bangunan_pros_nonstd.entity';
 
 export abstract class AsbKomponenBangunanProsNonstdService {
-    abstract create(data: CreateAsbKomponenBangunanProsNonstdDto): Promise<AsbKomponenBangunanProsNonstd>;
-    abstract update(data: UpdateAsbKomponenBangunanProsNonstdDto): Promise<AsbKomponenBangunanProsNonstd>;
+    abstract create(
+        data: CreateAsbKomponenBangunanProsNonstdDto,
+    ): Promise<AsbKomponenBangunanProsNonstd>;
+    abstract update(
+        data: UpdateAsbKomponenBangunanProsNonstdDto,
+    ): Promise<AsbKomponenBangunanProsNonstd>;
     abstract delete(data: DeleteAsbKomponenBangunanProsNonstdDto): Promise<boolean>;
-    abstract getAll(pagination: GetAsbKomponenBangunanProsNonstdListDto): Promise<AsbKomponenBangunanProsNonstdPaginationResult>;
-    abstract getDetail(data: GetAsbKomponenBangunanProsNonstdDetailDto): Promise<AsbKomponenBangunanProsNonstd>;
-    abstract findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd | null>;
+    abstract getAll(
+        pagination: GetAsbKomponenBangunanProsNonstdListDto,
+    ): Promise<AsbKomponenBangunanProsNonstdPaginationResult>;
+    abstract getDetail(
+        data: GetAsbKomponenBangunanProsNonstdDetailDto,
+    ): Promise<AsbKomponenBangunanProsNonstd>;
+    abstract findByKomponenBangunanNonstdId(
+        id: number,
+    ): Promise<AsbKomponenBangunanProsNonstd | null>;
 }

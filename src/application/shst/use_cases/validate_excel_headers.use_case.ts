@@ -10,31 +10,33 @@ export class ValidateExcelHeadersUseCase {
     execute(workbook: ExcelJS.Workbook): void {
         // Validate sheet name
         const worksheet = workbook.getWorksheet(this.EXPECTED_SHEET_NAME);
-        
+
         if (!worksheet) {
             throw new BadRequestException(
-                `Sheet "${this.EXPECTED_SHEET_NAME}" tidak ditemukan. Pastikan nama sheet adalah "${this.EXPECTED_SHEET_NAME}" dan tidak diubah.`
+                `Sheet "${this.EXPECTED_SHEET_NAME}" tidak ditemukan. Pastikan nama sheet adalah "${this.EXPECTED_SHEET_NAME}" dan tidak diubah.`,
             );
         }
-        
+
         // Get headers from first row
         const headers: string[] = [];
         const firstRow = worksheet.getRow(1);
-        
+
         if (!firstRow || firstRow.cellCount === 0) {
             throw new BadRequestException('Excel file is empty');
         }
-        
+
         firstRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
             headers[colNumber - 1] = String(cell.value ?? '').trim();
         });
-        
+
         if (!headers || headers.length === 0) {
             throw new BadRequestException('Excel file must have headers in the first row');
         }
 
         // Normalize headers (trim whitespace, convert to lowercase)
-        const normalizedHeaders = headers.map(h => h?.toString().trim().toLowerCase()).filter(h => h);
+        const normalizedHeaders = headers
+            .map((h) => h?.toString().trim().toLowerCase())
+            .filter((h) => h);
 
         // Check if we have exactly the required headers
         if (normalizedHeaders.length !== this.REQUIRED_HEADERS_COUNT) {
@@ -58,7 +60,7 @@ export class ValidateExcelHeadersUseCase {
         }
 
         // Check for extra headers
-        const extraHeaders = normalizedHeaders.filter(h => !this.REQUIRED_HEADERS.includes(h));
+        const extraHeaders = normalizedHeaders.filter((h) => !this.REQUIRED_HEADERS.includes(h));
         if (extraHeaders.length > 0) {
             throw new BadRequestException(
                 `Extra headers found: ${extraHeaders.join(', ')}. Only allowed headers are: ${this.REQUIRED_HEADERS.join(', ')}`,
@@ -66,4 +68,3 @@ export class ValidateExcelHeadersUseCase {
         }
     }
 }
-

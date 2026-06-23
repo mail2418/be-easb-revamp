@@ -8,10 +8,19 @@ import { UsulanSaluranAnalyticsDto } from 'src/application/usulan_saluran/dto/us
 
 export abstract class UsulanSaluranRepository {
     abstract findById(id: number, idOpd?: number): Promise<UsulanSaluranWithRelationsDto | null>;
-    abstract findAll(dto: FindAllUsulanSaluranDto, idOpd?: number): Promise<{ data: UsulanSaluranWithRelationsDto[]; total: number }>;
+    abstract findAll(
+        dto: FindAllUsulanSaluranDto,
+        idOpd?: number,
+    ): Promise<{ data: UsulanSaluranWithRelationsDto[]; total: number }>;
     abstract getRejectInfo(id: number, idOpd?: number): Promise<RejectInfoSaluranDto | null>;
     abstract create(data: DeepPartial<UsulanSaluran>): Promise<UsulanSaluranWithRelationsDto>;
-    abstract update(id: number, data: DeepPartial<UsulanSaluran>): Promise<UsulanSaluranWithRelationsDto>;
+    abstract update(
+        id: number,
+        data: DeepPartial<UsulanSaluran>,
+    ): Promise<UsulanSaluranWithRelationsDto>;
     abstract delete(id: number): Promise<void>;
-    abstract getAnalytics(idOpd?: number, filter?: GetUsulanSaluranAnalyticsFilterDto): Promise<UsulanSaluranAnalyticsDto>;
+    abstract getAnalytics(
+        idOpd?: number,
+        filter?: GetUsulanSaluranAnalyticsFilterDto,
+    ): Promise<UsulanSaluranAnalyticsDto>;
 }

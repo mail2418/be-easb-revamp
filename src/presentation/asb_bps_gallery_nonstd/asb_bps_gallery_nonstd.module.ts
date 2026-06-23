@@ -57,4 +57,4 @@ import { AsbKomponenBangunanStdModule } from '../asb_komponen_bangunan_std/asb_k
     ],
     exports: [AsbBpsGalleryNonstdService],
 })
-export class AsbBpsGalleryNonstdModule { }
+export class AsbBpsGalleryNonstdModule {}

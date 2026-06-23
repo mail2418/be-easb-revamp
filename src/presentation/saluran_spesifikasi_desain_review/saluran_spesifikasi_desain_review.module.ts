@@ -16,8 +16,14 @@ import { UsulanSaluranModule } from '../usulan_saluran/usulan_saluran.module';
         forwardRef(() => UsulanSaluranModule),
     ],
     providers: [
-        { provide: SaluranSpesifikasiDesainReviewService, useClass: SaluranSpesifikasiDesainReviewServiceImpl },
-        { provide: SaluranSpesifikasiDesainReviewRepository, useClass: SaluranSpesifikasiDesainReviewRepositoryImpl },
+        {
+            provide: SaluranSpesifikasiDesainReviewService,
+            useClass: SaluranSpesifikasiDesainReviewServiceImpl,
+        },
+        {
+            provide: SaluranSpesifikasiDesainReviewRepository,
+            useClass: SaluranSpesifikasiDesainReviewRepositoryImpl,
+        },
         CalculateVolumeSaluranSpesifikasiDesainReviewUseCase,
     ],
     exports: [SaluranSpesifikasiDesainReviewService],

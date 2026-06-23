@@ -48,10 +48,18 @@ export class CreateAsbKomponenBangunanProsStd1764093605423 implements MigrationI
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_komponen_bangunan_pros_std_updated_at ON "asb_komponen_bangunan_pros_std";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_pros_std_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_pros_std_komponen";`);
-        await queryRunner.query(`ALTER TABLE "asb_komponen_bangunan_pros_std" DROP CONSTRAINT "fk_asb_komponen_bangunan_pros_komponen";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_asb_komponen_bangunan_pros_std_updated_at ON "asb_komponen_bangunan_pros_std";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_pros_std_deleted";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_pros_std_komponen";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "asb_komponen_bangunan_pros_std" DROP CONSTRAINT "fk_asb_komponen_bangunan_pros_komponen";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "asb_komponen_bangunan_pros_std";`);
     }
 }

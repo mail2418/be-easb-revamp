@@ -41,7 +41,7 @@ export class SeedAsbKomponenBangunanProsNonStd1770088000016 implements Migration
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
-            `DELETE FROM \`asb_komponen_bangunan_pros_nonstd\` WHERE \`id_asb_komponen_bangunan_nonstd\` BETWEEN 1 AND 21`
+            `DELETE FROM \`asb_komponen_bangunan_pros_nonstd\` WHERE \`id_asb_komponen_bangunan_nonstd\` BETWEEN 1 AND 21`,
         );
     }
 }

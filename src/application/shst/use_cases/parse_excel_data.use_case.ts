@@ -29,14 +29,14 @@ export class ParseExcelDataUseCase {
         // Read Excel file
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.load(file.buffer as any);
-        
+
         // Only read from the locked sheet name
         const expectedSheetName = 'SHST Data';
         const worksheet = workbook.getWorksheet(expectedSheetName);
-        
+
         if (!worksheet) {
             throw new BadRequestException(
-                `Sheet "${expectedSheetName}" tidak ditemukan. Pastikan nama sheet adalah "${expectedSheetName}" dan tidak diubah.`
+                `Sheet "${expectedSheetName}" tidak ditemukan. Pastikan nama sheet adalah "${expectedSheetName}" dan tidak diubah.`,
             );
         }
 
@@ -47,10 +47,10 @@ export class ParseExcelDataUseCase {
             kabkota?: string;
             nominal?: number | string;
         }> = [];
-        
+
         const headers: string[] = [];
         let isFirstRow = true;
-        
+
         worksheet.eachRow((row, rowNumber) => {
             if (isFirstRow) {
                 // Get headers from first row
@@ -86,23 +86,40 @@ export class ParseExcelDataUseCase {
 
             try {
                 // Skip header row (if tipe_bangunan equals "tipe_bangunan", it's likely the header)
-                if (row.tipe_bangunan && String(row.tipe_bangunan).trim().toLowerCase() === 'tipe_bangunan') {
+                if (
+                    row.tipe_bangunan &&
+                    String(row.tipe_bangunan).trim().toLowerCase() === 'tipe_bangunan'
+                ) {
                     continue; // Skip header row
                 }
 
                 // Validate required fields
-                if (!row.tipe_bangunan || typeof row.tipe_bangunan !== 'string' || row.tipe_bangunan.trim() === '') {
-                    errors.push(`Row ${rowNumber}: tipe_bangunan is required and must be a non-empty string`);
+                if (
+                    !row.tipe_bangunan ||
+                    typeof row.tipe_bangunan !== 'string' ||
+                    row.tipe_bangunan.trim() === ''
+                ) {
+                    errors.push(
+                        `Row ${rowNumber}: tipe_bangunan is required and must be a non-empty string`,
+                    );
                     continue;
                 }
 
-                if (!row.klasifikasi || typeof row.klasifikasi !== 'string' || row.klasifikasi.trim() === '') {
-                    errors.push(`Row ${rowNumber}: klasifikasi is required and must be a non-empty string`);
+                if (
+                    !row.klasifikasi ||
+                    typeof row.klasifikasi !== 'string' ||
+                    row.klasifikasi.trim() === ''
+                ) {
+                    errors.push(
+                        `Row ${rowNumber}: klasifikasi is required and must be a non-empty string`,
+                    );
                     continue;
                 }
 
                 if (!row.kabkota || typeof row.kabkota !== 'string' || row.kabkota.trim() === '') {
-                    errors.push(`Row ${rowNumber}: kabkota is required and must be a non-empty string`);
+                    errors.push(
+                        `Row ${rowNumber}: kabkota is required and must be a non-empty string`,
+                    );
                     continue;
                 }
 
@@ -118,17 +135,19 @@ export class ParseExcelDataUseCase {
                     nominal = row.nominal;
                 } else {
                     const nominalStr = String(row.nominal).trim();
-                    
+
                     // Check if string is empty after trim
                     if (nominalStr === '') {
                         errors.push(`Row ${rowNumber}: nominal is required`);
                         continue;
                     }
-                    
+
                     // Remove common formatting characters but keep digits, dots, and minus
                     const cleanedStr = nominalStr.replace(/[^\d.-]/g, '');
                     if (cleanedStr === '' || cleanedStr === '-' || cleanedStr === '.') {
-                        errors.push(`Row ${rowNumber}: nominal must be a valid number. Received: "${row.nominal}"`);
+                        errors.push(
+                            `Row ${rowNumber}: nominal must be a valid number. Received: "${row.nominal}"`,
+                        );
                         continue;
                     }
                     nominal = parseFloat(cleanedStr);
@@ -136,18 +155,22 @@ export class ParseExcelDataUseCase {
 
                 // Additional validation: check if parseFloat resulted in NaN
                 if (isNaN(nominal)) {
-                    errors.push(`Row ${rowNumber}: nominal must be a valid number. Received: "${row.nominal}" (parsed as NaN)`);
+                    errors.push(
+                        `Row ${rowNumber}: nominal must be a valid number. Received: "${row.nominal}" (parsed as NaN)`,
+                    );
                     continue;
                 }
 
                 if (nominal <= 0) {
-                    errors.push(`Row ${rowNumber}: nominal must be a positive number. Received: "${row.nominal}" (parsed as ${nominal})`);
+                    errors.push(
+                        `Row ${rowNumber}: nominal must be a positive number. Received: "${row.nominal}" (parsed as ${nominal})`,
+                    );
                     continue;
                 }
 
                 // Lookup tipe_bangunan
                 const tipeBangunan = await this.asbTipeBangunanRepository.findByTipeBangunan(
-                    row.tipe_bangunan.trim()
+                    row.tipe_bangunan.trim(),
                 );
                 if (!tipeBangunan) {
                     errors.push(`Row ${rowNumber}: tipe_bangunan "${row.tipe_bangunan}" not found`);
@@ -156,7 +179,7 @@ export class ParseExcelDataUseCase {
 
                 // Lookup klasifikasi
                 const klasifikasi = await this.asbKlasifikasiRepository.findByKlasifikasi(
-                    row.klasifikasi.trim()
+                    row.klasifikasi.trim(),
                 );
                 if (!klasifikasi) {
                     errors.push(`Row ${rowNumber}: klasifikasi "${row.klasifikasi}" not found`);
@@ -167,15 +190,13 @@ export class ParseExcelDataUseCase {
                 if (klasifikasi.id_asb_tipe_bangunan !== tipeBangunan.id) {
                     errors.push(
                         `Row ${rowNumber}: klasifikasi "${row.klasifikasi}" tidak terikat dengan tipe_bangunan "${row.tipe_bangunan}". ` +
-                        `Klasifikasi "${row.klasifikasi}" terikat dengan tipe bangunan yang berbeda.`
+                            `Klasifikasi "${row.klasifikasi}" terikat dengan tipe bangunan yang berbeda.`,
                     );
                     continue;
                 }
 
                 // Lookup kabkota
-                const kabkota = await this.kabKotaRepository.findByNama(
-                    row.kabkota.trim()
-                );
+                const kabkota = await this.kabKotaRepository.findByNama(row.kabkota.trim());
                 if (!kabkota) {
                     errors.push(`Row ${rowNumber}: kabkota "${row.kabkota}" not found`);
                     continue;
@@ -194,15 +215,15 @@ export class ParseExcelDataUseCase {
                     nominal: nominal,
                 });
             } catch (error) {
-                errors.push(`Row ${rowNumber}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                errors.push(
+                    `Row ${rowNumber}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                );
             }
         }
 
         // If there are errors, throw them
         if (errors.length > 0) {
-            throw new BadRequestException(
-                `Validation errors found:\n${errors.join('\n')}`
-            );
+            throw new BadRequestException(`Validation errors found:\n${errors.join('\n')}`);
         }
 
         // If no valid rows found
@@ -220,4 +241,3 @@ export class ParseExcelDataUseCase {
         };
     }
 }
-

@@ -10,7 +10,10 @@ import { AsbKomponenBangunanNonstdRepository } from '../../domain/asb_komponen_b
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AsbKomponenBangunanNonstdOrmEntity, AsbKomponenBangunanProsNonstdOrmEntity]),
+        TypeOrmModule.forFeature([
+            AsbKomponenBangunanNonstdOrmEntity,
+            AsbKomponenBangunanProsNonstdOrmEntity,
+        ]),
     ],
     controllers: [AsbKomponenBangunanNonstdController],
     providers: [
@@ -23,9 +26,6 @@ import { AsbKomponenBangunanNonstdRepository } from '../../domain/asb_komponen_b
             useClass: AsbKomponenBangunanNonstdRepositoryImpl,
         },
     ],
-    exports: [
-        AsbKomponenBangunanNonstdService,
-        AsbKomponenBangunanNonstdRepository,
-    ],
+    exports: [AsbKomponenBangunanNonstdService, AsbKomponenBangunanNonstdRepository],
 })
-export class AsbKomponenBangunanNonstdModule { }
+export class AsbKomponenBangunanNonstdModule {}

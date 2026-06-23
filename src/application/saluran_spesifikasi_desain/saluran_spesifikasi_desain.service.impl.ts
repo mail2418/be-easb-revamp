@@ -18,17 +18,26 @@ export class SaluranSpesifikasiDesainServiceImpl implements SaluranSpesifikasiDe
         private readonly calculateVolumeUseCase: CalculateVolumeSaluranSpesifikasiDesainUseCase,
         private readonly hspkService: HspkService,
         private readonly usulanSaluranRepository: UsulanSaluranRepository,
-    ) { }
+    ) {}
 
-    async create(dto: CreateSaluranSpesifikasiDesainDto, lebar?: number): Promise<SaluranSpesifikasiDesain> {
+    async create(
+        dto: CreateSaluranSpesifikasiDesainDto,
+        lebar?: number,
+    ): Promise<SaluranSpesifikasiDesain> {
         let lebarValue = lebar;
         if (lebarValue === undefined) {
-            const usulanSaluran = await this.usulanSaluranRepository.findById(dto.id_usulan_saluran);
+            const usulanSaluran = await this.usulanSaluranRepository.findById(
+                dto.id_usulan_saluran,
+            );
             if (!usulanSaluran) {
-                throw new NotFoundException(`Usulan Saluran with id ${dto.id_usulan_saluran} not found`);
+                throw new NotFoundException(
+                    `Usulan Saluran with id ${dto.id_usulan_saluran} not found`,
+                );
             }
             if (!usulanSaluran.lebar) {
-                throw new NotFoundException(`Usulan Saluran with id ${dto.id_usulan_saluran} has no lebar`);
+                throw new NotFoundException(
+                    `Usulan Saluran with id ${dto.id_usulan_saluran} has no lebar`,
+                );
             }
             lebarValue = usulanSaluran.lebar;
         }
@@ -80,14 +89,16 @@ export class SaluranSpesifikasiDesainServiceImpl implements SaluranSpesifikasiDe
         return await this.saluranSpesifikasiDesainRepository.findById(id);
     }
 
-    async findAll(dto: GetSaluranSpesifikasiDesainDto): Promise<SaluranSpesifikasiDesainPaginationResultDto> {
+    async findAll(
+        dto: GetSaluranSpesifikasiDesainDto,
+    ): Promise<SaluranSpesifikasiDesainPaginationResultDto> {
         const result = await this.saluranSpesifikasiDesainRepository.findAll(dto);
         return {
             data: result.data,
             total: result.total,
             page: dto.page ?? 1,
             limit: dto.amount ?? result.total,
-            totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
+            totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1,
         };
     }
 
@@ -95,8 +106,18 @@ export class SaluranSpesifikasiDesainServiceImpl implements SaluranSpesifikasiDe
         await this.saluranSpesifikasiDesainRepository.deleteByUsulanSaluranId(idUsulanSaluran);
     }
 
-    async getByUsulanSaluran(dto: GetSaluranSpesifikasiDesainByUsulanSaluranDto): Promise<{ data: SaluranSpesifikasiDesain[]; total: number; page: number; amount: number; totalPages: number }> {
-        const [data, total] = await this.saluranSpesifikasiDesainRepository.findByUsulanSaluran(dto.idUsulanSaluran, dto.page, dto.amount);
+    async getByUsulanSaluran(dto: GetSaluranSpesifikasiDesainByUsulanSaluranDto): Promise<{
+        data: SaluranSpesifikasiDesain[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }> {
+        const [data, total] = await this.saluranSpesifikasiDesainRepository.findByUsulanSaluran(
+            dto.idUsulanSaluran,
+            dto.page,
+            dto.amount,
+        );
         const page = dto.page ?? 1;
         const amount = dto.amount ?? total;
         return {
@@ -104,7 +125,7 @@ export class SaluranSpesifikasiDesainServiceImpl implements SaluranSpesifikasiDe
             total,
             page,
             amount,
-            totalPages: amount > 0 ? Math.ceil(total / amount) : 1
+            totalPages: amount > 0 ? Math.ceil(total / amount) : 1,
         };
     }
 }

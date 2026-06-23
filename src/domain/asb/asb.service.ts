@@ -22,26 +22,124 @@ import { AsbAnalyticsDto } from 'src/application/asb/dto/asb_analytics.dto';
 import { RejectInfoDto } from 'src/application/asb/dto/reject_info.dto';
 
 export abstract class AsbService {
-    abstract findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null>;
-    abstract findAll(dto: FindAllAsbDto, userIdOpd: number | null, userRoles: Role[]): Promise<AsbListResultDto>;
-    abstract getAsbByMonthYear(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ date: string; count: number }[]>;
-    abstract getAsbByMonthYearStatus(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ asbStatus: string; amount: number }[]>;
-    abstract getAsbAnalytics(userIdOpd: number | null, userRoles: Role[], filter?: GetAsbAnalyticsFilterDto): Promise<AsbAnalyticsDto>;
-    abstract createIndex(dto: CreateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[], username: string): Promise<{ id: number; status: any }>;
-    abstract updateIndex(dto: UpdateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract deleteAsb(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }>;
-    abstract storeLantai(dto: UpdateAsbStoreLantaiDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract storeBps(dto: StoreBpsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract storeBpns(dto: StoreBpnsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract storeRekening(dto: StoreRekeningDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract storeVerif(dto: StoreVerifDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract storePenyesuaian(dto: StorePenyesuaianDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyLantai(dto: VerifyLantaiDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyBps(dto: VerifyBpsDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyBpns(dto: VerifyBpnsDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyRekening(dto: VerifyRekeningDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyPekerjaan(dto: VerifyPekerjaanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verify(id_asb: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract reject(id_asb: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<RejectInfoDto | null>;
+    abstract findById(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<AsbWithRelationsDto | null>;
+    abstract findAll(
+        dto: FindAllAsbDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<AsbListResultDto>;
+    abstract getAsbByMonthYear(
+        dto: GetAsbByMonthYearDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ date: string; count: number }[]>;
+    abstract getAsbByMonthYearStatus(
+        dto: GetAsbByMonthYearDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ asbStatus: string; amount: number }[]>;
+    abstract getAsbAnalytics(
+        userIdOpd: number | null,
+        userRoles: Role[],
+        filter?: GetAsbAnalyticsFilterDto,
+    ): Promise<AsbAnalyticsDto>;
+    abstract createIndex(
+        dto: CreateAsbStoreIndexDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+        username: string,
+    ): Promise<{ id: number; status: any }>;
+    abstract updateIndex(
+        dto: UpdateAsbStoreIndexDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract deleteAsb(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number }>;
+    abstract storeLantai(
+        dto: UpdateAsbStoreLantaiDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract storeBps(
+        dto: StoreBpsDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract storeBpns(
+        dto: StoreBpnsDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract storeRekening(
+        dto: StoreRekeningDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract storeVerif(
+        dto: StoreVerifDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract storePenyesuaian(
+        dto: StorePenyesuaianDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract verifyLantai(
+        dto: VerifyLantaiDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract verifyBps(
+        dto: VerifyBpsDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract verifyBpns(
+        dto: VerifyBpnsDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract verifyRekening(
+        dto: VerifyRekeningDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract verifyPekerjaan(
+        dto: VerifyPekerjaanDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract verify(
+        id_asb: number,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract reject(
+        id_asb: number,
+        rejectReason: string,
+        userId: string,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract getRejectInfo(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<RejectInfoDto | null>;
 }

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    ConflictException,
+    BadRequestException,
+} from '@nestjs/common';
 import { VerifikatorService } from '../../domain/verifikator/verifikator.service';
 import { VerifikatorRepository } from '../../domain/verifikator/verifikator.repository';
 import { Verifikator } from '../../domain/verifikator/verifikator.entity';
@@ -11,7 +16,7 @@ import { VerifikatorsPaginationResultDto } from './dto/verifikators_pagination_r
 
 @Injectable()
 export class VerifikatorServiceImpl implements VerifikatorService {
-    constructor(private readonly verifikatorRepository: VerifikatorRepository) { }
+    constructor(private readonly verifikatorRepository: VerifikatorRepository) {}
 
     async create(dto: CreateVerifikatorDto): Promise<Verifikator> {
         // Check if verifikator with the same user already exists
@@ -25,7 +30,7 @@ export class VerifikatorServiceImpl implements VerifikatorService {
             id: 0, // Will be auto-generated
             idUser: dto.idUser,
             jenisVerifikator: dto.jenisVerifikator,
-            verifikator: dto.verifikator
+            verifikator: dto.verifikator,
         };
 
         return await this.verifikatorRepository.create(verifikator);
@@ -42,7 +47,9 @@ export class VerifikatorServiceImpl implements VerifikatorService {
         if (dto.idUser && dto.idUser !== existing.idUser) {
             const conflicting = await this.verifikatorRepository.findByUserId(dto.idUser);
             if (conflicting) {
-                throw new ConflictException(`Verifikator with user ID ${dto.idUser} already exists`);
+                throw new ConflictException(
+                    `Verifikator with user ID ${dto.idUser} already exists`,
+                );
             }
         }
 
@@ -71,7 +78,17 @@ export class VerifikatorServiceImpl implements VerifikatorService {
         return await this.verifikatorRepository.findByUserId(userId);
     }
 
-    async findAll(page: number, amount: number, search?: string): Promise<{ data: Verifikator[]; total: number; page: number; amount: number; totalPages: number }> {
+    async findAll(
+        page: number,
+        amount: number,
+        search?: string,
+    ): Promise<{
+        data: Verifikator[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }> {
         const result = await this.verifikatorRepository.findAll(page, amount, search);
 
         return {
@@ -79,7 +96,7 @@ export class VerifikatorServiceImpl implements VerifikatorService {
             total: result.total,
             page,
             amount,
-            totalPages: Math.ceil(result.total / amount)
+            totalPages: Math.ceil(result.total / amount),
         };
     }
 

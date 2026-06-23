@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddIndexesForUsulanJalanAnalytics1767283468316 implements MigrationInterface {
-    name = 'AddIndexesForUsulanJalanAnalytics1767283468316'
+    name = 'AddIndexesForUsulanJalanAnalytics1767283468316';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -52,4 +52,3 @@ export class AddIndexesForUsulanJalanAnalytics1767283468316 implements Migration
         `);
     }
 }
-

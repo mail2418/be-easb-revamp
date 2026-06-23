@@ -17,4 +17,3 @@ export class DataHspkReviewDto {
     @Transform(({ value }) => parseFloat(value))
     tinggi_review!: number;
 }
-

@@ -9,10 +9,22 @@ import { RejectInfoDto } from 'src/application/asb/dto/reject_info.dto';
 
 export abstract class AsbRepository {
     abstract findById(id: number, idOpd?: number): Promise<AsbWithRelationsDto | null>;
-    abstract findAll(dto: FindAllAsbDto, idOpd?: number): Promise<{ data: AsbWithRelationsDto[]; total: number }>;
-    abstract getAllByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ date: string; count: number }[]>;
-    abstract getAsbStatusCountsByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ idAsbStatus: number; count: number }[]>;
-    abstract getAsbAnalytics(idOpd?: number, filter?: GetAsbAnalyticsFilterDto): Promise<AsbAnalyticsDto>;
+    abstract findAll(
+        dto: FindAllAsbDto,
+        idOpd?: number,
+    ): Promise<{ data: AsbWithRelationsDto[]; total: number }>;
+    abstract getAllByMonthYear(
+        dto: GetAsbByMonthYearDto,
+        idOpd?: number,
+    ): Promise<{ date: string; count: number }[]>;
+    abstract getAsbStatusCountsByMonthYear(
+        dto: GetAsbByMonthYearDto,
+        idOpd?: number,
+    ): Promise<{ idAsbStatus: number; count: number }[]>;
+    abstract getAsbAnalytics(
+        idOpd?: number,
+        filter?: GetAsbAnalyticsFilterDto,
+    ): Promise<AsbAnalyticsDto>;
     abstract getRejectInfo(id: number, idOpd?: number): Promise<RejectInfoDto | null>;
     abstract create(data: DeepPartial<Asb>): Promise<AsbWithRelationsDto>;
     abstract update(id: number, data: DeepPartial<Asb>): Promise<AsbWithRelationsDto>;

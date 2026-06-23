@@ -38,7 +38,9 @@ export class ValidateExcelHeadersUseCase {
             throw new BadRequestException('Excel file must have headers in the first row');
         }
 
-        const normalizedHeaders = headers.map(h => h?.toString().trim().toLowerCase()).filter(h => h);
+        const normalizedHeaders = headers
+            .map((h) => h?.toString().trim().toLowerCase())
+            .filter((h) => h);
 
         if (normalizedHeaders.length !== this.REQUIRED_HEADERS_COUNT) {
             throw new BadRequestException(
@@ -59,7 +61,7 @@ export class ValidateExcelHeadersUseCase {
             );
         }
 
-        const extraHeaders = normalizedHeaders.filter(h => !this.REQUIRED_HEADERS.includes(h));
+        const extraHeaders = normalizedHeaders.filter((h) => !this.REQUIRED_HEADERS.includes(h));
         if (extraHeaders.length > 0) {
             throw new BadRequestException(
                 `Extra headers found: ${extraHeaders.join(', ')}. Only allowed headers are: ${this.REQUIRED_HEADERS.join(', ')}`,

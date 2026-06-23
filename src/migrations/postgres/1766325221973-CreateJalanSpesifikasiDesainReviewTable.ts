@@ -99,16 +99,34 @@ export class CreateJalanSpesifikasiDesainReviewTable1766325221973 implements Mig
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jalan_spesifikasi_desain_review_updated_at ON "jalan_spesifikasi_desain_review";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_review_deleted";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jalan_spesifikasi_desain_review_updated_at ON "jalan_spesifikasi_desain_review";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_review_deleted";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_review_hspk";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_review_ruang_lingkup";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_review_usulan_jalan";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_review_spesifikasi_desain";`);
-        await queryRunner.query(`ALTER TABLE "jalan_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_review_hspk";`);
-        await queryRunner.query(`ALTER TABLE "jalan_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_review_ruang_lingkup";`);
-        await queryRunner.query(`ALTER TABLE "jalan_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_review_usulan_jalan";`);
-        await queryRunner.query(`ALTER TABLE "jalan_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_review_spesifikasi_desain";`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_review_ruang_lingkup";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_review_usulan_jalan";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_spesifikasi_desain_review_spesifikasi_desain";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_review_hspk";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_review_ruang_lingkup";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_review_usulan_jalan";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_jalan_spesifikasi_desain_review_spesifikasi_desain";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_spesifikasi_desain_review";`);
     }
 }

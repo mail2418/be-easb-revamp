@@ -9,21 +9,21 @@ import {
     HttpStatus,
     HttpException,
     Query,
-} from "@nestjs/common";
-import { AsbTipeBangunanService } from "../../domain/asb_tipe_bangunan/asb_tipe_bangunan.service";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { CreateAsbTipeBangunanDto } from "./dto/create_asb_tipe_bangunan.dto";
-import { UpdateAsbTipeBangunanDto } from "./dto/update_asb_tipe_bangunan.dto";
-import { DeleteAsbTipeBangunanDto } from "./dto/delete_asb_tipe_bangunan.dto";
-import { GetAsbTipeBangunanDto } from "./dto/get_asb_tipe_bangunan.dto";
-import { GetAsbTipeBangunanDetailDto } from "./dto/get_asb_tipe_bangunan_detail.dto";
-import { ResponseDto } from "../../common/dto/response.dto";
-import { Role } from "../../domain/user/user_role.enum";
+} from '@nestjs/common';
+import { AsbTipeBangunanService } from '../../domain/asb_tipe_bangunan/asb_tipe_bangunan.service';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { CreateAsbTipeBangunanDto } from './dto/create_asb_tipe_bangunan.dto';
+import { UpdateAsbTipeBangunanDto } from './dto/update_asb_tipe_bangunan.dto';
+import { DeleteAsbTipeBangunanDto } from './dto/delete_asb_tipe_bangunan.dto';
+import { GetAsbTipeBangunanDto } from './dto/get_asb_tipe_bangunan.dto';
+import { GetAsbTipeBangunanDetailDto } from './dto/get_asb_tipe_bangunan_detail.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
+import { Role } from '../../domain/user/user_role.enum';
 
-@Controller("asb-tipe-bangunan")
+@Controller('asb-tipe-bangunan')
 @Roles(Role.SUPERADMIN)
 export class AsbTipeBangunanController {
-    constructor(private readonly asbTipeBangunanService: AsbTipeBangunanService) { }
+    constructor(private readonly asbTipeBangunanService: AsbTipeBangunanService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)
@@ -32,9 +32,9 @@ export class AsbTipeBangunanController {
             const asbTipeBangunan = await this.asbTipeBangunanService.create(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.CREATED,
-                message: "AsbTipeBangunan created",
+                message: 'AsbTipeBangunan created',
                 data: asbTipeBangunan,
             };
         } catch (error) {
@@ -44,19 +44,19 @@ export class AsbTipeBangunanController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -64,9 +64,9 @@ export class AsbTipeBangunanController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -79,9 +79,9 @@ export class AsbTipeBangunanController {
             const asbTipeBangunan = await this.asbTipeBangunanService.update(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "AsbTipeBangunan updated",
+                message: 'AsbTipeBangunan updated',
                 data: asbTipeBangunan,
             };
         } catch (error) {
@@ -91,19 +91,19 @@ export class AsbTipeBangunanController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -111,9 +111,9 @@ export class AsbTipeBangunanController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -126,9 +126,9 @@ export class AsbTipeBangunanController {
             const deleted = await this.asbTipeBangunanService.delete(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "AsbTipeBangunan deleted",
+                message: 'AsbTipeBangunan deleted',
                 data: deleted,
             };
         } catch (error) {
@@ -138,19 +138,19 @@ export class AsbTipeBangunanController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -158,9 +158,9 @@ export class AsbTipeBangunanController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -173,9 +173,9 @@ export class AsbTipeBangunanController {
             const result = await this.asbTipeBangunanService.findAll(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "AsbTipeBangunan retrieved",
+                message: 'AsbTipeBangunan retrieved',
                 data: result,
             };
         } catch (error) {
@@ -185,19 +185,19 @@ export class AsbTipeBangunanController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -205,24 +205,26 @@ export class AsbTipeBangunanController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
     }
 
-    @Get("detail")
+    @Get('detail')
     @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
-    async getAsbTipeBangunanDetail(@Query() dto: GetAsbTipeBangunanDetailDto): Promise<ResponseDto> {
+    async getAsbTipeBangunanDetail(
+        @Query() dto: GetAsbTipeBangunanDetailDto,
+    ): Promise<ResponseDto> {
         try {
             const asbTipeBangunan = await this.asbTipeBangunanService.findById(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "AsbTipeBangunan detail retrieved",
+                message: 'AsbTipeBangunan detail retrieved',
                 data: asbTipeBangunan,
             };
         } catch (error) {
@@ -232,19 +234,19 @@ export class AsbTipeBangunanController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -252,9 +254,9 @@ export class AsbTipeBangunanController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }

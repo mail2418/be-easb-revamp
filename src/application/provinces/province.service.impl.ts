@@ -46,7 +46,7 @@ export class ProvinceServiceImpl implements ProvinceService {
         };
 
         // Remove undefined values
-        Object.keys(updateData).forEach(key => {
+        Object.keys(updateData).forEach((key) => {
             if (updateData[key as keyof typeof updateData] === undefined) {
                 delete updateData[key as keyof typeof updateData];
             }
@@ -74,7 +74,7 @@ export class ProvinceServiceImpl implements ProvinceService {
             total: result.total,
             page: pagination.page ?? 1,
             amount: pagination.amount ?? result.total,
-            totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1
+            totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1,
         };
     }
 

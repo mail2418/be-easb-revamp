@@ -1,4 +1,20 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards, Req, HttpStatus, HttpException, Body, Post, Put, Delete, UseInterceptors, UploadedFiles, Query } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Param,
+    ParseIntPipe,
+    UseGuards,
+    Req,
+    HttpStatus,
+    HttpException,
+    Body,
+    Post,
+    Put,
+    Delete,
+    UseInterceptors,
+    UploadedFiles,
+    Query,
+} from '@nestjs/common';
 import type { Express, Request } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
@@ -32,14 +48,11 @@ import { ResponseDto } from '../../common/dto/response.dto';
 @Controller('asb')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class AsbController {
-    constructor(private readonly asbService: AsbService) { }
+    constructor(private readonly asbService: AsbService) {}
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async findAll(
-        @Query() dto: FindAllAsbDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async findAll(@Query() dto: FindAllAsbDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.findAll(dto, user.idOpd, user.roles);
@@ -196,7 +209,12 @@ export class AsbController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.createIndex(dto, user.idOpd, user.roles, user.username);
+            const result = await this.asbService.createIndex(
+                dto,
+                user.idOpd,
+                user.roles,
+                user.username,
+            );
 
             return {
                 status: 'success',
@@ -290,10 +308,7 @@ export class AsbController {
 
     @Delete()
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async deleteAsb(
-        @Body() dto: DeleteAsbDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async deleteAsb(@Body() dto: DeleteAsbDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.deleteAsb(dto.id_asb, user.idOpd, user.roles);
@@ -390,10 +405,7 @@ export class AsbController {
 
     @Put('store-bps')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async storeBps(
-        @Body() dto: StoreBpsDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async storeBps(@Body() dto: StoreBpsDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeBps(dto, user.idOpd, user.roles);
@@ -440,10 +452,7 @@ export class AsbController {
 
     @Put('store-bpns')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async storeBpns(
-        @Body() dto: StoreBpnsDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async storeBpns(@Body() dto: StoreBpnsDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeBpns(dto, user.idOpd, user.roles);
@@ -490,10 +499,7 @@ export class AsbController {
 
     @Put('store-rekening')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async storeRekening(
-        @Body() dto: StoreRekeningDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async storeRekening(@Body() dto: StoreRekeningDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeRekening(dto, user.idOpd, user.roles);
@@ -540,10 +546,7 @@ export class AsbController {
 
     @Put('store-verif')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async storeVerif(
-        @Body() dto: StoreVerifDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async storeVerif(@Body() dto: StoreVerifDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.asbService.storeVerif(dto, user.idOpd, user.roles);
@@ -596,7 +599,12 @@ export class AsbController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.storePenyesuaian(dto, user.userId, user.idOpd, user.roles);
+            const result = await this.asbService.storePenyesuaian(
+                dto,
+                user.userId,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -640,13 +648,15 @@ export class AsbController {
 
     @Put('verify-lantai')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async verifyLantai(
-        @Body() dto: VerifyLantaiDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async verifyLantai(@Body() dto: VerifyLantaiDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyLantai(dto, user.userId, user.idOpd, user.roles);
+            const result = await this.asbService.verifyLantai(
+                dto,
+                user.userId,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -690,13 +700,15 @@ export class AsbController {
 
     @Put('verify-bps')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async verifyBps(
-        @Body() dto: VerifyBpsDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async verifyBps(@Body() dto: VerifyBpsDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyBps(dto, user.userId, user.idOpd, user.roles);
+            const result = await this.asbService.verifyBps(
+                dto,
+                user.userId,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -737,16 +749,17 @@ export class AsbController {
         }
     }
 
-
     @Put('verify-bpns')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async verifyBpns(
-        @Body() dto: VerifyBpnsDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async verifyBpns(@Body() dto: VerifyBpnsDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyBpns(dto, user.userId, user.idOpd, user.roles);
+            const result = await this.asbService.verifyBpns(
+                dto,
+                user.userId,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -796,7 +809,12 @@ export class AsbController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyRekening(dto, user.userId, user.idOpd, user.roles);
+            const result = await this.asbService.verifyRekening(
+                dto,
+                user.userId,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -846,7 +864,12 @@ export class AsbController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyPekerjaan(dto, user.userId, user.idOpd, user.roles);
+            const result = await this.asbService.verifyPekerjaan(
+                dto,
+                user.userId,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -890,13 +913,15 @@ export class AsbController {
 
     @Put('verify')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async verify(
-        @Body() dto: VerifyDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async verify(@Body() dto: VerifyDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verify(dto.id_asb, user.userId, user.idOpd, user.roles);
+            const result = await this.asbService.verify(
+                dto.id_asb,
+                user.userId,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -940,13 +965,16 @@ export class AsbController {
 
     @Put('reject')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async reject(
-        @Body() dto: RejectDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async reject(@Body() dto: RejectDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.reject(dto.id_asb, dto.reject_reason, user.userId, user.idOpd, user.roles);
+            const result = await this.asbService.reject(
+                dto.id_asb,
+                dto.reject_reason,
+                user.userId,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',

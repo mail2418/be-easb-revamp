@@ -7,4 +7,3 @@ export class MainDashboardPaginationResultDto {
     limit: number;
     totalPages: number;
 }
-

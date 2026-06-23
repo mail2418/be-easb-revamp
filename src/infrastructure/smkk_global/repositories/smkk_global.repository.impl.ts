@@ -1,17 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { SmkkGlobalRepository } from "../../../domain/smkk_global/smkk_global.repository";
-import { SmkkGlobalOrmEntity } from "../orm/smkk_global.orm_entity";
-import { SmkkGlobal } from "../../../domain/smkk_global/smkk_global.entity";
-import { CreateSmkkGlobalDto } from "../../../presentation/smkk_global/dto/create_smkk_global.dto";
-import { plainToInstance } from "class-transformer";
-import { UpdateSmkkGlobalDto } from "../../../presentation/smkk_global/dto/update_smkk_global.dto";
-import { GetSmkkGlobalDto } from "../../../presentation/smkk_global/dto/get_smkk_global.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { SmkkGlobalRepository } from '../../../domain/smkk_global/smkk_global.repository';
+import { SmkkGlobalOrmEntity } from '../orm/smkk_global.orm_entity';
+import { SmkkGlobal } from '../../../domain/smkk_global/smkk_global.entity';
+import { CreateSmkkGlobalDto } from '../../../presentation/smkk_global/dto/create_smkk_global.dto';
+import { plainToInstance } from 'class-transformer';
+import { UpdateSmkkGlobalDto } from '../../../presentation/smkk_global/dto/update_smkk_global.dto';
+import { GetSmkkGlobalDto } from '../../../presentation/smkk_global/dto/get_smkk_global.dto';
 
 @Injectable()
 export class SmkkGlobalRepositoryImpl implements SmkkGlobalRepository {
-    constructor(@InjectRepository(SmkkGlobalOrmEntity) private readonly repo: Repository<SmkkGlobalOrmEntity>) { }
+    constructor(
+        @InjectRepository(SmkkGlobalOrmEntity)
+        private readonly repo: Repository<SmkkGlobalOrmEntity>,
+    ) {}
 
     async create(dto: CreateSmkkGlobalDto): Promise<SmkkGlobal> {
         const ormEntity = plainToInstance(SmkkGlobalOrmEntity, dto);
@@ -27,7 +30,10 @@ export class SmkkGlobalRepositoryImpl implements SmkkGlobalRepository {
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<SmkkGlobal | null> {
@@ -40,9 +46,9 @@ export class SmkkGlobalRepositoryImpl implements SmkkGlobalRepository {
         return entity || null;
     }
 
-    async findAll(dto: GetSmkkGlobalDto): Promise<{ data: SmkkGlobal[]; total: number; }> {
+    async findAll(dto: GetSmkkGlobalDto): Promise<{ data: SmkkGlobal[]; total: number }> {
         const findOptions: any = {
-            order: { id: "DESC" }
+            order: { id: 'DESC' },
         };
 
         if (dto.page !== undefined && dto.amount !== undefined) {
@@ -65,4 +71,3 @@ export class SmkkGlobalRepositoryImpl implements SmkkGlobalRepository {
         return entity || null;
     }
 }
-

@@ -22,7 +22,7 @@ import { Role } from '../../domain/user/user_role.enum';
 
 @Controller('opds')
 export class OpdController {
-    constructor(private readonly opdService: OpdService) { }
+    constructor(private readonly opdService: OpdService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN, Role.ADMIN)

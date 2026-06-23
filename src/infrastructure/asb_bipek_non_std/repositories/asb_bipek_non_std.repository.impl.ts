@@ -72,10 +72,14 @@ export class AsbBipekNonStdRepositoryImpl extends AsbBipekNonStdRepository {
         return entity ? plainToInstance(AsbBipekNonStd, entity) : null;
     }
 
-    async findByAsb(idAsb: number, page?: number, amount?: number): Promise<[AsbBipekNonStd[], number]> {
+    async findByAsb(
+        idAsb: number,
+        page?: number,
+        amount?: number,
+    ): Promise<[AsbBipekNonStd[], number]> {
         const queryOptions: any = {
             where: { idAsb },
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (page !== undefined && amount !== undefined) {

@@ -3,7 +3,7 @@ import { SmkkGlobalService } from '../../../domain/smkk_global/smkk_global.servi
 
 @Injectable()
 export class CalculateBiayaSmkkUseCase {
-    constructor(private readonly smkkGlobalService: SmkkGlobalService) { }
+    constructor(private readonly smkkGlobalService: SmkkGlobalService) {}
 
     async execute(totalHarga: number): Promise<number | null> {
         // Get latest SMKK Global persentase
@@ -20,4 +20,3 @@ export class CalculateBiayaSmkkUseCase {
         return biayaSmkk;
     }
 }
-

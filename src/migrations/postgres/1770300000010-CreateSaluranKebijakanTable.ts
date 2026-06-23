@@ -46,9 +46,15 @@ export class CreateSaluranKebijakanTable1770300000010 implements MigrationInterf
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_saluran_kebijakan_updated_at ON "saluran_kebijakan";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_kebijakan_kabkota_bulan_tahun";`);
-        await queryRunner.query(`ALTER TABLE "saluran_kebijakan" DROP CONSTRAINT IF EXISTS "fk_saluran_kebijakan_kabkota";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_saluran_kebijakan_updated_at ON "saluran_kebijakan";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_kebijakan_kabkota_bulan_tahun";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "saluran_kebijakan" DROP CONSTRAINT IF EXISTS "fk_saluran_kebijakan_kabkota";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "saluran_kebijakan";`);
     }
 }

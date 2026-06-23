@@ -19,9 +19,7 @@ export class AsbBipekNonStdServiceImpl extends AsbBipekNonStdService {
     async update(dto: UpdateAsbBipekNonStdDto): Promise<AsbBipekNonStd> {
         const existing = await this.repository.findById(dto.id);
         if (!existing) {
-            throw new NotFoundException(
-                `AsbBipekNonStd with id ${dto.id} not found`,
-            );
+            throw new NotFoundException(`AsbBipekNonStd with id ${dto.id} not found`);
         }
 
         return await this.repository.update(dto);
@@ -30,9 +28,7 @@ export class AsbBipekNonStdServiceImpl extends AsbBipekNonStdService {
     async delete(id: number): Promise<void> {
         const existing = await this.repository.findById(id);
         if (!existing) {
-            throw new NotFoundException(
-                `AsbBipekNonStd with id ${id} not found`,
-            );
+            throw new NotFoundException(`AsbBipekNonStd with id ${id} not found`);
         }
 
         await this.repository.delete(id);
@@ -41,26 +37,30 @@ export class AsbBipekNonStdServiceImpl extends AsbBipekNonStdService {
     async getById(id: number): Promise<AsbBipekNonStd> {
         const bipekNonStd = await this.repository.findById(id);
         if (!bipekNonStd) {
-            throw new NotFoundException(
-                `AsbBipekNonStd with id ${id} not found`,
-            );
+            throw new NotFoundException(`AsbBipekNonStd with id ${id} not found`);
         }
         return bipekNonStd;
     }
 
-    async getByAsb(dto: GetAsbBipekNonStdByAsbDto): Promise<{ data: AsbBipekNonStd[], total: number, page: number, amount: number, totalPages: number }> {
+    async getByAsb(dto: GetAsbBipekNonStdByAsbDto): Promise<{
+        data: AsbBipekNonStd[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }> {
         const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
-        
+
         // If pagination is not provided, return all data with page=1, amount=total
         const page = dto.page ?? 1;
         const amount = dto.amount ?? total;
-        
+
         return {
             data,
             total,
             page,
             amount,
-            totalPages: amount > 0 ? Math.ceil(total / amount) : 1
+            totalPages: amount > 0 ? Math.ceil(total / amount) : 1,
         };
     }
 

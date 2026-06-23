@@ -22,7 +22,7 @@ import { Role } from '../../domain/user/user_role.enum';
 @Controller('asb-lantai')
 @Roles(Role.SUPERADMIN)
 export class AsbLantaiController {
-    constructor(private readonly asbLantaiService: AsbLantaiService) { }
+    constructor(private readonly asbLantaiService: AsbLantaiService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)

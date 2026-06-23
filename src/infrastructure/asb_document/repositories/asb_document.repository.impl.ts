@@ -48,7 +48,12 @@ export class AsbDocumentRepositoryImpl extends AsbDocumentRepository {
         return entities.map((e) => plainToInstance(AsbDocument, e));
     }
 
-    async findByAsb(idAsb: number, page: number, amount: number, idOpd?: number | null): Promise<[AsbDocument[], number]> {
+    async findByAsb(
+        idAsb: number,
+        page: number,
+        amount: number,
+        idOpd?: number | null,
+    ): Promise<[AsbDocument[], number]> {
         const queryBuilder = this.repository
             .createQueryBuilder('document')
             .leftJoinAndSelect('document.asb', 'asb')

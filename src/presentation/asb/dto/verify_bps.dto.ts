@@ -10,12 +10,12 @@ export class VerifyBpsDto {
     @IsArray()
     @IsNotEmpty()
     @IsNumber({}, { each: true })
-    @Transform(({ value }) => Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    @Transform(({ value }) => (Array.isArray(value) ? value.map((v) => parseFloat(v)) : value))
     verif_komponen_std!: number[];
 
     @IsArray()
     @IsNotEmpty()
     @IsNumber({}, { each: true })
-    @Transform(({ value }) => Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    @Transform(({ value }) => (Array.isArray(value) ? value.map((v) => parseFloat(v)) : value))
     verif_bobot_acuan_std!: number[];
 }

@@ -37,10 +37,11 @@ export class CreateJenisUsulanTable1763805006428 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jenis_usulan_updated_at ON "jenis_usulan";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jenis_usulan_updated_at ON "jenis_usulan";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jenis_usulan_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jenis_usulan_jenis";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "jenis_usulan";`);
     }
 }
-

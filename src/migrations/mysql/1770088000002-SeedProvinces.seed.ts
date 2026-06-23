@@ -42,14 +42,14 @@ export class SeedProvinces1770088000002 implements MigrationInterface {
             { kode: '93', nama: 'Papua Tengah' },
             { kode: '94', nama: 'Papua Pegunungan' },
             { kode: '95', nama: 'Papua' },
-            { kode: '96', nama: 'Papua Barat Daya' }
+            { kode: '96', nama: 'Papua Barat Daya' },
         ];
 
         for (const province of provinces) {
             await queryRunner.query(
                 `INSERT IGNORE INTO \`provinces\` (\`kode\`, \`nama\`, \`is_active\`)
                  VALUES (?, ?, ?)`,
-                [province.kode, province.nama, true]
+                [province.kode, province.nama, true],
             );
         }
     }

@@ -1,4 +1,12 @@
-import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, ValidateNested, ArrayMinSize } from 'class-validator';
+import {
+    IsArray,
+    IsInt,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    ValidateNested,
+    ArrayMinSize,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { DataRuangLingkupReviewDto } from './data_ruang_lingkup_review.dto';
 import { DataSmkkDto } from './data_smkk.dto';
@@ -11,7 +19,7 @@ export class VerifyInformasiUsulanJalanDto {
 
     @IsNumber()
     @IsOptional()
-    @Transform(({ value }) => value ? parseFloat(value) : undefined)
+    @Transform(({ value }) => (value ? parseFloat(value) : undefined))
     lebar?: number;
 
     @IsArray()
@@ -26,5 +34,3 @@ export class VerifyInformasiUsulanJalanDto {
     @Type(() => DataSmkkDto)
     data_smkk?: DataSmkkDto[];
 }
-
-

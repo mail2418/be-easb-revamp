@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class UpdateRekapitulasiBiayaKonstruksiPrecision1765383248686 implements MigrationInterface {
     name = 'UpdateRekapitulasiBiayaKonstruksiPrecision1765383248686';
@@ -31,4 +31,3 @@ export class UpdateRekapitulasiBiayaKonstruksiPrecision1765383248686 implements 
         `);
     }
 }
-

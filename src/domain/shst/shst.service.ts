@@ -1,12 +1,12 @@
 import { Express } from 'express';
-import { CreateShstDto } from "../../presentation/shst/dto/create_shst.dto";
-import { UpdateNominalShstDto } from "../../presentation/shst/dto/update_nominal_shst.dto";
-import { GetShstDto } from "../../presentation/shst/dto/get_shst.dto";
-import { GetShstDetailDto } from "../../presentation/shst/dto/get_shst_detail.dto";
-import { GetShstFileDto } from "../../presentation/shst/dto/get_shst_file.dto";
-import { Shst } from "./shst.entity";
-import { ShstsPaginationResultDto } from "../../presentation/shst/dto/shsts_pagination_result.dto";
-import { CreateShstResultDto } from "../../presentation/shst/dto/create_shst_result.dto";
+import { CreateShstDto } from '../../presentation/shst/dto/create_shst.dto';
+import { UpdateNominalShstDto } from '../../presentation/shst/dto/update_nominal_shst.dto';
+import { GetShstDto } from '../../presentation/shst/dto/get_shst.dto';
+import { GetShstDetailDto } from '../../presentation/shst/dto/get_shst_detail.dto';
+import { GetShstFileDto } from '../../presentation/shst/dto/get_shst_file.dto';
+import { Shst } from './shst.entity';
+import { ShstsPaginationResultDto } from '../../presentation/shst/dto/shsts_pagination_result.dto';
+import { CreateShstResultDto } from '../../presentation/shst/dto/create_shst_result.dto';
 import { GetShstNominalDto } from '../../application/shst/dto/get_shst_nominal.dto';
 import { ShstWithRelationsDto } from '../../application/shst/dto/shst_with_relations.dto';
 
@@ -22,4 +22,3 @@ export abstract class ShstService {
     abstract getNominal(dto: GetShstNominalDto): Promise<number>;
     abstract generateTemplate(): Promise<Buffer>;
 }
-

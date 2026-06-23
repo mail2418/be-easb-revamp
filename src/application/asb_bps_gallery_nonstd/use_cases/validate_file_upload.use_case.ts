@@ -59,7 +59,11 @@ export class ValidateFileUploadUseCase {
             }
 
             // Additional check: ensure declared MIME type matches detected MIME type
-            if (fileType.mime !== file.mimetype && fileType.mime !== 'image/jpeg' && file.mimetype === 'image/jpg') {
+            if (
+                fileType.mime !== file.mimetype &&
+                fileType.mime !== 'image/jpeg' &&
+                file.mimetype === 'image/jpg'
+            ) {
                 // Allow jpg/jpeg mismatch as they are the same
                 // This is fine
             } else if (fileType.mime !== file.mimetype) {

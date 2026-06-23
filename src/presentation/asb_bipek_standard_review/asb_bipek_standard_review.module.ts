@@ -9,10 +9,7 @@ import { AsbBipekStandardModule } from '../asb_bipek_standard/asb_bipek_standard
 import { AsbBipekStandardReviewController } from './asb_bipek_standard_review.controller';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([AsbBipekStandardReviewOrmEntity]),
-        AsbBipekStandardModule,
-    ],
+    imports: [TypeOrmModule.forFeature([AsbBipekStandardReviewOrmEntity]), AsbBipekStandardModule],
     controllers: [AsbBipekStandardReviewController],
     providers: [
         {
@@ -26,4 +23,4 @@ import { AsbBipekStandardReviewController } from './asb_bipek_standard_review.co
     ],
     exports: [AsbBipekStandardReviewService],
 })
-export class AsbBipekStandardReviewModule { }
+export class AsbBipekStandardReviewModule {}

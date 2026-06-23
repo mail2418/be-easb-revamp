@@ -23,7 +23,7 @@ import { Role } from '../../domain/user/user_role.enum';
 @Controller('asb-klasifikasis')
 @Roles(Role.SUPERADMIN)
 export class AsbKlasifikasiController {
-    constructor(private readonly asbKlasifikasiService: AsbKlasifikasiService) { }
+    constructor(private readonly asbKlasifikasiService: AsbKlasifikasiService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)

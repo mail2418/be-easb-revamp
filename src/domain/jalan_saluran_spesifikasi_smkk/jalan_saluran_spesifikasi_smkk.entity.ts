@@ -7,4 +7,3 @@ export class JalanSaluranSpesifikasiSmkk {
     jumlah_barang!: number;
     harga_satuan!: number;
 }
-

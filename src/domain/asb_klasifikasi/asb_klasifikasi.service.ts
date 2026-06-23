@@ -10,5 +10,7 @@ export abstract class AsbKlasifikasiService {
     abstract findById(id: number): Promise<AsbKlasifikasi | null>;
     abstract findByAsbTipeBangunan(id_asb_tipe_bangunan: number): Promise<AsbKlasifikasi | null>;
     abstract findByKlasifikasi(klasifikasi: string): Promise<AsbKlasifikasi | null>;
-    abstract findAll(pagination: GetAsbKlasifikasisDto): Promise<{ data: AsbKlasifikasi[]; total: number }>;
+    abstract findAll(
+        pagination: GetAsbKlasifikasisDto,
+    ): Promise<{ data: AsbKlasifikasi[]; total: number }>;
 }

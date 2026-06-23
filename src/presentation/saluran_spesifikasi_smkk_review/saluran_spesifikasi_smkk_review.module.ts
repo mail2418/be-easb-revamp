@@ -5,12 +5,12 @@ import { JalanSaluranSpesifikasiSmkkReviewModule } from '../jalan_saluran_spesif
 import { UsulanSaluranModule } from '../usulan_saluran/usulan_saluran.module';
 
 @Module({
-    imports: [
-        JalanSaluranSpesifikasiSmkkReviewModule,
-        forwardRef(() => UsulanSaluranModule),
-    ],
+    imports: [JalanSaluranSpesifikasiSmkkReviewModule, forwardRef(() => UsulanSaluranModule)],
     providers: [
-        { provide: SaluranSpesifikasiSmkkReviewService, useClass: SaluranSpesifikasiSmkkReviewServiceImpl },
+        {
+            provide: SaluranSpesifikasiSmkkReviewService,
+            useClass: SaluranSpesifikasiSmkkReviewServiceImpl,
+        },
     ],
     exports: [SaluranSpesifikasiSmkkReviewService],
 })

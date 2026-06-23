@@ -23,4 +23,3 @@ export class UpdateHspkHargaSatuanNullToZero1766924925498 implements MigrationIn
         `);
     }
 }
-

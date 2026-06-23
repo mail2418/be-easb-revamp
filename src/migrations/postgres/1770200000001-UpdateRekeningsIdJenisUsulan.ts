@@ -146,8 +146,6 @@ export class UpdateRekeningsIdJenisUsulan1770200000001 implements MigrationInter
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Reset all id_jenis_usulan to NULL
-        await queryRunner.query(
-            `UPDATE "rekenings" SET "id_jenis_usulan" = NULL`,
-        );
+        await queryRunner.query(`UPDATE "rekenings" SET "id_jenis_usulan" = NULL`);
     }
 }

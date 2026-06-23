@@ -26,4 +26,3 @@ export class ShstWithRelationsDto {
         isActive: boolean;
     } | null;
 }
-

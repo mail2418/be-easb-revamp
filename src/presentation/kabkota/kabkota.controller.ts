@@ -23,7 +23,7 @@ import { Role } from '../../domain/user/user_role.enum';
 @Controller('kabkotas')
 @Roles(Role.SUPERADMIN)
 export class KabKotaController {
-    constructor(private readonly kabKotaService: KabKotaService) { }
+    constructor(private readonly kabKotaService: KabKotaService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)

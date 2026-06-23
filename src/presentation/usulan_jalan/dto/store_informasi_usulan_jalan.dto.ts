@@ -1,4 +1,11 @@
-import { IsArray, IsNotEmpty, IsNumber, ValidateNested, ArrayMinSize, IsOptional } from 'class-validator';
+import {
+    IsArray,
+    IsNotEmpty,
+    IsNumber,
+    ValidateNested,
+    ArrayMinSize,
+    IsOptional,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { DataRuangLingkupDto } from './data_ruang_lingkup.dto';
 import { DataSmkkDto } from './data_smkk.dto';
@@ -31,5 +38,3 @@ export class StoreInformasiUsulanJalanDto {
     @Type(() => DataSmkkDto)
     data_smkk?: DataSmkkDto[];
 }
-
-

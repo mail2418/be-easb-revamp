@@ -1,11 +1,11 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { UsulanJalanStatusService } from "../../domain/usulan_jalan_status/usulan_jalan_status.service";
-import { UsulanJalanStatusRepository } from "../../domain/usulan_jalan_status/usulan_jalan_status.repository";
-import { UsulanJalanStatus } from "../../domain/usulan_jalan_status/usulan_jalan_status.entity";
-import { CreateUsulanJalanStatusDto } from "../../presentation/usulan_jalan_status/dto/create_usulan_jalan_status.dto";
-import { UpdateUsulanJalanStatusDto } from "../../presentation/usulan_jalan_status/dto/update_usulan_jalan_status.dto";
-import { GetUsulanJalanStatusDto } from "../../presentation/usulan_jalan_status/dto/get_usulan_jalan_status.dto";
-import { UsulanJalanStatusPaginationResultDto } from "../../presentation/usulan_jalan_status/dto/usulan_jalan_status_pagination_result.dto";
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { UsulanJalanStatusService } from '../../domain/usulan_jalan_status/usulan_jalan_status.service';
+import { UsulanJalanStatusRepository } from '../../domain/usulan_jalan_status/usulan_jalan_status.repository';
+import { UsulanJalanStatus } from '../../domain/usulan_jalan_status/usulan_jalan_status.entity';
+import { CreateUsulanJalanStatusDto } from '../../presentation/usulan_jalan_status/dto/create_usulan_jalan_status.dto';
+import { UpdateUsulanJalanStatusDto } from '../../presentation/usulan_jalan_status/dto/update_usulan_jalan_status.dto';
+import { GetUsulanJalanStatusDto } from '../../presentation/usulan_jalan_status/dto/get_usulan_jalan_status.dto';
+import { UsulanJalanStatusPaginationResultDto } from '../../presentation/usulan_jalan_status/dto/usulan_jalan_status_pagination_result.dto';
 
 @Injectable()
 export class UsulanJalanStatusServiceImpl implements UsulanJalanStatusService {
@@ -13,9 +13,13 @@ export class UsulanJalanStatusServiceImpl implements UsulanJalanStatusService {
 
     async create(dto: CreateUsulanJalanStatusDto): Promise<UsulanJalanStatus> {
         // Check if usulan_jalan_status with the same status already exists
-        const existingUsulanJalanStatus = await this.usulanJalanStatusRepository.findByStatus(dto.status);
+        const existingUsulanJalanStatus = await this.usulanJalanStatusRepository.findByStatus(
+            dto.status,
+        );
         if (existingUsulanJalanStatus) {
-            throw new ConflictException(`Usulan Jalan Status with status ${dto.status} already exists`);
+            throw new ConflictException(
+                `Usulan Jalan Status with status ${dto.status} already exists`,
+            );
         }
 
         const newUsulanJalanStatus = await this.usulanJalanStatusRepository.create(dto);
@@ -31,9 +35,13 @@ export class UsulanJalanStatusServiceImpl implements UsulanJalanStatusService {
 
         // If status is being updated, check for duplicates
         if (dto.status && dto.status !== existingUsulanJalanStatus.status) {
-            const duplicateUsulanJalanStatus = await this.usulanJalanStatusRepository.findByStatus(dto.status);
+            const duplicateUsulanJalanStatus = await this.usulanJalanStatusRepository.findByStatus(
+                dto.status,
+            );
             if (duplicateUsulanJalanStatus) {
-                throw new ConflictException(`Usulan Jalan Status with status ${dto.status} already exists`);
+                throw new ConflictException(
+                    `Usulan Jalan Status with status ${dto.status} already exists`,
+                );
             }
         }
 
@@ -59,15 +67,16 @@ export class UsulanJalanStatusServiceImpl implements UsulanJalanStatusService {
         return await this.usulanJalanStatusRepository.findByStatus(status);
     }
 
-    async findAll(pagination: GetUsulanJalanStatusDto): Promise<UsulanJalanStatusPaginationResultDto> {
+    async findAll(
+        pagination: GetUsulanJalanStatusDto,
+    ): Promise<UsulanJalanStatusPaginationResultDto> {
         const result = await this.usulanJalanStatusRepository.findAll(pagination);
         return {
             data: result.data,
             total: result.total,
             page: pagination.page ?? 1,
             limit: pagination.amount ?? result.total,
-            totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1
+            totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1,
         };
     }
 }
-

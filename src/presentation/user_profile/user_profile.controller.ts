@@ -89,8 +89,7 @@ export class UserProfileController {
             user.roles,
         );
         const ext = path.extname(absolutePath).toLowerCase();
-        const mime =
-            ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
+        const mime = ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
         res.setHeader('Content-Type', mime);
         createReadStream(absolutePath).pipe(res);
     }

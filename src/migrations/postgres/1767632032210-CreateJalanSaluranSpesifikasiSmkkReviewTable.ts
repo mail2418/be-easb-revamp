@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateJalanSaluranSpesifikasiSmkkReviewTable1767632032210 implements MigrationInterface {
+export class CreateJalanSaluranSpesifikasiSmkkReviewTable1767632032210
+    implements MigrationInterface
+{
     name = 'CreateJalanSaluranSpesifikasiSmkkReviewTable1767632032210';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -81,15 +83,30 @@ export class CreateJalanSaluranSpesifikasiSmkkReviewTable1767632032210 implement
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jalan_saluran_spesifikasi_smkk_review_updated_at ON "jalan_saluran_spesifikasi_smkk_review";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_review_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_review_jalan_saluran_smkk";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_review_usulan_jalan";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_review_jenis_usulan";`);
-        await queryRunner.query(`ALTER TABLE "jalan_saluran_spesifikasi_smkk_review" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_review_jalan_saluran_smkk";`);
-        await queryRunner.query(`ALTER TABLE "jalan_saluran_spesifikasi_smkk_review" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_review_usulan_jalan";`);
-        await queryRunner.query(`ALTER TABLE "jalan_saluran_spesifikasi_smkk_review" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_review_jenis_usulan";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jalan_saluran_spesifikasi_smkk_review_updated_at ON "jalan_saluran_spesifikasi_smkk_review";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_review_deleted";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_review_jalan_saluran_smkk";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_review_usulan_jalan";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_review_jenis_usulan";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_saluran_spesifikasi_smkk_review" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_review_jalan_saluran_smkk";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_saluran_spesifikasi_smkk_review" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_review_usulan_jalan";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_saluran_spesifikasi_smkk_review" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_review_jenis_usulan";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_saluran_spesifikasi_smkk_review";`);
     }
 }
-

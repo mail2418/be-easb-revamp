@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAsbTipeBangunan1763875186079 implements MigrationInterface {
     name = 'CreateAsbTipeBangunan1763875186079';
@@ -35,7 +35,9 @@ export class CreateAsbTipeBangunan1763875186079 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_tipe_bangunan_updated_at ON "asb_tipe_bangunan";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_asb_tipe_bangunan_updated_at ON "asb_tipe_bangunan";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_tipe_bangunan_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_tipe_bangunan_tipe_bangunan";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "asb_tipe_bangunan";`);

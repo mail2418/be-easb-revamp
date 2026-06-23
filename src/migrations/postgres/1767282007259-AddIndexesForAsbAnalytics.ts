@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddIndexesForAsbAnalytics1767282007259 implements MigrationInterface {
-    name = 'AddIndexesForAsbAnalytics1767282007259'
+    name = 'AddIndexesForAsbAnalytics1767282007259';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // ✅ Index untuk created_at (sangat penting untuk query analytics)
@@ -64,4 +64,3 @@ export class AddIndexesForAsbAnalytics1767282007259 implements MigrationInterfac
         `);
     }
 }
-

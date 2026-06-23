@@ -1,17 +1,19 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { PpnGlobalRepository } from "../../../domain/ppn_global/ppn_global.repository";
-import { PpnGlobalOrmEntity } from "../orm/ppn_global.orm_entity";
-import { PpnGlobal } from "../../../domain/ppn_global/ppn_global.entity";
-import { CreatePpnGlobalDto } from "../../../presentation/ppn_global/dto/create_ppn_global.dto";
-import { plainToInstance } from "class-transformer";
-import { UpdatePpnGlobalDto } from "../../../presentation/ppn_global/dto/update_ppn_global.dto";
-import { GetPpnGlobalDto } from "../../../presentation/ppn_global/dto/get_ppn_global.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PpnGlobalRepository } from '../../../domain/ppn_global/ppn_global.repository';
+import { PpnGlobalOrmEntity } from '../orm/ppn_global.orm_entity';
+import { PpnGlobal } from '../../../domain/ppn_global/ppn_global.entity';
+import { CreatePpnGlobalDto } from '../../../presentation/ppn_global/dto/create_ppn_global.dto';
+import { plainToInstance } from 'class-transformer';
+import { UpdatePpnGlobalDto } from '../../../presentation/ppn_global/dto/update_ppn_global.dto';
+import { GetPpnGlobalDto } from '../../../presentation/ppn_global/dto/get_ppn_global.dto';
 
 @Injectable()
 export class PpnGlobalRepositoryImpl implements PpnGlobalRepository {
-    constructor(@InjectRepository(PpnGlobalOrmEntity) private readonly repo: Repository<PpnGlobalOrmEntity>) { }
+    constructor(
+        @InjectRepository(PpnGlobalOrmEntity) private readonly repo: Repository<PpnGlobalOrmEntity>,
+    ) {}
 
     async create(dto: CreatePpnGlobalDto): Promise<PpnGlobal> {
         const ormEntity = plainToInstance(PpnGlobalOrmEntity, dto);
@@ -27,7 +29,10 @@ export class PpnGlobalRepositoryImpl implements PpnGlobalRepository {
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<PpnGlobal | null> {
@@ -40,9 +45,9 @@ export class PpnGlobalRepositoryImpl implements PpnGlobalRepository {
         return entity || null;
     }
 
-    async findAll(dto: GetPpnGlobalDto): Promise<{ data: PpnGlobal[]; total: number; }> {
+    async findAll(dto: GetPpnGlobalDto): Promise<{ data: PpnGlobal[]; total: number }> {
         const findOptions: any = {
-            order: { id: "DESC" }
+            order: { id: 'DESC' },
         };
 
         if (dto.page !== undefined && dto.amount !== undefined) {

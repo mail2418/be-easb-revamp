@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddRekapitulasiBiayaToAsb1764760755980 implements MigrationInterface {
     name = 'AddRekapitulasiBiayaToAsb1764760755980';

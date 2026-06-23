@@ -3,16 +3,16 @@ import { IsString, IsNotEmpty, MinLength, IsArray, ArrayNotEmpty, IsEnum } from 
 import { Role } from 'src/domain/user/user_role.enum';
 
 export class CreateUserDto {
-  @IsString()
-  @Transform(({ value }) => value?.trim())
-  username!: string;
+    @IsString()
+    @Transform(({ value }) => value?.trim())
+    username!: string;
 
-  @IsString()
-  @MinLength(8)
-  password!: string;
+    @IsString()
+    @MinLength(8)
+    password!: string;
 
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsEnum(Role, { each: true })
-  roles!: Role[];
+    @IsArray()
+    @ArrayNotEmpty()
+    @IsEnum(Role, { each: true })
+    roles!: Role[];
 }

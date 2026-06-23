@@ -335,5 +335,3 @@ export class CreateUsulanJalanTable1765732341504 implements MigrationInterface {
         await queryRunner.dropTable('usulan_jalan');
     }
 }
-
-

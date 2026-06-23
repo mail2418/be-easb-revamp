@@ -14,7 +14,9 @@ export class RekeningServiceImpl implements RekeningService {
         // Check if rekening with the same kode already exists
         const existingRekening = await this.rekeningRepository.findByKode(rekening.rekening_kode);
         if (existingRekening) {
-            throw new ConflictException(`Rekening with kode ${rekening.rekening_kode} already exists`);
+            throw new ConflictException(
+                `Rekening with kode ${rekening.rekening_kode} already exists`,
+            );
         }
 
         const newRekening = await this.rekeningRepository.create(rekening);
@@ -30,9 +32,13 @@ export class RekeningServiceImpl implements RekeningService {
 
         // If rekening_kode is being updated, check for duplicates
         if (rekening.rekening_kode && rekening.rekening_kode !== existingRekening.rekening_kode) {
-            const duplicateRekening = await this.rekeningRepository.findByKode(rekening.rekening_kode);
+            const duplicateRekening = await this.rekeningRepository.findByKode(
+                rekening.rekening_kode,
+            );
             if (duplicateRekening) {
-                throw new ConflictException(`Rekening with kode ${rekening.rekening_kode} already exists`);
+                throw new ConflictException(
+                    `Rekening with kode ${rekening.rekening_kode} already exists`,
+                );
             }
         }
 

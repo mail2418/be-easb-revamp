@@ -39,4 +39,3 @@ export class SeedJalanSaluranRuangLingkup1766564373269 implements MigrationInter
         }
     }
 }
-

@@ -14,7 +14,7 @@ export class KecamatanServiceImpl implements KecamatanService {
     constructor(
         private readonly repository: KecamatanRepository,
         private readonly kabkotaRepository: KabKotaRepository,
-    ) { }
+    ) {}
 
     async create(dto: CreateKecamatanDto): Promise<Kecamatan> {
         // Validate that kabkota exists
@@ -63,7 +63,13 @@ export class KecamatanServiceImpl implements KecamatanService {
         return kecamatan;
     }
 
-    async getAll(dto: GetKecamatansDto): Promise<{ data: Kecamatan[]; total: number; page: number; amount: number; totalPages: number }> {
+    async getAll(dto: GetKecamatansDto): Promise<{
+        data: Kecamatan[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }> {
         const filter: any = {};
         if (dto.idKabkota) filter.idKabkota = dto.idKabkota;
         if (dto.search) filter.search = dto.search;

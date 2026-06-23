@@ -67,7 +67,8 @@ export class ValidateDocumentUploadUseCase {
             // So we need special handling
             else if (
                 ext === '.docx' &&
-                file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                file.mimetype ===
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             ) {
                 // DOCX files are ZIP archives, so file-type will detect them as application/zip
                 // This is expected and acceptable

@@ -1,5 +1,14 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { JenisUsulanOrmEntity } from "../../jenis_usulan/orm/jenis_usulan.orm_entity";
+import {
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
+import { JenisUsulanOrmEntity } from '../../jenis_usulan/orm/jenis_usulan.orm_entity';
 
 @Entity('jalan_saluran_smkk')
 export class JalanSaluranSmkkOrmEntity {
@@ -34,4 +43,3 @@ export class JalanSaluranSmkkOrmEntity {
     @JoinColumn({ name: 'id_jenis_usulan' })
     jenisUsulan!: JenisUsulanOrmEntity;
 }
-

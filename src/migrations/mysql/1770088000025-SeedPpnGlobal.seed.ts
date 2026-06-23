@@ -5,7 +5,8 @@ export class SeedPpnGlobal1770088000025 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // MySQL compatible: INSERT ... SELECT ... WHERE NOT EXISTS
-        await queryRunner.query(`
+        await queryRunner.query(
+            `
             INSERT INTO \`ppn_global\` (\`bulan\`, \`tahun\`, \`persentase_ppn\`)
             SELECT ?, ?, ?
             FROM DUAL
@@ -13,13 +14,18 @@ export class SeedPpnGlobal1770088000025 implements MigrationInterface {
                 SELECT 1 FROM \`ppn_global\`
                 WHERE \`bulan\` = ? AND \`tahun\` = ?
             )
-        `, [12, 2025, 0.11, 12, 2025]);
+        `,
+            [12, 2025, 0.11, 12, 2025],
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+        await queryRunner.query(
+            `
             DELETE FROM \`ppn_global\`
             WHERE \`bulan\` = ? AND \`tahun\` = ? AND \`persentase_ppn\` = ?
-        `, [12, 2025, 0.11]);
+        `,
+            [12, 2025, 0.11],
+        );
     }
 }

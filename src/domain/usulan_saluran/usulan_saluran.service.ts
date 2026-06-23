@@ -14,24 +14,91 @@ import { VerifyIndexUsulanSaluranDto } from 'src/presentation/usulan_saluran/dto
 import { VerifyBpkadUsulanSaluranDto } from 'src/presentation/usulan_saluran/dto/verify_bpkad_usulan_saluran.dto';
 
 export abstract class UsulanSaluranService {
-    abstract findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanSaluranWithRelationsDto | null>;
-    abstract findAll(dto: FindAllUsulanSaluranDto, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanSaluranListResultDto>;
+    abstract findById(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<UsulanSaluranWithRelationsDto | null>;
+    abstract findAll(
+        dto: FindAllUsulanSaluranDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<UsulanSaluranListResultDto>;
 
-    abstract createIndex(dto: CreateUsulanSaluranStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract updateIndex(dto: UpdateUsulanSaluranStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract createIndex(
+        dto: CreateUsulanSaluranStoreIndexDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract updateIndex(
+        dto: UpdateUsulanSaluranStoreIndexDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
 
-    abstract storeInformasi(dto: StoreInformasiUsulanSaluranDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract updateUsulanSaluran(dto: UpdateUsulanSaluranDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract deleteUsulanSaluran(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }>;
+    abstract storeInformasi(
+        dto: StoreInformasiUsulanSaluranDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract updateUsulanSaluran(
+        dto: UpdateUsulanSaluranDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract deleteUsulanSaluran(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number }>;
 
-    abstract verifyIndex(dto: VerifyIndexUsulanSaluranDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyInformasi(dto: VerifyInformasiUsulanSaluranDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verifyIndex(
+        dto: VerifyIndexUsulanSaluranDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract verifyInformasi(
+        dto: VerifyInformasiUsulanSaluranDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
 
-    abstract verifyAdbang(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyBpkad(dto: VerifyBpkadUsulanSaluranDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyBappeda(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verifyAdbang(
+        id: number,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract verifyBpkad(
+        dto: VerifyBpkadUsulanSaluranDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract verifyBappeda(
+        id: number,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
 
-    abstract reject(id: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<RejectInfoSaluranDto | null>;
-    abstract getAnalytics(userIdOpd: number | null, userRoles: Role[], filter?: GetUsulanSaluranAnalyticsFilterDto): Promise<UsulanSaluranAnalyticsDto>;
+    abstract reject(
+        id: number,
+        rejectReason: string,
+        userId: string,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }>;
+    abstract getRejectInfo(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<RejectInfoSaluranDto | null>;
+    abstract getAnalytics(
+        userIdOpd: number | null,
+        userRoles: Role[],
+        filter?: GetUsulanSaluranAnalyticsFilterDto,
+    ): Promise<UsulanSaluranAnalyticsDto>;
 }

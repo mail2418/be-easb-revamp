@@ -9,7 +9,12 @@ import { RevokeAllDto } from 'src/presentation/auth/dto/revoke_all.dto';
 import { OpdRepository } from 'src/domain/opd/opd.repository';
 import { Role } from 'src/domain/user/user_role.enum';
 
-type Tokens = { accessToken: string; refreshToken: string, maxAgeAccess: number, maxAgeRefresh: number };
+type Tokens = {
+    accessToken: string;
+    refreshToken: string;
+    maxAgeAccess: number;
+    maxAgeRefresh: number;
+};
 
 function parseTimeStringToMs(timeString: string): number {
     const match = timeString.match(/^(\d+)([smhd])$/);
@@ -19,11 +24,16 @@ function parseTimeStringToMs(timeString: string): number {
     const unit = match[2];
 
     switch (unit) {
-        case 's': return value * 1000;
-        case 'm': return value * 60 * 1000;
-        case 'h': return value * 60 * 60 * 1000;
-        case 'd': return value * 24 * 60 * 60 * 1000;
-        default: return 0;
+        case 's':
+            return value * 1000;
+        case 'm':
+            return value * 60 * 1000;
+        case 'h':
+            return value * 60 * 60 * 1000;
+        case 'd':
+            return value * 24 * 60 * 60 * 1000;
+        default:
+            return 0;
     }
 }
 
@@ -35,7 +45,7 @@ export class AuthService {
         private readonly config: ConfigService,
         private readonly authRepo: AuthRepository,
         private readonly opdRepo: OpdRepository,
-    ) { }
+    ) {}
 
     async validateUser(dto: LoginDto): Promise<User> {
         const existing = await this.userService.findByUsername(dto.username);
@@ -63,7 +73,8 @@ export class AuthService {
         let idOpd: number | null = null;
 
         // Only fetch OPD for pure OPD users (not ADMIN/SUPERADMIN)
-        const hasAdminPrivileges = user.roles.includes(Role.ADMIN) || user.roles.includes(Role.SUPERADMIN);
+        const hasAdminPrivileges =
+            user.roles.includes(Role.ADMIN) || user.roles.includes(Role.SUPERADMIN);
 
         if (!hasAdminPrivileges && user.roles.includes(Role.OPD)) {
             const opd = await this.opdRepo.getOpdByUser(user.id);
@@ -79,7 +90,8 @@ export class AuthService {
         let idOpd: number | null = null;
 
         // Only fetch OPD for pure OPD users (not ADMIN/SUPERADMIN)
-        const hasAdminPrivileges = user.roles.includes(Role.ADMIN) || user.roles.includes(Role.SUPERADMIN);
+        const hasAdminPrivileges =
+            user.roles.includes(Role.ADMIN) || user.roles.includes(Role.SUPERADMIN);
 
         if (!hasAdminPrivileges && user.roles.includes(Role.OPD)) {
             const opd = await this.opdRepo.getOpdByUser(user.id);

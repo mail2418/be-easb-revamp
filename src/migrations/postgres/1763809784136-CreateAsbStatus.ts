@@ -35,7 +35,9 @@ export class CreateAsbStatus1763809784136 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_status_updated_at ON "asb_status";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_asb_status_updated_at ON "asb_status";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_status_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_status_status";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "asb_status";`);

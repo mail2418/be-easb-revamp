@@ -45,7 +45,9 @@ export class CreateAsbFungsiRuang1763655079732 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_fungsi_ruangs_updated_at ON "asb_fungsi_ruangs";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_asb_fungsi_ruangs_updated_at ON "asb_fungsi_ruangs";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_fungsi_ruangs_koef";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_fungsi_ruangs_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_fungsi_ruangs_active";`);

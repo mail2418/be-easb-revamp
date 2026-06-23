@@ -26,4 +26,4 @@ import { AsbBipekNonStdReviewController } from './asb_bipek_non_std_review.contr
     ],
     exports: [AsbBipekNonStdReviewService],
 })
-export class AsbBipekNonStdReviewModule { }
+export class AsbBipekNonStdReviewModule {}

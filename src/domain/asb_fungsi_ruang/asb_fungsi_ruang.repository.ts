@@ -6,7 +6,9 @@ export abstract class AsbFungsiRuangRepository {
     abstract create(asbFungsiRuang: CreateAsbFungsiRuangDto): Promise<AsbFungsiRuang>;
     abstract update(id: number, asbFungsiRuang: Partial<AsbFungsiRuang>): Promise<AsbFungsiRuang>;
     abstract delete(id: number): Promise<boolean>;
-    abstract findAll(pagination: GetAsbFungsiRuangsDto): Promise<{ data: AsbFungsiRuang[]; total: number}>;
+    abstract findAll(
+        pagination: GetAsbFungsiRuangsDto,
+    ): Promise<{ data: AsbFungsiRuang[]; total: number }>;
     abstract findById(id: number): Promise<AsbFungsiRuang | null>;
     abstract findByNama(nama: string): Promise<AsbFungsiRuang | null>;
 }

@@ -31,4 +31,3 @@ export class AsbJakonWithRelationsDto {
         klasifikasi: string;
     } | null;
 }
-

@@ -32,4 +32,4 @@ import { AsbDetailController } from './asb_detail.controller';
     ],
     exports: [AsbDetailService],
 })
-export class AsbDetailModule { }
+export class AsbDetailModule {}

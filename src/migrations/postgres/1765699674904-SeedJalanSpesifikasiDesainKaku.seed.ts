@@ -26,10 +26,7 @@ export class SeedJalanSpesifikasiDesainKaku1765699674904 implements MigrationInt
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        const specList = [
-            'Bagan Desain 4',
-            'Bagan Desain 4A',
-        ];
+        const specList = ['Bagan Desain 4', 'Bagan Desain 4A'];
 
         const placeholders = specList.map((_, index) => `$${index + 1}`).join(', ');
         await queryRunner.query(
@@ -38,4 +35,3 @@ export class SeedJalanSpesifikasiDesainKaku1765699674904 implements MigrationInt
         );
     }
 }
-

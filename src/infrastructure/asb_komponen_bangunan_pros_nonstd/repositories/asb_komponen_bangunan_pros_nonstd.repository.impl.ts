@@ -9,26 +9,34 @@ import { GetAsbKomponenBangunanProsNonstdListDto } from 'src/presentation/asb_ko
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
-export class AsbKomponenBangunanProsNonstdRepositoryImpl implements AsbKomponenBangunanProsNonstdRepository {
+export class AsbKomponenBangunanProsNonstdRepositoryImpl
+    implements AsbKomponenBangunanProsNonstdRepository
+{
     constructor(
         @InjectRepository(AsbKomponenBangunanProsNonstdOrmEntity)
-        private readonly repo: Repository<AsbKomponenBangunanProsNonstdOrmEntity>
-    ) { }
+        private readonly repo: Repository<AsbKomponenBangunanProsNonstdOrmEntity>,
+    ) {}
 
-    async create(data: CreateAsbKomponenBangunanProsNonstdDto): Promise<AsbKomponenBangunanProsNonstd> {
+    async create(
+        data: CreateAsbKomponenBangunanProsNonstdDto,
+    ): Promise<AsbKomponenBangunanProsNonstd> {
         const entity = plainToInstance(AsbKomponenBangunanProsNonstdOrmEntity, data);
         const saved = await this.repo.save(entity);
         return saved;
     }
 
-    async update(id: number, data: Partial<AsbKomponenBangunanProsNonstd>): Promise<AsbKomponenBangunanProsNonstd> {
+    async update(
+        id: number,
+        data: Partial<AsbKomponenBangunanProsNonstd>,
+    ): Promise<AsbKomponenBangunanProsNonstd> {
         await this.repo.update(id, data);
         const updated = await this.repo.findOne({ where: { id } });
         return updated!;
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id)
+        return await this.repo
+            .softDelete(id)
             .then(() => true)
             .catch(() => false);
     }
@@ -36,16 +44,27 @@ export class AsbKomponenBangunanProsNonstdRepositoryImpl implements AsbKomponenB
     async findById(id: number): Promise<AsbKomponenBangunanProsNonstd | null> {
         const entity = await this.repo
             .createQueryBuilder('asb_komponen_bangunan_pros_nonstd')
-            .select(['asb_komponen_bangunan_pros_nonstd.id', 'asb_komponen_bangunan_pros_nonstd.avgMin', 'asb_komponen_bangunan_pros_nonstd.avgMax', 'asb_komponen_bangunan_pros_nonstd.max', 'asb_komponen_bangunan_pros_nonstd.avg'])
+            .select([
+                'asb_komponen_bangunan_pros_nonstd.id',
+                'asb_komponen_bangunan_pros_nonstd.avgMin',
+                'asb_komponen_bangunan_pros_nonstd.avgMax',
+                'asb_komponen_bangunan_pros_nonstd.max',
+                'asb_komponen_bangunan_pros_nonstd.avg',
+            ])
             .where('asb_komponen_bangunan_pros_nonstd.id = :id', { id })
             .getOne();
         return entity || null;
     }
 
-    async findAll(pagination: GetAsbKomponenBangunanProsNonstdListDto): Promise<{ data: AsbKomponenBangunanProsNonstd[], total: number }> {
+    async findAll(
+        pagination: GetAsbKomponenBangunanProsNonstdListDto,
+    ): Promise<{ data: AsbKomponenBangunanProsNonstd[]; total: number }> {
         const queryBuilder = this.repo
             .createQueryBuilder('asb_komponen_bangunan_pros_nonstd')
-            .leftJoinAndSelect('asb_komponen_bangunan_pros_nonstd.asbKomponenBangunanNonstd', 'komponen_nonstd')
+            .leftJoinAndSelect(
+                'asb_komponen_bangunan_pros_nonstd.asbKomponenBangunanNonstd',
+                'komponen_nonstd',
+            )
             .orderBy('asb_komponen_bangunan_pros_nonstd.id', 'DESC');
 
         if (pagination.search) {
@@ -63,11 +82,21 @@ export class AsbKomponenBangunanProsNonstdRepositoryImpl implements AsbKomponenB
         return { data: items, total };
     }
 
-    async findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd | null> {
+    async findByKomponenBangunanNonstdId(
+        id: number,
+    ): Promise<AsbKomponenBangunanProsNonstd | null> {
         return await this.repo
             .createQueryBuilder('asb_komponen_bangunan_pros_nonstd')
-            .select(['asb_komponen_bangunan_pros_nonstd.id', 'asb_komponen_bangunan_pros_nonstd.avgMin', 'asb_komponen_bangunan_pros_nonstd.avgMax', 'asb_komponen_bangunan_pros_nonstd.max', 'asb_komponen_bangunan_pros_nonstd.avg'])
-            .where('asb_komponen_bangunan_pros_nonstd.id_asb_komponen_bangunan_nonstd = :id', { id })
+            .select([
+                'asb_komponen_bangunan_pros_nonstd.id',
+                'asb_komponen_bangunan_pros_nonstd.avgMin',
+                'asb_komponen_bangunan_pros_nonstd.avgMax',
+                'asb_komponen_bangunan_pros_nonstd.max',
+                'asb_komponen_bangunan_pros_nonstd.avg',
+            ])
+            .where('asb_komponen_bangunan_pros_nonstd.id_asb_komponen_bangunan_nonstd = :id', {
+                id,
+            })
             .getOne();
     }
 }

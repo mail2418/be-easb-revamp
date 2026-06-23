@@ -10,12 +10,12 @@ export class StoreBpnsDto {
     @IsArray()
     @IsNotEmpty()
     @IsNumber({}, { each: true })
-    @Transform(({ value }) => Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    @Transform(({ value }) => (Array.isArray(value) ? value.map((v) => parseFloat(v)) : value))
     komponen_nonstd!: number[];
 
     @IsArray()
     @IsNotEmpty()
     @IsNumber({}, { each: true })
-    @Transform(({ value }) => Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    @Transform(({ value }) => (Array.isArray(value) ? value.map((v) => parseFloat(v)) : value))
     bobot_nonstd!: number[];
 }

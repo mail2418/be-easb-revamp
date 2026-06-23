@@ -7,9 +7,11 @@ export class SeedVerifikators1770088000020 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Validate required environment variable
         const seedPassword = process.env.SEED_DEFAULT_PASSWORD;
-        
+
         if (!seedPassword) {
-            throw new Error('SEED_DEFAULT_PASSWORD environment variable is required for seeding verifikator users');
+            throw new Error(
+                'SEED_DEFAULT_PASSWORD environment variable is required for seeding verifikator users',
+            );
         }
 
         const SALT_ROUNDS = 12;
@@ -30,13 +32,13 @@ export class SeedVerifikators1770088000020 implements MigrationInterface {
                 `INSERT INTO \`users\` (\`username\`, \`password_hash\`, \`roles\`)
                  VALUES (?, ?, ?)
                  ON DUPLICATE KEY UPDATE \`updated_at\` = NOW()`,
-                [data.username, passwordHash, JSON.stringify(['verifikator'])]
+                [data.username, passwordHash, JSON.stringify(['verifikator'])],
             );
 
             // 2. Get user ID
             const userResult = await queryRunner.query(
                 `SELECT \`id\` FROM \`users\` WHERE \`username\` = ?`,
-                [data.username]
+                [data.username],
             );
 
             if (!userResult || userResult.length === 0) {
@@ -53,16 +55,19 @@ export class SeedVerifikators1770088000020 implements MigrationInterface {
                     \`jenis_verifikator\` = VALUES(\`jenis_verifikator\`),
                     \`verifikator\` = VALUES(\`verifikator\`),
                     \`updated_at\` = NOW()`,
-                [userId, data.type, data.username]
+                [userId, data.type, data.username],
             );
         }
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const usernames = [
-            'VerifikatorAdbang1', 'VerifikatorAdbang2',
-            'VerifikatorBpkad1', 'VerifikatorBpkad2',
-            'VerifikatorBappeda1', 'VerifikatorBappeda2'
+            'VerifikatorAdbang1',
+            'VerifikatorAdbang2',
+            'VerifikatorBpkad1',
+            'VerifikatorBpkad2',
+            'VerifikatorBappeda1',
+            'VerifikatorBappeda2',
         ];
 
         const placeholders = usernames.map(() => '?').join(', ');
@@ -70,24 +75,24 @@ export class SeedVerifikators1770088000020 implements MigrationInterface {
         // 1. Get User IDs
         const users = await queryRunner.query(
             `SELECT \`id\` FROM \`users\` WHERE \`username\` IN (${placeholders})`,
-            usernames
+            usernames,
         );
 
         const userIds = users.map((u: any) => u.id);
 
         if (userIds.length > 0) {
             const userIdPlaceholders = userIds.map(() => '?').join(', ');
-            // 2. Delete from verifikators 
+            // 2. Delete from verifikators
             await queryRunner.query(
                 `DELETE FROM \`verifikators\` WHERE \`id_user\` IN (${userIdPlaceholders})`,
-                userIds
+                userIds,
             );
         }
 
         // 3. Delete users
         await queryRunner.query(
             `DELETE FROM \`users\` WHERE \`username\` IN (${placeholders})`,
-            usernames
+            usernames,
         );
     }
 }

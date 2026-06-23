@@ -13,7 +13,10 @@ import { CreateBulkAsbJakonResultDto } from 'src/presentation/asb_jakon/dto/crea
 
 export abstract class AsbJakonService {
     abstract create(dto: CreateAsbJakonDto): Promise<AsbJakon>;
-    abstract createBulk(dto: CreateBulkAsbJakonDto, file: Express.Multer.File): Promise<CreateBulkAsbJakonResultDto>;
+    abstract createBulk(
+        dto: CreateBulkAsbJakonDto,
+        file: Express.Multer.File,
+    ): Promise<CreateBulkAsbJakonResultDto>;
     abstract downloadTemplate(): Promise<{ buffer: Buffer; filename: string }>;
     abstract update(dto: UpdateAsbJakonDto): Promise<AsbJakon>;
     abstract delete(dto: DeleteAsbJakonDto): Promise<boolean>;

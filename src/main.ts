@@ -16,7 +16,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
         logger: ['log', 'error', 'warn'],
     });
-    
+
     const config = app.get(ConfigService);
     const isProduction = config.get('NODE_ENV') === 'production';
 
@@ -98,7 +98,9 @@ async function bootstrap() {
         maxAge: corsConfig.maxAge,
     });
 
-    Logger.log(`CORS configured with ${allowedOrigins.length} allowed origin(s): ${allowedOrigins.join(', ')}`);
+    Logger.log(
+        `CORS configured with ${allowedOrigins.length} allowed origin(s): ${allowedOrigins.join(', ')}`,
+    );
 
     // Global serialization (untuk @Exclude, @Expose)
     const reflector = app.get(Reflector);
@@ -106,7 +108,6 @@ async function bootstrap() {
 
     // Global exception filter -> konsistenkan bentuk error payload
     app.useGlobalFilters(new HttpExceptionFilter());
-
 
     // Middleware (order matters)
     app.use(CorrelationIdMiddleware());

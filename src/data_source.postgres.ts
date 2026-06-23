@@ -1,12 +1,12 @@
 /**
  * PostgreSQL Data Source Configuration
- * 
+ *
  * Used for running migrations with PostgreSQL database.
- * 
+ *
  * Usage:
  *   npm run typeorm:postgres migration:run
  *   npm run typeorm:postgres migration:revert
- * 
+ *
  * Environment Variables:
  *   DB_URL_POSTGRES - PostgreSQL connection URL (preferred)
  *   DB_URL - Fallback if DB_URL_POSTGRES is not set
@@ -34,7 +34,11 @@ export default new DataSource({
     url: dbUrl,
     ssl: isRender ? { rejectUnauthorized: false } : false,
 
-    entities: [isProd ? 'dist/infrastructure/**/orm/*.orm_entity.js' : 'src/infrastructure/**/orm/*.orm_entity.ts'],
+    entities: [
+        isProd
+            ? 'dist/infrastructure/**/orm/*.orm_entity.js'
+            : 'src/infrastructure/**/orm/*.orm_entity.ts',
+    ],
 
     // PostgreSQL migrations folder
     migrations: [isProd ? 'dist/migrations/postgres/*.js' : 'src/migrations/postgres/*{.ts,.js}'],
@@ -44,8 +48,8 @@ export default new DataSource({
 
     synchronize: false,
     logging: ['error', 'warn'],
-    
+
     extra: {
-        options: '-c timezone=Asia/Jakarta'
+        options: '-c timezone=Asia/Jakarta',
     },
 });

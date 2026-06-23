@@ -48,12 +48,16 @@ export class UpdateAsbJakonDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     priceFrom!: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     priceTo!: number;
 
     @IsString()
@@ -63,6 +67,8 @@ export class UpdateAsbJakonDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     standard!: number;
 }

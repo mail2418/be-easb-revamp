@@ -1,4 +1,17 @@
-import { Controller, Post, Put, Delete, Get, Body, HttpStatus, HttpException, Query, UploadedFile, UseInterceptors, Res } from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    Put,
+    Delete,
+    Get,
+    Body,
+    HttpStatus,
+    HttpException,
+    Query,
+    UploadedFile,
+    UseInterceptors,
+    Res,
+} from '@nestjs/common';
 import type { Express } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { StreamableFile } from '@nestjs/common';
@@ -17,13 +30,18 @@ import { ResponseDto } from '../../common/dto/response.dto';
 @Controller('asb-jakon')
 @Roles(Role.SUPERADMIN, Role.ADMIN)
 export class AsbJakonController {
-    constructor(private readonly service: AsbJakonService) { }
+    constructor(private readonly service: AsbJakonService) {}
 
     @Post()
     async create(@Body() dto: CreateAsbJakonDto): Promise<ResponseDto> {
         try {
             const result = await this.service.create(dto);
-            return { status: 'success', responseCode: HttpStatus.CREATED, message: 'AsbJakon created', data: result };
+            return {
+                status: 'success',
+                responseCode: HttpStatus.CREATED,
+                message: 'AsbJakon created',
+                data: result,
+            };
         } catch (error) {
             return this.handleError(error);
         }
@@ -33,7 +51,12 @@ export class AsbJakonController {
     async update(@Body() dto: UpdateAsbJakonDto): Promise<ResponseDto> {
         try {
             const result = await this.service.update(dto);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'AsbJakon updated', data: result };
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'AsbJakon updated',
+                data: result,
+            };
         } catch (error) {
             return this.handleError(error);
         }
@@ -43,7 +66,12 @@ export class AsbJakonController {
     async delete(@Body() dto: DeleteAsbJakonDto): Promise<ResponseDto> {
         try {
             const result = await this.service.delete(dto);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'AsbJakon deleted', data: result };
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'AsbJakon deleted',
+                data: result,
+            };
         } catch (error) {
             return this.handleError(error);
         }
@@ -54,7 +82,12 @@ export class AsbJakonController {
     async getAll(@Query() dto: GetAsbJakonListDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getAll(dto);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'AsbJakon list retrieved', data: result };
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'AsbJakon list retrieved',
+                data: result,
+            };
         } catch (error) {
             return this.handleError(error);
         }
@@ -65,7 +98,12 @@ export class AsbJakonController {
     async getDetail(@Query() dto: GetAsbJakonDetailDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getDetail(dto);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'AsbJakon detail retrieved', data: result };
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'AsbJakon detail retrieved',
+                data: result,
+            };
         } catch (error) {
             return this.handleError(error);
         }
@@ -74,7 +112,10 @@ export class AsbJakonController {
     @Post('bulk')
     @Roles(Role.SUPERADMIN, Role.ADMIN)
     @UseInterceptors(FileInterceptor('file'))
-    async createBulk(@Body() dto: CreateBulkAsbJakonDto, @UploadedFile() file: Express.Multer.File): Promise<ResponseDto> {
+    async createBulk(
+        @Body() dto: CreateBulkAsbJakonDto,
+        @UploadedFile() file: Express.Multer.File,
+    ): Promise<ResponseDto> {
         try {
             const result = await this.service.createBulk(dto, file);
             return {
@@ -104,10 +145,7 @@ export class AsbJakonController {
             if (error instanceof HttpException) {
                 throw error;
             }
-            throw new HttpException(
-                'Internal server error',
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -128,6 +166,11 @@ export class AsbJakonController {
             }
             return { status: 'error', responseCode: status, message, data: null };
         }
-        return { status: 'error', responseCode: HttpStatus.INTERNAL_SERVER_ERROR, message: 'Internal server error', data: null };
+        return {
+            status: 'error',
+            responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: 'Internal server error',
+            data: null,
+        };
     }
 }

@@ -67,9 +67,7 @@ function sanitizeResponseBody(
     try {
         // Handle arrays
         if (Array.isArray(body)) {
-            return body.map((item) =>
-                sanitizeResponseBody(item, visited, depth + 1, maxDepth),
-            );
+            return body.map((item) => sanitizeResponseBody(item, visited, depth + 1, maxDepth));
         }
 
         // Handle Date objects
@@ -127,10 +125,10 @@ export function LoggerMiddleware() {
         const spanContext = trace.getActiveSpan()?.spanContext();
         const traceId = spanContext?.traceId;
         const spanId = spanContext?.spanId;
-        
+
         // Capture response body by intercepting res.json()
         const originalJson = res.json.bind(res);
-        res.json = function(body: any) {
+        res.json = function (body: any) {
             // Simpan response body ke res.locals jika belum ada
             if (!(res.locals as any).responseDto) {
                 (res.locals as any).responseDto = body;
@@ -147,7 +145,7 @@ export function LoggerMiddleware() {
                     }
                 }
             }
-            
+
             return originalJson(body);
         };
 
@@ -164,7 +162,7 @@ export function LoggerMiddleware() {
                 span_id: spanId,
                 appStatusCode: res.statusCode,
                 appStatusMessage: res.statusMessage,
-                responseBody: responseDTO ? sanitizeResponseBody(responseDTO) : "DTO not captured",
+                responseBody: responseDTO ? sanitizeResponseBody(responseDTO) : 'DTO not captured',
                 duration,
             });
         });

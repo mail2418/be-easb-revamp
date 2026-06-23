@@ -14,9 +14,11 @@ export class UpdateAsbFungsiRuangDto {
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => value !== undefined && value !== null ? parseFloat(value) : undefined)
+    @Transform(({ value }) =>
+        value !== undefined && value !== null ? parseFloat(value) : undefined,
+    )
     koef?: number;
-    
+
     @IsOptional()
     @IsBoolean()
     @Transform(({ value }) => value === 'true' || value === true || value === 1)

@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAsbDetail1764251821162 implements MigrationInterface {
-    name = 'CreateAsbDetail1764251821162'
+    name = 'CreateAsbDetail1764251821162';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create table
@@ -24,9 +24,15 @@ export class CreateAsbDetail1764251821162 implements MigrationInterface {
 
         // Create indexes
         await queryRunner.query(`CREATE INDEX "idx_asb_details_files" ON "asb_details" ("files")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_details_lantai" ON "asb_details" ("id_asb_lantai")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_details_fungsi_ruang" ON "asb_details" ("id_asb_fungsi_ruang")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_details_deleted_at" ON "asb_details" ("deleted_at")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_details_lantai" ON "asb_details" ("id_asb_lantai")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_details_fungsi_ruang" ON "asb_details" ("id_asb_fungsi_ruang")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_details_deleted_at" ON "asb_details" ("deleted_at")`,
+        );
 
         // Add foreign key to asb_lantai
         await queryRunner.query(`
@@ -56,16 +62,22 @@ export class CreateAsbDetail1764251821162 implements MigrationInterface {
                     FOR EACH ROW EXECUTE FUNCTION set_updated_at();
                 END IF;
             END $$;
-        `)
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Drop trigger
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_details_updated_at ON "asb_details"`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_asb_details_updated_at ON "asb_details"`,
+        );
 
         // Drop foreign keys
-        await queryRunner.query(`ALTER TABLE "asb_details" DROP CONSTRAINT IF EXISTS "fk_asb_details_fungsi_ruang"`);
-        await queryRunner.query(`ALTER TABLE "asb_details" DROP CONSTRAINT IF EXISTS "fk_asb_details_lantai"`);
+        await queryRunner.query(
+            `ALTER TABLE "asb_details" DROP CONSTRAINT IF EXISTS "fk_asb_details_fungsi_ruang"`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "asb_details" DROP CONSTRAINT IF EXISTS "fk_asb_details_lantai"`,
+        );
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_details_deleted_at"`);

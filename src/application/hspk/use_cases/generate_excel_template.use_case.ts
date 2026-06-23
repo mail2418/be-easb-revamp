@@ -45,7 +45,9 @@ export class GenerateExcelTemplateUseCase {
         sopData.push([]);
         sopData.push(['1. Buka worksheet "HSPK Data" untuk mengisi data']);
         sopData.push(['2. Isi data pada baris ke-2 dan seterusnya (baris pertama adalah header)']);
-        sopData.push(['3. Kolom id_ruang_lingkup diisi dengan ID yang valid (lihat daftar referensi di bawah)']);
+        sopData.push([
+            '3. Kolom id_ruang_lingkup diisi dengan ID yang valid (lihat daftar referensi di bawah)',
+        ]);
         sopData.push(['4. Kolom tahun_anggaran: tahun fiskal per baris (2000–2100)']);
         sopData.push(['5. Kolom satuan: teks bebas (tidak terhubung ke master satuan)']);
         sopData.push(['6. Kolom harga_satuan: angka >= 0']);
@@ -83,11 +85,7 @@ export class GenerateExcelTemplateUseCase {
         sopData.push(['REFERENSI id_ruang_lingkup (ID | deskripsi | jenis usulan):']);
         sopData.push(['id', 'deskripsi_ruang_lingkup', 'jenis_usulan']);
         ruangLingkupList.forEach((rl) => {
-            sopData.push([
-                rl.id,
-                rl.deskripsi_ruang_lingkup,
-                rl.jenisUsulan?.jenis ?? '',
-            ]);
+            sopData.push([rl.id, rl.deskripsi_ruang_lingkup, rl.jenisUsulan?.jenis ?? '']);
         });
         sopData.push([]);
 

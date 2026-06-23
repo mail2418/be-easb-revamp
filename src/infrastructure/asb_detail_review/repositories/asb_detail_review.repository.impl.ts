@@ -30,9 +30,7 @@ export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
             where: { id: dto.id },
         });
         if (!existing) {
-            throw new Error(
-                `AsbDetailReview with id ${dto.id} not found`,
-            );
+            throw new Error(`AsbDetailReview with id ${dto.id} not found`);
         }
 
         const updateData: Partial<AsbDetailReviewOrmEntity> = {};
@@ -82,12 +80,16 @@ export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
         return entity ? plainToInstance(AsbDetailReview, entity) : null;
     }
 
-    async findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbDetailReview[], number]> {
+    async findByAsb(
+        idAsb: number,
+        page: number,
+        amount: number,
+    ): Promise<[AsbDetailReview[], number]> {
         const [entities, total] = await this.repository.findAndCount({
             where: { idAsb },
             skip: (page - 1) * amount,
             take: amount,
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         });
         const domainEntities = entities.map((e) => plainToInstance(AsbDetailReview, e));
         return [domainEntities, total];
@@ -103,19 +105,15 @@ export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
                 'asb_detail_review.id_asb_fungsi_ruang',
                 'asb_detail_review.asb_fungsi_ruang_koef',
                 'asb_detail_review.lantai_koef',
-                'asb_detail_review.luas'
+                'asb_detail_review.luas',
             ])
             .leftJoin('asb_detail_review.asbLantai', 'asb_lantai')
-            .addSelect([
-                'asb_lantai.id',
-                'asb_lantai.lantai',
-                'asb_lantai.koef'
-            ])
+            .addSelect(['asb_lantai.id', 'asb_lantai.lantai', 'asb_lantai.koef'])
             .leftJoin('asb_detail_review.asbFungsiRuang', 'asb_fungsi_ruang')
             .addSelect([
                 'asb_fungsi_ruang.id',
                 'asb_fungsi_ruang.nama_fungsi_ruang',
-                'asb_fungsi_ruang.koef'
+                'asb_fungsi_ruang.koef',
             ])
             .where('asb_detail_review.id_asb = :idAsb', { idAsb })
             .getMany();
@@ -132,14 +130,14 @@ export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
                 asb_lantai: {
                     id: e.asbLantai?.id ?? null,
                     lantai: e.asbLantai?.lantai ?? '',
-                    koef: e.asbLantai?.koef ?? 0
+                    koef: e.asbLantai?.koef ?? 0,
                 },
                 asb_fungsi_ruang: {
                     id: e.asbFungsiRuang?.id ?? null,
                     fungsi_ruang: e.asbFungsiRuang?.nama_fungsi_ruang ?? '',
-                    koef: e.asbFungsiRuang?.koef ?? 0
-                }
-            }
+                    koef: e.asbFungsiRuang?.koef ?? 0,
+                },
+            };
         });
         return domainEntities;
     }

@@ -8,10 +8,19 @@ import { UsulanJalanAnalyticsDto } from 'src/application/usulan_jalan/dto/usulan
 
 export abstract class UsulanJalanRepository {
     abstract findById(id: number, idOpd?: number): Promise<UsulanJalanWithRelationsDto | null>;
-    abstract findAll(dto: FindAllUsulanJalanDto, idOpd?: number): Promise<{ data: UsulanJalanWithRelationsDto[]; total: number }>;
+    abstract findAll(
+        dto: FindAllUsulanJalanDto,
+        idOpd?: number,
+    ): Promise<{ data: UsulanJalanWithRelationsDto[]; total: number }>;
     abstract getRejectInfo(id: number, idOpd?: number): Promise<RejectInfoDto | null>;
     abstract create(data: DeepPartial<UsulanJalan>): Promise<UsulanJalanWithRelationsDto>;
-    abstract update(id: number, data: DeepPartial<UsulanJalan>): Promise<UsulanJalanWithRelationsDto>;
+    abstract update(
+        id: number,
+        data: DeepPartial<UsulanJalan>,
+    ): Promise<UsulanJalanWithRelationsDto>;
     abstract delete(id: number): Promise<void>;
-    abstract getAnalytics(idOpd?: number, filter?: GetUsulanJalanAnalyticsFilterDto): Promise<UsulanJalanAnalyticsDto>;
+    abstract getAnalytics(
+        idOpd?: number,
+        filter?: GetUsulanJalanAnalyticsFilterDto,
+    ): Promise<UsulanJalanAnalyticsDto>;
 }

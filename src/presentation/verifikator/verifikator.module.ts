@@ -8,9 +8,7 @@ import { VerifikatorService } from '../../domain/verifikator/verifikator.service
 import { VerifikatorRepository } from '../../domain/verifikator/verifikator.repository';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([VerifikatorOrmEntity]),
-    ],
+    imports: [TypeOrmModule.forFeature([VerifikatorOrmEntity])],
     controllers: [VerifikatorController],
     providers: [
         {
@@ -22,9 +20,6 @@ import { VerifikatorRepository } from '../../domain/verifikator/verifikator.repo
             useClass: VerifikatorRepositoryImpl,
         },
     ],
-    exports: [
-        VerifikatorService,
-        VerifikatorRepository,
-    ],
+    exports: [VerifikatorService, VerifikatorRepository],
 })
-export class VerifikatorModule { }
+export class VerifikatorModule {}

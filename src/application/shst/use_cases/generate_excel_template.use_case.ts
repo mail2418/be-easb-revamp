@@ -27,15 +27,15 @@ export class GenerateExcelTemplateUseCase {
         ]);
 
         // Extract values for dropdowns
-        const tipeBangunanValues = tipeBangunanList.data.map(tb => tb.tipe_bangunan);
-        const kabkotaValues = kabkotaList.kabkotas.map(kk => kk.nama);
+        const tipeBangunanValues = tipeBangunanList.data.map((tb) => tb.tipe_bangunan);
+        const kabkotaValues = kabkotaList.kabkotas.map((kk) => kk.nama);
 
         // Group klasifikasi by tipe bangunan for better validation
         const klasifikasiByTipeBangunan = new Map<number, string[]>();
-        tipeBangunanList.data.forEach(tb => {
+        tipeBangunanList.data.forEach((tb) => {
             const klasifikasis = klasifikasiList.data
-                .filter(k => k.id_asb_tipe_bangunan === tb.id)
-                .map(k => k.klasifikasi);
+                .filter((k) => k.id_asb_tipe_bangunan === tb.id)
+                .map((k) => k.klasifikasi);
             klasifikasiByTipeBangunan.set(tb.id, klasifikasis);
         });
 
@@ -50,11 +50,7 @@ export class GenerateExcelTemplateUseCase {
 
         // Create data upload worksheet with headers
         const dataWorksheet = workbook.addWorksheet(SHST_DATA_SHEET_NAME);
-        this.createDataWorksheet(
-            dataWorksheet,
-            tipeBangunanValues,
-            kabkotaValues,
-        );
+        this.createDataWorksheet(dataWorksheet, tipeBangunanValues, kabkotaValues);
 
         // Generate buffer
         const buffer = await workbook.xlsx.writeBuffer();
@@ -79,7 +75,9 @@ export class GenerateExcelTemplateUseCase {
         sopData.push([]);
         sopData.push(['1. Buka worksheet "SHST Data" untuk mengisi data']);
         sopData.push(['2. Isi data pada baris ke-2 dan seterusnya (baris pertama adalah header)']);
-        sopData.push(['3. Gunakan dropdown list yang tersedia untuk kolom: tipe_bangunan, klasifikasi, dan kabkota']);
+        sopData.push([
+            '3. Gunakan dropdown list yang tersedia untuk kolom: tipe_bangunan, klasifikasi, dan kabkota',
+        ]);
         sopData.push(['4. Untuk kolom nominal, isi dengan angka positif']);
         sopData.push(['5. Pastikan semua kolom terisi dengan benar sebelum upload']);
         sopData.push(['6. Jangan mengubah nama worksheet "SHST Data"']);
@@ -108,12 +106,7 @@ export class GenerateExcelTemplateUseCase {
             'Text (Dropdown)',
             'Pilih dari daftar yang tersedia di bawah',
         ]);
-        sopData.push([
-            'nominal',
-            'Nominal Harga',
-            'Number',
-            'Angka positif (contoh: 5000000)',
-        ]);
+        sopData.push(['nominal', 'Nominal Harga', 'Number', 'Angka positif (contoh: 5000000)']);
         sopData.push([]);
 
         // Valid values lists
@@ -130,7 +123,9 @@ export class GenerateExcelTemplateUseCase {
 
         // Klasifikasi (grouped by tipe bangunan)
         sopData.push(['KLASIFIKASI (klasifikasi) - Dikelompokkan berdasarkan Tipe Bangunan:']);
-        sopData.push(['PENTING: Klasifikasi yang dipilih HARUS sesuai dengan tipe_bangunan yang dipilih!']);
+        sopData.push([
+            'PENTING: Klasifikasi yang dipilih HARUS sesuai dengan tipe_bangunan yang dipilih!',
+        ]);
         sopData.push([]);
         tipeBangunanList.forEach((tb) => {
             const klasifikasis = klasifikasiByTipeBangunan.get(tb.id) || [];
@@ -156,8 +151,12 @@ export class GenerateExcelTemplateUseCase {
         sopData.push(['CATATAN PENTING:']);
         sopData.push(['- Pastikan nilai yang diinput sesuai dengan daftar di atas']);
         sopData.push(['- Nilai harus ditulis persis seperti yang tertera di daftar']);
-        sopData.push(['- PENTING: Klasifikasi yang dipilih HARUS terikat dengan tipe_bangunan yang dipilih']);
-        sopData.push(['- Contoh: Jika tipe_bangunan = "Rumah", maka klasifikasi harus salah satu dari klasifikasi yang terikat dengan "Rumah"']);
+        sopData.push([
+            '- PENTING: Klasifikasi yang dipilih HARUS terikat dengan tipe_bangunan yang dipilih',
+        ]);
+        sopData.push([
+            '- Contoh: Jika tipe_bangunan = "Rumah", maka klasifikasi harus salah satu dari klasifikasi yang terikat dengan "Rumah"',
+        ]);
         sopData.push(['- Untuk nominal, gunakan angka tanpa titik atau koma (contoh: 5000000)']);
         sopData.push(['- Jika data tidak ditemukan di daftar, hubungi administrator']);
 
@@ -190,11 +189,11 @@ export class GenerateExcelTemplateUseCase {
             fill: {
                 type: 'pattern' as const,
                 pattern: 'solid' as const,
-                fgColor: { argb: 'FFD9E1F2' }
+                fgColor: { argb: 'FFD9E1F2' },
             },
         };
         const sectionRows = [4, 13, 15]; // Row numbers for section headers
-        sectionRows.forEach(rowNum => {
+        sectionRows.forEach((rowNum) => {
             const cell = worksheet.getCell(rowNum, 1);
             cell.font = sectionStyle.font;
             cell.fill = sectionStyle.fill;
@@ -206,7 +205,7 @@ export class GenerateExcelTemplateUseCase {
             fill: {
                 type: 'pattern' as const,
                 pattern: 'solid' as const,
-                fgColor: { argb: 'FF4472C4' }
+                fgColor: { argb: 'FF4472C4' },
             },
             alignment: { horizontal: 'center' as const, vertical: 'middle' as const },
         };
@@ -220,8 +219,8 @@ export class GenerateExcelTemplateUseCase {
             }
         });
         const headerRows = [13, 15, klasifikasiSectionStart, currentRow];
-        headerRows.forEach(rowNum => {
-            ['A', 'B'].forEach(col => {
+        headerRows.forEach((rowNum) => {
+            ['A', 'B'].forEach((col) => {
                 const cell = worksheet.getCell(`${col}${rowNum}`);
                 cell.font = headerStyle.font;
                 cell.fill = headerStyle.fill;
@@ -247,7 +246,7 @@ export class GenerateExcelTemplateUseCase {
             cell.fill = {
                 type: 'pattern',
                 pattern: 'solid',
-                fgColor: { argb: 'FF4472C4' }
+                fgColor: { argb: 'FF4472C4' },
             };
             cell.alignment = { horizontal: 'center', vertical: 'middle' };
         });

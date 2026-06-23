@@ -23,12 +23,18 @@ export class AsbKlasifikasiRepositoryImpl implements AsbKlasifikasiRepository {
 
     async update(id: number, asbKlasifikasi: Partial<AsbKlasifikasi>): Promise<AsbKlasifikasi> {
         await this.repo.update(id, asbKlasifikasi);
-        const updatedEntity = await this.repo.findOne({ where: { id }, relations: ['asbTipeBangunan'] });
+        const updatedEntity = await this.repo.findOne({
+            where: { id },
+            relations: ['asbTipeBangunan'],
+        });
         return updatedEntity!;
     }
-    
+
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<AsbKlasifikasi | null> {
@@ -36,10 +42,12 @@ export class AsbKlasifikasiRepositoryImpl implements AsbKlasifikasiRepository {
         return entity || null;
     }
 
-    async findAll(pagination: GetAsbKlasifikasisDto): Promise<{ data: AsbKlasifikasi[]; total: number }> {
+    async findAll(
+        pagination: GetAsbKlasifikasisDto,
+    ): Promise<{ data: AsbKlasifikasi[]; total: number }> {
         const findOptions: any = {
             order: { id: 'DESC' },
-            relations: ['asbTipeBangunan']
+            relations: ['asbTipeBangunan'],
         };
 
         if (pagination.search) {
@@ -57,13 +65,16 @@ export class AsbKlasifikasiRepositoryImpl implements AsbKlasifikasiRepository {
     }
 
     async findByAsbTipeBangunan(id_asb_tipe_bangunan: number): Promise<AsbKlasifikasi | null> {
-        const entity = await this.repo.findOne({ where: { id_asb_tipe_bangunan }, relations: ['asbTipeBangunan'] });
+        const entity = await this.repo.findOne({
+            where: { id_asb_tipe_bangunan },
+            relations: ['asbTipeBangunan'],
+        });
         return entity || null;
     }
 
     async findByKlasifikasi(klasifikasi: string): Promise<AsbKlasifikasi | null> {
         const entity = await this.repo.findOne({
-            where: { klasifikasi }
+            where: { klasifikasi },
         });
         return entity || null;
     }

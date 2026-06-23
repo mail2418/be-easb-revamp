@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateStandardKlasifikasi1764760755981 implements MigrationInterface {
     name = 'CreateStandardKlasifikasi1764760755981';
@@ -64,12 +64,20 @@ export class CreateStandardKlasifikasi1764760755981 implements MigrationInterfac
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_standard_klasifikasi_updated_at ON "standard_klasifikasi";`);
-        await queryRunner.query(`ALTER TABLE "standard_klasifikasi" DROP CONSTRAINT "FK_standard_klasifikasi_kabkota";`);
-        await queryRunner.query(`ALTER TABLE "standard_klasifikasi" DROP CONSTRAINT "FK_standard_klasifikasi_asb_klasifikasi";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_standard_klasifikasi_updated_at ON "standard_klasifikasi";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "standard_klasifikasi" DROP CONSTRAINT "FK_standard_klasifikasi_kabkota";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "standard_klasifikasi" DROP CONSTRAINT "FK_standard_klasifikasi_asb_klasifikasi";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_standard_klasifikasi_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_standard_klasifikasi_kabkota_id";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_standard_klasifikasi_asb_klasifikasi_id";`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_standard_klasifikasi_asb_klasifikasi_id";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "standard_klasifikasi";`);
     }
 }

@@ -1,4 +1,12 @@
-import { IsArray, IsNotEmpty, IsNumber, ValidateNested, ArrayMinSize, IsOptional, IsString } from 'class-validator';
+import {
+    IsArray,
+    IsNotEmpty,
+    IsNumber,
+    ValidateNested,
+    ArrayMinSize,
+    IsOptional,
+    IsString,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { DataRuangLingkupDto } from '../../usulan_jalan/dto/data_ruang_lingkup.dto';
 import { DataSmkkDto } from '../../usulan_jalan/dto/data_smkk.dto';
@@ -33,6 +41,6 @@ export class StoreInformasiUsulanSaluranDto {
 
     @IsOptional()
     @IsString()
-    @Transform(({ value }) => (value != null && value !== '') ? String(value).trim() : undefined)
+    @Transform(({ value }) => (value != null && value !== '' ? String(value).trim() : undefined))
     keteranganTambahan?: string;
 }

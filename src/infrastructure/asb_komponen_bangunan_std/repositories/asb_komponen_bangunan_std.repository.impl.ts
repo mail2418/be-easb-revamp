@@ -12,8 +12,8 @@ import { plainToInstance } from 'class-transformer';
 export class AsbKomponenBangunanStdRepositoryImpl implements AsbKomponenBangunanStdRepository {
     constructor(
         @InjectRepository(AsbKomponenBangunanStdOrmEntity)
-        private readonly repo: Repository<AsbKomponenBangunanStdOrmEntity>
-    ) { }
+        private readonly repo: Repository<AsbKomponenBangunanStdOrmEntity>,
+    ) {}
 
     async create(data: CreateAsbKomponenBangunanStdDto): Promise<AsbKomponenBangunanStd> {
         const entity = plainToInstance(AsbKomponenBangunanStdOrmEntity, data);
@@ -21,14 +21,18 @@ export class AsbKomponenBangunanStdRepositoryImpl implements AsbKomponenBangunan
         return saved;
     }
 
-    async update(id: number, data: Partial<AsbKomponenBangunanStd>): Promise<AsbKomponenBangunanStd> {
+    async update(
+        id: number,
+        data: Partial<AsbKomponenBangunanStd>,
+    ): Promise<AsbKomponenBangunanStd> {
         await this.repo.update(id, data);
         const updated = await this.repo.findOne({ where: { id } });
         return updated!;
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id)
+        return await this.repo
+            .softDelete(id)
             .then(() => true)
             .catch(() => false);
     }
@@ -44,12 +48,14 @@ export class AsbKomponenBangunanStdRepositoryImpl implements AsbKomponenBangunan
 
     async findByKomponen(komponen: string): Promise<AsbKomponenBangunanStd | null> {
         const entity = await this.repo.findOne({
-            where: { komponen: ILike(`%${komponen}%`) }
+            where: { komponen: ILike(`%${komponen}%`) },
         });
         return entity || null;
     }
 
-    async findAll(pagination: GetAsbKomponenBangunanStdsDto): Promise<{ data: AsbKomponenBangunanStd[], total: number }> {
+    async findAll(
+        pagination: GetAsbKomponenBangunanStdsDto,
+    ): Promise<{ data: AsbKomponenBangunanStd[]; total: number }> {
         const where: any = {};
 
         if (pagination.id_asb_jenis !== undefined) {
@@ -66,7 +72,7 @@ export class AsbKomponenBangunanStdRepositoryImpl implements AsbKomponenBangunan
 
         const findOptions: any = {
             where: Object.keys(where).length > 0 ? where : undefined,
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (pagination.page !== undefined && pagination.amount !== undefined) {

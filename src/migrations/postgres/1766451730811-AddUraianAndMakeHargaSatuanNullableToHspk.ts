@@ -37,6 +37,3 @@ export class AddUraianAndMakeHargaSatuanNullableToHspk1766451730811 implements M
         `);
     }
 }
-
-
-

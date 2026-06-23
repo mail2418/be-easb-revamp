@@ -15,7 +15,7 @@ import { KabKotasPaginationResult } from '../../presentation/kabkota/dto/kabkota
 export class KabKotaServiceImpl implements KabKotaService {
     constructor(
         private readonly kabKotaRepository: KabKotaRepository,
-        private readonly provinceService: ProvinceService
+        private readonly provinceService: ProvinceService,
     ) {}
 
     async create(kabkota: CreateKabKotaDto): Promise<KabKota> {
@@ -67,7 +67,7 @@ export class KabKotaServiceImpl implements KabKotaService {
         };
 
         // Remove undefined values
-        Object.keys(updateData).forEach(key => {
+        Object.keys(updateData).forEach((key) => {
             if (updateData[key as keyof typeof updateData] === undefined) {
                 delete updateData[key as keyof typeof updateData];
             }
@@ -95,7 +95,7 @@ export class KabKotaServiceImpl implements KabKotaService {
             total: result.total,
             page: pagination.page ?? 1,
             amount: pagination.amount ?? result.total,
-            totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1
+            totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1,
         };
     }
 
@@ -119,17 +119,20 @@ export class KabKotaServiceImpl implements KabKotaService {
         return await this.kabKotaRepository.findByProvinceId(provinceId);
     }
 
-    async getKabKotasByProvince(provinceId: number, pagination?: GetKabKotasDto): Promise<KabKotasPaginationResult> {
+    async getKabKotasByProvince(
+        provinceId: number,
+        pagination?: GetKabKotasDto,
+    ): Promise<KabKotasPaginationResult> {
         // Get all kabkotas for the province
         const kabkotas = await this.kabKotaRepository.findByProvinceId(provinceId);
-        
+
         if (!pagination || pagination.page === undefined || pagination.amount === undefined) {
             return {
                 kabkotas,
                 total: kabkotas.length,
                 page: 1,
                 amount: kabkotas.length,
-                totalPages: 1
+                totalPages: 1,
             };
         }
 
@@ -143,7 +146,7 @@ export class KabKotaServiceImpl implements KabKotaService {
             total: kabkotas.length,
             page: pagination.page,
             amount: pagination.amount,
-            totalPages: Math.ceil(kabkotas.length / pagination.amount)
+            totalPages: Math.ceil(kabkotas.length / pagination.amount),
         };
     }
 }

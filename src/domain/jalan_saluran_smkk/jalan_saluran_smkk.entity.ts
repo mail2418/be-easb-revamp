@@ -6,4 +6,3 @@ export class JalanSaluranSmkk {
     uraian!: string;
     pengali!: number;
 }
-

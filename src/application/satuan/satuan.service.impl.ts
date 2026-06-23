@@ -45,7 +45,7 @@ export class SatuanServiceImpl implements SatuanService {
         };
 
         // Remove undefined values
-        Object.keys(updateData).forEach(key => {
+        Object.keys(updateData).forEach((key) => {
             if (updateData[key as keyof typeof updateData] === undefined) {
                 delete updateData[key as keyof typeof updateData];
             }
@@ -69,13 +69,17 @@ export class SatuanServiceImpl implements SatuanService {
     async getSatuans(pagination: GetSatuansDto): Promise<SatuansPaginationResult> {
         const page = pagination.page ?? 1;
         const amount = pagination.amount ?? 10;
-        const result = await this.satuanRepository.findAll({ page, amount, search: pagination.search });
+        const result = await this.satuanRepository.findAll({
+            page,
+            amount,
+            search: pagination.search,
+        });
         return {
             satuans: result.data,
             total: result.total,
             page,
             amount,
-            totalPages: Math.ceil(result.total / amount)
+            totalPages: Math.ceil(result.total / amount),
         };
     }
 

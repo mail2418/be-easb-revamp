@@ -13,10 +13,7 @@ import { ParseExcelDataUseCase } from '../../application/hspk/use_cases/parse_ex
 import { GenerateExcelTemplateUseCase } from '../../application/hspk/use_cases/generate_excel_template.use_case';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([HspkOrmEntity]),
-        JalanSaluranRuangLingkupModule,
-    ],
+    imports: [TypeOrmModule.forFeature([HspkOrmEntity]), JalanSaluranRuangLingkupModule],
     providers: [
         {
             provide: HspkRepository,
@@ -34,5 +31,4 @@ import { GenerateExcelTemplateUseCase } from '../../application/hspk/use_cases/g
     controllers: [HspkController],
     exports: [HspkRepository, HspkService],
 })
-export class HspkModule { }
-
+export class HspkModule {}

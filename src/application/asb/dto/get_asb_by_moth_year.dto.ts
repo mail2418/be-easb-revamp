@@ -1,5 +1,5 @@
-import { IsNumber, IsNotEmpty, Min, Max } from "class-validator";
-import { Transform } from "class-transformer";
+import { IsNumber, IsNotEmpty, Min, Max } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class GetAsbByMonthYearDto {
     @IsNumber()

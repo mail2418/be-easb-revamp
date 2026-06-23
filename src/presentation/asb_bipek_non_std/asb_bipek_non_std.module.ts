@@ -30,8 +30,8 @@ import { AsbBipekNonStdController } from './asb_bipek_non_std.controller';
             provide: AsbBipekNonStdService,
             useClass: AsbBipekNonStdServiceImpl,
         },
-        CalculateBobotBPNSUseCase
+        CalculateBobotBPNSUseCase,
     ],
     exports: [AsbBipekNonStdService],
 })
-export class AsbBipekNonStdModule { }
+export class AsbBipekNonStdModule {}

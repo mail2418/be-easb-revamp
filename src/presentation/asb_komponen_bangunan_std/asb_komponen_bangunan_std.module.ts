@@ -11,7 +11,10 @@ import { AsbJenisModule } from '../asb_jenis/asb_jenis.module';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AsbKomponenBangunanStdOrmEntity, AsbKomponenBangunanProsStdOrmEntity]),
+        TypeOrmModule.forFeature([
+            AsbKomponenBangunanStdOrmEntity,
+            AsbKomponenBangunanProsStdOrmEntity,
+        ]),
         AsbJenisModule,
     ],
     controllers: [AsbKomponenBangunanController],
@@ -25,9 +28,6 @@ import { AsbJenisModule } from '../asb_jenis/asb_jenis.module';
             useClass: AsbKomponenBangunanStdRepositoryImpl,
         },
     ],
-    exports: [
-        AsbKomponenBangunanStdService,
-        AsbKomponenBangunanStdRepository,
-    ],
+    exports: [AsbKomponenBangunanStdService, AsbKomponenBangunanStdRepository],
 })
-export class AsbKomponenBangunanStdModule { }
+export class AsbKomponenBangunanStdModule {}

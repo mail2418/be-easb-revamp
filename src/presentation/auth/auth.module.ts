@@ -31,7 +31,7 @@ import { OpdModule } from '../opd/opd.module';
             },
         }),
         TypeOrmModule.forFeature([UserOrmEntity]),
-        OpdModule
+        OpdModule,
     ],
     controllers: [AuthController],
     providers: [
@@ -44,4 +44,4 @@ import { OpdModule } from '../opd/opd.module';
     ],
     exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

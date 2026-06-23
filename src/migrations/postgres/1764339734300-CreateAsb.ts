@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAsb1764339734300 implements MigrationInterface {
-    name = 'CreateAsb1764339734300'
+    name = 'CreateAsb1764339734300';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create table
@@ -38,11 +38,17 @@ export class CreateAsb1764339734300 implements MigrationInterface {
         await queryRunner.query(`CREATE INDEX "idx_asb_asb_jenis" ON "asb" ("id_asb_jenis")`);
         await queryRunner.query(`CREATE INDEX "idx_asb_asb_status" ON "asb" ("id_asb_status")`);
         await queryRunner.query(`CREATE INDEX "idx_asb_opds" ON "asb" ("id_opd")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_tipe_bangunan" ON "asb" ("id_asb_tipe_bangunan")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_tipe_bangunan" ON "asb" ("id_asb_tipe_bangunan")`,
+        );
         await queryRunner.query(`CREATE INDEX "idx_asb_rekenings" ON "asb" ("id_rekening")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_rekening_reviews" ON "asb" ("id_rekening_review")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_rekening_reviews" ON "asb" ("id_rekening_review")`,
+        );
         await queryRunner.query(`CREATE INDEX "idx_asb_kabkotas" ON "asb" ("id_kabkota")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_klasifikasi" ON "asb" ("id_asb_klasifikasi")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_klasifikasi" ON "asb" ("id_asb_klasifikasi")`,
+        );
         await queryRunner.query(`CREATE INDEX "idx_asb_deleted_at" ON "asb" ("deleted_at")`);
 
         // Add foreign keys - Required (CASCADE)
@@ -138,9 +144,13 @@ export class CreateAsb1764339734300 implements MigrationInterface {
         // Drop foreign keys
         await queryRunner.query(`ALTER TABLE "asb" DROP CONSTRAINT IF EXISTS "fk_asb_klasifikasi"`);
         await queryRunner.query(`ALTER TABLE "asb" DROP CONSTRAINT IF EXISTS "fk_asb_kabkotas"`);
-        await queryRunner.query(`ALTER TABLE "asb" DROP CONSTRAINT IF EXISTS "fk_asb_rekening_reviews"`);
+        await queryRunner.query(
+            `ALTER TABLE "asb" DROP CONSTRAINT IF EXISTS "fk_asb_rekening_reviews"`,
+        );
         await queryRunner.query(`ALTER TABLE "asb" DROP CONSTRAINT IF EXISTS "fk_asb_rekenings"`);
-        await queryRunner.query(`ALTER TABLE "asb" DROP CONSTRAINT IF EXISTS "fk_asb_tipe_bangunan"`);
+        await queryRunner.query(
+            `ALTER TABLE "asb" DROP CONSTRAINT IF EXISTS "fk_asb_tipe_bangunan"`,
+        );
         await queryRunner.query(`ALTER TABLE "asb" DROP CONSTRAINT IF EXISTS "fk_asb_opds"`);
         await queryRunner.query(`ALTER TABLE "asb" DROP CONSTRAINT IF EXISTS "fk_asb_asb_status"`);
         await queryRunner.query(`ALTER TABLE "asb" DROP CONSTRAINT IF EXISTS "fk_asb_asb_jenis"`);

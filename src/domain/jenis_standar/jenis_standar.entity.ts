@@ -1,4 +1,4 @@
 export class JenisStandar {
-  id!: number;
-  jenis!: string;
+    id!: number;
+    jenis!: string;
 }

@@ -24,7 +24,7 @@ import { Role } from '../../domain/user/user_role.enum';
 @Controller('asb-fungsi-ruangs')
 @Roles(Role.SUPERADMIN)
 export class AsbFungsiRuangController {
-    constructor(private readonly asbFungsiRuangService: AsbFungsiRuangService) { }
+    constructor(private readonly asbFungsiRuangService: AsbFungsiRuangService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)

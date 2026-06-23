@@ -1,11 +1,11 @@
-import { Role } from "./user_role.enum";
+import { Role } from './user_role.enum';
 
 export class User {
-  id!: number;
-  username!: string;
-  passwordHash?: string; // jangan expose keluar layer
-  roles!: Role[];
-  refreshTokenVersion!: number;
-  failedLoginAttempts!: number;
-  lockedUntil!: Date | null;
+    id!: number;
+    username!: string;
+    passwordHash?: string; // jangan expose keluar layer
+    roles!: Role[];
+    refreshTokenVersion!: number;
+    failedLoginAttempts!: number;
+    lockedUntil!: Date | null;
 }

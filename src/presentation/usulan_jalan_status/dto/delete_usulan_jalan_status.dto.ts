@@ -1,5 +1,5 @@
-import { IsNumber, IsNotEmpty } from "class-validator";
-import { Transform } from "class-transformer";
+import { IsNumber, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class DeleteUsulanJalanStatusDto {
     @IsNumber()
@@ -7,4 +7,3 @@ export class DeleteUsulanJalanStatusDto {
     @Transform(({ value }) => parseInt(value, 10))
     id!: number;
 }
-

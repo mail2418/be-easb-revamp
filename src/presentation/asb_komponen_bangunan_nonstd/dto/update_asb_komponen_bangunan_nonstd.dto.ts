@@ -19,11 +19,11 @@ export class UpdateAsbKomponenBangunanNonstdDto {
 
     @IsNumber()
     @IsOptional()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     idAsbJenis?: number;
 
     @IsNumber()
     @IsOptional()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     idAsbTipeBangunan?: number;
 }

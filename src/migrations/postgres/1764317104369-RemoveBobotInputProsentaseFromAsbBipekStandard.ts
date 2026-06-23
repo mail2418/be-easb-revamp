@@ -1,7 +1,9 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class RemoveBobotInputProsentaseFromAsbBipekStandard1764317104369 implements MigrationInterface {
-    name = 'RemoveBobotInputProsentaseFromAsbBipekStandard1764317104369'
+export class RemoveBobotInputProsentaseFromAsbBipekStandard1764317104369
+    implements MigrationInterface
+{
+    name = 'RemoveBobotInputProsentaseFromAsbBipekStandard1764317104369';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Drop column bobot_input_prosentase from asb_bipek_standards

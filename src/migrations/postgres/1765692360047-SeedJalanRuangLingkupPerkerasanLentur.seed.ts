@@ -44,4 +44,3 @@ export class SeedJalanRuangLingkupPerkerasanLentur1765692360047 implements Migra
         );
     }
 }
-

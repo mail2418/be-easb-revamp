@@ -40,10 +40,7 @@ export class AsbBpsGalleryStdOrmEntity {
     @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt: Date | null;
 
-    @ManyToOne(
-        () => AsbKomponenBangunanStdOrmEntity,
-        { onDelete: 'SET NULL', nullable: true },
-    )
+    @ManyToOne(() => AsbKomponenBangunanStdOrmEntity, { onDelete: 'SET NULL', nullable: true })
     @JoinColumn({ name: 'id_asb_komponen_bangunan_std' })
     komponenBangunan: AsbKomponenBangunanStdOrmEntity;
 

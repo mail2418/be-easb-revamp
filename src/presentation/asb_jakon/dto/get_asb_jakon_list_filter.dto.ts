@@ -1,5 +1,5 @@
-import { IsNumber, IsOptional } from "class-validator";
-import { AsbJakonType } from "src/domain/asb_jakon/asb_jakon_type.enum";
+import { IsNumber, IsOptional } from 'class-validator';
+import { AsbJakonType } from 'src/domain/asb_jakon/asb_jakon_type.enum';
 
 export class GetAsbJakonListFilterDto {
     @IsNumber()

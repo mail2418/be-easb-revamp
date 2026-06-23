@@ -40,9 +40,15 @@ export class UnifySpesifikasiSmkkTables1770400000001 implements MigrationInterfa
             DROP TRIGGER IF EXISTS set_saluran_spesifikasi_smkk_updated_at ON "saluran_spesifikasi_smkk";
         `);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_jalan_saluran_smkk";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_usulan_saluran";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_jenis_usulan";`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_jalan_saluran_smkk";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_usulan_saluran";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_jenis_usulan";`,
+        );
         await queryRunner.query(`
             ALTER TABLE "saluran_spesifikasi_smkk" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_smkk_jalan_saluran_smkk";
         `);
@@ -89,10 +95,18 @@ export class UnifySpesifikasiSmkkTables1770400000001 implements MigrationInterfa
         await queryRunner.query(`
             DROP TRIGGER IF EXISTS set_saluran_spesifikasi_smkk_review_updated_at ON "saluran_spesifikasi_smkk_review";
         `);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_review_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_review_jalan_saluran_smkk";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_review_usulan_saluran";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_review_jenis_usulan";`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_review_deleted";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_review_jalan_saluran_smkk";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_review_usulan_saluran";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_smkk_review_jenis_usulan";`,
+        );
         await queryRunner.query(`
             ALTER TABLE "saluran_spesifikasi_smkk_review" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_smkk_review_jalan_saluran_smkk";
         `);

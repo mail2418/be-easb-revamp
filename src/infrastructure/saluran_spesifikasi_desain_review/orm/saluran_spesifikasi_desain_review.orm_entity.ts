@@ -1,7 +1,16 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { UsulanSaluranOrmEntity } from "../../usulan_saluran/orm/usulan_saluran.orm_entity";
-import { JalanSaluranRuangLingkupOrmEntity } from "../../jalan_saluran_ruang_lingkup/orm/jalan_saluran_ruang_lingkup.orm_entity";
-import { HspkOrmEntity } from "../../hspk/orm/hspk.orm_entity";
+import {
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
+import { UsulanSaluranOrmEntity } from '../../usulan_saluran/orm/usulan_saluran.orm_entity';
+import { JalanSaluranRuangLingkupOrmEntity } from '../../jalan_saluran_ruang_lingkup/orm/jalan_saluran_ruang_lingkup.orm_entity';
+import { HspkOrmEntity } from '../../hspk/orm/hspk.orm_entity';
 
 @Entity('saluran_spesifikasi_desain_review')
 export class SaluranSpesifikasiDesainReviewOrmEntity {
@@ -32,13 +41,13 @@ export class SaluranSpesifikasiDesainReviewOrmEntity {
     @Column({ name: 'keterangan_tambahan_review', type: 'text', nullable: true })
     keterangan_tambahan_review!: string | null;
 
-    @CreateDateColumn({ name: "created_at", type: "timestamp" })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt!: Date;
 
-    @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt!: Date;
 
-    @DeleteDateColumn({ name: "deleted_at", type: "timestamp", nullable: true })
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
     deletedAt?: Date;
 
     @ManyToOne(() => UsulanSaluranOrmEntity)

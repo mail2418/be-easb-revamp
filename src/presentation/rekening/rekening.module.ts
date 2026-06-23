@@ -8,23 +8,18 @@ import { RekeningService } from '../../domain/rekening/rekening.service';
 import { RekeningRepository } from '../../domain/rekening/rekening.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([RekeningOrmEntity]),
-  ],
-  controllers: [RekeningController],
-  providers: [
-    {
-      provide: RekeningService,
-      useClass: RekeningServiceImpl,
-    },
-    {
-      provide: RekeningRepository,
-      useClass: RekeningRepositoryImpl,
-    },
-  ],
-  exports: [
-    RekeningService,
-    RekeningRepository,
-  ],
+    imports: [TypeOrmModule.forFeature([RekeningOrmEntity])],
+    controllers: [RekeningController],
+    providers: [
+        {
+            provide: RekeningService,
+            useClass: RekeningServiceImpl,
+        },
+        {
+            provide: RekeningRepository,
+            useClass: RekeningRepositoryImpl,
+        },
+    ],
+    exports: [RekeningService, RekeningRepository],
 })
 export class RekeningModule {}

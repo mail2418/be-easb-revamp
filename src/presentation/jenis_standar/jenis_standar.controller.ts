@@ -9,21 +9,21 @@ import {
     HttpStatus,
     HttpException,
     Query,
-} from "@nestjs/common";
-import { JenisStandarService } from "../../domain/jenis_standar/jenis_standar.service";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { CreateJenisStandarDto } from "./dto/create_jenis_standar.dto";
-import { UpdateJenisStandarDto } from "./dto/update_jenis_standar.dto";
-import { DeleteJenisStandarDto } from "./dto/delete_jenis_standar.dto";
-import { GetJenisStandarDto } from "./dto/get_jenis_standar.dto";
-import { GetJenisStandarDetailDto } from "./dto/get_jenis_standar_detail.dto";
-import { ResponseDto } from "../../common/dto/response.dto";
-import { Role } from "../../domain/user/user_role.enum";
+} from '@nestjs/common';
+import { JenisStandarService } from '../../domain/jenis_standar/jenis_standar.service';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { CreateJenisStandarDto } from './dto/create_jenis_standar.dto';
+import { UpdateJenisStandarDto } from './dto/update_jenis_standar.dto';
+import { DeleteJenisStandarDto } from './dto/delete_jenis_standar.dto';
+import { GetJenisStandarDto } from './dto/get_jenis_standar.dto';
+import { GetJenisStandarDetailDto } from './dto/get_jenis_standar_detail.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
+import { Role } from '../../domain/user/user_role.enum';
 
-@Controller("jenis-standar")
+@Controller('jenis-standar')
 @Roles(Role.SUPERADMIN)
 export class JenisStandarController {
-    constructor(private readonly jenisStandarService: JenisStandarService) { }
+    constructor(private readonly jenisStandarService: JenisStandarService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)
@@ -32,9 +32,9 @@ export class JenisStandarController {
             const jenisStandar = await this.jenisStandarService.create(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.CREATED,
-                message: "JenisStandar created",
+                message: 'JenisStandar created',
                 data: jenisStandar,
             };
         } catch (error) {
@@ -44,19 +44,19 @@ export class JenisStandarController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -64,9 +64,9 @@ export class JenisStandarController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -79,9 +79,9 @@ export class JenisStandarController {
             const jenisStandar = await this.jenisStandarService.update(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JenisStandar updated",
+                message: 'JenisStandar updated',
                 data: jenisStandar,
             };
         } catch (error) {
@@ -91,19 +91,19 @@ export class JenisStandarController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -111,9 +111,9 @@ export class JenisStandarController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -126,9 +126,9 @@ export class JenisStandarController {
             const deleted = await this.jenisStandarService.delete(dto.id);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JenisStandar deleted",
+                message: 'JenisStandar deleted',
                 data: deleted,
             };
         } catch (error) {
@@ -138,19 +138,19 @@ export class JenisStandarController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -158,9 +158,9 @@ export class JenisStandarController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -173,9 +173,9 @@ export class JenisStandarController {
             const result = await this.jenisStandarService.findAll(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JenisStandars retrieved",
+                message: 'JenisStandars retrieved',
                 data: result,
             };
         } catch (error) {
@@ -185,19 +185,19 @@ export class JenisStandarController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -205,24 +205,24 @@ export class JenisStandarController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
     }
 
-    @Get("detail")
+    @Get('detail')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getJenisStandarDetail(@Query() dto: GetJenisStandarDetailDto): Promise<ResponseDto> {
         try {
             const jenisStandar = await this.jenisStandarService.findById(dto.id);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JenisStandar detail retrieved",
+                message: 'JenisStandar detail retrieved',
                 data: jenisStandar,
             };
         } catch (error) {
@@ -232,19 +232,19 @@ export class JenisStandarController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -252,9 +252,9 @@ export class JenisStandarController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }

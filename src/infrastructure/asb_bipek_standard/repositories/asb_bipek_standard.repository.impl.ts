@@ -73,10 +73,14 @@ export class AsbBipekStandardRepositoryImpl extends AsbBipekStandardRepository {
         return entity ? plainToInstance(AsbBipekStandard, entity) : null;
     }
 
-    async findByAsb(idAsb: number, page?: number, amount?: number): Promise<[AsbBipekStandard[], number]> {
+    async findByAsb(
+        idAsb: number,
+        page?: number,
+        amount?: number,
+    ): Promise<[AsbBipekStandard[], number]> {
         const queryOptions: any = {
             where: { idAsb },
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (page !== undefined && amount !== undefined) {

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAsbKlasifikasis1763916030120 implements MigrationInterface {
     name = 'CreateAsbKlasifikasis1763916030120';
@@ -39,7 +39,7 @@ export class CreateAsbKlasifikasis1763916030120 implements MigrationInterface {
             ALTER TABLE "asb_klasifikasi"
             ADD CONSTRAINT "UQ_asb_klasifikasi_klasifikasi_tipe"
             UNIQUE ("klasifikasi", "id_asb_tipe_bangunan");
-    `)
+    `);
 
         await queryRunner.query(`
             DO $$
@@ -54,8 +54,12 @@ export class CreateAsbKlasifikasis1763916030120 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_klasifikasi_updated_at ON "asb_klasifikasi";`);
-        await queryRunner.query(`ALTER TABLE "asb_klasifikasi" DROP CONSTRAINT "FK_asb_klasifikasi_tipe_bangunan";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_asb_klasifikasi_updated_at ON "asb_klasifikasi";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "asb_klasifikasi" DROP CONSTRAINT "FK_asb_klasifikasi_tipe_bangunan";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_klasifikasi_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_klasifikasi_tipe_bangunan_id";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_klasifikasi_klasifikasi";`);

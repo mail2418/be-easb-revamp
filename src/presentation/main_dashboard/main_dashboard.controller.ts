@@ -1,11 +1,4 @@
-import {
-    Controller,
-    Get,
-    Query,
-    HttpStatus,
-    UseGuards,
-    Req,
-} from '@nestjs/common';
+import { Controller, Get, Query, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { MainDashboardService } from '../../application/main_dashboard/main_dashboard.service';
 import { GetMainDashboardDto } from '../../application/main_dashboard/dto/get_main_dashboard.dto';
@@ -19,14 +12,11 @@ import { UserContext } from '../../common/types/user-context.type';
 @Controller('main-dashboard')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class MainDashboardController {
-    constructor(private readonly service: MainDashboardService) { }
+    constructor(private readonly service: MainDashboardService) {}
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async findAll(
-        @Query() dto: GetMainDashboardDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async findAll(@Query() dto: GetMainDashboardDto, @Req() req: Request): Promise<ResponseDto> {
         const user = req.user as UserContext;
         const result = await this.service.findAll(dto, user.idOpd, user.roles);
 
@@ -38,4 +28,3 @@ export class MainDashboardController {
         };
     }
 }
-

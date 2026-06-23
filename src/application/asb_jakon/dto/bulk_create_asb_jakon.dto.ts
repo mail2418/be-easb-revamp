@@ -14,4 +14,3 @@ export interface BulkCreateAsbJakonDto {
     satuan: string;
     standard: number;
 }
-

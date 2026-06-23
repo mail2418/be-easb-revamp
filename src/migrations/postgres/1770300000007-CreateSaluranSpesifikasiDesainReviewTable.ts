@@ -81,14 +81,30 @@ export class CreateSaluranSpesifikasiDesainReviewTable1770300000007 implements M
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_saluran_spesifikasi_desain_review_updated_at ON "saluran_spesifikasi_desain_review";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_review_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_review_hspk";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_review_ruang_lingkup";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_review_usulan_saluran";`);
-        await queryRunner.query(`ALTER TABLE "saluran_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_review_hspk";`);
-        await queryRunner.query(`ALTER TABLE "saluran_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_review_ruang_lingkup";`);
-        await queryRunner.query(`ALTER TABLE "saluran_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_review_usulan_saluran";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_saluran_spesifikasi_desain_review_updated_at ON "saluran_spesifikasi_desain_review";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_review_deleted";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_review_hspk";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_review_ruang_lingkup";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_review_usulan_saluran";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "saluran_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_review_hspk";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "saluran_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_review_ruang_lingkup";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "saluran_spesifikasi_desain_review" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_review_usulan_saluran";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "saluran_spesifikasi_desain_review";`);
     }
 }

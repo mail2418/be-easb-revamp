@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAsbBipekStandardReview1764321020213 implements MigrationInterface {
-    name = 'CreateAsbBipekStandardReview1764321020213'
+    name = 'CreateAsbBipekStandardReview1764321020213';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create table
@@ -25,11 +25,21 @@ export class CreateAsbBipekStandardReview1764321020213 implements MigrationInter
         `);
 
         // Create indexes
-        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_files" ON "asb_bipek_standard_reviews" ("files")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_bipek_standard" ON "asb_bipek_standard_reviews" ("id_asb_bipek_standard")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_komponen_bangunan_std" ON "asb_bipek_standard_reviews" ("id_asb_komponen_bangunan_std")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_calculation_method" ON "asb_bipek_standard_reviews" ("calculation_method")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_deleted_at" ON "asb_bipek_standard_reviews" ("deleted_at")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_bipek_standard_reviews_files" ON "asb_bipek_standard_reviews" ("files")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_bipek_standard_reviews_bipek_standard" ON "asb_bipek_standard_reviews" ("id_asb_bipek_standard")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_bipek_standard_reviews_komponen_bangunan_std" ON "asb_bipek_standard_reviews" ("id_asb_komponen_bangunan_std")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_bipek_standard_reviews_calculation_method" ON "asb_bipek_standard_reviews" ("calculation_method")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_bipek_standard_reviews_deleted_at" ON "asb_bipek_standard_reviews" ("deleted_at")`,
+        );
 
         // Add foreign key to asb_bipek_standard
         await queryRunner.query(`
@@ -70,18 +80,32 @@ export class CreateAsbBipekStandardReview1764321020213 implements MigrationInter
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Drop trigger
-        await queryRunner.query(`DROP TRIGGER IF EXISTS trigger_set_asb_bipek_standard_reviews_updated_at ON "asb_bipek_standard_reviews"`);
-        await queryRunner.query(`DROP FUNCTION IF EXISTS set_asb_bipek_standard_reviews_updated_at`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS trigger_set_asb_bipek_standard_reviews_updated_at ON "asb_bipek_standard_reviews"`,
+        );
+        await queryRunner.query(
+            `DROP FUNCTION IF EXISTS set_asb_bipek_standard_reviews_updated_at`,
+        );
 
         // Drop foreign keys
-        await queryRunner.query(`ALTER TABLE "asb_bipek_standard_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_standard_reviews_komponen_bangunan_std"`);
-        await queryRunner.query(`ALTER TABLE "asb_bipek_standard_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_standard_reviews_bipek_standard"`);
+        await queryRunner.query(
+            `ALTER TABLE "asb_bipek_standard_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_standard_reviews_komponen_bangunan_std"`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "asb_bipek_standard_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_standard_reviews_bipek_standard"`,
+        );
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_deleted_at"`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_calculation_method"`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_komponen_bangunan_std"`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_bipek_standard"`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_calculation_method"`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_komponen_bangunan_std"`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_bipek_standard"`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_files"`);
 
         // Drop table

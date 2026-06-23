@@ -8,22 +8,21 @@ import { UserRepository } from '../../domain/user/user.repository';
 import { UserController } from './user.controller';
 import { UserProfileModule } from '../user_profile/user_profile.module';
 
-
 @Module({
-  imports: [TypeOrmModule.forFeature([UserOrmEntity]), forwardRef(() => UserProfileModule)],
-  controllers: [UserController],
-  providers: [
-    UserServiceImpl,
-    {
-        provide: UserService,
-        useExisting: UserServiceImpl,
-    },
-    UserRepositoryImpl,
-    {
-      provide: UserRepository,
-      useExisting: UserRepositoryImpl,
-    },
-  ],
-  exports: [UserService, UserRepository],
+    imports: [TypeOrmModule.forFeature([UserOrmEntity]), forwardRef(() => UserProfileModule)],
+    controllers: [UserController],
+    providers: [
+        UserServiceImpl,
+        {
+            provide: UserService,
+            useExisting: UserServiceImpl,
+        },
+        UserRepositoryImpl,
+        {
+            provide: UserRepository,
+            useExisting: UserRepositoryImpl,
+        },
+    ],
+    exports: [UserService, UserRepository],
 })
 export class UserModule {}

@@ -1,7 +1,4 @@
-import {
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ValidateFileUploadUseCase } from '../asb_bps_gallery_nonstd/use_cases/validate_file_upload.use_case';
 import { EnsureUploadDirectoryUseCase } from '../asb_bps_gallery_nonstd/use_cases/ensure_upload_directory.use_case';
 import { SaveFileUseCase } from '../asb_bps_gallery_nonstd/use_cases/save_file.use_case';
@@ -44,9 +41,7 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
     ): Promise<AsbBpsGalleryNonstd> {
         const existing = await this.repository.findById(id);
         if (!existing) {
-            throw new NotFoundException(
-                `AsbBpsGalleryNonstd with id ${id} not found`,
-            );
+            throw new NotFoundException(`AsbBpsGalleryNonstd with id ${id} not found`);
         }
 
         let filepath: string | undefined = undefined;
@@ -63,9 +58,7 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
     async delete(id: number): Promise<void> {
         const existing = await this.repository.findById(id);
         if (!existing) {
-            throw new NotFoundException(
-                `AsbBpsGalleryNonstd with id ${id} not found`,
-            );
+            throw new NotFoundException(`AsbBpsGalleryNonstd with id ${id} not found`);
         }
 
         this.deleteFile.execute(existing.filename);
@@ -75,9 +68,7 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
     async findById(id: number): Promise<AsbBpsGalleryNonstd> {
         const entity = await this.repository.findById(id);
         if (!entity) {
-            throw new NotFoundException(
-                `AsbBpsGalleryNonstd with id ${id} not found`,
-            );
+            throw new NotFoundException(`AsbBpsGalleryNonstd with id ${id} not found`);
         }
         return entity;
     }
@@ -87,11 +78,7 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
         amount: number,
         filters?: GetAsbBpsGalleryNonstdListFilterDto,
     ): Promise<{ data: AsbBpsGalleryNonstd[]; total: number }> {
-        const [data, total] = await this.repository.findAll(
-            page,
-            amount,
-            filters,
-        );
+        const [data, total] = await this.repository.findAll(page, amount, filters);
         return { data, total };
     }
 
@@ -99,7 +86,13 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
         return await this.repository.findByKomponenBangunanNonstdId(id);
     }
 
-    async getByAsb(dto: GetAsbBpsGalleryNonstdByAsbDto): Promise<{ data: AsbBpsGalleryNonstd[], total: number, page: number, amount: number, totalPages: number }> {
+    async getByAsb(dto: GetAsbBpsGalleryNonstdByAsbDto): Promise<{
+        data: AsbBpsGalleryNonstd[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }> {
         const page = dto.page ?? 1;
         const amount = dto.amount ?? 10;
         const [data, total] = await this.repository.findByAsb(dto.idAsb, page, amount);
@@ -108,7 +101,7 @@ export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
             total,
             page,
             amount,
-            totalPages: Math.ceil(total / amount)
+            totalPages: Math.ceil(total / amount),
         };
     }
 }

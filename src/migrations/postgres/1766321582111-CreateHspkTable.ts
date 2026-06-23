@@ -62,8 +62,9 @@ export class CreateHspkTable1766321582111 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_hspk_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_hspk_no_mata_pembayaran";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_hspk_ruang_lingkup";`);
-        await queryRunner.query(`ALTER TABLE "hspk" DROP CONSTRAINT IF EXISTS "fk_hspk_jalan_saluran_ruang_lingkup";`);
+        await queryRunner.query(
+            `ALTER TABLE "hspk" DROP CONSTRAINT IF EXISTS "fk_hspk_jalan_saluran_ruang_lingkup";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "hspk";`);
     }
 }
-

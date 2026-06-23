@@ -4,10 +4,7 @@ import { UpdateAsbBpsGalleryStdDto } from '../../presentation/asb_bps_gallery_st
 import { GetAsbBpsGalleryStdListFilterDto } from '../../presentation/asb_bps_gallery_std/dto/get_asb_bps_gallery_std_list_filter.dto';
 
 export abstract class AsbBpsGalleryStdRepository {
-    abstract create(
-        dto: CreateAsbBpsGalleryStdDto,
-        filename: string,
-    ): Promise<AsbBpsGalleryStd>;
+    abstract create(dto: CreateAsbBpsGalleryStdDto, filename: string): Promise<AsbBpsGalleryStd>;
     abstract update(
         id: number,
         dto: UpdateAsbBpsGalleryStdDto,
@@ -21,5 +18,9 @@ export abstract class AsbBpsGalleryStdRepository {
         filters?: GetAsbBpsGalleryStdListFilterDto,
     ): Promise<[AsbBpsGalleryStd[], number]>;
     abstract findByKomponenBangunanStdId(id: number): Promise<AsbBpsGalleryStd[]>;
-    abstract findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBpsGalleryStd[], number]>;
+    abstract findByAsb(
+        idAsb: number,
+        page: number,
+        amount: number,
+    ): Promise<[AsbBpsGalleryStd[], number]>;
 }

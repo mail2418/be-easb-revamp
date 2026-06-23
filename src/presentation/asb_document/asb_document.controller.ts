@@ -25,7 +25,7 @@ import { ResponseDto } from '../../common/dto/response.dto';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.SUPERADMIN, Role.ADMIN, Role.OPD, Role.VERIFIKATOR)
 export class AsbDocumentController {
-    constructor(private readonly service: AsbDocumentService) { }
+    constructor(private readonly service: AsbDocumentService) {}
 
     @Get('by-asb')
     async getByAsb(
@@ -47,10 +47,7 @@ export class AsbDocumentController {
     }
 
     @Get('by-spec')
-    async findBySpec(
-        @Query('spec') spec: DocumentSpec,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async findBySpec(@Query('spec') spec: DocumentSpec, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.service.findBySpec(spec, user.idOpd, user.roles[0]);
@@ -107,9 +104,10 @@ export class AsbDocumentController {
 
             res.set({
                 'Content-Type': 'application/pdf',
-                'Content-Disposition': dto.view === 'true'
-                    ? `inline; filename="${filename}"`
-                    : `attachment; filename="${filename}"`,
+                'Content-Disposition':
+                    dto.view === 'true'
+                        ? `inline; filename="${filename}"`
+                        : `attachment; filename="${filename}"`,
             });
 
             return new StreamableFile(buffer);
@@ -135,9 +133,10 @@ export class AsbDocumentController {
 
             res.set({
                 'Content-Type': 'application/pdf',
-                'Content-Disposition': dto.view === 'true'
-                    ? `inline; filename="${filename}"`
-                    : `attachment; filename="${filename}"`,
+                'Content-Disposition':
+                    dto.view === 'true'
+                        ? `inline; filename="${filename}"`
+                        : `attachment; filename="${filename}"`,
             });
 
             return new StreamableFile(buffer);
@@ -160,15 +159,9 @@ export class AsbDocumentController {
         }
 
         if (error.code === '23503') {
-            throw new HttpException(
-                'Foreign key constraint violation',
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new HttpException('Foreign key constraint violation', HttpStatus.BAD_REQUEST);
         }
 
-        throw new HttpException(
-            'Internal server error',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

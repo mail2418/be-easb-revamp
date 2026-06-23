@@ -18,7 +18,11 @@ export class UserProfileRepositoryImpl implements UserProfileRepository {
         return entity ? plainToInstance(UserProfile, entity) : null;
     }
 
-    async create(data: { idUser: number; nama: string; nip?: string | null }): Promise<UserProfile> {
+    async create(data: {
+        idUser: number;
+        nama: string;
+        nip?: string | null;
+    }): Promise<UserProfile> {
         const entity = this.repo.create(data);
         const saved = await this.repo.save(entity);
         return plainToInstance(UserProfile, saved);

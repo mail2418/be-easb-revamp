@@ -1,7 +1,9 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddSuratPermohonanAndKertasKerjaToDocumentSpec1764955227944 implements MigrationInterface {
-    name = 'AddSuratPermohonanAndKertasKerjaToDocumentSpec1764955227944'
+export class AddSuratPermohonanAndKertasKerjaToDocumentSpec1764955227944
+    implements MigrationInterface
+{
+    name = 'AddSuratPermohonanAndKertasKerjaToDocumentSpec1764955227944';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Add new enum values to document_spec_enum
@@ -14,6 +16,5 @@ export class AddSuratPermohonanAndKertasKerjaToDocumentSpec1764955227944 impleme
         `);
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-    }
+    public async down(queryRunner: QueryRunner): Promise<void> {}
 }

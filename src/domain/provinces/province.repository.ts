@@ -8,5 +8,5 @@ export abstract class ProvinceRepository {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<Province | null>;
     abstract findByKode(kode: string): Promise<Province | null>;
-    abstract findAll(pagination: GetProvincesDto): Promise<{ data: Province[], total: number }>;
+    abstract findAll(pagination: GetProvincesDto): Promise<{ data: Province[]; total: number }>;
 }

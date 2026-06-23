@@ -20,8 +20,12 @@ export class CreateJalanSpesifikasiDesainLentur1770087536002 implements Migratio
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP INDEX \`idx_jalan_spesifikasi_desain_lentur_deleted\` ON \`jalan_spesifikasi_desain_lentur\``);
-        await queryRunner.query(`DROP INDEX \`idx_jalan_spesifikasi_desain_lentur_spec\` ON \`jalan_spesifikasi_desain_lentur\``);
+        await queryRunner.query(
+            `DROP INDEX \`idx_jalan_spesifikasi_desain_lentur_deleted\` ON \`jalan_spesifikasi_desain_lentur\``,
+        );
+        await queryRunner.query(
+            `DROP INDEX \`idx_jalan_spesifikasi_desain_lentur_spec\` ON \`jalan_spesifikasi_desain_lentur\``,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS \`jalan_spesifikasi_desain_lentur\``);
     }
 }

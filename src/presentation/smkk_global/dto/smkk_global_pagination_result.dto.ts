@@ -1,4 +1,4 @@
-import { SmkkGlobal } from "../../../domain/smkk_global/smkk_global.entity";
+import { SmkkGlobal } from '../../../domain/smkk_global/smkk_global.entity';
 
 export class SmkkGlobalPaginationResultDto {
     data!: SmkkGlobal[];
@@ -7,4 +7,3 @@ export class SmkkGlobalPaginationResultDto {
     limit!: number;
     totalPages!: number;
 }
-

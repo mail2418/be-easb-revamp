@@ -1,20 +1,22 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { SmkkGlobalService } from "../../domain/smkk_global/smkk_global.service";
-import { SmkkGlobalRepository } from "../../domain/smkk_global/smkk_global.repository";
-import { CreateSmkkGlobalDto } from "../../presentation/smkk_global/dto/create_smkk_global.dto";
-import { SmkkGlobal } from "../../domain/smkk_global/smkk_global.entity";
-import { UpdateSmkkGlobalDto } from "../../presentation/smkk_global/dto/update_smkk_global.dto";
-import { GetSmkkGlobalDto } from "../../presentation/smkk_global/dto/get_smkk_global.dto";
-import { SmkkGlobalPaginationResultDto } from "../../presentation/smkk_global/dto/smkk_global_pagination_result.dto";
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { SmkkGlobalService } from '../../domain/smkk_global/smkk_global.service';
+import { SmkkGlobalRepository } from '../../domain/smkk_global/smkk_global.repository';
+import { CreateSmkkGlobalDto } from '../../presentation/smkk_global/dto/create_smkk_global.dto';
+import { SmkkGlobal } from '../../domain/smkk_global/smkk_global.entity';
+import { UpdateSmkkGlobalDto } from '../../presentation/smkk_global/dto/update_smkk_global.dto';
+import { GetSmkkGlobalDto } from '../../presentation/smkk_global/dto/get_smkk_global.dto';
+import { SmkkGlobalPaginationResultDto } from '../../presentation/smkk_global/dto/smkk_global_pagination_result.dto';
 
 @Injectable()
 export class SmkkGlobalServiceImpl implements SmkkGlobalService {
-    constructor(private readonly repository: SmkkGlobalRepository) { }
+    constructor(private readonly repository: SmkkGlobalRepository) {}
 
     async create(dto: CreateSmkkGlobalDto): Promise<SmkkGlobal> {
         const existing = await this.repository.findByBulanAndTahun(dto.bulan, dto.tahun);
         if (existing) {
-            throw new ConflictException(`SmkkGlobal with bulan ${dto.bulan} and tahun ${dto.tahun} already exists`);
+            throw new ConflictException(
+                `SmkkGlobal with bulan ${dto.bulan} and tahun ${dto.tahun} already exists`,
+            );
         }
         return await this.repository.create(dto);
     }
@@ -25,12 +27,17 @@ export class SmkkGlobalServiceImpl implements SmkkGlobalService {
             throw new NotFoundException(`SmkkGlobal with ID ${dto.id} not found`);
         }
 
-        if ((dto.bulan && dto.bulan !== existing.bulan) || (dto.tahun && dto.tahun !== existing.tahun)) {
+        if (
+            (dto.bulan && dto.bulan !== existing.bulan) ||
+            (dto.tahun && dto.tahun !== existing.tahun)
+        ) {
             const targetBulan = dto.bulan ?? existing.bulan;
             const targetTahun = dto.tahun ?? existing.tahun;
             const duplicate = await this.repository.findByBulanAndTahun(targetBulan, targetTahun);
             if (duplicate) {
-                throw new ConflictException(`SmkkGlobal with bulan ${targetBulan} and tahun ${targetTahun} already exists`);
+                throw new ConflictException(
+                    `SmkkGlobal with bulan ${targetBulan} and tahun ${targetTahun} already exists`,
+                );
             }
         }
         return await this.repository.update(dto);
@@ -59,7 +66,7 @@ export class SmkkGlobalServiceImpl implements SmkkGlobalService {
             total,
             page: dto.page ?? 1,
             limit: dto.amount ?? total,
-            totalPages: dto.amount ? Math.ceil(total / dto.amount) : 1
+            totalPages: dto.amount ? Math.ceil(total / dto.amount) : 1,
         };
     }
 
@@ -72,4 +79,3 @@ export class SmkkGlobalServiceImpl implements SmkkGlobalService {
         return latest?.persentase_smkk || null;
     }
 }
-

@@ -14,4 +14,3 @@ export class DataRuangLingkupReviewDto {
     @Type(() => DataHspkReviewDto)
     data_hspk!: DataHspkReviewDto[];
 }
-

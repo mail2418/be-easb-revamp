@@ -7,10 +7,10 @@ import { GetOpdsDto } from '../../presentation/opd/dto/get_opds.dto';
 import { OpdsPaginationResultDto } from '../../presentation/opd/dto/opds_pagination_result.dto';
 
 export abstract class OpdService {
-  abstract createOpd(dto: CreateOpdDto): Promise<Opd>;
-  abstract updateOpd(dto: UpdateOpdDto): Promise<Opd>;
-  abstract deleteOpd(dto: DeleteOpdDto): Promise<boolean>;
-  abstract getOpdById(dto: GetOpdDetailDto): Promise<Opd | null>;
-  abstract getOpds(dto: GetOpdsDto): Promise<OpdsPaginationResultDto>;
-  abstract getOpdByUser(id_user: number): Promise<Opd | null>;
+    abstract createOpd(dto: CreateOpdDto): Promise<Opd>;
+    abstract updateOpd(dto: UpdateOpdDto): Promise<Opd>;
+    abstract deleteOpd(dto: DeleteOpdDto): Promise<boolean>;
+    abstract getOpdById(dto: GetOpdDetailDto): Promise<Opd | null>;
+    abstract getOpds(dto: GetOpdsDto): Promise<OpdsPaginationResultDto>;
+    abstract getOpdByUser(id_user: number): Promise<Opd | null>;
 }

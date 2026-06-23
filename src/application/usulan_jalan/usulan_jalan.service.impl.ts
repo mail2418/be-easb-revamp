@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    ForbiddenException,
+    BadRequestException,
+} from '@nestjs/common';
 import { UsulanJalanService } from '../../domain/usulan_jalan/usulan_jalan.service';
 import { UsulanJalanRepository } from '../../domain/usulan_jalan/usulan_jalan.repository';
 import { VerifikatorService } from '../../domain/verifikator/verifikator.service';
@@ -48,15 +53,23 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         private readonly jalanSaluranSmkkService: JalanSaluranSmkkService,
         private readonly jalanSaluranSpesifikasiSmkkService: JalanSaluranSpesifikasiSmkkService,
         private readonly jalanSaluranSpesifikasiSmkkReviewService: JalanSaluranSpesifikasiSmkkReviewService,
-    ) { }
+    ) {}
 
-    async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanWithRelationsDto | null> {
+    async findById(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<UsulanJalanWithRelationsDto | null> {
         // OPD users can only see their own data
         const idOpd = userRoles.includes(Role.OPD) && userIdOpd !== null ? userIdOpd : undefined;
         return await this.repository.findById(id, idOpd);
     }
 
-    async findAll(dto: FindAllUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanListResultDto> {
+    async findAll(
+        dto: FindAllUsulanJalanDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<UsulanJalanListResultDto> {
         // OPD users can only see their own data
         const idOpd = userRoles.includes(Role.OPD) && userIdOpd !== null ? userIdOpd : undefined;
 
@@ -67,16 +80,20 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         const totalPages = amount > 0 ? Math.ceil(total / amount) : 0;
 
         return {
-        data,
-        page,
-        amount,
-        total,
-        totalPages,
+            data,
+            page,
+            amount,
+            total,
+            totalPages,
         };
     }
 
-    async createIndex(dto: CreateUsulanJalanStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
-            // Validate that user has idOpd (must be OPD user)
+    async createIndex(
+        dto: CreateUsulanJalanStoreIndexDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }> {
+        // Validate that user has idOpd (must be OPD user)
         if (!userIdOpd) {
             throw new ForbiddenException('User is not sync to an opd');
         }
@@ -91,7 +108,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         } else if (dto.idAsbJenis === 2) {
             // If idAsbJenis is 2 (Pemeliharaan), idJalanJenisPemeliharaan is required
             if (!dto.idJalanJenisPemeliharaan) {
-                throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)');
+                throw new BadRequestException(
+                    'idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)',
+                );
             }
             idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
         }
@@ -126,7 +145,11 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async updateIndex(dto: UpdateUsulanJalanStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async updateIndex(
+        dto: UpdateUsulanJalanStoreIndexDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }> {
         // Check permissions
         const isAdmin = userRoles.includes(Role.ADMIN);
         const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
@@ -147,7 +170,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
 
         if (!existingUsulanJalan) {
-            throw new NotFoundException(`Usulan Jalan with id ${dto.id} not found or access denied`);
+            throw new NotFoundException(
+                `Usulan Jalan with id ${dto.id} not found or access denied`,
+            );
         }
 
         // Validate idJalanJenisPemeliharaan based on idAsbJenis
@@ -158,7 +183,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         } else if (dto.idAsbJenis === 2) {
             // If idAsbJenis is 2 (Pemeliharaan), idJalanJenisPemeliharaan is required
             if (!dto.idJalanJenisPemeliharaan) {
-                throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)');
+                throw new BadRequestException(
+                    'idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)',
+                );
             }
             idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
         }
@@ -196,7 +223,11 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async storeInformasi(dto: StoreInformasiUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async storeInformasi(
+        dto: StoreInformasiUsulanJalanDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }> {
         // Check permissions
         const isAdmin = userRoles.includes(Role.ADMIN);
         const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
@@ -222,24 +253,28 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
 
         if (!existingUsulanJalan) {
-            throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found or access denied`);
+            throw new NotFoundException(
+                `Usulan Jalan with id ${dto.idUsulanJalan} not found or access denied`,
+            );
         }
 
-            // Step 1: Always delete all JalanSpesifikasiDesain records for this Usulan Jalan to ensure clean state
+        // Step 1: Always delete all JalanSpesifikasiDesain records for this Usulan Jalan to ensure clean state
         await this.jalanSpesifikasiDesainService.deleteByUsulanJalanId(dto.idUsulanJalan);
         await this.jalanSaluranSpesifikasiSmkkService.deleteByUsulanJalanId(dto.idUsulanJalan);
 
-            // Validate that idJalanJenisPerkerasan is set (required for generating uraian)
+        // Validate that idJalanJenisPerkerasan is set (required for generating uraian)
         if (!existingUsulanJalan.idJalanJenisPerkerasan) {
-            throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in storeIndex first');
+            throw new BadRequestException(
+                'idJalanJenisPerkerasan is required and must be set in storeIndex first',
+            );
         }
 
         if (!existingUsulanJalan.jalanJenisPerkerasan) {
             throw new NotFoundException('JalanJenisPerkerasan relation not found');
         }
 
-            // Step 2: Create JalanSpesifikasiDesain records for each ruang lingkup and hspk
-            // Collect all tinggi values for MIN/MAX calculation and calculate total harga
+        // Step 2: Create JalanSpesifikasiDesain records for each ruang lingkup and hspk
+        // Collect all tinggi values for MIN/MAX calculation and calculate total harga
         const tinggiValues: number[] = [];
         let totalHarga = 0;
         for (const ruangLingkup of dto.data_ruang_lingkup) {
@@ -252,37 +287,46 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 createSpesifikasiDto.tinggi = hspk.tinggi;
 
                 // volume and harga_spec will be calculated in the service layer
-                const createdSpesifikasi = await this.jalanSpesifikasiDesainService.create(createSpesifikasiDto, dto.lebar);
+                const createdSpesifikasi = await this.jalanSpesifikasiDesainService.create(
+                    createSpesifikasiDto,
+                    dto.lebar,
+                );
                 tinggiValues.push(hspk.tinggi);
                 totalHarga += createdSpesifikasi.harga_spec;
             }
         }
-        
-            // Apply PPN if is_include_ppn is true
+
+        // Apply PPN if is_include_ppn is true
         if (existingUsulanJalan.isIncludePpn) {
             const persentasePpn = await this.ppnGlobalService.getLatestPersentasePPn();
             if (persentasePpn !== null) {
-                totalHarga = totalHarga * (100 + persentasePpn) / 100;
+                totalHarga = (totalHarga * (100 + persentasePpn)) / 100;
             }
         }
 
-            // Step 3: Generate uraian, spesifikasi, satuan, and deskripsiDesain automatically
+        // Step 3: Generate uraian, spesifikasi, satuan, and deskripsiDesain automatically
         const jenisPerkerasan = existingUsulanJalan.jalanJenisPerkerasan.jenis;
-        const uraian = await this.generateUraianUsulanJalanUseCase.execute(jenisPerkerasan, dto.lebar);
-        
-        const idJenisPerkerasan = existingUsulanJalan.idJalanJenisPerkerasan;
-        const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(tinggiValues, idJenisPerkerasan);
+        const uraian = await this.generateUraianUsulanJalanUseCase.execute(
+            jenisPerkerasan,
+            dto.lebar,
+        );
 
-            // Satuan is always "m^1"
+        const idJenisPerkerasan = existingUsulanJalan.idJalanJenisPerkerasan;
+        const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(
+            tinggiValues,
+            idJenisPerkerasan,
+        );
+
+        // Satuan is always "m^1"
         const satuan = 'm^1';
 
-            // deskripsiDesain is always empty string
+        // deskripsiDesain is always empty string
         const deskripsiDesain = '';
 
-            // Calculate biaya_smkk = totalHarga * latest SMKK Global persentase
+        // Calculate biaya_smkk = totalHarga * latest SMKK Global persentase
         const biayaSmkk = await this.calculateBiayaSmkkUseCase.execute(totalHarga);
 
-            // Step 4: Update Usulan Jalan with new information and status 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
+        // Step 4: Update Usulan Jalan with new information and status 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
         const updatedUsulanJalan = await this.repository.update(dto.idUsulanJalan, {
             uraian,
             spesifikasi,
@@ -295,61 +339,73 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             idUsulanJalanStatus: 2, // Input Ruang Lingkup dan Spesifikasi Jalan
         });
 
-            // Step 5: Create JalanSaluranSpesifikasiSmkk records if data_smkk is provided
-            if (dto.data_smkk && dto.data_smkk.length > 0) {
-                for (const smkk of dto.data_smkk) {
-                    // Get jalan_saluran_smkk to get pengali and id_jenis_usulan
-                    const komponenSmkk = await this.jalanSaluranSmkkService.findById(smkk.id_smkk);
-                    if (!komponenSmkk) {
-                        throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
-                    }
-
-                    if (!komponenSmkk.id_jenis_usulan) {
-                        throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no id_jenis_usulan`);
-                    }
-
-                    if (!komponenSmkk.pengali) {
-                        throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`);
-                    }
-
-                    // Validate jumlah from DTO
-                    if (!smkk.jumlah || smkk.jumlah <= 0) {
-                        throw new BadRequestException(`Jumlah must be provided and greater than 0 for SMKK with id ${smkk.id_smkk}`);
-                    }
-
-                    // Calculate harga_spec = biaya_smkk * komponen_smkk.pengali
-                    const hargaSpec = biayaSmkk! * komponenSmkk.pengali;
-
-                    console.log('hargaSpec', hargaSpec);
-
-                    // jumlah_barang is now taken from DTO
-                    const jumlahBarang = smkk.jumlah;
-
-                    console.log('jumlahBarang', jumlahBarang);
-
-                    // Calculate harga_satuan = harga_spec / jumlah_barang
-                    const hargaSatuan = hargaSpec / jumlahBarang;
-
-                    console.log('hargaSatuan', hargaSatuan);
-
-                    const createSpesifikasiSmkkDto: CreateJalanSaluranSpesifikasiSmkkDto = {
-                        id_jenis_usulan: komponenSmkk.id_jenis_usulan,
-                        id_usulan: dto.idUsulanJalan,
-                        id_jalan_saluran_smkk: smkk.id_smkk,
-                        harga_spec: hargaSpec,
-                        jumlah_barang: jumlahBarang,
-                        harga_satuan: hargaSatuan,
-                    };
-
-                    await this.jalanSaluranSpesifikasiSmkkService.create(createSpesifikasiSmkkDto);
+        // Step 5: Create JalanSaluranSpesifikasiSmkk records if data_smkk is provided
+        if (dto.data_smkk && dto.data_smkk.length > 0) {
+            for (const smkk of dto.data_smkk) {
+                // Get jalan_saluran_smkk to get pengali and id_jenis_usulan
+                const komponenSmkk = await this.jalanSaluranSmkkService.findById(smkk.id_smkk);
+                if (!komponenSmkk) {
+                    throw new NotFoundException(
+                        `JalanSaluranSmkk with id ${smkk.id_smkk} not found`,
+                    );
                 }
-            }
 
-        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
-            idAsbStatus: 2,
-            namaUsulan: updatedUsulanJalan.namaUsulan,
-            tahunAnggaran: updatedUsulanJalan.tahunAnggaran ?? null,
-        });
+                if (!komponenSmkk.id_jenis_usulan) {
+                    throw new NotFoundException(
+                        `JalanSaluranSmkk with id ${smkk.id_smkk} has no id_jenis_usulan`,
+                    );
+                }
+
+                if (!komponenSmkk.pengali) {
+                    throw new BadRequestException(
+                        `JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`,
+                    );
+                }
+
+                // Validate jumlah from DTO
+                if (!smkk.jumlah || smkk.jumlah <= 0) {
+                    throw new BadRequestException(
+                        `Jumlah must be provided and greater than 0 for SMKK with id ${smkk.id_smkk}`,
+                    );
+                }
+
+                // Calculate harga_spec = biaya_smkk * komponen_smkk.pengali
+                const hargaSpec = biayaSmkk! * komponenSmkk.pengali;
+
+                console.log('hargaSpec', hargaSpec);
+
+                // jumlah_barang is now taken from DTO
+                const jumlahBarang = smkk.jumlah;
+
+                console.log('jumlahBarang', jumlahBarang);
+
+                // Calculate harga_satuan = harga_spec / jumlah_barang
+                const hargaSatuan = hargaSpec / jumlahBarang;
+
+                console.log('hargaSatuan', hargaSatuan);
+
+                const createSpesifikasiSmkkDto: CreateJalanSaluranSpesifikasiSmkkDto = {
+                    id_jenis_usulan: komponenSmkk.id_jenis_usulan,
+                    id_usulan: dto.idUsulanJalan,
+                    id_jalan_saluran_smkk: smkk.id_smkk,
+                    harga_spec: hargaSpec,
+                    jumlah_barang: jumlahBarang,
+                    harga_satuan: hargaSatuan,
+                };
+
+                await this.jalanSaluranSpesifikasiSmkkService.create(createSpesifikasiSmkkDto);
+            }
+        }
+
+        await this.mainDashboardRepository.updateByUsulan(
+            dto.idUsulanJalan,
+            ID_JENIS_USULAN_JALAN,
+            {
+                idAsbStatus: 2,
+                namaUsulan: updatedUsulanJalan.namaUsulan,
+                tahunAnggaran: updatedUsulanJalan.tahunAnggaran ?? null,
+            },
+        );
 
         return {
             id: updatedUsulanJalan.id,
@@ -357,7 +413,11 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async updateUsulanJalan(dto: UpdateUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async updateUsulanJalan(
+        dto: UpdateUsulanJalanDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }> {
         // Check existence and permission
         const usulanJalan = await this.findById(dto.id, userIdOpd, userRoles);
         if (!usulanJalan) {
@@ -368,10 +428,13 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         const updateData: any = {};
 
         // idOpd is not allowed to be updated from request body, it comes from UserContext
-        if (dto.idUsulanJalanStatus !== undefined) updateData.idUsulanJalanStatus = dto.idUsulanJalanStatus;
+        if (dto.idUsulanJalanStatus !== undefined)
+            updateData.idUsulanJalanStatus = dto.idUsulanJalanStatus;
         if (dto.idAsbJenis !== undefined) updateData.idAsbJenis = dto.idAsbJenis;
-        if (dto.idJalanJenisPemeliharaan !== undefined) updateData.idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan ?? null;
-        if (dto.idJalanJenisPerkerasan !== undefined) updateData.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan ?? null;
+        if (dto.idJalanJenisPemeliharaan !== undefined)
+            updateData.idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan ?? null;
+        if (dto.idJalanJenisPerkerasan !== undefined)
+            updateData.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan ?? null;
         if (dto.idRekening !== undefined) updateData.idRekening = dto.idRekening;
         if (dto.idRekeningReview !== undefined) updateData.idRekeningReview = dto.idRekeningReview;
         if (dto.idKabkota !== undefined) updateData.idKabkota = dto.idKabkota ?? null;
@@ -394,11 +457,15 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async deleteUsulanJalan(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }> {
+    async deleteUsulanJalan(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number }> {
         // Check existence and permission
         const usulanJalan = await this.findById(id, userIdOpd, userRoles);
         if (!usulanJalan) {
-        throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
+            throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
 
         await this.repository.delete(id);
@@ -406,10 +473,17 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         return { id };
     }
 
-    async verifyIndex(dto: VerifyIndexUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyIndex(
+        dto: VerifyIndexUsulanJalanDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }> {
         // Check verificator type - only ADBANG
         if (userRoles.includes(Role.VERIFIKATOR)) {
-            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(
+                Number(userId),
+            );
             if (!verificatorType) {
                 throw new NotFoundException(`User not sync with verifikator`);
             }
@@ -427,7 +501,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
         // Check that status is 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
         if (usulanJalan.idUsulanJalanStatus !== 2) {
-            throw new BadRequestException(`Usulan Jalan must be in status 2 (Input Ruang Lingkup dan Spesifikasi Jalan) to verify index`);
+            throw new BadRequestException(
+                `Usulan Jalan must be in status 2 (Input Ruang Lingkup dan Spesifikasi Jalan) to verify index`,
+            );
         }
 
         // Validate idJalanJenisPemeliharaan based on idAsbJenis
@@ -438,7 +514,9 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         } else if (dto.idAsbJenis === 2) {
             // If idAsbJenis is 2 (Pemeliharaan), idJalanJenisPemeliharaan is required
             if (!dto.idJalanJenisPemeliharaan) {
-                throw new BadRequestException('idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)');
+                throw new BadRequestException(
+                    'idJalanJenisPemeliharaan is required when idAsbJenis is 2 (Pemeliharaan)',
+                );
             }
             idJalanJenisPemeliharaan = dto.idJalanJenisPemeliharaan;
         }
@@ -457,11 +535,15 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             idUsulanJalanStatus: 5, // Verifikasi Informasi Usulan Jalan
         });
 
-        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
-            idAsbStatus: 5,
-            namaUsulan: updated.namaUsulan,
-            tahunAnggaran: updated.tahunAnggaran ?? null,
-        });
+        await this.mainDashboardRepository.updateByUsulan(
+            dto.idUsulanJalan,
+            ID_JENIS_USULAN_JALAN,
+            {
+                idAsbStatus: 5,
+                namaUsulan: updated.namaUsulan,
+                tahunAnggaran: updated.tahunAnggaran ?? null,
+            },
+        );
 
         return {
             id: updated.id,
@@ -469,10 +551,17 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async verifyInformasi(dto: VerifyInformasiUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyInformasi(
+        dto: VerifyInformasiUsulanJalanDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }> {
         // Check verificator type - only ADBANG
         if (userRoles.includes(Role.VERIFIKATOR)) {
-            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(
+                Number(userId),
+            );
             if (!verificatorType) {
                 throw new NotFoundException(`User not sync with verifikator`);
             }
@@ -490,13 +579,17 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
         // Check that status is 5 (Verifikasi Informasi Usulan Jalan)
         if (usulanJalan.idUsulanJalanStatus !== 5) {
-            throw new BadRequestException(`Usulan Jalan must be in status 5 (Verifikasi Informasi Usulan Jalan) to verify informasi`);
+            throw new BadRequestException(
+                `Usulan Jalan must be in status 5 (Verifikasi Informasi Usulan Jalan) to verify informasi`,
+            );
         }
 
         await this.jalanSpesifikasiDesainReviewService.deleteByUsulanJalanId(dto.idUsulanJalan);
 
         if (!usulanJalan.idJalanJenisPerkerasan) {
-            throw new BadRequestException('idJalanJenisPerkerasan is required and must be set in verifyIndex first');
+            throw new BadRequestException(
+                'idJalanJenisPerkerasan is required and must be set in verifyIndex first',
+            );
         }
 
         if (!usulanJalan.jalanJenisPerkerasan) {
@@ -517,7 +610,10 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 createReviewDto.spasi_review = hspk.spasi_review;
                 createReviewDto.tinggi_review = hspk.tinggi_review;
 
-                const createdReview = await this.jalanSpesifikasiDesainReviewService.create(createReviewDto, lebarReview);
+                const createdReview = await this.jalanSpesifikasiDesainReviewService.create(
+                    createReviewDto,
+                    lebarReview,
+                );
                 tinggiReviewValues.push(hspk.tinggi_review);
                 totalHargaReview += createdReview.harga_spec_review;
             }
@@ -526,12 +622,18 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         if (usulanJalan.isIncludePpn) {
             const persentasePpn = await this.ppnGlobalService.getLatestPersentasePPn();
             if (persentasePpn !== null) {
-                totalHargaReview = totalHargaReview * (100 + persentasePpn) / 100;
+                totalHargaReview = (totalHargaReview * (100 + persentasePpn)) / 100;
             }
         }
 
-        const uraian = await this.generateUraianUsulanJalanUseCase.execute(jenisPerkerasan, lebarReview);
-        const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(tinggiReviewValues, idJalanJenisPerkerasanToUse);
+        const uraian = await this.generateUraianUsulanJalanUseCase.execute(
+            jenisPerkerasan,
+            lebarReview,
+        );
+        const spesifikasi = await this.generateSpesifikasiUsulanJalanUseCase.execute(
+            tinggiReviewValues,
+            idJalanJenisPerkerasanToUse,
+        );
         const satuan = 'm^1';
         const deskripsiDesain = '';
 
@@ -560,20 +662,28 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 // Get jalan_saluran_smkk to get pengali and id_jenis_usulan
                 const komponenSmkk = await this.jalanSaluranSmkkService.findById(smkk.id_smkk);
                 if (!komponenSmkk) {
-                    throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+                    throw new NotFoundException(
+                        `JalanSaluranSmkk with id ${smkk.id_smkk} not found`,
+                    );
                 }
 
                 if (!komponenSmkk.id_jenis_usulan) {
-                    throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no id_jenis_usulan`);
+                    throw new NotFoundException(
+                        `JalanSaluranSmkk with id ${smkk.id_smkk} has no id_jenis_usulan`,
+                    );
                 }
 
                 if (!komponenSmkk.pengali) {
-                    throw new BadRequestException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`);
+                    throw new BadRequestException(
+                        `JalanSaluranSmkk with id ${smkk.id_smkk} has no pengali`,
+                    );
                 }
 
                 // Validate jumlah from DTO
                 if (!smkk.jumlah || smkk.jumlah <= 0) {
-                    throw new BadRequestException(`Jumlah must be provided and greater than 0 for SMKK with id ${smkk.id_smkk}`);
+                    throw new BadRequestException(
+                        `Jumlah must be provided and greater than 0 for SMKK with id ${smkk.id_smkk}`,
+                    );
                 }
 
                 // Calculate harga_spec = biaya_smkk * komponen_smkk.pengali
@@ -594,15 +704,21 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                     harga_satuan: hargaSatuan,
                 };
 
-                await this.jalanSaluranSpesifikasiSmkkReviewService.create(createSpesifikasiSmkkReviewDto);
+                await this.jalanSaluranSpesifikasiSmkkReviewService.create(
+                    createSpesifikasiSmkkReviewDto,
+                );
             }
         }
 
-        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
-            idAsbStatus: 6,
-            namaUsulan: updated.namaUsulan,
-            tahunAnggaran: updated.tahunAnggaran ?? null,
-        });
+        await this.mainDashboardRepository.updateByUsulan(
+            dto.idUsulanJalan,
+            ID_JENIS_USULAN_JALAN,
+            {
+                idAsbStatus: 6,
+                namaUsulan: updated.namaUsulan,
+                tahunAnggaran: updated.tahunAnggaran ?? null,
+            },
+        );
 
         return {
             id: updated.id,
@@ -610,10 +726,17 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async verifyAdbang(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyAdbang(
+        id: number,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }> {
         // Check verificator type - only ADBANG
         if (userRoles.includes(Role.VERIFIKATOR)) {
-            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(
+                Number(userId),
+            );
             if (!verificatorType) {
                 throw new NotFoundException(`User not sync with verifikator`);
             }
@@ -623,18 +746,20 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             }
         }
 
-            // Check existence
+        // Check existence
         const usulanJalan = await this.findById(id, userIdOpd, userRoles);
         if (!usulanJalan) {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
 
-            // Check that status is 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)
+        // Check that status is 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan)
         if (usulanJalan.idUsulanJalanStatus !== 6) {
-            throw new BadRequestException(`Usulan Jalan must be in status 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan) to verify adbang`);
+            throw new BadRequestException(
+                `Usulan Jalan must be in status 6 (Verifikasi Ruang Lingkup dan Spesifikasi Jalan) to verify adbang`,
+            );
         }
 
-            // Update status to 7 (Verifikasi Adbang) and set verificator
+        // Update status to 7 (Verifikasi Adbang) and set verificator
         const updated = await this.repository.update(id, {
             idUsulanJalanStatus: 7,
             idVerifikatorAdbang: Number(userId),
@@ -653,10 +778,17 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async verifyBpkad(dto: VerifyBpkadUsulanJalanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyBpkad(
+        dto: VerifyBpkadUsulanJalanDto,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }> {
         // Check verificator type - only BPKAD
         if (userRoles.includes(Role.VERIFIKATOR)) {
-            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(
+                Number(userId),
+            );
             if (!verificatorType) {
                 throw new NotFoundException(`User not sync with verifikator`);
             }
@@ -666,38 +798,42 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             }
         }
 
-            // Check existence
+        // Check existence
         const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
         if (!usulanJalan) {
             throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
         }
 
-            // Check that status is 7 (Verifikasi Adbang)
+        // Check that status is 7 (Verifikasi Adbang)
         if (usulanJalan.idUsulanJalanStatus !== 7) {
             throw new BadRequestException(
-                `Usulan Jalan must be in status 7 (Verifikasi Adbang) before verifying BPKAD. Current status: ${usulanJalan.idUsulanJalanStatus}`
+                `Usulan Jalan must be in status 7 (Verifikasi Adbang) before verifying BPKAD. Current status: ${usulanJalan.idUsulanJalanStatus}`,
             );
         }
 
-            // Check that ADBANG verified first
+        // Check that ADBANG verified first
         if (!usulanJalan.idVerifikatorAdbang) {
             throw new ForbiddenException(`ADBANG must verify first`);
         }
 
-            // Re-read Usulan Jalan data before update to prevent race condition
-        const usulanJalanBeforeUpdate = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+        // Re-read Usulan Jalan data before update to prevent race condition
+        const usulanJalanBeforeUpdate = await this.findById(
+            dto.idUsulanJalan,
+            userIdOpd,
+            userRoles,
+        );
         if (!usulanJalanBeforeUpdate) {
             throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
         }
 
-            // Re-validate status before update (race condition protection)
+        // Re-validate status before update (race condition protection)
         if (usulanJalanBeforeUpdate.idUsulanJalanStatus !== 7) {
             throw new BadRequestException(
-                `Usulan Jalan status has changed. Expected status 7, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
+                `Usulan Jalan status has changed. Expected status 7, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`,
             );
         }
 
-            // Prepare update data
+        // Prepare update data
         const updateData: any = {
             idUsulanJalanStatus: 8, // Verifikasi Bpkad
             idVerifikatorBpkad: Number(userId),
@@ -705,14 +841,18 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             idRekeningReview: dto.idRekeningReview,
         };
 
-            // Update status to 8 (Verifikasi Bpkad), set verificator, and update rekening review
+        // Update status to 8 (Verifikasi Bpkad), set verificator, and update rekening review
         const updated = await this.repository.update(dto.idUsulanJalan, updateData);
 
-        await this.mainDashboardRepository.updateByUsulan(dto.idUsulanJalan, ID_JENIS_USULAN_JALAN, {
-            idAsbStatus: 8,
-            namaUsulan: updated.namaUsulan,
-            tahunAnggaran: updated.tahunAnggaran ?? null,
-        });
+        await this.mainDashboardRepository.updateByUsulan(
+            dto.idUsulanJalan,
+            ID_JENIS_USULAN_JALAN,
+            {
+                idAsbStatus: 8,
+                namaUsulan: updated.namaUsulan,
+                tahunAnggaran: updated.tahunAnggaran ?? null,
+            },
+        );
 
         return {
             id: updated.id,
@@ -720,10 +860,17 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async verifyBappeda(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyBappeda(
+        id: number,
+        userId: string | null,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }> {
         // Check verificator type - only BAPPEDA
         if (userRoles.includes(Role.VERIFIKATOR)) {
-            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(
+                Number(userId),
+            );
             if (!verificatorType) {
                 throw new NotFoundException(`User not sync with verifikator`);
             }
@@ -733,38 +880,38 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             }
         }
 
-            // Check existence
+        // Check existence
         const usulanJalan = await this.findById(id, userIdOpd, userRoles);
         if (!usulanJalan) {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
 
-            // Check that status is 8 (Verifikasi Bpkad)
+        // Check that status is 8 (Verifikasi Bpkad)
         if (usulanJalan.idUsulanJalanStatus !== 8) {
             throw new BadRequestException(
-                `Usulan Jalan must be in status 8 (Verifikasi Bpkad) before verifying BAPPEDA. Current status: ${usulanJalan.idUsulanJalanStatus}`
+                `Usulan Jalan must be in status 8 (Verifikasi Bpkad) before verifying BAPPEDA. Current status: ${usulanJalan.idUsulanJalanStatus}`,
             );
         }
 
-            // Check that ADBANG and BPKAD verified first
+        // Check that ADBANG and BPKAD verified first
         if (!usulanJalan.idVerifikatorAdbang || !usulanJalan.idVerifikatorBpkad) {
             throw new ForbiddenException(`ADBANG and BPKAD must verify first`);
         }
 
-            // Re-read Usulan Jalan data before update to prevent race condition
+        // Re-read Usulan Jalan data before update to prevent race condition
         const usulanJalanBeforeUpdate = await this.findById(id, userIdOpd, userRoles);
         if (!usulanJalanBeforeUpdate) {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
 
-            // Re-validate status before update (race condition protection)
+        // Re-validate status before update (race condition protection)
         if (usulanJalanBeforeUpdate.idUsulanJalanStatus !== 8) {
             throw new BadRequestException(
-                `Usulan Jalan status has changed. Expected status 8, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
+                `Usulan Jalan status has changed. Expected status 8, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`,
             );
         }
 
-            // Update status to 3 (Memenuhi Syarat - Final approved) and set verificator
+        // Update status to 3 (Memenuhi Syarat - Final approved) and set verificator
         const updated = await this.repository.update(id, {
             idUsulanJalanStatus: 3,
             idVerifikatorBappeda: Number(userId),
@@ -777,7 +924,13 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async reject(id: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async reject(
+        id: number,
+        rejectReason: string,
+        userId: string,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<{ id: number; status: any }> {
         // Check existence
         const usulanJalan = await this.findById(id, userIdOpd, userRoles);
         if (!usulanJalan) {
@@ -788,7 +941,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         const allowedStatuses = [2, 5, 6, 7, 8];
         if (!allowedStatuses.includes(usulanJalan.idUsulanJalanStatus)) {
             throw new BadRequestException(
-                `Usulan Jalan can only be rejected when in status 2 or 5-8 (VERIFICATION). Current status: ${usulanJalan.idUsulanJalanStatus}`
+                `Usulan Jalan can only be rejected when in status 2 or 5-8 (VERIFICATION). Current status: ${usulanJalan.idUsulanJalanStatus}`,
             );
         }
 
@@ -797,10 +950,14 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const isAdmin = userRoles.includes(Role.ADMIN);
             const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
             if (!isAdmin && !isSuperAdmin) {
-                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+                const verificatorType = await this.verifikatorService.checkVerifikatorType(
+                    Number(userId),
+                );
                 if (!verificatorType) throw new NotFoundException(`User not sync with verifikator`);
                 if (verificatorType !== JenisVerifikator.ADBANG) {
-                    throw new ForbiddenException(`Only ADBANG verifikator, ADMIN, or SUPERADMIN can reject Usulan Jalan in status 2`);
+                    throw new ForbiddenException(
+                        `Only ADBANG verifikator, ADMIN, or SUPERADMIN can reject Usulan Jalan in status 2`,
+                    );
                 }
             }
         }
@@ -814,11 +971,11 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         // Re-validate status before update (race condition protection)
         if (!allowedStatuses.includes(usulanJalanBeforeUpdate.idUsulanJalanStatus)) {
             throw new BadRequestException(
-                `Usulan Jalan status has changed. Expected status 2 or 5-8, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`
+                `Usulan Jalan status has changed. Expected status 2 or 5-8, but got ${usulanJalanBeforeUpdate.idUsulanJalanStatus}. Please refresh and try again.`,
             );
         }
 
-            // Update status to 4 (Tidak Memenuhi Syarat - Rejected)
+        // Update status to 4 (Tidak Memenuhi Syarat - Rejected)
         const updated = await this.repository.update(id, {
             idUsulanJalanStatus: 4,
             idRejectVerif: Number(userId),
@@ -839,7 +996,11 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<RejectInfoDto | null> {
+    async getRejectInfo(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<RejectInfoDto | null> {
         // Check if user is ADMIN or SUPERADMIN
         const isAdmin = userRoles.includes(Role.ADMIN);
         const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
@@ -871,14 +1032,16 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
 
-            // Check if Usulan Jalan has been rejected
+        // Check if Usulan Jalan has been rejected
         if (!rejectInfo.rejectVerifId || !rejectInfo.rejectedAt) {
             throw new BadRequestException('Usulan Jalan is not in rejected status');
         }
 
-            // Get verifikator info if rejectVerifikator exists
+        // Get verifikator info if rejectVerifikator exists
         if (rejectInfo.rejectVerifikator) {
-            const verifikator = await this.verifikatorService.findByUserId(rejectInfo.rejectVerifikator.id);
+            const verifikator = await this.verifikatorService.findByUserId(
+                rejectInfo.rejectVerifikator.id,
+            );
             if (verifikator && verifikator.user) {
                 rejectInfo.verifikator = {
                     id: verifikator.id,
@@ -896,7 +1059,11 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         return rejectInfo;
     }
 
-    async getAnalytics(userIdOpd: number | null, userRoles: Role[], filter?: GetUsulanJalanAnalyticsFilterDto): Promise<UsulanJalanAnalyticsDto> {
+    async getAnalytics(
+        userIdOpd: number | null,
+        userRoles: Role[],
+        filter?: GetUsulanJalanAnalyticsFilterDto,
+    ): Promise<UsulanJalanAnalyticsDto> {
         // Check permissions
         const isAdmin = userRoles.includes(Role.ADMIN);
         const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
@@ -918,10 +1085,10 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                 // Fetch with OPD filter
                 return await this.repository.getAnalytics(userIdOpd, filter);
             } else {
-                throw new ForbiddenException('User is not authorized to access Usulan Jalan analytics');
+                throw new ForbiddenException(
+                    'User is not authorized to access Usulan Jalan analytics',
+                );
             }
         }
     }
 }
-
-

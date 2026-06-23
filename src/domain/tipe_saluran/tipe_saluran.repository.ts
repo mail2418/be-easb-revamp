@@ -1,7 +1,7 @@
-import { CreateTipeSaluranDto } from "src/presentation/tipe_saluran/dto/create_tipe_saluran.dto";
-import { TipeSaluran } from "./tipe_saluran.entity";
-import { UpdateTipeSaluranDto } from "src/presentation/tipe_saluran/dto/update_tipe_saluran.dto";
-import { GetTipeSaluranDto } from "src/presentation/tipe_saluran/dto/get_tipe_saluran.dto";
+import { CreateTipeSaluranDto } from 'src/presentation/tipe_saluran/dto/create_tipe_saluran.dto';
+import { TipeSaluran } from './tipe_saluran.entity';
+import { UpdateTipeSaluranDto } from 'src/presentation/tipe_saluran/dto/update_tipe_saluran.dto';
+import { GetTipeSaluranDto } from 'src/presentation/tipe_saluran/dto/get_tipe_saluran.dto';
 
 export abstract class TipeSaluranRepository {
     abstract create(dto: CreateTipeSaluranDto): Promise<TipeSaluran>;

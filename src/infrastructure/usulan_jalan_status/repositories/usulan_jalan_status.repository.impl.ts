@@ -1,17 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { UsulanJalanStatusRepository } from "../../../domain/usulan_jalan_status/usulan_jalan_status.repository";
-import { UsulanJalanStatus } from "../../../domain/usulan_jalan_status/usulan_jalan_status.entity";
-import { UsulanJalanStatusOrmEntity } from "../orm/usulan_jalan_status.orm_entity";
-import { CreateUsulanJalanStatusDto } from "../../../presentation/usulan_jalan_status/dto/create_usulan_jalan_status.dto";
-import { UpdateUsulanJalanStatusDto } from "../../../presentation/usulan_jalan_status/dto/update_usulan_jalan_status.dto";
-import { GetUsulanJalanStatusDto } from "../../../presentation/usulan_jalan_status/dto/get_usulan_jalan_status.dto";
-import { plainToInstance } from "class-transformer";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UsulanJalanStatusRepository } from '../../../domain/usulan_jalan_status/usulan_jalan_status.repository';
+import { UsulanJalanStatus } from '../../../domain/usulan_jalan_status/usulan_jalan_status.entity';
+import { UsulanJalanStatusOrmEntity } from '../orm/usulan_jalan_status.orm_entity';
+import { CreateUsulanJalanStatusDto } from '../../../presentation/usulan_jalan_status/dto/create_usulan_jalan_status.dto';
+import { UpdateUsulanJalanStatusDto } from '../../../presentation/usulan_jalan_status/dto/update_usulan_jalan_status.dto';
+import { GetUsulanJalanStatusDto } from '../../../presentation/usulan_jalan_status/dto/get_usulan_jalan_status.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UsulanJalanStatusRepositoryImpl implements UsulanJalanStatusRepository {
-    constructor(@InjectRepository(UsulanJalanStatusOrmEntity) private readonly repo: Repository<UsulanJalanStatusOrmEntity>) {}
+    constructor(
+        @InjectRepository(UsulanJalanStatusOrmEntity)
+        private readonly repo: Repository<UsulanJalanStatusOrmEntity>,
+    ) {}
 
     async create(dto: CreateUsulanJalanStatusDto): Promise<UsulanJalanStatus> {
         const ormEntity = plainToInstance(UsulanJalanStatusOrmEntity, dto);
@@ -27,7 +30,10 @@ export class UsulanJalanStatusRepositoryImpl implements UsulanJalanStatusReposit
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<UsulanJalanStatus | null> {
@@ -37,15 +43,17 @@ export class UsulanJalanStatusRepositoryImpl implements UsulanJalanStatusReposit
 
     async findByStatus(status: string): Promise<UsulanJalanStatus | null> {
         const entity = await this.repo
-            .createQueryBuilder("usulan_jalan_status")
-            .where("usulan_jalan_status.status ILIKE :status", { status: `%${status}%` })
+            .createQueryBuilder('usulan_jalan_status')
+            .where('usulan_jalan_status.status ILIKE :status', { status: `%${status}%` })
             .getOne();
         return entity || null;
     }
 
-    async findAll(dto: GetUsulanJalanStatusDto): Promise<{ data: UsulanJalanStatus[], total: number }> {
+    async findAll(
+        dto: GetUsulanJalanStatusDto,
+    ): Promise<{ data: UsulanJalanStatus[]; total: number }> {
         const findOptions: any = {
-            order: { id: "DESC" }
+            order: { id: 'DESC' },
         };
 
         if (dto.page !== undefined && dto.amount !== undefined) {
@@ -58,4 +66,3 @@ export class UsulanJalanStatusRepositoryImpl implements UsulanJalanStatusReposit
         return { data, total };
     }
 }
-

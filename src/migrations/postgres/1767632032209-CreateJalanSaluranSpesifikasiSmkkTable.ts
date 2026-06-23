@@ -81,15 +81,30 @@ export class CreateJalanSaluranSpesifikasiSmkkTable1767632032209 implements Migr
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jalan_saluran_spesifikasi_smkk_updated_at ON "jalan_saluran_spesifikasi_smkk";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_jalan_saluran_smkk";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_usulan_jalan";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_jenis_usulan";`);
-        await queryRunner.query(`ALTER TABLE "jalan_saluran_spesifikasi_smkk" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_jalan_saluran_smkk";`);
-        await queryRunner.query(`ALTER TABLE "jalan_saluran_spesifikasi_smkk" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_usulan_jalan";`);
-        await queryRunner.query(`ALTER TABLE "jalan_saluran_spesifikasi_smkk" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_jenis_usulan";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jalan_saluran_spesifikasi_smkk_updated_at ON "jalan_saluran_spesifikasi_smkk";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_deleted";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_jalan_saluran_smkk";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_usulan_jalan";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_saluran_spesifikasi_smkk_jenis_usulan";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_saluran_spesifikasi_smkk" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_jalan_saluran_smkk";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_saluran_spesifikasi_smkk" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_usulan_jalan";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_saluran_spesifikasi_smkk" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_spesifikasi_smkk_jenis_usulan";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_saluran_spesifikasi_smkk";`);
     }
 }
-

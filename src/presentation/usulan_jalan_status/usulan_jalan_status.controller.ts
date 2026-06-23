@@ -8,21 +8,21 @@ import {
     HttpStatus,
     HttpException,
     Query,
-} from "@nestjs/common";
-import { UsulanJalanStatusService } from "../../domain/usulan_jalan_status/usulan_jalan_status.service";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { CreateUsulanJalanStatusDto } from "./dto/create_usulan_jalan_status.dto";
-import { UpdateUsulanJalanStatusDto } from "./dto/update_usulan_jalan_status.dto";
-import { DeleteUsulanJalanStatusDto } from "./dto/delete_usulan_jalan_status.dto";
-import { GetUsulanJalanStatusDto } from "./dto/get_usulan_jalan_status.dto";
-import { GetUsulanJalanStatusDetailDto } from "./dto/get_usulan_jalan_status_detail.dto";
-import { ResponseDto } from "../../common/dto/response.dto";
-import { Role } from "../../domain/user/user_role.enum";
+} from '@nestjs/common';
+import { UsulanJalanStatusService } from '../../domain/usulan_jalan_status/usulan_jalan_status.service';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { CreateUsulanJalanStatusDto } from './dto/create_usulan_jalan_status.dto';
+import { UpdateUsulanJalanStatusDto } from './dto/update_usulan_jalan_status.dto';
+import { DeleteUsulanJalanStatusDto } from './dto/delete_usulan_jalan_status.dto';
+import { GetUsulanJalanStatusDto } from './dto/get_usulan_jalan_status.dto';
+import { GetUsulanJalanStatusDetailDto } from './dto/get_usulan_jalan_status_detail.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
+import { Role } from '../../domain/user/user_role.enum';
 
-@Controller("usulan-jalan-status")
+@Controller('usulan-jalan-status')
 @Roles(Role.SUPERADMIN)
 export class UsulanJalanStatusController {
-    constructor(private readonly usulanJalanStatusService: UsulanJalanStatusService) { }
+    constructor(private readonly usulanJalanStatusService: UsulanJalanStatusService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)
@@ -31,9 +31,9 @@ export class UsulanJalanStatusController {
             const usulanJalanStatus = await this.usulanJalanStatusService.create(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.CREATED,
-                message: "Usulan Jalan Status created",
+                message: 'Usulan Jalan Status created',
                 data: usulanJalanStatus,
             };
         } catch (error) {
@@ -43,19 +43,19 @@ export class UsulanJalanStatusController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -63,9 +63,9 @@ export class UsulanJalanStatusController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -78,9 +78,9 @@ export class UsulanJalanStatusController {
             const usulanJalanStatus = await this.usulanJalanStatusService.update(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "Usulan Jalan Status updated",
+                message: 'Usulan Jalan Status updated',
                 data: usulanJalanStatus,
             };
         } catch (error) {
@@ -90,19 +90,19 @@ export class UsulanJalanStatusController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -110,9 +110,9 @@ export class UsulanJalanStatusController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -125,9 +125,9 @@ export class UsulanJalanStatusController {
             const deleted = await this.usulanJalanStatusService.delete(dto.id);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "Usulan Jalan Status deleted",
+                message: 'Usulan Jalan Status deleted',
                 data: deleted,
             };
         } catch (error) {
@@ -137,19 +137,19 @@ export class UsulanJalanStatusController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -157,9 +157,9 @@ export class UsulanJalanStatusController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -172,9 +172,9 @@ export class UsulanJalanStatusController {
             const result = await this.usulanJalanStatusService.findAll(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "Usulan Jalan Status list retrieved",
+                message: 'Usulan Jalan Status list retrieved',
                 data: result,
             };
         } catch (error) {
@@ -184,19 +184,19 @@ export class UsulanJalanStatusController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -204,24 +204,26 @@ export class UsulanJalanStatusController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
     }
 
-    @Get("detail")
+    @Get('detail')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getUsulanJalanStatusDetail(@Query() dto: GetUsulanJalanStatusDetailDto): Promise<ResponseDto> {
+    async getUsulanJalanStatusDetail(
+        @Query() dto: GetUsulanJalanStatusDetailDto,
+    ): Promise<ResponseDto> {
         try {
             const usulanJalanStatus = await this.usulanJalanStatusService.findById(dto.id);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "Usulan Jalan Status detail retrieved",
+                message: 'Usulan Jalan Status detail retrieved',
                 data: usulanJalanStatus,
             };
         } catch (error) {
@@ -231,19 +233,19 @@ export class UsulanJalanStatusController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -251,12 +253,11 @@ export class UsulanJalanStatusController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
     }
 }
-

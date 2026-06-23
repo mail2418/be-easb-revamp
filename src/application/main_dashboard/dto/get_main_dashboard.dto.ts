@@ -30,4 +30,3 @@ export class GetMainDashboardDto {
     @Min(1)
     limit?: number;
 }
-

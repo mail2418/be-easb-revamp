@@ -1,4 +1,4 @@
-import { AsbKomponenBangunanNonStdFiles } from "./asb_komponen_bangunan_nonstd_files.enum";
+import { AsbKomponenBangunanNonStdFiles } from './asb_komponen_bangunan_nonstd_files.enum';
 
 export class AsbKomponenBangunanNonstd {
     id!: number;

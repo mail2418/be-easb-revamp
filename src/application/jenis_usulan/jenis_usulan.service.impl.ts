@@ -1,15 +1,15 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { JenisUsulanService } from "../../domain/jenis_usulan/jenis_usulan.service";
-import { JenisUsulanRepository } from "../../domain/jenis_usulan/jenis_usulan.repository";
-import { CreateJenisUsulanDto } from "../../presentation/jenis_usulan/dto/create_jenis_usulan.dto";
-import { JenisUsulan } from "../../domain/jenis_usulan/jenis_usulan.entity";
-import { UpdateJenisUsulanDto } from "../../presentation/jenis_usulan/dto/update_jenis_usulan.dto";
-import { GetJenisUsulanDto } from "../../presentation/jenis_usulan/dto/get_jenis_usulan.dto";
-import { JenisUsulanPaginationResultDto } from "../../presentation/jenis_usulan/dto/jenis_usulan_pagination_result.dto";
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { JenisUsulanService } from '../../domain/jenis_usulan/jenis_usulan.service';
+import { JenisUsulanRepository } from '../../domain/jenis_usulan/jenis_usulan.repository';
+import { CreateJenisUsulanDto } from '../../presentation/jenis_usulan/dto/create_jenis_usulan.dto';
+import { JenisUsulan } from '../../domain/jenis_usulan/jenis_usulan.entity';
+import { UpdateJenisUsulanDto } from '../../presentation/jenis_usulan/dto/update_jenis_usulan.dto';
+import { GetJenisUsulanDto } from '../../presentation/jenis_usulan/dto/get_jenis_usulan.dto';
+import { JenisUsulanPaginationResultDto } from '../../presentation/jenis_usulan/dto/jenis_usulan_pagination_result.dto';
 
 @Injectable()
 export class JenisUsulanServiceImpl implements JenisUsulanService {
-    constructor(private readonly repository: JenisUsulanRepository) { }
+    constructor(private readonly repository: JenisUsulanRepository) {}
 
     async create(dto: CreateJenisUsulanDto): Promise<JenisUsulan> {
         const existing = await this.repository.findByJenis(dto.jenis);
@@ -57,7 +57,7 @@ export class JenisUsulanServiceImpl implements JenisUsulanService {
             total,
             page: dto.page ?? 1,
             limit: dto.amount ?? total,
-            totalPages: dto.amount ? Math.ceil(total / dto.amount) : 1
+            totalPages: dto.amount ? Math.ceil(total / dto.amount) : 1,
         };
     }
 

@@ -1,7 +1,7 @@
 import { IsNumber, IsNotEmpty } from 'class-validator';
 
 export class GetAsbKlasifikasiDetailDto {
-  @IsNumber()
-  @IsNotEmpty()
-  id!: number;
+    @IsNumber()
+    @IsNotEmpty()
+    id!: number;
 }

@@ -12,4 +12,3 @@ export class RejectUsulanJalanDto {
     @Transform(({ value }) => value?.trim())
     rejectReason: string;
 }
-

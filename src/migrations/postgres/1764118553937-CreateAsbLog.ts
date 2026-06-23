@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAsbLog1764118553937 implements MigrationInterface {
-    name = 'CreateAsbLog1764118553937'
+    name = 'CreateAsbLog1764118553937';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create table
@@ -19,8 +19,12 @@ export class CreateAsbLog1764118553937 implements MigrationInterface {
 
         // Create indexes
         await queryRunner.query(`CREATE INDEX "idx_asb_log_user" ON "asb_log" ("id_user")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_log_created_at" ON "asb_log" ("created_at")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_log_deleted_at" ON "asb_log" ("deleted_at")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_log_created_at" ON "asb_log" ("created_at")`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_log_deleted_at" ON "asb_log" ("deleted_at")`,
+        );
 
         // Add foreign key with SET NULL to preserve logs
         await queryRunner.query(`
@@ -52,11 +56,15 @@ export class CreateAsbLog1764118553937 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Drop trigger
-        await queryRunner.query(`DROP TRIGGER IF EXISTS trigger_set_asb_log_updated_at ON "asb_log"`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS trigger_set_asb_log_updated_at ON "asb_log"`,
+        );
         await queryRunner.query(`DROP FUNCTION IF EXISTS set_asb_log_updated_at`);
 
         // Drop foreign key
-        await queryRunner.query(`ALTER TABLE "asb_log" DROP CONSTRAINT IF EXISTS "fk_asb_log_user"`);
+        await queryRunner.query(
+            `ALTER TABLE "asb_log" DROP CONSTRAINT IF EXISTS "fk_asb_log_user"`,
+        );
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_log_deleted_at"`);

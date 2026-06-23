@@ -22,6 +22,8 @@ export class AddTahunAnggaranToMainDashboard1767988763767 implements MigrationIn
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_main_dashboard_tahun_anggaran";`);
 
         // Drop column
-        await queryRunner.query(`ALTER TABLE "main_dashboard" DROP COLUMN IF EXISTS "tahun_anggaran";`);
+        await queryRunner.query(
+            `ALTER TABLE "main_dashboard" DROP COLUMN IF EXISTS "tahun_anggaran";`,
+        );
     }
 }

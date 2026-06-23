@@ -34,4 +34,4 @@ import { AsbBipekStandardController } from './asb_bipek_standard.controller';
     ],
     exports: [AsbBipekStandardService],
 })
-export class AsbBipekStandardModule { }
+export class AsbBipekStandardModule {}

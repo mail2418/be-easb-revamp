@@ -1,72 +1,72 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { AsbStatusService } from "../../domain/asb_status/asb_status.service";
-import { AsbStatusRepository } from "../../domain/asb_status/asb_status.repository";
-import { AsbStatus } from "../../domain/asb_status/asb_status.entity";
-import { CreateAsbStatusDto } from "../../presentation/asb_status/dto/create_asb_status.dto";
-import { UpdateAsbStatusDto } from "../../presentation/asb_status/dto/update_asb_status.dto";
-import { GetAsbStatusDto } from "../../presentation/asb_status/dto/get_asb_status.dto";
-import { AsbStatusPaginationResultDto } from "../../presentation/asb_status/dto/asb_status_pagination_result.dto";
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { AsbStatusService } from '../../domain/asb_status/asb_status.service';
+import { AsbStatusRepository } from '../../domain/asb_status/asb_status.repository';
+import { AsbStatus } from '../../domain/asb_status/asb_status.entity';
+import { CreateAsbStatusDto } from '../../presentation/asb_status/dto/create_asb_status.dto';
+import { UpdateAsbStatusDto } from '../../presentation/asb_status/dto/update_asb_status.dto';
+import { GetAsbStatusDto } from '../../presentation/asb_status/dto/get_asb_status.dto';
+import { AsbStatusPaginationResultDto } from '../../presentation/asb_status/dto/asb_status_pagination_result.dto';
 
 @Injectable()
 export class AsbStatusServiceImpl implements AsbStatusService {
-  constructor(private readonly asbStatusRepository: AsbStatusRepository) {}
+    constructor(private readonly asbStatusRepository: AsbStatusRepository) {}
 
-  async create(dto: CreateAsbStatusDto): Promise<AsbStatus> {
-    // Check if asb_status with the same status already exists
-    const existingAsbStatus = await this.asbStatusRepository.findByStatus(dto.status);
-    if (existingAsbStatus) {
-      throw new ConflictException(`AsbStatus with status ${dto.status} already exists`);
+    async create(dto: CreateAsbStatusDto): Promise<AsbStatus> {
+        // Check if asb_status with the same status already exists
+        const existingAsbStatus = await this.asbStatusRepository.findByStatus(dto.status);
+        if (existingAsbStatus) {
+            throw new ConflictException(`AsbStatus with status ${dto.status} already exists`);
+        }
+
+        const newAsbStatus = await this.asbStatusRepository.create(dto);
+        return newAsbStatus;
     }
 
-    const newAsbStatus = await this.asbStatusRepository.create(dto);
-    return newAsbStatus;
-  }
+    async update(dto: UpdateAsbStatusDto): Promise<AsbStatus> {
+        // Check if asb_status exists
+        const existingAsbStatus = await this.asbStatusRepository.findById(dto.id);
+        if (!existingAsbStatus) {
+            throw new NotFoundException(`AsbStatus with id ${dto.id} not found`);
+        }
 
-  async update(dto: UpdateAsbStatusDto): Promise<AsbStatus> {
-    // Check if asb_status exists
-    const existingAsbStatus = await this.asbStatusRepository.findById(dto.id);
-    if (!existingAsbStatus) {
-      throw new NotFoundException(`AsbStatus with id ${dto.id} not found`);
+        // If status is being updated, check for duplicates
+        if (dto.status && dto.status !== existingAsbStatus.status) {
+            const duplicateAsbStatus = await this.asbStatusRepository.findByStatus(dto.status);
+            if (duplicateAsbStatus) {
+                throw new ConflictException(`AsbStatus with status ${dto.status} already exists`);
+            }
+        }
+
+        const updatedAsbStatus = await this.asbStatusRepository.update(dto);
+        return updatedAsbStatus;
     }
 
-    // If status is being updated, check for duplicates
-    if (dto.status && dto.status !== existingAsbStatus.status) {
-      const duplicateAsbStatus = await this.asbStatusRepository.findByStatus(dto.status);
-      if (duplicateAsbStatus) {
-        throw new ConflictException(`AsbStatus with status ${dto.status} already exists`);
-      }
+    async delete(id: number): Promise<boolean> {
+        // Check if asb_status exists
+        const existingAsbStatus = await this.asbStatusRepository.findById(id);
+        if (!existingAsbStatus) {
+            throw new NotFoundException(`AsbStatus with id ${id} not found`);
+        }
+
+        return await this.asbStatusRepository.delete(id);
     }
 
-    const updatedAsbStatus = await this.asbStatusRepository.update(dto);
-    return updatedAsbStatus;
-  }
-
-  async delete(id: number): Promise<boolean> {
-    // Check if asb_status exists
-    const existingAsbStatus = await this.asbStatusRepository.findById(id);
-    if (!existingAsbStatus) {
-      throw new NotFoundException(`AsbStatus with id ${id} not found`);
+    async findById(id: number): Promise<AsbStatus | null> {
+        return await this.asbStatusRepository.findById(id);
     }
 
-    return await this.asbStatusRepository.delete(id);
-  }
+    async findByStatus(status: string): Promise<AsbStatus | null> {
+        return await this.asbStatusRepository.findByStatus(status);
+    }
 
-  async findById(id: number): Promise<AsbStatus | null> {
-    return await this.asbStatusRepository.findById(id);
-  }
-
-  async findByStatus(status: string): Promise<AsbStatus | null> {
-    return await this.asbStatusRepository.findByStatus(status);
-  }
-
-  async findAll(pagination: GetAsbStatusDto): Promise<AsbStatusPaginationResultDto> {
-    const result = await this.asbStatusRepository.findAll(pagination);
-    return {
-      data: result.data,
-      total: result.total,
-      page: pagination.page ?? 1,
-      limit: pagination.amount ?? result.total,
-      totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1
-    };
-  }
+    async findAll(pagination: GetAsbStatusDto): Promise<AsbStatusPaginationResultDto> {
+        const result = await this.asbStatusRepository.findAll(pagination);
+        return {
+            data: result.data,
+            total: result.total,
+            page: pagination.page ?? 1,
+            limit: pagination.amount ?? result.total,
+            totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1,
+        };
+    }
 }

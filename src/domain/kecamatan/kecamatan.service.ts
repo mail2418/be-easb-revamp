@@ -10,6 +10,12 @@ export abstract class KecamatanService {
     abstract update(dto: UpdateKecamatanDto): Promise<Kecamatan>;
     abstract delete(dto: DeleteKecamatanDto): Promise<void>;
     abstract getById(dto: GetKecamatanDetailDto): Promise<Kecamatan>;
-    abstract getAll(dto: GetKecamatansDto): Promise<{ data: Kecamatan[]; total: number; page: number; amount: number; totalPages: number }>;
+    abstract getAll(dto: GetKecamatansDto): Promise<{
+        data: Kecamatan[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }>;
     abstract getKecamatanByKabkotaId(idKabkota: number): Promise<Kecamatan[]>;
 }

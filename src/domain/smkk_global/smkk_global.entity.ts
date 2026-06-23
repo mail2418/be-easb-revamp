@@ -4,4 +4,3 @@ export class SmkkGlobal {
     tahun!: number;
     persentase_smkk!: number;
 }
-

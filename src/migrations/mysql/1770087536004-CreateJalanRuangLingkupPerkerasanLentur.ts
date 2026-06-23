@@ -19,8 +19,12 @@ export class CreateJalanRuangLingkupPerkerasanLentur1770087536004 implements Mig
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP INDEX \`idx_jalan_ruang_lingkup_perkerasan_lentur_deleted\` ON \`jalan_ruang_lingkup_perkerasan_lentur\``);
-        await queryRunner.query(`DROP INDEX \`idx_jalan_ruang_lingkup_perkerasan_lentur_jenis\` ON \`jalan_ruang_lingkup_perkerasan_lentur\``);
+        await queryRunner.query(
+            `DROP INDEX \`idx_jalan_ruang_lingkup_perkerasan_lentur_deleted\` ON \`jalan_ruang_lingkup_perkerasan_lentur\``,
+        );
+        await queryRunner.query(
+            `DROP INDEX \`idx_jalan_ruang_lingkup_perkerasan_lentur_jenis\` ON \`jalan_ruang_lingkup_perkerasan_lentur\``,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS \`jalan_ruang_lingkup_perkerasan_lentur\``);
     }
 }

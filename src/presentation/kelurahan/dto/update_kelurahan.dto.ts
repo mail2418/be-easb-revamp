@@ -9,7 +9,7 @@ export class UpdateKelurahanDto {
 
     @IsInt()
     @IsOptional()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     idKecamatan?: number;
 
     @IsString()

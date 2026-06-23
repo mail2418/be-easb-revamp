@@ -9,7 +9,7 @@ export class ValidateUserUseCase {
     async execute(dto: LoginDto): Promise<User | null> {
         const user = await this.userRepo.findByUsername(dto.username);
         if (!user) return null;
-        const ok = await bcrypt.compare(dto.password, user.passwordHash? user.passwordHash : '');
+        const ok = await bcrypt.compare(dto.password, user.passwordHash ? user.passwordHash : '');
 
         if (!ok) return null;
         const { passwordHash, ...safe } = user as any;

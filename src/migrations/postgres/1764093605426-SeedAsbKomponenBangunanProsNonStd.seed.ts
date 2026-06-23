@@ -50,14 +50,7 @@ export class SeedAsbKomponenBangunanProsNonStd1764093605426 implements Migration
         ];
 
         for (const row of rows) {
-            const [
-                idAsbKomponenBangunanNonstd,
-                min,
-                max,
-                avg,
-                avgMin,
-                avgMax,
-            ] = row;
+            const [idAsbKomponenBangunanNonstd, min, max, avg, avgMin, avgMax] = row;
 
             await queryRunner.query(
                 `INSERT INTO "asb_komponen_bangunan_pros_nonstd"
@@ -71,11 +64,8 @@ export class SeedAsbKomponenBangunanProsNonStd1764093605426 implements Migration
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const ids = [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-            11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-            21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-            31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-            41, 42,
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
         ];
 
         const placeholders = ids.map((_, index) => `$${index + 1}`).join(', ');

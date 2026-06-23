@@ -14,7 +14,7 @@ export class KelurahanServiceImpl implements KelurahanService {
     constructor(
         private readonly repository: KelurahanRepository,
         private readonly kecamatanRepository: KecamatanRepository,
-    ) { }
+    ) {}
 
     async create(dto: CreateKelurahanDto): Promise<Kelurahan> {
         // Validate that kecamatan exists
@@ -63,7 +63,13 @@ export class KelurahanServiceImpl implements KelurahanService {
         return kelurahan;
     }
 
-    async getAll(dto: GetKelurahansDto): Promise<{ data: Kelurahan[]; total: number; page: number; amount: number; totalPages: number }> {
+    async getAll(dto: GetKelurahansDto): Promise<{
+        data: Kelurahan[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }> {
         const filter: any = {};
         if (dto.idKecamatan) filter.idKecamatan = dto.idKecamatan;
         if (dto.search) filter.search = dto.search;

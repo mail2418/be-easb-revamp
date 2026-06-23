@@ -13,7 +13,7 @@ import { plainToInstance } from 'class-transformer';
 export class HspkRepositoryImpl implements HspkRepository {
     constructor(
         @InjectRepository(HspkOrmEntity)
-        private readonly repo: Repository<HspkOrmEntity>
+        private readonly repo: Repository<HspkOrmEntity>,
     ) {}
 
     async create(dto: CreateHspkDto): Promise<Hspk> {
@@ -38,7 +38,10 @@ export class HspkRepositoryImpl implements HspkRepository {
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<Hspk | null> {
@@ -51,7 +54,7 @@ export class HspkRepositoryImpl implements HspkRepository {
                 'hspk.no_mata_pembayaran',
                 'hspk.satuan',
                 'hspk.harga_satuan',
-                'hspk.uraian'
+                'hspk.uraian',
             ])
             .where('hspk.id = :id', { id })
             .getOne();
@@ -60,7 +63,7 @@ export class HspkRepositoryImpl implements HspkRepository {
 
     async findAll(dto: GetHspkDto): Promise<{ data: Hspk[]; total: number }> {
         const findOptions: any = {
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         const baseWhere: Record<string, unknown> = {};
@@ -88,7 +91,10 @@ export class HspkRepositoryImpl implements HspkRepository {
         return { data, total };
     }
 
-    async findByNoMataPembayaranAndTahun(no_mata_pembayaran: string, tahun_anggaran: number): Promise<Hspk | null> {
+    async findByNoMataPembayaranAndTahun(
+        no_mata_pembayaran: string,
+        tahun_anggaran: number,
+    ): Promise<Hspk | null> {
         const entity = await this.repo.findOne({ where: { no_mata_pembayaran, tahun_anggaran } });
         return entity || null;
     }
@@ -102,4 +108,3 @@ export class HspkRepositoryImpl implements HspkRepository {
         return entities;
     }
 }
-

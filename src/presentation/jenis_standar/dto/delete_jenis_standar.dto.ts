@@ -1,9 +1,9 @@
-import { IsNumber, IsNotEmpty } from "class-validator";
-import { Transform } from "class-transformer";
+import { IsNumber, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class DeleteJenisStandarDto {
-  @IsNumber()
-  @IsNotEmpty()
-  @Transform(({ value }) => parseInt(value, 10))
-  id!: number;
+    @IsNumber()
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
+    id!: number;
 }

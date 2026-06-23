@@ -10,7 +10,10 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AsbFungsiRuangRepositoryImpl implements AsbFungsiRuangRepository {
-    constructor(@InjectRepository(AsbFungsiRuangOrmEntity) private readonly repo: Repository<AsbFungsiRuangOrmEntity>) {}
+    constructor(
+        @InjectRepository(AsbFungsiRuangOrmEntity)
+        private readonly repo: Repository<AsbFungsiRuangOrmEntity>,
+    ) {}
 
     async create(asbFungsiRuang: CreateAsbFungsiRuangDto): Promise<AsbFungsiRuang> {
         const ormEntity = plainToInstance(AsbFungsiRuangOrmEntity, asbFungsiRuang);
@@ -23,21 +26,30 @@ export class AsbFungsiRuangRepositoryImpl implements AsbFungsiRuangRepository {
         const updatedEntity = await this.repo.findOne({ where: { id } });
         return updatedEntity!;
     }
-    
+
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<AsbFungsiRuang | null> {
         const entity = await this.repo
             .createQueryBuilder('asb_fungsi_ruang')
-            .select(['asb_fungsi_ruang.id', 'asb_fungsi_ruang.nama_fungsi_ruang', 'asb_fungsi_ruang.koef'])
+            .select([
+                'asb_fungsi_ruang.id',
+                'asb_fungsi_ruang.nama_fungsi_ruang',
+                'asb_fungsi_ruang.koef',
+            ])
             .where('asb_fungsi_ruang.id = :id', { id })
             .getOne();
         return entity || null;
     }
 
-    async findAll(pagination: GetAsbFungsiRuangsDto): Promise<{ data: AsbFungsiRuang[]; total: number }> {
+    async findAll(
+        pagination: GetAsbFungsiRuangsDto,
+    ): Promise<{ data: AsbFungsiRuang[]; total: number }> {
         const where = pagination.search
             ? { nama_fungsi_ruang: ILike(`%${pagination.search}%`) }
             : undefined;

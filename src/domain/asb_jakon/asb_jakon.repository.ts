@@ -1,9 +1,9 @@
-import { CreateAsbJakonDto } from "src/presentation/asb_jakon/dto/create_asb_jakon.dto";
-import { AsbJakon } from "./asb_jakon.entity";
-import { AsbJakonType } from "./asb_jakon_type.enum";
-import { GetJakonByPriceRangeDto } from "src/application/asb_jakon/dto/get_jakon_by_price_range.dto";
-import { BulkCreateAsbJakonDto } from "src/application/asb_jakon/dto/bulk_create_asb_jakon.dto";
-import { GetAsbJakonListDto } from "src/presentation/asb_jakon/dto/get_asb_jakon_list.dto";
+import { CreateAsbJakonDto } from 'src/presentation/asb_jakon/dto/create_asb_jakon.dto';
+import { AsbJakon } from './asb_jakon.entity';
+import { AsbJakonType } from './asb_jakon_type.enum';
+import { GetJakonByPriceRangeDto } from 'src/application/asb_jakon/dto/get_jakon_by_price_range.dto';
+import { BulkCreateAsbJakonDto } from 'src/application/asb_jakon/dto/bulk_create_asb_jakon.dto';
+import { GetAsbJakonListDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon_list.dto';
 
 export abstract class AsbJakonRepository {
     abstract create(dto: CreateAsbJakonDto): Promise<AsbJakon>;

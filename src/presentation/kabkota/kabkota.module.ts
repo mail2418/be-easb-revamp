@@ -9,24 +9,21 @@ import { KabKotaRepository } from '../../domain/kabkota/kabkota.repository';
 import { ProvinceModule } from '../provinces/province.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([KabKotaOrmEntity]),
-    ProvinceModule, // Import ProvinceModule for potential FK validation
-  ],
-  controllers: [KabKotaController],
-  providers: [
-    {
-      provide: KabKotaService,
-      useClass: KabKotaServiceImpl,
-    },
-    {
-      provide: KabKotaRepository,
-      useClass: KabKotaRepositoryImpl,
-    },
-  ],
-  exports: [
-    KabKotaService,
-    KabKotaRepository,
-  ],
+    imports: [
+        TypeOrmModule.forFeature([KabKotaOrmEntity]),
+        ProvinceModule, // Import ProvinceModule for potential FK validation
+    ],
+    controllers: [KabKotaController],
+    providers: [
+        {
+            provide: KabKotaService,
+            useClass: KabKotaServiceImpl,
+        },
+        {
+            provide: KabKotaRepository,
+            useClass: KabKotaRepositoryImpl,
+        },
+    ],
+    exports: [KabKotaService, KabKotaRepository],
 })
 export class KabKotaModule {}

@@ -10,8 +10,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
         const isDevelopment = process.env.NODE_ENV === 'development';
 
-        const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
-        
+        const status =
+            exception instanceof HttpException
+                ? exception.getStatus()
+                : HttpStatus.INTERNAL_SERVER_ERROR;
+
         let message: string;
         if (exception instanceof HttpException) {
             const response = exception.getResponse();
@@ -19,14 +22,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 message = response;
             } else {
                 const resObj = response as any;
-                message = Array.isArray(resObj.message) 
-                    ? resObj.message.join(', ') 
-                    : resObj.message ?? exception.message ?? 'An error occurred';
+                message = Array.isArray(resObj.message)
+                    ? resObj.message.join(', ')
+                    : (resObj.message ?? exception.message ?? 'An error occurred');
             }
         } else if (exception instanceof Error) {
             // Log full error for debugging, but don't expose to client
             console.error('Unhandled error:', exception);
-            
+
             // Only expose error message in development
             message = isDevelopment ? exception.message : 'Internal Server Error';
         } else {

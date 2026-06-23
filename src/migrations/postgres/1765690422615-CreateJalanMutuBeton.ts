@@ -35,10 +35,11 @@ export class CreateJalanMutuBeton1765690422615 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jalan_mutu_beton_updated_at ON "jalan_mutu_beton";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jalan_mutu_beton_updated_at ON "jalan_mutu_beton";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_mutu_beton_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_mutu_beton_jenis";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_mutu_beton";`);
     }
 }
-

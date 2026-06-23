@@ -1,4 +1,4 @@
-import { UsulanJalanStatus } from "../../../domain/usulan_jalan_status/usulan_jalan_status.entity";
+import { UsulanJalanStatus } from '../../../domain/usulan_jalan_status/usulan_jalan_status.entity';
 
 export class UsulanJalanStatusPaginationResultDto {
     data!: UsulanJalanStatus[];
@@ -7,4 +7,3 @@ export class UsulanJalanStatusPaginationResultDto {
     limit!: number;
     totalPages!: number;
 }
-

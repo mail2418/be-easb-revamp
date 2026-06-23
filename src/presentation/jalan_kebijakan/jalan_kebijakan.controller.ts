@@ -1,18 +1,29 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
-import { JwtAuthGuard } from "../../common/guards/jwt_auth.guard";
-import { RolesGuard } from "../../common/guards/roles.guard";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { Role } from "../../domain/user/user_role.enum";
-import { JalanKebijakanService } from "../../domain/jalan_kebijakan/jalan_kebijakan.service";
-import { CreateJalanKebijakanDto } from "./dto/create_jalan_kebijakan.dto";
-import { UpdateJalanKebijakanDto } from "./dto/update_jalan_kebijakan.dto";
-import { GetJalanKebijakanDto } from "./dto/get_jalan_kebijakan.dto";
-import { ResponseDto } from "../../common/dto/response.dto";
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpStatus,
+    Param,
+    Post,
+    Put,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../domain/user/user_role.enum';
+import { JalanKebijakanService } from '../../domain/jalan_kebijakan/jalan_kebijakan.service';
+import { CreateJalanKebijakanDto } from './dto/create_jalan_kebijakan.dto';
+import { UpdateJalanKebijakanDto } from './dto/update_jalan_kebijakan.dto';
+import { GetJalanKebijakanDto } from './dto/get_jalan_kebijakan.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
 
 @Controller('jalan-kebijakan')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class JalanKebijakanController {
-    constructor(private readonly service: JalanKebijakanService) { }
+    constructor(private readonly service: JalanKebijakanService) {}
 
     @Post()
     @Roles(Role.ADMIN, Role.SUPERADMIN)
@@ -20,10 +31,10 @@ export class JalanKebijakanController {
         try {
             const result = await this.service.create(dto);
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.CREATED,
-                message: "JalanKebijakan created successfully",
-                data: result
+                message: 'JalanKebijakan created successfully',
+                data: result,
             };
         } catch (error) {
             throw error;
@@ -36,10 +47,10 @@ export class JalanKebijakanController {
         try {
             const result = await this.service.update(dto);
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JalanKebijakan updated successfully",
-                data: result
+                message: 'JalanKebijakan updated successfully',
+                data: result,
             };
         } catch (error) {
             throw error;
@@ -52,9 +63,9 @@ export class JalanKebijakanController {
         try {
             await this.service.delete(Number(id));
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JalanKebijakan deleted successfully"
+                message: 'JalanKebijakan deleted successfully',
             };
         } catch (error) {
             throw error;
@@ -67,10 +78,10 @@ export class JalanKebijakanController {
         try {
             const result = await this.service.findById(Number(id));
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JalanKebijakan retrieved successfully",
-                data: result
+                message: 'JalanKebijakan retrieved successfully',
+                data: result,
             };
         } catch (error) {
             throw error;
@@ -83,10 +94,10 @@ export class JalanKebijakanController {
         try {
             const result = await this.service.findAll(dto);
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "JalanKebijakan list retrieved successfully",
-                data: result
+                message: 'JalanKebijakan list retrieved successfully',
+                data: result,
             };
         } catch (error) {
             throw error;

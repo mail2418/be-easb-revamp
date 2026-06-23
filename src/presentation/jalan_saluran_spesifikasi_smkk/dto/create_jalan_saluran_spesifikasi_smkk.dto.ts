@@ -32,4 +32,3 @@ export class CreateJalanSaluranSpesifikasiSmkkDto {
     @Transform(({ value }) => parseFloat(value))
     harga_satuan!: number;
 }
-

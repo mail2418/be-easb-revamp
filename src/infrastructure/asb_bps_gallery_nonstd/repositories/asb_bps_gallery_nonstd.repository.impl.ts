@@ -116,9 +116,7 @@ export class AsbBpsGalleryNonstdRepositoryImpl extends AsbBpsGalleryNonstdReposi
             .take(amount)
             .getManyAndCount();
 
-        const domainEntities = entities.map((e) =>
-            plainToInstance(AsbBpsGalleryNonstd, e),
-        );
+        const domainEntities = entities.map((e) => plainToInstance(AsbBpsGalleryNonstd, e));
         return [domainEntities, total];
     }
 
@@ -129,12 +127,16 @@ export class AsbBpsGalleryNonstdRepositoryImpl extends AsbBpsGalleryNonstdReposi
         return entities.map((e) => plainToInstance(AsbBpsGalleryNonstd, e));
     }
 
-    async findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBpsGalleryNonstd[], number]> {
+    async findByAsb(
+        idAsb: number,
+        page: number,
+        amount: number,
+    ): Promise<[AsbBpsGalleryNonstd[], number]> {
         const [entities, total] = await this.repository.findAndCount({
             where: { idAsb },
             skip: (page - 1) * amount,
             take: amount,
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         });
         const domainEntities = entities.map((e) => plainToInstance(AsbBpsGalleryNonstd, e));
         return [domainEntities, total];

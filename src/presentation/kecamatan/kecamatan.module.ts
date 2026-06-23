@@ -26,4 +26,4 @@ import { KabKotaModule } from '../kabkota/kabkota.module';
     ],
     exports: [KecamatanService, KecamatanRepository],
 })
-export class KecamatanModule { }
+export class KecamatanModule {}

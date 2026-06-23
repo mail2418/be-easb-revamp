@@ -6,4 +6,3 @@ export interface BulkCreateShstDto {
     id_kabkota: number;
     nominal: number;
 }
-

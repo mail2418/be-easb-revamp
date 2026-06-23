@@ -14,11 +14,17 @@ import { ValidateStatisticalRangeUseCase } from './use_cases/validate_statistica
 export class AsbKomponenBangunanProsStdServiceImpl implements AsbKomponenBangunanProsStdService {
     constructor(
         private readonly repository: AsbKomponenBangunanProsStdRepository,
-        private readonly validateStatisticalRangeUseCase: ValidateStatisticalRangeUseCase
-    ) { }
+        private readonly validateStatisticalRangeUseCase: ValidateStatisticalRangeUseCase,
+    ) {}
 
     async create(dto: CreateAsbKomponenBangunanProsStdDto): Promise<AsbKomponenBangunanProsStd> {
-        this.validateStatisticalRangeUseCase.execute(dto.min || 0, dto.avgMin || 0, dto.avg || 0, dto.avgMax || 0, dto.max || 0);
+        this.validateStatisticalRangeUseCase.execute(
+            dto.min || 0,
+            dto.avgMin || 0,
+            dto.avg || 0,
+            dto.avgMax || 0,
+            dto.max || 0,
+        );
         const entity = await this.repository.create(dto);
         return entity;
     }
@@ -48,7 +54,7 @@ export class AsbKomponenBangunanProsStdServiceImpl implements AsbKomponenBanguna
         };
 
         // Remove undefined values
-        Object.keys(updateData).forEach(key => {
+        Object.keys(updateData).forEach((key) => {
             if (updateData[key as keyof typeof updateData] === undefined) {
                 delete updateData[key as keyof typeof updateData];
             }
@@ -66,7 +72,9 @@ export class AsbKomponenBangunanProsStdServiceImpl implements AsbKomponenBanguna
         return await this.repository.delete(dto.id);
     }
 
-    async getAll(pagination: GetAsbKomponenBangunanProsStdListDto): Promise<AsbKomponenBangunanProsStdPaginationResult> {
+    async getAll(
+        pagination: GetAsbKomponenBangunanProsStdListDto,
+    ): Promise<AsbKomponenBangunanProsStdPaginationResult> {
         const result = await this.repository.findAll(pagination);
         const page = pagination.page ?? 1;
         const amount = pagination.amount ?? result.total;
@@ -75,11 +83,13 @@ export class AsbKomponenBangunanProsStdServiceImpl implements AsbKomponenBanguna
             total: result.total,
             page,
             amount,
-            totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0
+            totalPages: amount > 0 ? Math.ceil(result.total / amount) : 0,
         };
     }
 
-    async getDetail(dto: GetAsbKomponenBangunanProsStdDetailDto): Promise<AsbKomponenBangunanProsStd> {
+    async getDetail(
+        dto: GetAsbKomponenBangunanProsStdDetailDto,
+    ): Promise<AsbKomponenBangunanProsStd> {
         const entity = await this.repository.findById(dto.id);
         if (!entity) {
             throw new NotFoundException(`AsbKomponenBangunanProsStd with id ${dto.id} not found`);

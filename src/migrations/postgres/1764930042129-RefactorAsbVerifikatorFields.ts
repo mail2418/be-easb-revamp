@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class RefactorAsbVerifikatorFields1764930042129 implements MigrationInterface {
     name = 'RefactorAsbVerifikatorFields1764930042129';
@@ -47,7 +47,6 @@ export class RefactorAsbVerifikatorFields1764930042129 implements MigrationInter
             ON DELETE SET NULL
             ON UPDATE NO ACTION;
             `);
-
 
         // Add foreign key constraint for id_verifikator_bappeda
         await queryRunner.query(`

@@ -1,16 +1,16 @@
 /**
  * Dynamic Data Source Configuration
- * 
+ *
  * Automatically selects PostgreSQL or MySQL based on DB_TYPE environment variable.
- * 
+ *
  * Usage:
  *   npm run typeorm migration:run
  *   npm run typeorm migration:revert
- * 
+ *
  * For database-specific commands, use:
  *   npm run typeorm:postgres migration:run  (PostgreSQL only)
  *   npm run typeorm:mysql migration:run     (MySQL only)
- * 
+ *
  * Environment Variables:
  *   DB_TYPE - 'postgres' (default) or 'mysql'
  *   DB_URL - Connection URL (used when specific URLs not set)
@@ -31,10 +31,11 @@ const dbType = (process.env.DB_TYPE || 'postgres') as 'postgres' | 'mysql';
 const getDbUrl = (): string => {
     if (dbType === 'mysql') {
         const url = process.env.DB_URL_MYSQL || process.env.DB_URL;
-        if (!url) throw new Error('Database URL not configured. Set DB_URL_MYSQL or DB_URL in .env');
+        if (!url)
+            throw new Error('Database URL not configured. Set DB_URL_MYSQL or DB_URL in .env');
         return url;
     }
-    
+
     // Default: PostgreSQL
     const url = process.env.DB_URL_POSTGRES || process.env.DB_URL;
     if (!url) throw new Error('Database URL not configured. Set DB_URL_POSTGRES or DB_URL in .env');
@@ -72,7 +73,9 @@ const getDataSourceOptions = (): DataSourceOptions => {
         url: dbUrl,
         ssl: isRender ? { rejectUnauthorized: false } : false,
         entities: [entitiesGlob],
-        migrations: [isProd ? 'dist/migrations/postgres/*.js' : 'src/migrations/postgres/*{.ts,.js}'],
+        migrations: [
+            isProd ? 'dist/migrations/postgres/*.js' : 'src/migrations/postgres/*{.ts,.js}',
+        ],
         migrationsTableName: 'typeorm_migrations',
         namingStrategy: new SnakeNamingStrategy(),
         synchronize: false,

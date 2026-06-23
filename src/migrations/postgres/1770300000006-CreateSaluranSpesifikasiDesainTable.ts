@@ -81,14 +81,26 @@ export class CreateSaluranSpesifikasiDesainTable1770300000006 implements Migrati
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_saluran_spesifikasi_desain_updated_at ON "saluran_spesifikasi_desain";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_saluran_spesifikasi_desain_updated_at ON "saluran_spesifikasi_desain";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_hspk";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_ruang_lingkup";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_usulan_saluran";`);
-        await queryRunner.query(`ALTER TABLE "saluran_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_hspk";`);
-        await queryRunner.query(`ALTER TABLE "saluran_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_ruang_lingkup";`);
-        await queryRunner.query(`ALTER TABLE "saluran_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_usulan_saluran";`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_ruang_lingkup";`,
+        );
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_saluran_spesifikasi_desain_usulan_saluran";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "saluran_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_hspk";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "saluran_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_ruang_lingkup";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "saluran_spesifikasi_desain" DROP CONSTRAINT IF EXISTS "fk_saluran_spesifikasi_desain_usulan_saluran";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "saluran_spesifikasi_desain";`);
     }
 }

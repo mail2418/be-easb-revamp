@@ -1,5 +1,5 @@
-import { CalculationMethod } from "src/domain/asb_bipek_standard/calculation_method.enum";
-import { Files } from "src/domain/asb_detail/files.enum";
+import { CalculationMethod } from 'src/domain/asb_bipek_standard/calculation_method.enum';
+import { Files } from 'src/domain/asb_detail/files.enum';
 
 export class BpnsReviewWithRelationsDto {
     id: number;

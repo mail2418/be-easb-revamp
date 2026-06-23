@@ -6,14 +6,18 @@ export class SeedAsbStatus1770088000009 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const asbStatuses = [
             { status: 'General Documents' },
-            { status: 'Luas Total Bangunan (LTB), Koefesien Luas Bangunan (KLB) dan Koefesien Fungsi Bangunan (KFB)' },
+            {
+                status: 'Luas Total Bangunan (LTB), Koefesien Luas Bangunan (KLB) dan Koefesien Fungsi Bangunan (KFB)',
+            },
             { status: 'Kebutuhan Biaya Pekerjaan Standar (BPS)' },
             { status: 'Kebutuhan Biaya Pekerjaan Non Standar (BPNS)' },
             { status: 'Setup Rekening' },
             { status: 'Proses Verifikasi' },
             { status: 'Tidak Memenuhi Syarat' },
             { status: 'Memenuhi Syarat' },
-            { status: 'Verifikasi Luas Total Bangunan (LTB), Koefesien Luas Bangunan (KLB) dan Koefesien Fungsi Bangunan (KFB)' },
+            {
+                status: 'Verifikasi Luas Total Bangunan (LTB), Koefesien Luas Bangunan (KLB) dan Koefesien Fungsi Bangunan (KFB)',
+            },
             { status: 'Verifikasi Kebutuhan Biaya Pekerjaan Standart (BPS)' },
             { status: 'Verifikasi Kebutuhan Biaya Pekerjaan Non Standar (BPNS)' },
             { status: 'Verifikasi Rekening Belanja' },

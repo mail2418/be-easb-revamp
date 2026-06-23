@@ -35,7 +35,9 @@ export class CreateJenisStandars1763867841131 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jenis_standars_updated_at ON "jenis_standars";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jenis_standars_updated_at ON "jenis_standars";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jenis_standars_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jenis_standars_jenis";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "jenis_standars";`);

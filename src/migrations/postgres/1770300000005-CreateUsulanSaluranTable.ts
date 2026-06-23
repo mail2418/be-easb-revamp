@@ -185,23 +185,51 @@ export class CreateUsulanSaluranTable1770300000005 implements MigrationInterface
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_usulan_saluran_updated_at ON "usulan_saluran";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_usulan_saluran_updated_at ON "usulan_saluran";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_usulan_saluran_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_usulan_saluran_opd";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_usulan_saluran_status_tahun";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_reject_verif";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_verifikator_bappeda";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_verifikator_bpkad";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_verifikator_adbang";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_kelurahan";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_kecamatan";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_kabkota";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_tipe_saluran";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_rekening_review";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_rekening";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_asb_jenis";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_usulan_saluran_status";`);
-        await queryRunner.query(`ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_opd";`);
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_reject_verif";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_verifikator_bappeda";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_verifikator_bpkad";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_verifikator_adbang";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_kelurahan";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_kecamatan";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_kabkota";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_tipe_saluran";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_rekening_review";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_rekening";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_asb_jenis";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_usulan_saluran_status";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "usulan_saluran" DROP CONSTRAINT IF EXISTS "fk_usulan_saluran_opd";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "usulan_saluran";`);
     }
 }

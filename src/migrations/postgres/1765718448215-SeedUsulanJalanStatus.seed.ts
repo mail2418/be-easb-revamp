@@ -46,4 +46,3 @@ export class SeedUsulanJalanStatus1765718448215 implements MigrationInterface {
         );
     }
 }
-

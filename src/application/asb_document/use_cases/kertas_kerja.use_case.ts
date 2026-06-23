@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { escapeHtml } from 'src/common/utils/escape_html.util';
-import { KertasKerjaDto } from 'src/presentation/asb_document/dto/kertas_kerja.dto'
+import { KertasKerjaDto } from 'src/presentation/asb_document/dto/kertas_kerja.dto';
 import * as puppeteer from 'puppeteer';
 
 @Injectable()
@@ -9,21 +9,27 @@ export class KertasKerjaUseCase {
         const html = await this.generateHtml(data);
         const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
-        const formatter = new Intl.DateTimeFormat("id-ID", {
-            timeZone: "Asia/Jakarta",
-            weekday: "long",
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
+        const formatter = new Intl.DateTimeFormat('id-ID', {
+            timeZone: 'Asia/Jakarta',
+            weekday: 'long',
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
             hour12: false,
-          });
+        });
 
-        const formattedVerifiedAdpemAt = formatter.format(data.dataAsb.verifiedAdpemAt ?? new Date());
-        const formattedVerifiedBpkadAt = formatter.format(data.dataAsb.verifiedBpkadAt ?? new Date());
-        const formattedVerifiedBappedaAt = formatter.format(data.dataAsb.verifiedBappedaAt ?? new Date());
+        const formattedVerifiedAdpemAt = formatter.format(
+            data.dataAsb.verifiedAdpemAt ?? new Date(),
+        );
+        const formattedVerifiedBpkadAt = formatter.format(
+            data.dataAsb.verifiedBpkadAt ?? new Date(),
+        );
+        const formattedVerifiedBappedaAt = formatter.format(
+            data.dataAsb.verifiedBappedaAt ?? new Date(),
+        );
 
         // Set content and wait for network idle to ensure styles are loaded
         await page.setContent(html, { waitUntil: 'networkidle0' });
@@ -37,7 +43,7 @@ export class KertasKerjaUseCase {
                 top: '70px',
                 bottom: '60px',
                 left: '15mm',
-                right: '15mm'
+                right: '15mm',
             },
             displayHeaderFooter: true,
             headerTemplate: `
@@ -73,7 +79,7 @@ export class KertasKerjaUseCase {
                     </div>
 
                     </div>
-            `
+            `,
         });
 
         await browser.close();
@@ -81,35 +87,66 @@ export class KertasKerjaUseCase {
     }
 
     async generateHtml(data: KertasKerjaDto): Promise<string> {
-        const { title, tipe_bangunan, tanggal_cetak, dataAsb, dataAsbDetailReview, shst, dataBps, dataBpns } = data;
+        const {
+            title,
+            tipe_bangunan,
+            tanggal_cetak,
+            dataAsb,
+            dataAsbDetailReview,
+            shst,
+            dataBps,
+            dataBpns,
+        } = data;
 
         // Helper for number formatting
         const number_format = (num: number, decimals = 0) => {
-            return Number(num)?.toLocaleString('id-ID', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) || '0';
+            return (
+                Number(num)?.toLocaleString('id-ID', {
+                    minimumFractionDigits: decimals,
+                    maximumFractionDigits: decimals,
+                }) || '0'
+            );
         };
 
         // Helper for terbilang (simplified version)
         const terbilang = (nilai: number): string => {
-            const angka = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
-            let temp = "";
+            const angka = [
+                '',
+                'Satu',
+                'Dua',
+                'Tiga',
+                'Empat',
+                'Lima',
+                'Enam',
+                'Tujuh',
+                'Delapan',
+                'Sembilan',
+                'Sepuluh',
+                'Sebelas',
+            ];
+            let temp = '';
             if (nilai < 12) {
-                temp = " " + angka[nilai];
+                temp = ' ' + angka[nilai];
             } else if (nilai < 20) {
-                temp = terbilang(nilai - 10) + " Belas";
+                temp = terbilang(nilai - 10) + ' Belas';
             } else if (nilai < 100) {
-                temp = terbilang(Math.floor(nilai / 10)) + " Puluh" + terbilang(nilai % 10);
+                temp = terbilang(Math.floor(nilai / 10)) + ' Puluh' + terbilang(nilai % 10);
             } else if (nilai < 200) {
-                temp = " Seratus" + terbilang(nilai - 100);
+                temp = ' Seratus' + terbilang(nilai - 100);
             } else if (nilai < 1000) {
-                temp = terbilang(Math.floor(nilai / 100)) + " Ratus" + terbilang(nilai % 100);
+                temp = terbilang(Math.floor(nilai / 100)) + ' Ratus' + terbilang(nilai % 100);
             } else if (nilai < 2000) {
-                temp = " Seribu" + terbilang(nilai - 1000);
+                temp = ' Seribu' + terbilang(nilai - 1000);
             } else if (nilai < 1000000) {
-                temp = terbilang(Math.floor(nilai / 1000)) + " Ribu" + terbilang(nilai % 1000);
+                temp = terbilang(Math.floor(nilai / 1000)) + ' Ribu' + terbilang(nilai % 1000);
             } else if (nilai < 1000000000) {
-                temp = terbilang(Math.floor(nilai / 1000000)) + " Juta" + terbilang(nilai % 1000000);
+                temp =
+                    terbilang(Math.floor(nilai / 1000000)) + ' Juta' + terbilang(nilai % 1000000);
             } else if (nilai < 1000000000000) {
-                temp = terbilang(Math.floor(nilai / 1000000000)) + " Milyar" + terbilang(nilai % 1000000000);
+                temp =
+                    terbilang(Math.floor(nilai / 1000000000)) +
+                    ' Milyar' +
+                    terbilang(nilai % 1000000000);
             }
             return temp;
         };
@@ -117,15 +154,16 @@ export class KertasKerjaUseCase {
         // Calculate totals for BPS
         let sumBps = 0;
         let jbobotKoef = 0;
-        const bpsRows = dataBps.map((row, i) => {
-            const bobot = row.asb.bobot_input ?? 0;
-            const jumlahBobot = row.asb.jumlah_bobot ?? 0;
-            const rincianHarga = row.asb.rincian_harga ?? 0;
+        const bpsRows = dataBps
+            .map((row, i) => {
+                const bobot = row.asb.bobot_input ?? 0;
+                const jumlahBobot = row.asb.jumlah_bobot ?? 0;
+                const rincianHarga = row.asb.rincian_harga ?? 0;
 
-            if (row.asb.jumlah_bobot) jbobotKoef += row.asb.jumlah_bobot;
-            if (row.asb.rincian_harga) sumBps += row.asb.rincian_harga;
+                if (row.asb.jumlah_bobot) jbobotKoef += row.asb.jumlah_bobot;
+                if (row.asb.rincian_harga) sumBps += row.asb.rincian_harga;
 
-            return `
+                return `
                 <tr>
                     <td class="text-center">${i + 1}</td>
                     <td>${escapeHtml(row.komponen)}</td>
@@ -137,20 +175,22 @@ export class KertasKerjaUseCase {
                     </td>
                 </tr>
             `;
-        }).join('');
+            })
+            .join('');
 
         // Calculate totals for BPNS
         let sumBpns = 0;
         let jbobotNsKoef = 0;
-        const bpnsRows = dataBpns.map((row, i) => {
-            const bobot = row.asb.bobot_input ?? 0;
-            const jumlahBobot = row.asb.jumlah_bobot ?? 0;
-            const rincianHarga = row.asb.rincian_harga ?? 0;
+        const bpnsRows = dataBpns
+            .map((row, i) => {
+                const bobot = row.asb.bobot_input ?? 0;
+                const jumlahBobot = row.asb.jumlah_bobot ?? 0;
+                const rincianHarga = row.asb.rincian_harga ?? 0;
 
-            if (row.asb.jumlah_bobot) jbobotNsKoef += row.asb.jumlah_bobot;
-            if (row.asb.rincian_harga) sumBpns += row.asb.rincian_harga;
+                if (row.asb.jumlah_bobot) jbobotNsKoef += row.asb.jumlah_bobot;
+                if (row.asb.rincian_harga) sumBpns += row.asb.rincian_harga;
 
-            return `
+                return `
                 <tr>
                     <td class="text-center">${i + 1}</td>
                     <td>${escapeHtml(row.komponen)}</td>
@@ -162,7 +202,8 @@ export class KertasKerjaUseCase {
                     </td>
                 </tr>
             `;
-        }).join('');
+            })
+            .join('');
 
         const totalBiayaKonstruksiFromReview = sumBps + sumBpns;
         const totalBiayaKonstruksi = totalBiayaKonstruksiFromReview;
@@ -175,41 +216,60 @@ export class KertasKerjaUseCase {
         const penyesuaianPengawasan = dataAsb.penyesuaianPengawasanKonstruksi ?? 0;
         const penyesuaianManagement = dataAsb.penyesuaianManagementKonstruksi ?? 0;
 
-        const hasPenyesuaian = penyesuaianPerencanaan !== 0 || penyesuaianPengawasan !== 0 || penyesuaianManagement !== 0;
+        const hasPenyesuaian =
+            penyesuaianPerencanaan !== 0 ||
+            penyesuaianPengawasan !== 0 ||
+            penyesuaianManagement !== 0;
 
         // Fallback: jika pakai penyesuaian, total = konstruksi + penyesuaian; jika tidak, total = konstruksi + jakon
         const calculatedRekapitulasi = hasPenyesuaian
-            ? Number(totalBiayaKonstruksi) + Number(penyesuaianPerencanaan) + Number(penyesuaianPengawasan) + Number(penyesuaianManagement)
-            : Number(totalBiayaKonstruksi) + Number(jakonPerencanaan) + Number(jakonPengawasan) + Number(jakonManagement);
+            ? Number(totalBiayaKonstruksi) +
+              Number(penyesuaianPerencanaan) +
+              Number(penyesuaianPengawasan) +
+              Number(penyesuaianManagement)
+            : Number(totalBiayaKonstruksi) +
+              Number(jakonPerencanaan) +
+              Number(jakonPengawasan) +
+              Number(jakonManagement);
 
-        const penyesuaianRowsHtml = hasPenyesuaian ? `
+        const penyesuaianRowsHtml = hasPenyesuaian
+            ? `
   <tr><td></td><td>e.</td><td class="text-left" colspan="3">Penyesuaian Perencanaan Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(penyesuaianPerencanaan)}</td></tr>
   <tr><td></td><td>f.</td><td class="text-left" colspan="3">Penyesuaian Pengawasan Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(penyesuaianPengawasan)}</td></tr>
   <tr><td></td><td>g.</td><td class="text-left" colspan="3">Penyesuaian Manajemen Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(penyesuaianManagement)}</td></tr>
-` : '';
+`
+            : '';
 
         // Helper to safely access nested properties
         const getOpd = (d: any) => escapeHtml(d.opd?.opd ?? '');
         const getNama = (d: any) => escapeHtml(d.namaAsb ?? '');
         const getKlasifikasi = (d: any) => escapeHtml(d.asbKlasifikasi?.klasifikasi ?? '');
 
-        const asbDetailsReview = dataAsbDetailReview.map((detail, i: number) => `
+        const asbDetailsReview = dataAsbDetailReview
+            .map(
+                (detail, i: number) => `
             <tr>
                 <td></td>
                 <td>- Luas ${detail.asb_lantai?.lantai}</td>
                 <td>:</td>
                 <td>${detail.luas} m<sup>2</sup></td>
             </tr>
-        `).join('');
+        `,
+            )
+            .join('');
 
-        const detailFungsiRows = dataAsbDetailReview.map((detail, i: number) => `
+        const detailFungsiRows = dataAsbDetailReview
+            .map(
+                (detail, i: number) => `
             <tr>
                 <td></td>
                 <td>- Fungsi ${detail.asb_lantai?.lantai}</td>
                 <td>:</td>
                 <td>${detail.asb_fungsi_ruang.fungsi_ruang} </td>
             </tr>
-        `).join('');
+        `,
+            )
+            .join('');
 
         return `
 <!DOCTYPE html>

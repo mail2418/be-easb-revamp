@@ -5,13 +5,13 @@ export class GetAsbFungsiRuangsDto {
     @IsOptional()
     @IsNumber()
     @Min(1)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     page?: number;
 
     @IsOptional()
     @IsNumber()
     @Min(1)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     amount?: number;
 
     @IsOptional()

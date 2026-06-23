@@ -1,17 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { JalanSpesifikasiDesainRepository } from "../../../domain/jalan_spesifikasi_desain/jalan_spesifikasi_desain.repository";
-import { JalanSpesifikasiDesainOrmEntity } from "../orm/jalan_spesifikasi_desain.orm_entity";
-import { JalanSpesifikasiDesain } from "../../../domain/jalan_spesifikasi_desain/jalan_spesifikasi_desain.entity";
-import { CreateJalanSpesifikasiDesainDto } from "../../../presentation/jalan_spesifikasi_desain/dto/create_jalan_spesifikasi_desain.dto";
-import { plainToInstance } from "class-transformer";
-import { UpdateJalanSpesifikasiDesainDto } from "../../../presentation/jalan_spesifikasi_desain/dto/update_jalan_spesifikasi_desain.dto";
-import { GetJalanSpesifikasiDesainDto } from "../../../presentation/jalan_spesifikasi_desain/dto/get_jalan_spesifikasi_desain.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { JalanSpesifikasiDesainRepository } from '../../../domain/jalan_spesifikasi_desain/jalan_spesifikasi_desain.repository';
+import { JalanSpesifikasiDesainOrmEntity } from '../orm/jalan_spesifikasi_desain.orm_entity';
+import { JalanSpesifikasiDesain } from '../../../domain/jalan_spesifikasi_desain/jalan_spesifikasi_desain.entity';
+import { CreateJalanSpesifikasiDesainDto } from '../../../presentation/jalan_spesifikasi_desain/dto/create_jalan_spesifikasi_desain.dto';
+import { plainToInstance } from 'class-transformer';
+import { UpdateJalanSpesifikasiDesainDto } from '../../../presentation/jalan_spesifikasi_desain/dto/update_jalan_spesifikasi_desain.dto';
+import { GetJalanSpesifikasiDesainDto } from '../../../presentation/jalan_spesifikasi_desain/dto/get_jalan_spesifikasi_desain.dto';
 
 @Injectable()
 export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDesainRepository {
-    constructor(@InjectRepository(JalanSpesifikasiDesainOrmEntity) private readonly repo: Repository<JalanSpesifikasiDesainOrmEntity>) { }
+    constructor(
+        @InjectRepository(JalanSpesifikasiDesainOrmEntity)
+        private readonly repo: Repository<JalanSpesifikasiDesainOrmEntity>,
+    ) {}
 
     async create(dto: CreateJalanSpesifikasiDesainDto): Promise<JalanSpesifikasiDesain> {
         const ormEntity = plainToInstance(JalanSpesifikasiDesainOrmEntity, dto);
@@ -27,7 +30,10 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<JalanSpesifikasiDesain | null> {
@@ -41,14 +47,16 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
                 'jsd.volume',
                 'jsd.spasi',
                 'jsd.tinggi',
-                'jsd.harga_spec'
+                'jsd.harga_spec',
             ])
             .where('jsd.id = :id', { id })
             .getOne();
         return entity || null;
     }
 
-    async findAll(dto: GetJalanSpesifikasiDesainDto): Promise<{ data: JalanSpesifikasiDesain[]; total: number; }> {
+    async findAll(
+        dto: GetJalanSpesifikasiDesainDto,
+    ): Promise<{ data: JalanSpesifikasiDesain[]; total: number }> {
         const queryBuilder = this.repo
             .createQueryBuilder('jsd')
             .select([
@@ -59,12 +67,14 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
                 'jsd.volume',
                 'jsd.spasi',
                 'jsd.tinggi',
-                'jsd.harga_spec'
+                'jsd.harga_spec',
             ])
             .orderBy('jsd.id', 'DESC');
 
         if (dto.id_usulan_jalan !== undefined) {
-            queryBuilder.where('jsd.id_usulan_jalan = :id_usulan_jalan', { id_usulan_jalan: dto.id_usulan_jalan });
+            queryBuilder.where('jsd.id_usulan_jalan = :id_usulan_jalan', {
+                id_usulan_jalan: dto.id_usulan_jalan,
+            });
         }
 
         if (dto.page !== undefined && dto.amount !== undefined) {
@@ -81,7 +91,11 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
         await this.repo.softDelete({ id_usulan_jalan: idUsulanJalan });
     }
 
-    async findByUsulanJalan(idUsulanJalan: number, page?: number, amount?: number): Promise<[JalanSpesifikasiDesain[], number]> {
+    async findByUsulanJalan(
+        idUsulanJalan: number,
+        page?: number,
+        amount?: number,
+    ): Promise<[JalanSpesifikasiDesain[], number]> {
         const queryBuilder = this.repo
             .createQueryBuilder('jsd')
             .select([
@@ -92,7 +106,7 @@ export class JalanSpesifikasiDesainRepositoryImpl implements JalanSpesifikasiDes
                 'jsd.volume',
                 'jsd.spasi',
                 'jsd.tinggi',
-                'jsd.harga_spec'
+                'jsd.harga_spec',
             ])
             .where('jsd.id_usulan_jalan = :idUsulanJalan', { idUsulanJalan })
             .orderBy('jsd.id', 'DESC');

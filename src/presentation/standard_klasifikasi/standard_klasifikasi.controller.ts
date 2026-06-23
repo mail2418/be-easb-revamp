@@ -23,7 +23,7 @@ import { Role } from '../../domain/user/user_role.enum';
 @Controller('standard-klasifikasis')
 @Roles(Role.SUPERADMIN)
 export class StandardKlasifikasiController {
-    constructor(private readonly standardKlasifikasiService: StandardKlasifikasiService) { }
+    constructor(private readonly standardKlasifikasiService: StandardKlasifikasiService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)
@@ -121,7 +121,9 @@ export class StandardKlasifikasiController {
 
     @Delete()
     @Roles(Role.SUPERADMIN)
-    async deleteStandardKlasifikasi(@Body() dto: DeleteStandardKlasifikasiDto): Promise<ResponseDto> {
+    async deleteStandardKlasifikasi(
+        @Body() dto: DeleteStandardKlasifikasiDto,
+    ): Promise<ResponseDto> {
         try {
             const deleted = await this.standardKlasifikasiService.delete(dto);
 
@@ -215,7 +217,9 @@ export class StandardKlasifikasiController {
 
     @Get('detail')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getStandardKlasifikasiDetail(@Query() dto: GetStandardKlasifikasiDetailDto): Promise<ResponseDto> {
+    async getStandardKlasifikasiDetail(
+        @Query() dto: GetStandardKlasifikasiDetailDto,
+    ): Promise<ResponseDto> {
         try {
             const standardKlasifikasi = await this.standardKlasifikasiService.findById(dto);
 

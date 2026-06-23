@@ -20,4 +20,4 @@ import { AsbLogServiceImpl } from '../../application/asb_log/asb_log.service.imp
     ],
     exports: [AsbLogService],
 })
-export class AsbLogModule { }
+export class AsbLogModule {}

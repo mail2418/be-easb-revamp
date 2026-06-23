@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class DropIdSpesifikasiDesainFromJalanSpesifikasiDesainReview1767546826914 implements MigrationInterface {
+export class DropIdSpesifikasiDesainFromJalanSpesifikasiDesainReview1767546826914
+    implements MigrationInterface
+{
     name = 'DropIdSpesifikasiDesainFromJalanSpesifikasiDesainReview1767546826914';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -40,4 +42,3 @@ export class DropIdSpesifikasiDesainFromJalanSpesifikasiDesainReview176754682691
         `);
     }
 }
-

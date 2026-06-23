@@ -26,8 +26,12 @@ export class UpdateJalanSaluranRuangLingkupDeskripsi1766844966240 implements Mig
         `);
 
         // If id=3 already has 'PEKERJAAN TANAH DAN GEOSINTETIK' with same id_jenis_usulan as id=2
-        if (existing3.length > 0 && existing3[0].deskripsi_ruang_lingkup === 'PEKERJAAN TANAH DAN GEOSINTETIK' && 
-            existing2.length > 0 && existing2[0].id_jenis_usulan === existing3[0].id_jenis_usulan) {
+        if (
+            existing3.length > 0 &&
+            existing3[0].deskripsi_ruang_lingkup === 'PEKERJAAN TANAH DAN GEOSINTETIK' &&
+            existing2.length > 0 &&
+            existing2[0].id_jenis_usulan === existing3[0].id_jenis_usulan
+        ) {
             // Only update id=2, and delete id=3 to avoid duplicate
             await queryRunner.query(`
                 UPDATE "jalan_saluran_ruang_lingkup"
@@ -107,13 +111,16 @@ export class UpdateJalanSaluranRuangLingkupDeskripsi1766844966240 implements Mig
             const id2Data = await queryRunner.query(`
                 SELECT "id_jenis_usulan" FROM "jalan_saluran_ruang_lingkup" WHERE "id" = 2
             `);
-            
+
             if (id2Data.length > 0) {
-                await queryRunner.query(`
+                await queryRunner.query(
+                    `
                     INSERT INTO "jalan_saluran_ruang_lingkup" ("id_jenis_usulan", "deskripsi_ruang_lingkup")
                     VALUES ($1, 'PEKERJAAN TANAH DAN GEOSINTETIK')
                     ON CONFLICT DO NOTHING
-                `, [id2Data[0].id_jenis_usulan]);
+                `,
+                    [id2Data[0].id_jenis_usulan],
+                );
             }
         }
 
@@ -125,4 +132,3 @@ export class UpdateJalanSaluranRuangLingkupDeskripsi1766844966240 implements Mig
         `);
     }
 }
-

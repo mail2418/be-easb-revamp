@@ -35,10 +35,11 @@ export class CreateJalanJenisPerkerasan1765690322931 implements MigrationInterfa
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jalan_jenis_perkerasan_updated_at ON "jalan_jenis_perkerasan";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jalan_jenis_perkerasan_updated_at ON "jalan_jenis_perkerasan";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_jenis_perkerasan_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_jenis_perkerasan_jenis";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_jenis_perkerasan";`);
     }
 }
-

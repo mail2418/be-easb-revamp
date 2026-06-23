@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
+    OneToOne,
+    JoinColumn,
+} from 'typeorm';
 import { JenisVerifikator } from '../../../domain/verifikator/jenis_verifikator.enum';
 import { UserOrmEntity } from '../../user/orm/user.orm_entity';
 
@@ -13,7 +22,7 @@ export class VerifikatorOrmEntity {
     @Column({
         name: 'jenis_verifikator',
         type: 'enum',
-        enum: JenisVerifikator
+        enum: JenisVerifikator,
     })
     jenisVerifikator: JenisVerifikator;
 

@@ -1,4 +1,4 @@
-import { AsbKlasifikasi } from "../../../domain/asb_klasifikasi/asb_klasifikasi.entity";
+import { AsbKlasifikasi } from '../../../domain/asb_klasifikasi/asb_klasifikasi.entity';
 
 export class AsbKlasifikasisPaginationResultDto {
     data!: AsbKlasifikasi[];

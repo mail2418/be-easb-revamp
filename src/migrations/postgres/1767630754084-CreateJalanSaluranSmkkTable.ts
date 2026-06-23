@@ -66,13 +66,20 @@ export class CreateJalanSaluranSmkkTable1767630754084 implements MigrationInterf
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_jalan_saluran_smkk_updated_at ON "jalan_saluran_smkk";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_jalan_saluran_smkk_updated_at ON "jalan_saluran_smkk";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_smkk_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_smkk_no_mata_pembayaran";`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_jalan_saluran_smkk_no_mata_pembayaran";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_jalan_saluran_smkk_ruang_lingkup";`);
-        await queryRunner.query(`ALTER TABLE "jalan_saluran_smkk" DROP CONSTRAINT IF EXISTS "uq_jalan_saluran_smkk_ruang_lingkup_no_mata_uraian";`);
-        await queryRunner.query(`ALTER TABLE "jalan_saluran_smkk" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_smkk_ruang_lingkup";`);
+        await queryRunner.query(
+            `ALTER TABLE "jalan_saluran_smkk" DROP CONSTRAINT IF EXISTS "uq_jalan_saluran_smkk_ruang_lingkup_no_mata_uraian";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "jalan_saluran_smkk" DROP CONSTRAINT IF EXISTS "fk_jalan_saluran_smkk_ruang_lingkup";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "jalan_saluran_smkk";`);
     }
 }
-

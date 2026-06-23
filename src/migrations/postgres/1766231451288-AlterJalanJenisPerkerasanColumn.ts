@@ -41,4 +41,3 @@ export class AlterJalanJenisPerkerasanColumn1766231451286 implements MigrationIn
         `);
     }
 }
-

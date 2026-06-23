@@ -42,7 +42,7 @@ export class SeedProvinces1763626412272 implements MigrationInterface {
             { kode: '93', nama: 'Papua Tengah' },
             { kode: '94', nama: 'Papua Pegunungan' },
             { kode: '95', nama: 'Papua' },
-            { kode: '96', nama: 'Papua Barat Daya' }
+            { kode: '96', nama: 'Papua Barat Daya' },
         ];
 
         for (const province of provinces) {
@@ -50,7 +50,7 @@ export class SeedProvinces1763626412272 implements MigrationInterface {
                 `INSERT INTO "provinces" ("kode", "nama", "is_active")
                  VALUES ($1, $2, $3)
                  ON CONFLICT ("kode") DO NOTHING`,
-                [province.kode, province.nama, true]
+                [province.kode, province.nama, true],
             );
         }
     }

@@ -8,23 +8,18 @@ import { AsbFungsiRuangService } from '../../domain/asb_fungsi_ruang/asb_fungsi_
 import { AsbFungsiRuangRepository } from '../../domain/asb_fungsi_ruang/asb_fungsi_ruang.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([AsbFungsiRuangOrmEntity]),
-  ],
-  controllers: [AsbFungsiRuangController],
-  providers: [
-    {
-      provide: AsbFungsiRuangService,
-      useClass: AsbFungsiRuangServiceImpl,
-    },
-    {
-      provide: AsbFungsiRuangRepository,
-      useClass: AsbFungsiRuangRepositoryImpl,
-    },
-  ],
-  exports: [
-    AsbFungsiRuangService,
-    AsbFungsiRuangRepository,
-  ],
+    imports: [TypeOrmModule.forFeature([AsbFungsiRuangOrmEntity])],
+    controllers: [AsbFungsiRuangController],
+    providers: [
+        {
+            provide: AsbFungsiRuangService,
+            useClass: AsbFungsiRuangServiceImpl,
+        },
+        {
+            provide: AsbFungsiRuangRepository,
+            useClass: AsbFungsiRuangRepositoryImpl,
+        },
+    ],
+    exports: [AsbFungsiRuangService, AsbFungsiRuangRepository],
 })
 export class AsbFungsiRuangModule {}

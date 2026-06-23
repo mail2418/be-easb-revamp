@@ -1,4 +1,17 @@
-import { Controller, Get, Post, Put, Delete, Body, Query, Req, HttpStatus, HttpException, ParseIntPipe, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Put,
+    Delete,
+    Body,
+    Query,
+    Req,
+    HttpStatus,
+    HttpException,
+    ParseIntPipe,
+    UseGuards,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import { UsulanSaluranService } from '../../domain/usulan_saluran/usulan_saluran.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -24,10 +37,20 @@ import { ResponseDto } from '../../common/dto/response.dto';
 function handleErr(e: unknown): ResponseDto {
     if (e instanceof HttpException) {
         const r = e.getResponse();
-        const msg = typeof r === 'string' ? r : (Array.isArray((r as any).message) ? (r as any).message.join(', ') : (r as any).message ?? 'Error');
+        const msg =
+            typeof r === 'string'
+                ? r
+                : Array.isArray((r as any).message)
+                  ? (r as any).message.join(', ')
+                  : ((r as any).message ?? 'Error');
         return { status: 'error', responseCode: e.getStatus(), message: msg, data: null };
     }
-    return { status: 'error', responseCode: HttpStatus.INTERNAL_SERVER_ERROR, message: 'Internal server error', data: null };
+    return {
+        status: 'error',
+        responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Internal server error',
+        data: null,
+    };
 }
 
 @Controller('usulan-saluran')
@@ -37,62 +60,122 @@ export class UsulanSaluranController {
 
     @Get('analytics')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getAnalytics(@Query() f: GetUsulanSaluranAnalyticsFilterDto, @Req() req: Request): Promise<ResponseDto> {
+    async getAnalytics(
+        @Query() f: GetUsulanSaluranAnalyticsFilterDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.getAnalytics(u.idOpd, u.roles, f);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran analytics retrieved successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran analytics retrieved successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async findAll(@Query() dto: FindAllUsulanSaluranDto, @Req() req: Request): Promise<ResponseDto> {
+    async findAll(
+        @Query() dto: FindAllUsulanSaluranDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.findAll(dto, u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran list retrieved successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran list retrieved successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Get('id')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async findById(@Query('id', ParseIntPipe) id: number, @Req() req: Request): Promise<ResponseDto> {
+    async findById(
+        @Query('id', ParseIntPipe) id: number,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.findById(id, u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran retrieved successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran retrieved successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Post('store-index')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async storeIndex(@Body() dto: CreateUsulanSaluranStoreIndexDto, @Req() req: Request): Promise<ResponseDto> {
+    async storeIndex(
+        @Body() dto: CreateUsulanSaluranStoreIndexDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.createIndex(dto, u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran index created successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran index created successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Put('store-index')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async updateIndex(@Body() dto: UpdateUsulanSaluranStoreIndexDto, @Req() req: Request): Promise<ResponseDto> {
+    async updateIndex(
+        @Body() dto: UpdateUsulanSaluranStoreIndexDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.updateIndex(dto, u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran index updated successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran index updated successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Put('store-informasi')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async storeInformasi(@Body() dto: StoreInformasiUsulanSaluranDto, @Req() req: Request): Promise<ResponseDto> {
+    async storeInformasi(
+        @Body() dto: StoreInformasiUsulanSaluranDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.storeInformasi(dto, u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Informasi Usulan Saluran stored successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Informasi Usulan Saluran stored successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Put('update')
@@ -101,8 +184,15 @@ export class UsulanSaluranController {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.updateUsulanSaluran(dto, u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran updated successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran updated successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Delete()
@@ -111,58 +201,125 @@ export class UsulanSaluranController {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.deleteUsulanSaluran(dto.idUsulanSaluran, u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran deleted successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran deleted successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Put('verify-index')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async verifyIndex(@Body() dto: VerifyIndexUsulanSaluranDto, @Req() req: Request): Promise<ResponseDto> {
+    async verifyIndex(
+        @Body() dto: VerifyIndexUsulanSaluranDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.verifyIndex(dto, u.userId.toString(), u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran index verified successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran index verified successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Put('verify-informasi')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async verifyInformasi(@Body() dto: VerifyInformasiUsulanSaluranDto, @Req() req: Request): Promise<ResponseDto> {
+    async verifyInformasi(
+        @Body() dto: VerifyInformasiUsulanSaluranDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.verifyInformasi(dto, u.userId.toString(), u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Informasi Usulan Saluran verified successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Informasi Usulan Saluran verified successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Put('verify-adbang')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async verifyAdbang(@Body() dto: VerifyUsulanSaluranDto, @Req() req: Request): Promise<ResponseDto> {
+    async verifyAdbang(
+        @Body() dto: VerifyUsulanSaluranDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
-            const r = await this.svc.verifyAdbang(dto.idUsulanSaluran, u.userId.toString(), u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran approved by ADBANG successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            const r = await this.svc.verifyAdbang(
+                dto.idUsulanSaluran,
+                u.userId.toString(),
+                u.idOpd,
+                u.roles,
+            );
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran approved by ADBANG successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Put('verify-bpkad')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async verifyBpkad(@Body() dto: VerifyBpkadUsulanSaluranDto, @Req() req: Request): Promise<ResponseDto> {
+    async verifyBpkad(
+        @Body() dto: VerifyBpkadUsulanSaluranDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.verifyBpkad(dto, u.userId.toString(), u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran approved by BPKAD successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran approved by BPKAD successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Put('verify-bappeda')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async verifyBappeda(@Body() dto: VerifyUsulanSaluranDto, @Req() req: Request): Promise<ResponseDto> {
+    async verifyBappeda(
+        @Body() dto: VerifyUsulanSaluranDto,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
-            const r = await this.svc.verifyBappeda(dto.idUsulanSaluran, u.userId.toString(), u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran approved by BAPPEDA successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            const r = await this.svc.verifyBappeda(
+                dto.idUsulanSaluran,
+                u.userId.toString(),
+                u.idOpd,
+                u.roles,
+            );
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran approved by BAPPEDA successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Put('reject')
@@ -171,18 +328,41 @@ export class UsulanSaluranController {
         try {
             const u = req.user as UserContext;
             if (!u?.userId) throw new ForbiddenException('User ID is required');
-            const r = await this.svc.reject(dto.idUsulanSaluran, dto.rejectReason, u.userId.toString(), u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Usulan Saluran rejected successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            const r = await this.svc.reject(
+                dto.idUsulanSaluran,
+                dto.rejectReason,
+                u.userId.toString(),
+                u.idOpd,
+                u.roles,
+            );
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Usulan Saluran rejected successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 
     @Get('reject-info')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getRejectInfo(@Query('id', ParseIntPipe) id: number, @Req() req: Request): Promise<ResponseDto> {
+    async getRejectInfo(
+        @Query('id', ParseIntPipe) id: number,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
         try {
             const u = req.user as UserContext;
             const r = await this.svc.getRejectInfo(id, u.idOpd, u.roles);
-            return { status: 'success', responseCode: HttpStatus.OK, message: 'Reject info retrieved successfully', data: r };
-        } catch (e) { return handleErr(e); }
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Reject info retrieved successfully',
+                data: r,
+            };
+        } catch (e) {
+            return handleErr(e);
+        }
     }
 }

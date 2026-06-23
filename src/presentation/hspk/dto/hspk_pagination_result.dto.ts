@@ -7,4 +7,3 @@ export class HspkPaginationResultDto {
     limit!: number;
     totalPages!: number;
 }
-

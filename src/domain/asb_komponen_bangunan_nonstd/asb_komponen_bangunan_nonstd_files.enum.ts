@@ -1,4 +1,4 @@
 export enum AsbKomponenBangunanNonStdFiles {
     ORIGIN = 'ORIGIN',
-    REVIEW = 'REVIEW'
+    REVIEW = 'REVIEW',
 }

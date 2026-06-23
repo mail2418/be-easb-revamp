@@ -8,23 +8,18 @@ import { OpdService } from '../../domain/opd/opd.service';
 import { OpdRepository } from '../../domain/opd/opd.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([OpdOrmEntity]),
-  ],
-  controllers: [OpdController],
-  providers: [
-    {
-      provide: OpdService,
-      useClass: OpdServiceImpl,
-    },
-    {
-      provide: OpdRepository,
-      useClass: OpdRepositoryImpl,
-    },
-  ],
-  exports: [
-    OpdService,
-    OpdRepository,
-  ],
+    imports: [TypeOrmModule.forFeature([OpdOrmEntity])],
+    controllers: [OpdController],
+    providers: [
+        {
+            provide: OpdService,
+            useClass: OpdServiceImpl,
+        },
+        {
+            provide: OpdRepository,
+            useClass: OpdRepositoryImpl,
+        },
+    ],
+    exports: [OpdService, OpdRepository],
 })
 export class OpdModule {}

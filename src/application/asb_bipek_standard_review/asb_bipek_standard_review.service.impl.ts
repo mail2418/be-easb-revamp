@@ -9,26 +9,18 @@ import { BpsReviewWithRelationsDto } from './dto/bps_review_with_relations.dto';
 
 @Injectable()
 export class AsbBipekStandardReviewServiceImpl extends AsbBipekStandardReviewService {
-    constructor(
-        private readonly repository: AsbBipekStandardReviewRepository,
-    ) {
+    constructor(private readonly repository: AsbBipekStandardReviewRepository) {
         super();
     }
 
-    async create(
-        dto: CreateAsbBipekStandardReviewDto,
-    ): Promise<AsbBipekStandardReview> {
+    async create(dto: CreateAsbBipekStandardReviewDto): Promise<AsbBipekStandardReview> {
         return await this.repository.create(dto);
     }
 
-    async update(
-        dto: UpdateAsbBipekStandardReviewDto,
-    ): Promise<AsbBipekStandardReview> {
+    async update(dto: UpdateAsbBipekStandardReviewDto): Promise<AsbBipekStandardReview> {
         const existing = await this.repository.findById(dto.id);
         if (!existing) {
-            throw new NotFoundException(
-                `AsbBipekStandardReview with id ${dto.id} not found`,
-            );
+            throw new NotFoundException(`AsbBipekStandardReview with id ${dto.id} not found`);
         }
 
         return await this.repository.update(dto);
@@ -37,9 +29,7 @@ export class AsbBipekStandardReviewServiceImpl extends AsbBipekStandardReviewSer
     async delete(id: number): Promise<void> {
         const existing = await this.repository.findById(id);
         if (!existing) {
-            throw new NotFoundException(
-                `AsbBipekStandardReview with id ${id} not found`,
-            );
+            throw new NotFoundException(`AsbBipekStandardReview with id ${id} not found`);
         }
 
         await this.repository.delete(id);
@@ -48,42 +38,56 @@ export class AsbBipekStandardReviewServiceImpl extends AsbBipekStandardReviewSer
     async getById(id: number): Promise<AsbBipekStandardReview> {
         const bipekStandardReview = await this.repository.findById(id);
         if (!bipekStandardReview) {
-            throw new NotFoundException(
-                `AsbBipekStandardReview with id ${id} not found`,
-            );
+            throw new NotFoundException(`AsbBipekStandardReview with id ${id} not found`);
         }
         return bipekStandardReview;
     }
 
-    async getByAsb(dto: GetAsbBipekStandardReviewByAsbDto): Promise<{ data: AsbBipekStandardReview[], total: number, page: number, amount: number, totalPages: number }> {
+    async getByAsb(dto: GetAsbBipekStandardReviewByAsbDto): Promise<{
+        data: AsbBipekStandardReview[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }> {
         const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
-        
+
         // If pagination is not provided, return all data with page=1, amount=total
         const page = dto.page ?? 1;
         const amount = dto.amount ?? total;
-        
+
         return {
             data,
             total,
             page,
             amount,
-            totalPages: amount > 0 ? Math.ceil(total / amount) : 1
+            totalPages: amount > 0 ? Math.ceil(total / amount) : 1,
         };
     }
 
-    async getBpsWithRelationByAsb(dto: GetAsbBipekStandardReviewByAsbDto): Promise<{ data: BpsReviewWithRelationsDto[], total: number, page: number, amount: number, totalPages: number }> {
-        const [data, total] = await this.repository.getBpsWithRelationByAsb({ idAsb: dto.idAsb, page: dto.page, amount: dto.amount });
-        
+    async getBpsWithRelationByAsb(dto: GetAsbBipekStandardReviewByAsbDto): Promise<{
+        data: BpsReviewWithRelationsDto[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }> {
+        const [data, total] = await this.repository.getBpsWithRelationByAsb({
+            idAsb: dto.idAsb,
+            page: dto.page,
+            amount: dto.amount,
+        });
+
         // If pagination is not provided, return all data with page=1, amount=total
         const page = dto.page ?? 1;
         const amount = dto.amount ?? total;
-        
+
         return {
             data,
             total,
             page,
             amount,
-            totalPages: amount > 0 ? Math.ceil(total / amount) : 1
+            totalPages: amount > 0 ? Math.ceil(total / amount) : 1,
         };
     }
 

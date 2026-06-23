@@ -19,7 +19,7 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
     constructor(
         @InjectRepository(AsbJakonOrmEntity)
         private readonly repo: Repository<AsbJakonOrmEntity>,
-    ) { }
+    ) {}
 
     async create(dto: CreateAsbJakonDto): Promise<AsbJakon> {
         const entity = this.repo.create(dto);
@@ -34,7 +34,8 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id)
+        return await this.repo
+            .softDelete(id)
             .then(() => true)
             .catch(() => false);
     }
@@ -54,7 +55,7 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
                 'asb_jakon.price_from',
                 'asb_jakon.price_to',
                 'asb_jakon.satuan',
-                'asb_jakon.standard'
+                'asb_jakon.standard',
             ])
             .leftJoinAndSelect('asb_jakon.asbTipeBangunan', 'asb_tipe_bangunan')
             .leftJoinAndSelect('asb_jakon.asbJenis', 'asb_jenis')
@@ -81,7 +82,7 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
                 'asb_jakon.price_from',
                 'asb_jakon.price_to',
                 'asb_jakon.satuan',
-                'asb_jakon.standard'
+                'asb_jakon.standard',
             ])
             .leftJoinAndSelect('asb_jakon.asbTipeBangunan', 'asb_tipe_bangunan')
             .leftJoinAndSelect('asb_jakon.asbJenis', 'asb_jenis')
@@ -130,42 +131,52 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
     async findByPriceRange(dto: GetJakonByPriceRangeDto): Promise<AsbJakon | null> {
         let entity = await this.repo
             .createQueryBuilder('asb_jakon')
-            .select(['asb_jakon.id', 'asb_jakon.standard', 'asb_jakon.price_from', 'asb_jakon.price_to'])
+            .select([
+                'asb_jakon.id',
+                'asb_jakon.standard',
+                'asb_jakon.price_from',
+                'asb_jakon.price_to',
+            ])
             .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
-                id_asb_klasifikasi: dto.id_asb_klasifikasi
+                id_asb_klasifikasi: dto.id_asb_klasifikasi,
             })
             .andWhere('asb_jakon.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
-                id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+                id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan,
             })
             .andWhere('asb_jakon.id_asb_jenis = :id_asb_jenis', {
-                id_asb_jenis: dto.id_asb_jenis
+                id_asb_jenis: dto.id_asb_jenis,
             })
             .andWhere('asb_jakon.type = :type', {
-                type: dto.type
+                type: dto.type,
             })
             .andWhere('asb_jakon.price_from <= :total_biaya', {
-                total_biaya: dto.total_biaya_pembangunan
+                total_biaya: dto.total_biaya_pembangunan,
             })
             .andWhere('asb_jakon.price_to > :total_biaya', {
-                total_biaya: dto.total_biaya_pembangunan
+                total_biaya: dto.total_biaya_pembangunan,
             })
             .getOne();
 
         if (!entity) {
             entity = await this.repo
                 .createQueryBuilder('asb_jakon')
-                .select(['asb_jakon.id', 'asb_jakon.standard', 'asb_jakon.price_from', 'asb_jakon.price_to'])
+                .select([
+                    'asb_jakon.id',
+                    'asb_jakon.standard',
+                    'asb_jakon.price_from',
+                    'asb_jakon.price_to',
+                ])
                 .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
-                    id_asb_klasifikasi: dto.id_asb_klasifikasi
+                    id_asb_klasifikasi: dto.id_asb_klasifikasi,
                 })
                 .andWhere('asb_jakon.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
-                    id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+                    id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan,
                 })
                 .andWhere('asb_jakon.id_asb_jenis = :id_asb_jenis', {
-                    id_asb_jenis: dto.id_asb_jenis
+                    id_asb_jenis: dto.id_asb_jenis,
                 })
                 .andWhere('asb_jakon.type = :type', {
-                    type: dto.type
+                    type: dto.type,
                 })
                 .orderBy('asb_jakon.price_from', 'ASC')
                 .getOne();
@@ -174,18 +185,23 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
         if (!entity) {
             entity = await this.repo
                 .createQueryBuilder('asb_jakon')
-                .select(['asb_jakon.id', 'asb_jakon.standard', 'asb_jakon.price_from', 'asb_jakon.price_to'])
+                .select([
+                    'asb_jakon.id',
+                    'asb_jakon.standard',
+                    'asb_jakon.price_from',
+                    'asb_jakon.price_to',
+                ])
                 .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
-                    id_asb_klasifikasi: dto.id_asb_klasifikasi
+                    id_asb_klasifikasi: dto.id_asb_klasifikasi,
                 })
                 .andWhere('asb_jakon.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
-                    id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+                    id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan,
                 })
                 .andWhere('asb_jakon.id_asb_jenis = :id_asb_jenis', {
-                    id_asb_jenis: dto.id_asb_jenis
+                    id_asb_jenis: dto.id_asb_jenis,
                 })
                 .andWhere('asb_jakon.type = :type', {
-                    type: dto.type
+                    type: dto.type,
                 })
                 .orderBy('asb_jakon.price_to', 'DESC')
                 .getOne();
@@ -195,7 +211,7 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
     }
 
     async bulkCreate(dtos: BulkCreateAsbJakonDto[]): Promise<AsbJakon[]> {
-        const ormEntities = dtos.map(dto => plainToInstance(AsbJakonOrmEntity, dto));
+        const ormEntities = dtos.map((dto) => plainToInstance(AsbJakonOrmEntity, dto));
         const savedEntities = await this.repo.save(ormEntities);
         return savedEntities;
     }

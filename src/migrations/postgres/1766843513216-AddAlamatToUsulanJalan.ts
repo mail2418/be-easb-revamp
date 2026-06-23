@@ -19,4 +19,3 @@ export class AddAlamatToUsulanJalan1766843513216 implements MigrationInterface {
         `);
     }
 }
-

@@ -28,9 +28,6 @@ import { AsbTipeBangunanModule } from '../asb_tipe_bangunan/asb_tipe_bangunan.mo
         },
         ValidateStatisticalRangeUseCase,
     ],
-    exports: [
-        AsbKomponenBangunanProsStdService,
-        AsbKomponenBangunanProsStdRepository,
-    ],
+    exports: [AsbKomponenBangunanProsStdService, AsbKomponenBangunanProsStdRepository],
 })
-export class AsbKomponenBangunanProsStdModule { }
+export class AsbKomponenBangunanProsStdModule {}

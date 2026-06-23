@@ -23,7 +23,7 @@ import { Role } from '../../domain/user/user_role.enum';
 @Controller('satuans')
 @Roles(Role.SUPERADMIN)
 export class SatuanController {
-    constructor(private readonly satuanService: SatuanService) { }
+    constructor(private readonly satuanService: SatuanService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)

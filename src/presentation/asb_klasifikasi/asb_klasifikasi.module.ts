@@ -9,24 +9,18 @@ import { AsbKlasifikasiRepository } from '../../domain/asb_klasifikasi/asb_klasi
 import { AsbTipeBangunanModule } from '../asb_tipe_bangunan/asb_tipe_bangunan.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([AsbKlasifikasiOrmEntity]),
-    AsbTipeBangunanModule
-  ],
-  controllers: [AsbKlasifikasiController],
-  providers: [
-    {
-      provide: AsbKlasifikasiService,
-      useClass: AsbKlasifikasiServiceImpl,
-    },
-    {
-      provide: AsbKlasifikasiRepository,
-      useClass: AsbKlasifikasiRepositoryImpl,
-    },
-  ],
-  exports: [
-    AsbKlasifikasiService,
-    AsbKlasifikasiRepository,
-  ],
+    imports: [TypeOrmModule.forFeature([AsbKlasifikasiOrmEntity]), AsbTipeBangunanModule],
+    controllers: [AsbKlasifikasiController],
+    providers: [
+        {
+            provide: AsbKlasifikasiService,
+            useClass: AsbKlasifikasiServiceImpl,
+        },
+        {
+            provide: AsbKlasifikasiRepository,
+            useClass: AsbKlasifikasiRepositoryImpl,
+        },
+    ],
+    exports: [AsbKlasifikasiService, AsbKlasifikasiRepository],
 })
 export class AsbKlasifikasiModule {}

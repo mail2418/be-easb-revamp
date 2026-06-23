@@ -8,21 +8,21 @@ import {
     HttpStatus,
     HttpException,
     Query,
-} from "@nestjs/common";
-import { JalanJenisPemeliharaanService } from "../../domain/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.service";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { CreateJalanJenisPemeliharaanDto } from "./dto/create_jalan_jenis_pemeliharaan.dto";
-import { UpdateJalanJenisPemeliharaanDto } from "./dto/update_jalan_jenis_pemeliharaan.dto";
-import { DeleteJalanJenisPemeliharaanDto } from "./dto/delete_jalan_jenis_pemeliharaan.dto";
-import { GetJalanJenisPemeliharaanDto } from "./dto/get_jalan_jenis_pemeliharaan.dto";
-import { GetJalanJenisPemeliharaanDetailDto } from "./dto/get_jalan_jenis_pemeliharaan_detail.dto";
-import { ResponseDto } from "../../common/dto/response.dto";
-import { Role } from "../../domain/user/user_role.enum";
+} from '@nestjs/common';
+import { JalanJenisPemeliharaanService } from '../../domain/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.service';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { CreateJalanJenisPemeliharaanDto } from './dto/create_jalan_jenis_pemeliharaan.dto';
+import { UpdateJalanJenisPemeliharaanDto } from './dto/update_jalan_jenis_pemeliharaan.dto';
+import { DeleteJalanJenisPemeliharaanDto } from './dto/delete_jalan_jenis_pemeliharaan.dto';
+import { GetJalanJenisPemeliharaanDto } from './dto/get_jalan_jenis_pemeliharaan.dto';
+import { GetJalanJenisPemeliharaanDetailDto } from './dto/get_jalan_jenis_pemeliharaan_detail.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
+import { Role } from '../../domain/user/user_role.enum';
 
-@Controller("jalan-jenis-pemeliharaan")
+@Controller('jalan-jenis-pemeliharaan')
 @Roles(Role.SUPERADMIN)
 export class JalanJenisPemeliharaanController {
-    constructor(private readonly jalanJenisPemeliharaanService: JalanJenisPemeliharaanService) { }
+    constructor(private readonly jalanJenisPemeliharaanService: JalanJenisPemeliharaanService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)
@@ -31,9 +31,9 @@ export class JalanJenisPemeliharaanController {
             const jalanJenisPemeliharaan = await this.jalanJenisPemeliharaanService.create(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.CREATED,
-                message: "Jalan Jenis Pemeliharaan created",
+                message: 'Jalan Jenis Pemeliharaan created',
                 data: jalanJenisPemeliharaan,
             };
         } catch (error) {
@@ -43,19 +43,19 @@ export class JalanJenisPemeliharaanController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -63,9 +63,9 @@ export class JalanJenisPemeliharaanController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -78,9 +78,9 @@ export class JalanJenisPemeliharaanController {
             const jalanJenisPemeliharaan = await this.jalanJenisPemeliharaanService.update(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "Jalan Jenis Pemeliharaan updated",
+                message: 'Jalan Jenis Pemeliharaan updated',
                 data: jalanJenisPemeliharaan,
             };
         } catch (error) {
@@ -90,19 +90,19 @@ export class JalanJenisPemeliharaanController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -110,9 +110,9 @@ export class JalanJenisPemeliharaanController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -125,9 +125,9 @@ export class JalanJenisPemeliharaanController {
             const deleted = await this.jalanJenisPemeliharaanService.delete(dto.id);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "Jalan Jenis Pemeliharaan deleted",
+                message: 'Jalan Jenis Pemeliharaan deleted',
                 data: deleted,
             };
         } catch (error) {
@@ -137,19 +137,19 @@ export class JalanJenisPemeliharaanController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -157,9 +157,9 @@ export class JalanJenisPemeliharaanController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
@@ -172,9 +172,9 @@ export class JalanJenisPemeliharaanController {
             const result = await this.jalanJenisPemeliharaanService.findAll(dto);
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "Jalan Jenis Pemeliharaan list retrieved",
+                message: 'Jalan Jenis Pemeliharaan list retrieved',
                 data: result,
             };
         } catch (error) {
@@ -184,19 +184,19 @@ export class JalanJenisPemeliharaanController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -204,24 +204,26 @@ export class JalanJenisPemeliharaanController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }
     }
 
-    @Get("detail")
+    @Get('detail')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async findById(@Query() dto: GetJalanJenisPemeliharaanDetailDto): Promise<ResponseDto> {
         try {
-            const jalanJenisPemeliharaan = await this.jalanJenisPemeliharaanService.findById(dto.id);
+            const jalanJenisPemeliharaan = await this.jalanJenisPemeliharaanService.findById(
+                dto.id,
+            );
 
             return {
-                status: "success",
+                status: 'success',
                 responseCode: HttpStatus.OK,
-                message: "Jalan Jenis Pemeliharaan detail retrieved",
+                message: 'Jalan Jenis Pemeliharaan detail retrieved',
                 data: jalanJenisPemeliharaan,
             };
         } catch (error) {
@@ -231,19 +233,19 @@ export class JalanJenisPemeliharaanController {
 
                 let message: string;
 
-                if (typeof response === "string") {
+                if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(", ");
+                        message = resObj.message.join(', ');
                     } else {
-                        message = resObj.message ?? "Error";
+                        message = resObj.message ?? 'Error';
                     }
                 }
 
                 return {
-                    status: "error",
+                    status: 'error',
                     responseCode: status,
                     message,
                     data: null,
@@ -251,9 +253,9 @@ export class JalanJenisPemeliharaanController {
             }
 
             return {
-                status: "error",
+                status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: 'Internal server error',
                 data: null,
             };
         }

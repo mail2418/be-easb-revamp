@@ -9,10 +9,7 @@ import { KelurahanOrmEntity } from '../../infrastructure/kelurahan/orm/kelurahan
 import { KecamatanModule } from '../kecamatan/kecamatan.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([KelurahanOrmEntity]),
-        KecamatanModule,
-    ],
+    imports: [TypeOrmModule.forFeature([KelurahanOrmEntity]), KecamatanModule],
     controllers: [KelurahanController],
     providers: [
         {
@@ -26,4 +23,4 @@ import { KecamatanModule } from '../kecamatan/kecamatan.module';
     ],
     exports: [KelurahanService, KelurahanRepository],
 })
-export class KelurahanModule { }
+export class KelurahanModule {}

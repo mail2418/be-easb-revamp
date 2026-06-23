@@ -9,5 +9,7 @@ export abstract class AsbFungsiRuangService {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<AsbFungsiRuang | null>;
     abstract findByNama(nama: string): Promise<AsbFungsiRuang | null>;
-    abstract findAll(pagination: GetAsbFungsiRuangsDto): Promise<{ data: AsbFungsiRuang[]; total: number }>;
+    abstract findAll(
+        pagination: GetAsbFungsiRuangsDto,
+    ): Promise<{ data: AsbFungsiRuang[]; total: number }>;
 }

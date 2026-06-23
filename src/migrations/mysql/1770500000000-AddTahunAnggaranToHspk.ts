@@ -3,7 +3,11 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class AddTahunAnggaranToHspk1770500000000 implements MigrationInterface {
     name = 'AddTahunAnggaranToHspk1770500000000';
 
-    private async dropIndexIfExists(queryRunner: QueryRunner, tableName: string, indexName: string): Promise<void> {
+    private async dropIndexIfExists(
+        queryRunner: QueryRunner,
+        tableName: string,
+        indexName: string,
+    ): Promise<void> {
         const result = await queryRunner.query(
             `
             SELECT COUNT(*) as cnt
@@ -12,7 +16,7 @@ export class AddTahunAnggaranToHspk1770500000000 implements MigrationInterface {
               AND table_name = ?
               AND index_name = ?
             `,
-            [tableName, indexName]
+            [tableName, indexName],
         );
         if (result[0]?.cnt > 0) {
             await queryRunner.query(`ALTER TABLE \`${tableName}\` DROP INDEX \`${indexName}\``);

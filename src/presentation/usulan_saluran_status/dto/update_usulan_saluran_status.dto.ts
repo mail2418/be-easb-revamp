@@ -1,5 +1,5 @@
-import { IsNumber, IsString, IsOptional, IsNotEmpty } from "class-validator";
-import { Transform } from "class-transformer";
+import { IsNumber, IsString, IsOptional, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateUsulanSaluranStatusDto {
     @IsNumber()

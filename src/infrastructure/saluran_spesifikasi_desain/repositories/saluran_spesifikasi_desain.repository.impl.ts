@@ -1,19 +1,24 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { SaluranSpesifikasiDesainRepository } from "../../../domain/saluran_spesifikasi_desain/saluran_spesifikasi_desain.repository";
-import { SaluranSpesifikasiDesainOrmEntity } from "../orm/saluran_spesifikasi_desain.orm_entity";
-import { SaluranSpesifikasiDesain } from "../../../domain/saluran_spesifikasi_desain/saluran_spesifikasi_desain.entity";
-import { CreateSaluranSpesifikasiDesainDto } from "../../../presentation/saluran_spesifikasi_desain/dto/create_saluran_spesifikasi_desain.dto";
-import { plainToInstance } from "class-transformer";
-import { UpdateSaluranSpesifikasiDesainDto } from "../../../presentation/saluran_spesifikasi_desain/dto/update_saluran_spesifikasi_desain.dto";
-import { GetSaluranSpesifikasiDesainDto } from "../../../presentation/saluran_spesifikasi_desain/dto/get_saluran_spesifikasi_desain.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { SaluranSpesifikasiDesainRepository } from '../../../domain/saluran_spesifikasi_desain/saluran_spesifikasi_desain.repository';
+import { SaluranSpesifikasiDesainOrmEntity } from '../orm/saluran_spesifikasi_desain.orm_entity';
+import { SaluranSpesifikasiDesain } from '../../../domain/saluran_spesifikasi_desain/saluran_spesifikasi_desain.entity';
+import { CreateSaluranSpesifikasiDesainDto } from '../../../presentation/saluran_spesifikasi_desain/dto/create_saluran_spesifikasi_desain.dto';
+import { plainToInstance } from 'class-transformer';
+import { UpdateSaluranSpesifikasiDesainDto } from '../../../presentation/saluran_spesifikasi_desain/dto/update_saluran_spesifikasi_desain.dto';
+import { GetSaluranSpesifikasiDesainDto } from '../../../presentation/saluran_spesifikasi_desain/dto/get_saluran_spesifikasi_desain.dto';
 
 @Injectable()
 export class SaluranSpesifikasiDesainRepositoryImpl implements SaluranSpesifikasiDesainRepository {
-    constructor(@InjectRepository(SaluranSpesifikasiDesainOrmEntity) private readonly repo: Repository<SaluranSpesifikasiDesainOrmEntity>) { }
+    constructor(
+        @InjectRepository(SaluranSpesifikasiDesainOrmEntity)
+        private readonly repo: Repository<SaluranSpesifikasiDesainOrmEntity>,
+    ) {}
 
-    async create(dto: CreateSaluranSpesifikasiDesainDto & { volume?: number; harga_spec?: number }): Promise<SaluranSpesifikasiDesain> {
+    async create(
+        dto: CreateSaluranSpesifikasiDesainDto & { volume?: number; harga_spec?: number },
+    ): Promise<SaluranSpesifikasiDesain> {
         const ormEntity = plainToInstance(SaluranSpesifikasiDesainOrmEntity, dto);
         const newEntity = await this.repo.save(ormEntity);
         return newEntity;
@@ -27,7 +32,10 @@ export class SaluranSpesifikasiDesainRepositoryImpl implements SaluranSpesifikas
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<SaluranSpesifikasiDesain | null> {
@@ -42,14 +50,16 @@ export class SaluranSpesifikasiDesainRepositoryImpl implements SaluranSpesifikas
                 'ssd.spasi',
                 'ssd.tinggi',
                 'ssd.harga_spec',
-                'ssd.keterangan_tambahan'
+                'ssd.keterangan_tambahan',
             ])
             .where('ssd.id = :id', { id })
             .getOne();
         return entity || null;
     }
 
-    async findAll(dto: GetSaluranSpesifikasiDesainDto): Promise<{ data: SaluranSpesifikasiDesain[]; total: number }> {
+    async findAll(
+        dto: GetSaluranSpesifikasiDesainDto,
+    ): Promise<{ data: SaluranSpesifikasiDesain[]; total: number }> {
         const queryBuilder = this.repo
             .createQueryBuilder('ssd')
             .select([
@@ -61,12 +71,14 @@ export class SaluranSpesifikasiDesainRepositoryImpl implements SaluranSpesifikas
                 'ssd.spasi',
                 'ssd.tinggi',
                 'ssd.harga_spec',
-                'ssd.keterangan_tambahan'
+                'ssd.keterangan_tambahan',
             ])
             .orderBy('ssd.id', 'DESC');
 
         if (dto.id_usulan_saluran !== undefined) {
-            queryBuilder.where('ssd.id_usulan_saluran = :id_usulan_saluran', { id_usulan_saluran: dto.id_usulan_saluran });
+            queryBuilder.where('ssd.id_usulan_saluran = :id_usulan_saluran', {
+                id_usulan_saluran: dto.id_usulan_saluran,
+            });
         }
 
         if (dto.page !== undefined && dto.amount !== undefined) {
@@ -83,7 +95,11 @@ export class SaluranSpesifikasiDesainRepositoryImpl implements SaluranSpesifikas
         await this.repo.softDelete({ id_usulan_saluran: idUsulanSaluran });
     }
 
-    async findByUsulanSaluran(idUsulanSaluran: number, page?: number, amount?: number): Promise<[SaluranSpesifikasiDesain[], number]> {
+    async findByUsulanSaluran(
+        idUsulanSaluran: number,
+        page?: number,
+        amount?: number,
+    ): Promise<[SaluranSpesifikasiDesain[], number]> {
         const queryBuilder = this.repo
             .createQueryBuilder('ssd')
             .select([
@@ -95,7 +111,7 @@ export class SaluranSpesifikasiDesainRepositoryImpl implements SaluranSpesifikas
                 'ssd.spasi',
                 'ssd.tinggi',
                 'ssd.harga_spec',
-                'ssd.keterangan_tambahan'
+                'ssd.keterangan_tambahan',
             ])
             .where('ssd.id_usulan_saluran = :idUsulanSaluran', { idUsulanSaluran })
             .orderBy('ssd.id', 'DESC');

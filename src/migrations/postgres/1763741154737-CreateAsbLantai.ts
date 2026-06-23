@@ -52,8 +52,12 @@ export class CreateAsbLantai1763741154737 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_lantais_updated_at ON "asb_lantais";`);
-        await queryRunner.query(`ALTER TABLE "asb_lantais" DROP CONSTRAINT IF EXISTS "fk_asb_lantais_id_satuan";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_asb_lantais_updated_at ON "asb_lantais";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "asb_lantais" DROP CONSTRAINT IF EXISTS "fk_asb_lantais_id_satuan";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_lantais_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_lantais_id_satuan";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_lantais_type";`);

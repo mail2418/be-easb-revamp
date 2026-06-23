@@ -1,18 +1,15 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { AsbLantaiController } from "./asb_lantai.controller";
-import { AsbLantaiServiceImpl } from "../../application/asb_lantai/asb_lantai.service.impl";
-import { AsbLantaiRepositoryImpl } from "../../infrastructure/asb_lantai/repositories/asb_lantai.repository.impl";
-import { AsbLantaiOrmEntity } from "../../infrastructure/asb_lantai/orm/asb_lantai.orm_entity";
-import { AsbLantaiService } from "../../domain/asb_lantai/asb_lantai.service";
-import { AsbLantaiRepository } from "../../domain/asb_lantai/asb_lantai.repository";
-import { SatuanModule } from "../satuan/satuan.module";
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AsbLantaiController } from './asb_lantai.controller';
+import { AsbLantaiServiceImpl } from '../../application/asb_lantai/asb_lantai.service.impl';
+import { AsbLantaiRepositoryImpl } from '../../infrastructure/asb_lantai/repositories/asb_lantai.repository.impl';
+import { AsbLantaiOrmEntity } from '../../infrastructure/asb_lantai/orm/asb_lantai.orm_entity';
+import { AsbLantaiService } from '../../domain/asb_lantai/asb_lantai.service';
+import { AsbLantaiRepository } from '../../domain/asb_lantai/asb_lantai.repository';
+import { SatuanModule } from '../satuan/satuan.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([AsbLantaiOrmEntity]),
-        SatuanModule
-    ],
+    imports: [TypeOrmModule.forFeature([AsbLantaiOrmEntity]), SatuanModule],
     controllers: [AsbLantaiController],
     providers: [
         {
@@ -24,9 +21,6 @@ import { SatuanModule } from "../satuan/satuan.module";
             useClass: AsbLantaiRepositoryImpl,
         },
     ],
-    exports: [
-        AsbLantaiService,
-        AsbLantaiRepository,
-    ],
+    exports: [AsbLantaiService, AsbLantaiRepository],
 })
-export class AsbLantaiModule { }
+export class AsbLantaiModule {}

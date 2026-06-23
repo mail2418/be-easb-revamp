@@ -7,4 +7,3 @@ export class VerifikatorsPaginationResultDto {
     amount!: number;
     totalPages!: number;
 }
-

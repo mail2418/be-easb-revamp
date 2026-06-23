@@ -1,4 +1,4 @@
-import { SaluranSpesifikasiDesainReview } from "../../../domain/saluran_spesifikasi_desain_review/saluran_spesifikasi_desain_review.entity";
+import { SaluranSpesifikasiDesainReview } from '../../../domain/saluran_spesifikasi_desain_review/saluran_spesifikasi_desain_review.entity';
 
 export class SaluranSpesifikasiDesainReviewPaginationResultDto {
     data!: SaluranSpesifikasiDesainReview[];

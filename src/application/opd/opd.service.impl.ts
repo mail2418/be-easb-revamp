@@ -16,7 +16,7 @@ export class OpdServiceImpl implements OpdService {
     async createOpd(dto: CreateOpdDto): Promise<Opd> {
         // Check if opd with the same name already exists
         const existingOpd = await this.opdRepository.findById(dto.id_user);
-        
+
         if (existingOpd) {
             throw new ConflictException(`OPD with id_user ${dto.id_user} already exists`);
         }
@@ -31,7 +31,7 @@ export class OpdServiceImpl implements OpdService {
         if (!existingOpd) {
             throw new NotFoundException(`OPD with id ${dto.id} not found`);
         }
-            
+
         if (existingOpd) {
             throw new ConflictException(`OPD with id_user ${dto.id_user} already exists`);
         }
@@ -64,7 +64,7 @@ export class OpdServiceImpl implements OpdService {
             total: opds.total,
             page,
             amount,
-            totalPages: amount > 0 ? Math.ceil(opds.total / amount) : 0
+            totalPages: amount > 0 ? Math.ceil(opds.total / amount) : 0,
         };
     }
 

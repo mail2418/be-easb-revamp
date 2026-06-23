@@ -1,5 +1,14 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { KabKotaOrmEntity } from "../../kabkota/orm/kabkota.orm_entity";
+import {
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
+import { KabKotaOrmEntity } from '../../kabkota/orm/kabkota.orm_entity';
 
 @Entity('jalan_kebijakan')
 export class JalanKebijakanOrmEntity {

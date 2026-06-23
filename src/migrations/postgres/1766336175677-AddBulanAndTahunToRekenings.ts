@@ -2,7 +2,6 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddBulanAndTahunToRekenings1766336175677 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
-
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth() + 1;
         const currentYear = currentDate.getFullYear();
@@ -34,4 +33,3 @@ export class AddBulanAndTahunToRekenings1766336175677 implements MigrationInterf
         await queryRunner.query(`ALTER TABLE "rekenings" DROP COLUMN "bulan"`);
     }
 }
-

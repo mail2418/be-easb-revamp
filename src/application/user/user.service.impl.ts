@@ -1,4 +1,14 @@
-import { ConflictException, ForbiddenException, HttpException, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException, forwardRef } from '@nestjs/common';
+import {
+    ConflictException,
+    ForbiddenException,
+    HttpException,
+    Inject,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+    UnauthorizedException,
+    forwardRef,
+} from '@nestjs/common';
 import { UserRepository } from '../../domain/user/user.repository';
 import { User } from '../../domain/user/user.entity';
 import { ValidateUserUseCase } from './use_cases/validate_user.use_case';
@@ -52,7 +62,7 @@ export class UserServiceImpl implements UserService {
                 throw error;
             }
 
-            throw new InternalServerErrorException("Failed to create user");
+            throw new InternalServerErrorException('Failed to create user');
         }
     }
 
@@ -60,7 +70,7 @@ export class UserServiceImpl implements UserService {
         try {
             // cek role yang ingin di-assign ke user baru
             if (userDto.roles.includes(Role.SUPERADMIN) || userDto.roles.includes(Role.ADMIN)) {
-                throw new ForbiddenException("Admin can't add new admin users")
+                throw new ForbiddenException("Admin can't add new admin users");
             }
 
             // cek username existing
@@ -84,7 +94,7 @@ export class UserServiceImpl implements UserService {
                 throw error;
             }
 
-            throw new InternalServerErrorException("Failed to create user");
+            throw new InternalServerErrorException('Failed to create user');
         }
     }
 
@@ -110,7 +120,11 @@ export class UserServiceImpl implements UserService {
         }
     }
 
-    async recordFailedLogin(userId: number, maxAttempts: number, lockoutMinutes: number): Promise<void> {
+    async recordFailedLogin(
+        userId: number,
+        maxAttempts: number,
+        lockoutMinutes: number,
+    ): Promise<void> {
         await this.userRepo.recordFailedLogin(userId, maxAttempts, lockoutMinutes);
     }
 
@@ -126,7 +140,7 @@ export class UserServiceImpl implements UserService {
             if (error instanceof HttpException) {
                 throw error;
             }
-            throw new InternalServerErrorException('Failed to find userby id')
+            throw new InternalServerErrorException('Failed to find userby id');
         }
     }
 
@@ -171,10 +185,12 @@ export class UserServiceImpl implements UserService {
             // Admin hanya bisa update user dengan role VERIFIKATOR, OPD, GUEST
             const unAllowedRoles = [Role.SUPERADMIN, Role.ADMIN];
             const userRoles = existingUser.roles;
-            const hasUnAllowedRole = userRoles.some(role => unAllowedRoles.includes(role));
+            const hasUnAllowedRole = userRoles.some((role) => unAllowedRoles.includes(role));
 
             if (hasUnAllowedRole) {
-                throw new ForbiddenException('Admin cannot update users with admin or superadmin roles');
+                throw new ForbiddenException(
+                    'Admin cannot update users with admin or superadmin roles',
+                );
             }
 
             // cek username uniqueness jika username mau diupdate
@@ -228,10 +244,12 @@ export class UserServiceImpl implements UserService {
             // Admin hanya bisa delete user dengan role VERIFIKATOR, OPD, GUEST
             const unAllowedRoles = [Role.SUPERADMIN, Role.ADMIN];
             const userRoles = existingUser.roles;
-            const hasAllowedRole = userRoles.some(role => unAllowedRoles.includes(role));
+            const hasAllowedRole = userRoles.some((role) => unAllowedRoles.includes(role));
 
             if (hasAllowedRole) {
-                throw new ForbiddenException('Admin cannot delete users with admin or superadmin roles');
+                throw new ForbiddenException(
+                    'Admin cannot delete users with admin or superadmin roles',
+                );
             }
 
             // delete user via repository
@@ -249,20 +267,22 @@ export class UserServiceImpl implements UserService {
             const result = await this.userRepo.getUsers(pagination);
 
             // sanitize users - remove passwordHash from response and superadmin users
-            const sanitizedUsers = result.data.map(user => {
-                const { passwordHash: _, ...safe } = user as any;
-                return safe as User;
-            }).filter(user => !user.roles.includes(Role.SUPERADMIN));
+            const sanitizedUsers = result.data
+                .map((user) => {
+                    const { passwordHash: _, ...safe } = user as any;
+                    return safe as User;
+                })
+                .filter((user) => !user.roles.includes(Role.SUPERADMIN));
 
             const page = pagination.page || 1;
             const amount = pagination.amount || result.total;
-            const totalPages = Math.ceil(result.total / (pagination.amount || result.total))
+            const totalPages = Math.ceil(result.total / (pagination.amount || result.total));
             return {
                 users: sanitizedUsers,
                 total: result.total,
                 page,
                 amount,
-                totalPages
+                totalPages,
             };
         } catch (error) {
             if (error instanceof HttpException) {
@@ -295,7 +315,10 @@ export class UserServiceImpl implements UserService {
         }
     }
 
-    async changeUserPassword(authenticatedUserId: number, dto: ChangeUserPasswordDto): Promise<User> {
+    async changeUserPassword(
+        authenticatedUserId: number,
+        dto: ChangeUserPasswordDto,
+    ): Promise<User> {
         try {
             const authenticatedUser = await this.userRepo.findById(authenticatedUserId);
             if (!authenticatedUser) {
@@ -320,7 +343,9 @@ export class UserServiceImpl implements UserService {
             }
 
             if (dto.userId === authenticatedUserId) {
-                throw new ForbiddenException('Cannot change your own password through this endpoint');
+                throw new ForbiddenException(
+                    'Cannot change your own password through this endpoint',
+                );
             }
 
             const target = await this.userRepo.findById(dto.userId);
@@ -339,20 +364,26 @@ export class UserServiceImpl implements UserService {
                     target.roles.includes(Role.VERIFIKATOR) ||
                     target.roles.includes(Role.OPD);
                 if (!isAllowedTarget) {
-                    throw new ForbiddenException('Password can only be changed for Admin, Verifikator, or OPD users');
+                    throw new ForbiddenException(
+                        'Password can only be changed for Admin, Verifikator, or OPD users',
+                    );
                 }
             } else {
                 // Admin hanya boleh mengubah password verifikator dan opd
                 const isAllowedTarget =
-                    target.roles.includes(Role.VERIFIKATOR) ||
-                    target.roles.includes(Role.OPD);
+                    target.roles.includes(Role.VERIFIKATOR) || target.roles.includes(Role.OPD);
                 if (!isAllowedTarget) {
-                    throw new ForbiddenException('Admin can only change password for Verifikator or OPD users');
+                    throw new ForbiddenException(
+                        'Admin can only change password for Verifikator or OPD users',
+                    );
                 }
             }
 
             const passwordHash = bcrypt.hashSync(dto.newPassword, this.SALT_ROUNDS);
-            await this.userRepo.updatePasswordHashAndIncrementRefreshTokenVersion(dto.userId, passwordHash);
+            await this.userRepo.updatePasswordHashAndIncrementRefreshTokenVersion(
+                dto.userId,
+                passwordHash,
+            );
 
             const updated = await this.userRepo.findById(dto.userId);
             const { passwordHash: _, ...safe } = updated as any;

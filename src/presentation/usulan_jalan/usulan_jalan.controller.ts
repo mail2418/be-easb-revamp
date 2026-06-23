@@ -37,7 +37,7 @@ import { ResponseDto } from '../../common/dto/response.dto';
 @Controller('usulan-jalan')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UsulanJalanController {
-    constructor(private readonly usulanJalanService: UsulanJalanService) { }
+    constructor(private readonly usulanJalanService: UsulanJalanService) {}
 
     @Get('analytics')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
@@ -47,7 +47,11 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.getAnalytics(user.idOpd, user.roles, filter);
+            const result = await this.usulanJalanService.getAnalytics(
+                user.idOpd,
+                user.roles,
+                filter,
+            );
 
             return {
                 status: 'success',
@@ -67,7 +71,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -89,10 +93,7 @@ export class UsulanJalanController {
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async findAll(
-        @Query() dto: FindAllUsulanJalanDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async findAll(@Query() dto: FindAllUsulanJalanDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const result = await this.usulanJalanService.findAll(dto, user.idOpd, user.roles);
@@ -115,7 +116,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -163,7 +164,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -211,7 +212,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -259,7 +260,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -287,7 +288,11 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.storeInformasi(dto, user.idOpd, user.roles);
+            const result = await this.usulanJalanService.storeInformasi(
+                dto,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -307,7 +312,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -329,13 +334,14 @@ export class UsulanJalanController {
 
     @Put('update')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async update(
-        @Body() dto: UpdateUsulanJalanDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async update(@Body() dto: UpdateUsulanJalanDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.updateUsulanJalan(dto, user.idOpd, user.roles);
+            const result = await this.usulanJalanService.updateUsulanJalan(
+                dto,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -355,7 +361,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -377,13 +383,14 @@ export class UsulanJalanController {
 
     @Delete()
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    async delete(
-        @Body() dto: DeleteUsulanJalanDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async delete(@Body() dto: DeleteUsulanJalanDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.deleteUsulanJalan(dto.idUsulanJalan, user.idOpd, user.roles);
+            const result = await this.usulanJalanService.deleteUsulanJalan(
+                dto.idUsulanJalan,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -403,7 +410,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -431,7 +438,12 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.verifyIndex(dto, user.userId.toString(), user.idOpd, user.roles);
+            const result = await this.usulanJalanService.verifyIndex(
+                dto,
+                user.userId.toString(),
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -451,7 +463,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -479,7 +491,12 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.verifyInformasi(dto, user.userId.toString(), user.idOpd, user.roles);
+            const result = await this.usulanJalanService.verifyInformasi(
+                dto,
+                user.userId.toString(),
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -499,7 +516,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -527,7 +544,12 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.verifyAdbang(dto.idUsulanJalan, user.userId.toString(), user.idOpd, user.roles);
+            const result = await this.usulanJalanService.verifyAdbang(
+                dto.idUsulanJalan,
+                user.userId.toString(),
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -547,7 +569,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -575,7 +597,12 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.verifyBpkad(dto, user.userId.toString(), user.idOpd, user.roles);
+            const result = await this.usulanJalanService.verifyBpkad(
+                dto,
+                user.userId.toString(),
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -595,7 +622,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -623,7 +650,12 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.verifyBappeda(dto.idUsulanJalan, user.userId.toString(), user.idOpd, user.roles);
+            const result = await this.usulanJalanService.verifyBappeda(
+                dto.idUsulanJalan,
+                user.userId.toString(),
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -643,7 +675,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -665,10 +697,7 @@ export class UsulanJalanController {
 
     @Put('reject')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async reject(
-        @Body() dto: RejectUsulanJalanDto,
-        @Req() req: Request,
-    ): Promise<ResponseDto> {
+    async reject(@Body() dto: RejectUsulanJalanDto, @Req() req: Request): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
             const userId = user?.userId?.toString();
@@ -679,7 +708,13 @@ export class UsulanJalanController {
                 throw new ForbiddenException('User ID is required');
             }
 
-            const result = await this.usulanJalanService.reject(dto.idUsulanJalan, dto.rejectReason, userId, user.idOpd, user.roles);
+            const result = await this.usulanJalanService.reject(
+                dto.idUsulanJalan,
+                dto.rejectReason,
+                userId,
+                user.idOpd,
+                user.roles,
+            );
 
             return {
                 status: 'success',
@@ -699,7 +734,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {
@@ -747,7 +782,7 @@ export class UsulanJalanController {
                     const resObj = response as any;
                     message = Array.isArray(resObj.message)
                         ? resObj.message.join(', ')
-                        : resObj.message ?? 'Error';
+                        : (resObj.message ?? 'Error');
                 }
 
                 return {

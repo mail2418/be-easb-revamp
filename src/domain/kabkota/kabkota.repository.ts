@@ -10,5 +10,5 @@ export abstract class KabKotaRepository {
     abstract findByKode(kode: string): Promise<KabKota | null>;
     abstract findByNama(nama: string): Promise<KabKota | null>;
     abstract findByProvinceId(provinceId: number): Promise<KabKota[]>;
-    abstract findAll(pagination: GetKabKotasDto): Promise<{ data: KabKota[], total: number }>;
+    abstract findAll(pagination: GetKabKotasDto): Promise<{ data: KabKota[]; total: number }>;
 }

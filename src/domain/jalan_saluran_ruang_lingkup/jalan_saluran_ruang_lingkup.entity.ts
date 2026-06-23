@@ -1,4 +1,4 @@
-import { JenisUsulan } from "../jenis_usulan/jenis_usulan.entity";
+import { JenisUsulan } from '../jenis_usulan/jenis_usulan.entity';
 
 export class JalanSaluranRuangLingkup {
     id!: number;

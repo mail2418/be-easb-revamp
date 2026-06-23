@@ -39,11 +39,21 @@ export class CreateMainDashboardTable1770200000003 implements MigrationInterface
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP INDEX \`idx_main_dashboard_nama_usulan\` ON \`main_dashboard\``);
-        await queryRunner.query(`DROP INDEX \`idx_main_dashboard_created_at\` ON \`main_dashboard\``);
-        await queryRunner.query(`DROP INDEX \`idx_main_dashboard_id_asb_status\` ON \`main_dashboard\``);
-        await queryRunner.query(`DROP INDEX \`idx_main_dashboard_id_jenis_usulan\` ON \`main_dashboard\``);
-        await queryRunner.query(`DROP INDEX \`idx_main_dashboard_id_usulan\` ON \`main_dashboard\``);
+        await queryRunner.query(
+            `DROP INDEX \`idx_main_dashboard_nama_usulan\` ON \`main_dashboard\``,
+        );
+        await queryRunner.query(
+            `DROP INDEX \`idx_main_dashboard_created_at\` ON \`main_dashboard\``,
+        );
+        await queryRunner.query(
+            `DROP INDEX \`idx_main_dashboard_id_asb_status\` ON \`main_dashboard\``,
+        );
+        await queryRunner.query(
+            `DROP INDEX \`idx_main_dashboard_id_jenis_usulan\` ON \`main_dashboard\``,
+        );
+        await queryRunner.query(
+            `DROP INDEX \`idx_main_dashboard_id_usulan\` ON \`main_dashboard\``,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS \`main_dashboard\``);
     }
 }

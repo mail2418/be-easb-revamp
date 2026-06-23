@@ -22,7 +22,7 @@ import { Role } from '../../domain/user/user_role.enum';
 @Controller('asb-komponen-bangunan-pros-std')
 @Roles(Role.SUPERADMIN)
 export class AsbKomponenBangunanProsStdController {
-    constructor(private readonly service: AsbKomponenBangunanProsStdService) { }
+    constructor(private readonly service: AsbKomponenBangunanProsStdService) {}
 
     @Post()
     @Roles(Role.SUPERADMIN)

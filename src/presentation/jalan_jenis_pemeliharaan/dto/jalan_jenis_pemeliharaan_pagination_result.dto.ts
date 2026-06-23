@@ -1,4 +1,4 @@
-import { JalanJenisPemeliharaan } from "../../../domain/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.entity";
+import { JalanJenisPemeliharaan } from '../../../domain/jalan_jenis_pemeliharaan/jalan_jenis_pemeliharaan.entity';
 
 export class JalanJenisPemeliharaanPaginationResultDto {
     data!: JalanJenisPemeliharaan[];

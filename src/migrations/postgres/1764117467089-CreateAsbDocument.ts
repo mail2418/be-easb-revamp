@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAsbDocument1764117467089 implements MigrationInterface {
-    name = 'CreateAsbDocument1764117467089'
+    name = 'CreateAsbDocument1764117467089';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create enum type
@@ -28,7 +28,9 @@ export class CreateAsbDocument1764117467089 implements MigrationInterface {
 
         // Create indexes
         await queryRunner.query(`CREATE INDEX "idx_asb_document_spec" ON "asb_document" ("spec")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_document_deleted_at" ON "asb_document" ("deleted_at")`);
+        await queryRunner.query(
+            `CREATE INDEX "idx_asb_document_deleted_at" ON "asb_document" ("deleted_at")`,
+        );
 
         // Create trigger for updated_at
         await queryRunner.query(`
@@ -51,7 +53,9 @@ export class CreateAsbDocument1764117467089 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Drop trigger
-        await queryRunner.query(`DROP TRIGGER IF EXISTS trigger_set_asb_document_updated_at ON "asb_document"`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS trigger_set_asb_document_updated_at ON "asb_document"`,
+        );
         await queryRunner.query(`DROP FUNCTION IF EXISTS set_asb_document_updated_at`);
 
         // Drop indexes

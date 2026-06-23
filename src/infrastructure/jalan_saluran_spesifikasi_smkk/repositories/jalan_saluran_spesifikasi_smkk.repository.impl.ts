@@ -1,16 +1,24 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { JalanSaluranSpesifikasiSmkkRepository } from "../../../domain/jalan_saluran_spesifikasi_smkk/jalan_saluran_spesifikasi_smkk.repository";
-import { JalanSaluranSpesifikasiSmkkOrmEntity } from "../orm/jalan_saluran_spesifikasi_smkk.orm_entity";
-import { JalanSaluranSpesifikasiSmkk } from "../../../domain/jalan_saluran_spesifikasi_smkk/jalan_saluran_spesifikasi_smkk.entity";
-import { CreateJalanSaluranSpesifikasiSmkkDto } from "../../../presentation/jalan_saluran_spesifikasi_smkk/dto/create_jalan_saluran_spesifikasi_smkk.dto";
-import { plainToInstance } from "class-transformer";
-import { ID_JENIS_USULAN_JALAN, ID_JENIS_USULAN_SALURAN } from "../../../domain/jenis_usulan/jenis_usulan.constants";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { JalanSaluranSpesifikasiSmkkRepository } from '../../../domain/jalan_saluran_spesifikasi_smkk/jalan_saluran_spesifikasi_smkk.repository';
+import { JalanSaluranSpesifikasiSmkkOrmEntity } from '../orm/jalan_saluran_spesifikasi_smkk.orm_entity';
+import { JalanSaluranSpesifikasiSmkk } from '../../../domain/jalan_saluran_spesifikasi_smkk/jalan_saluran_spesifikasi_smkk.entity';
+import { CreateJalanSaluranSpesifikasiSmkkDto } from '../../../presentation/jalan_saluran_spesifikasi_smkk/dto/create_jalan_saluran_spesifikasi_smkk.dto';
+import { plainToInstance } from 'class-transformer';
+import {
+    ID_JENIS_USULAN_JALAN,
+    ID_JENIS_USULAN_SALURAN,
+} from '../../../domain/jenis_usulan/jenis_usulan.constants';
 
 @Injectable()
-export class JalanSaluranSpesifikasiSmkkRepositoryImpl implements JalanSaluranSpesifikasiSmkkRepository {
-    constructor(@InjectRepository(JalanSaluranSpesifikasiSmkkOrmEntity) private readonly repo: Repository<JalanSaluranSpesifikasiSmkkOrmEntity>) { }
+export class JalanSaluranSpesifikasiSmkkRepositoryImpl
+    implements JalanSaluranSpesifikasiSmkkRepository
+{
+    constructor(
+        @InjectRepository(JalanSaluranSpesifikasiSmkkOrmEntity)
+        private readonly repo: Repository<JalanSaluranSpesifikasiSmkkOrmEntity>,
+    ) {}
 
     async create(dto: CreateJalanSaluranSpesifikasiSmkkDto): Promise<JalanSaluranSpesifikasiSmkk> {
         const ormEntity = plainToInstance(JalanSaluranSpesifikasiSmkkOrmEntity, dto);
@@ -30,15 +38,28 @@ export class JalanSaluranSpesifikasiSmkkRepositoryImpl implements JalanSaluranSp
         await this.repo.softDelete({ id_usulan: idUsulan, id_jenis_usulan: idJenisUsulan });
     }
 
-    async findByUsulanJalan(idUsulanJalan: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkk[], number]> {
+    async findByUsulanJalan(
+        idUsulanJalan: number,
+        page?: number,
+        amount?: number,
+    ): Promise<[JalanSaluranSpesifikasiSmkk[], number]> {
         return this.findByUsulan(idUsulanJalan, ID_JENIS_USULAN_JALAN, page, amount);
     }
 
-    async findByUsulanSaluran(idUsulanSaluran: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkk[], number]> {
+    async findByUsulanSaluran(
+        idUsulanSaluran: number,
+        page?: number,
+        amount?: number,
+    ): Promise<[JalanSaluranSpesifikasiSmkk[], number]> {
         return this.findByUsulan(idUsulanSaluran, ID_JENIS_USULAN_SALURAN, page, amount);
     }
 
-    async findByUsulan(idUsulan: number, idJenisUsulan: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkk[], number]> {
+    async findByUsulan(
+        idUsulan: number,
+        idJenisUsulan: number,
+        page?: number,
+        amount?: number,
+    ): Promise<[JalanSaluranSpesifikasiSmkk[], number]> {
         const queryBuilder = this.repo
             .createQueryBuilder('jsss')
             .select([
@@ -48,7 +69,7 @@ export class JalanSaluranSpesifikasiSmkkRepositoryImpl implements JalanSaluranSp
                 'jsss.id_jalan_saluran_smkk',
                 'jsss.harga_spec',
                 'jsss.jumlah_barang',
-                'jsss.harga_satuan'
+                'jsss.harga_satuan',
             ])
             .where('jsss.id_usulan = :idUsulan', { idUsulan })
             .andWhere('jsss.id_jenis_usulan = :idJenisUsulan', { idJenisUsulan })
@@ -63,4 +84,3 @@ export class JalanSaluranSpesifikasiSmkkRepositoryImpl implements JalanSaluranSp
         return [entities, total];
     }
 }
-

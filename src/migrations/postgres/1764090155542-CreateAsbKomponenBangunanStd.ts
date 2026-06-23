@@ -63,13 +63,23 @@ export class CreateAsbKomponenBangunanStd1764090155542 implements MigrationInter
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "asb_komponen_bangunan_stds" DROP CONSTRAINT IF EXISTS "fk_asb_komponen_bangunan_stds_id_asb_jenis";`);
-        await queryRunner.query(`ALTER TABLE "asb_komponen_bangunan_stds" DROP CONSTRAINT IF EXISTS "fk_asb_komponen_bangunan_stds_id_asb_tipe_bangunan";`);
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_komponen_bangunan_stds_updated_at ON "asb_komponen_bangunan_stds";`);
+        await queryRunner.query(
+            `ALTER TABLE "asb_komponen_bangunan_stds" DROP CONSTRAINT IF EXISTS "fk_asb_komponen_bangunan_stds_id_asb_jenis";`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "asb_komponen_bangunan_stds" DROP CONSTRAINT IF EXISTS "fk_asb_komponen_bangunan_stds_id_asb_tipe_bangunan";`,
+        );
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_asb_komponen_bangunan_stds_updated_at ON "asb_komponen_bangunan_stds";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_stds_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_stds_id_asb_jenis";`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_stds_id_asb_jenis";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_stds_files";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_stds_id_asb_tipe_bangunan";`);
+        await queryRunner.query(
+            `DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_stds_id_asb_tipe_bangunan";`,
+        );
         await queryRunner.query(`DROP TABLE IF EXISTS "asb_komponen_bangunan_stds";`);
     }
 }

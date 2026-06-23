@@ -35,7 +35,9 @@ export class CreateUsulanSaluranStatus1770300000001 implements MigrationInterfac
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TRIGGER IF EXISTS set_usulan_saluran_status_updated_at ON "usulan_saluran_status";`);
+        await queryRunner.query(
+            `DROP TRIGGER IF EXISTS set_usulan_saluran_status_updated_at ON "usulan_saluran_status";`,
+        );
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_usulan_saluran_status_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_usulan_saluran_status_status";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "usulan_saluran_status";`);

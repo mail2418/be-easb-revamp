@@ -31,7 +31,7 @@ export class AsbJakonServiceImpl implements AsbJakonService {
         private readonly parseExcelDataUseCase: ParseExcelDataUseCase,
         private readonly handleFileUseCase: HandleJakonFileUseCase,
         private readonly generateExcelTemplateUseCase: GenerateExcelTemplateUseCase,
-    ) { }
+    ) {}
 
     async create(dto: CreateAsbJakonDto): Promise<AsbJakon> {
         this.validatePriceRange.execute(dto.priceFrom, dto.priceTo);
@@ -60,7 +60,7 @@ export class AsbJakonServiceImpl implements AsbJakonService {
             standard: dto.standard,
         };
         // remove undefined
-        Object.keys(updateData).forEach(k => {
+        Object.keys(updateData).forEach((k) => {
             if (updateData[k as keyof typeof updateData] === undefined) {
                 delete updateData[k as keyof typeof updateData];
             }
@@ -137,56 +137,56 @@ export class AsbJakonServiceImpl implements AsbJakonService {
         return jakon;
     }
 
-    async createBulk(dto: CreateBulkAsbJakonDto, file: Express.Multer.File): Promise<CreateBulkAsbJakonResultDto> {
+    async createBulk(
+        dto: CreateBulkAsbJakonDto,
+        file: Express.Multer.File,
+    ): Promise<CreateBulkAsbJakonResultDto> {
         // 1. Validate Excel file (type, size, extension)
-            this.validateExcelFileUseCase.execute(file);
+        this.validateExcelFileUseCase.execute(file);
 
-            // 2. Read Excel file and validate headers
-            const workbook = new ExcelJS.Workbook();
-            await workbook.xlsx.load(file.buffer as any);
-            this.validateExcelHeadersUseCase.execute(workbook);
+        // 2. Read Excel file and validate headers
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(file.buffer as any);
+        this.validateExcelHeadersUseCase.execute(workbook);
 
-            // 3. Parse Excel data and lookup IDs
-            const parsedData = await this.parseExcelDataUseCase.execute(file);
+        // 3. Parse Excel data and lookup IDs
+        const parsedData = await this.parseExcelDataUseCase.execute(file);
 
-            // 4. Generate filename with format: YYYYMMDDHHmm-jakon{tahun}.{ext}
-            const generatedFilename = this.handleFileUseCase.generateFilename(
-                file,
-                dto.tahun
-            );
+        // 4. Generate filename with format: YYYYMMDDHHmm-jakon{tahun}.{ext}
+        const generatedFilename = this.handleFileUseCase.generateFilename(file, dto.tahun);
 
-            // 5. Save file using use case
-            const filePath = await this.handleFileUseCase.saveFile(file, generatedFilename);
+        // 5. Save file using use case
+        const filePath = await this.handleFileUseCase.saveFile(file, generatedFilename);
 
-            // 6. Prepare bulk create DTOs
-            const bulkCreateDtos: BulkCreateAsbJakonDto[] = parsedData.map(row => ({
-                tahun: dto.tahun,
-                file: filePath,
-                idAsbTipeBangunan: row.idAsbTipeBangunan,
-                idAsbJenis: row.idAsbJenis,
-                idAsbKlasifikasi: row.idAsbKlasifikasi,
-                type: row.type,
-                nama: row.nama,
-                spec: row.spec,
-                priceFrom: row.priceFrom,
-                priceTo: row.priceTo,
-                satuan: row.satuan,
-                standard: row.standard,
-            }));
+        // 6. Prepare bulk create DTOs
+        const bulkCreateDtos: BulkCreateAsbJakonDto[] = parsedData.map((row) => ({
+            tahun: dto.tahun,
+            file: filePath,
+            idAsbTipeBangunan: row.idAsbTipeBangunan,
+            idAsbJenis: row.idAsbJenis,
+            idAsbKlasifikasi: row.idAsbKlasifikasi,
+            type: row.type,
+            nama: row.nama,
+            spec: row.spec,
+            priceFrom: row.priceFrom,
+            priceTo: row.priceTo,
+            satuan: row.satuan,
+            standard: row.standard,
+        }));
 
-            // 7. Bulk insert with transaction
-            const createdJakons = await this.repository.bulkCreate(bulkCreateDtos);
+        // 7. Bulk insert with transaction
+        const createdJakons = await this.repository.bulkCreate(bulkCreateDtos);
 
-            const result = new CreateBulkAsbJakonResultDto();
-            result.created = createdJakons.length;
-            result.data = createdJakons;
-            return result;
+        const result = new CreateBulkAsbJakonResultDto();
+        result.created = createdJakons.length;
+        result.data = createdJakons;
+        return result;
     }
 
     async downloadTemplate(): Promise<{ buffer: Buffer; filename: string }> {
         const buffer = await this.generateExcelTemplateUseCase.execute();
         const filename = `Jakon_Template_${new Date().getFullYear()}.xlsx`;
-        
+
         return {
             buffer,
             filename,

@@ -10,7 +10,9 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ProvinceRepositoryImpl implements ProvinceRepository {
-    constructor(@InjectRepository(ProvinceOrmEntity) private readonly repo: Repository<ProvinceOrmEntity>) {}
+    constructor(
+        @InjectRepository(ProvinceOrmEntity) private readonly repo: Repository<ProvinceOrmEntity>,
+    ) {}
 
     async create(province: CreateProvinceDto): Promise<Province> {
         const provinceOrm = plainToInstance(ProvinceOrmEntity, province);
@@ -25,7 +27,10 @@ export class ProvinceRepositoryImpl implements ProvinceRepository {
     }
 
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id) .then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<Province | null> {
@@ -38,9 +43,9 @@ export class ProvinceRepositoryImpl implements ProvinceRepository {
         return province || null;
     }
 
-    async findAll(pagination: GetProvincesDto): Promise<{ data: Province[], total: number }> {
+    async findAll(pagination: GetProvincesDto): Promise<{ data: Province[]; total: number }> {
         const findOptions: any = {
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
 
         if (pagination.page !== undefined && pagination.amount !== undefined) {

@@ -23,5 +23,11 @@ export abstract class AsbBpsGalleryStdService {
         filters?: GetAsbBpsGalleryStdListFilterDto,
     ): Promise<{ data: AsbBpsGalleryStd[]; total: number }>;
     abstract findByKomponenBangunanStdId(id: number): Promise<AsbBpsGalleryStd[]>;
-    abstract getByAsb(dto: GetAsbBpsGalleryStdByAsbDto): Promise<{ data: AsbBpsGalleryStd[], total: number, page: number, amount: number, totalPages: number }>;
+    abstract getByAsb(dto: GetAsbBpsGalleryStdByAsbDto): Promise<{
+        data: AsbBpsGalleryStd[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }>;
 }

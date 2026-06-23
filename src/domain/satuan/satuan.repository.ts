@@ -8,5 +8,5 @@ export abstract class SatuanRepository {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<Satuan | null>;
     abstract findBySatuan(satuan: string): Promise<Satuan | null>;
-    abstract findAll(pagination: GetSatuansDto): Promise<{ data: Satuan[], total: number }>;
+    abstract findAll(pagination: GetSatuansDto): Promise<{ data: Satuan[]; total: number }>;
 }

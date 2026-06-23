@@ -3,7 +3,7 @@ import { HspkService } from '../../../domain/hspk/hspk.service';
 
 @Injectable()
 export class CalculateVolumeJalanSpesifikasiDesainReviewUseCase {
-    constructor(private readonly hspkService: HspkService) { }
+    constructor(private readonly hspkService: HspkService) {}
 
     async execute(
         idHspk: number,
@@ -13,7 +13,7 @@ export class CalculateVolumeJalanSpesifikasiDesainReviewUseCase {
     ): Promise<number> {
         // Get HSPK data to get satuan
         const hspk = await this.hspkService.findById(idHspk);
-        
+
         if (!hspk) {
             throw new NotFoundException(`HSPK with id ${idHspk} not found`);
         }
@@ -23,16 +23,17 @@ export class CalculateVolumeJalanSpesifikasiDesainReviewUseCase {
 
         // Calculate volume based on satuan
         if (satuan === 'Ton') {
-            volume = (lebar * tinggiReview / 1000) * 2;
+            volume = ((lebar * tinggiReview) / 1000) * 2;
         } else if (satuan === 'M^3') {
-            volume = lebar * tinggiReview / 1000;
+            volume = (lebar * tinggiReview) / 1000;
         } else if (satuan === 'Kg') {
             const pi = Math.PI;
-            volume = 7850 * (pi / 4) * Math.ceil(1000 / spasiReview) * Math.pow(tinggiReview / 1000, 2);
+            volume =
+                7850 * (pi / 4) * Math.ceil(1000 / spasiReview) * Math.pow(tinggiReview / 1000, 2);
         } else if (satuan === 'M^2') {
             volume = lebar;
         } else if (satuan === 'M^2*') {
-            volume = 1 * 2 * tinggiReview / 1000;
+            volume = (1 * 2 * tinggiReview) / 1000;
         } else if (satuan === 'Buah') {
             volume = 1000 / spasiReview;
         } else {
@@ -42,4 +43,3 @@ export class CalculateVolumeJalanSpesifikasiDesainReviewUseCase {
         return volume;
     }
 }
-

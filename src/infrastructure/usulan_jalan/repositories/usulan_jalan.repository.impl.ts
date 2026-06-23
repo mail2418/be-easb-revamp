@@ -22,10 +22,11 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         private readonly spesifikasiSmkkRepo: Repository<JalanSaluranSpesifikasiSmkkOrmEntity>,
         @InjectRepository(JalanSaluranSpesifikasiSmkkReviewOrmEntity)
         private readonly spesifikasiSmkkReviewRepo: Repository<JalanSaluranSpesifikasiSmkkReviewOrmEntity>,
-    ) { }
+    ) {}
 
     async findById(id: number, idOpd?: number): Promise<UsulanJalanWithRelationsDto | null> {
-        const qb = this.repo.createQueryBuilder('uj')
+        const qb = this.repo
+            .createQueryBuilder('uj')
             .leftJoinAndSelect('uj.opd', 'opd')
             .leftJoinAndSelect('uj.usulanJalanStatus', 'usulanJalanStatus')
             .leftJoinAndSelect('uj.asbJenis', 'asbJenis')
@@ -44,7 +45,10 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
             .leftJoinAndSelect('spesifikasiDesain.ruangLingkup', 'spesifikasiDesainRuangLingkup')
             .leftJoinAndSelect('spesifikasiDesain.hspk', 'spesifikasiDesainHspk')
             .leftJoinAndSelect('uj.spesifikasiDesainReview', 'spesifikasiDesainReview')
-            .leftJoinAndSelect('spesifikasiDesainReview.ruangLingkup', 'spesifikasiDesainReviewRuangLingkup')
+            .leftJoinAndSelect(
+                'spesifikasiDesainReview.ruangLingkup',
+                'spesifikasiDesainReviewRuangLingkup',
+            )
             .leftJoinAndSelect('spesifikasiDesainReview.hspk', 'spesifikasiDesainReviewHspk')
             .where('uj.id = :id', { id });
 
@@ -73,7 +77,10 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         return plainToInstance(UsulanJalanWithRelationsDto, entity);
     }
 
-    async findAll(dto: FindAllUsulanJalanDto, idOpd?: number): Promise<{ data: UsulanJalanWithRelationsDto[]; total: number }> {
+    async findAll(
+        dto: FindAllUsulanJalanDto,
+        idOpd?: number,
+    ): Promise<{ data: UsulanJalanWithRelationsDto[]; total: number }> {
         const page = dto.page ? Math.max(dto.page, 1) : undefined;
         const amount = dto.amount ? Math.max(dto.amount, 1) : undefined;
         const skip = page && amount ? (page - 1) * amount : undefined;
@@ -121,7 +128,8 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
             whereParams.idJalanJenisPerkerasan = dto.idJalanJenisPerkerasan;
         }
 
-        const qb = this.repo.createQueryBuilder('uj')
+        const qb = this.repo
+            .createQueryBuilder('uj')
             .leftJoinAndSelect('uj.opd', 'opd')
             .leftJoinAndSelect('uj.usulanJalanStatus', 'usulanJalanStatus')
             .leftJoinAndSelect('uj.asbJenis', 'asbJenis')
@@ -149,22 +157,20 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
             totalQb.where(whereConditions.join(' AND '), whereParams);
         }
 
-        const [data, total] = await Promise.all([
-            qb.getMany(),
-            totalQb.getCount()
-        ]);
+        const [data, total] = await Promise.all([qb.getMany(), totalQb.getCount()]);
 
         return {
-            data: data.map(e => plainToInstance(UsulanJalanWithRelationsDto, e)),
-            total
+            data: data.map((e) => plainToInstance(UsulanJalanWithRelationsDto, e)),
+            total,
         };
     }
 
     async create(data: DeepPartial<UsulanJalanOrmEntity>): Promise<UsulanJalanWithRelationsDto> {
         const entity = this.repo.create(data);
         const saved = await this.repo.save(entity);
-        
-        const entityWithBasicRelations = await this.repo.createQueryBuilder('uj')
+
+        const entityWithBasicRelations = await this.repo
+            .createQueryBuilder('uj')
             .leftJoinAndSelect('uj.opd', 'opd')
             .leftJoinAndSelect('uj.usulanJalanStatus', 'usulanJalanStatus')
             .leftJoinAndSelect('uj.asbJenis', 'asbJenis')
@@ -181,14 +187,18 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
             .leftJoinAndSelect('uj.rejectVerifikator', 'rejectVerifikator')
             .where('uj.id = :id', { id: saved.id })
             .getOne();
-        
+
         return plainToInstance(UsulanJalanWithRelationsDto, entityWithBasicRelations);
     }
 
-    async update(id: number, data: DeepPartial<UsulanJalanOrmEntity>): Promise<UsulanJalanWithRelationsDto> {
+    async update(
+        id: number,
+        data: DeepPartial<UsulanJalanOrmEntity>,
+    ): Promise<UsulanJalanWithRelationsDto> {
         await this.repo.update(id, data);
-        
-        const updatedEntity = await this.repo.createQueryBuilder('uj')
+
+        const updatedEntity = await this.repo
+            .createQueryBuilder('uj')
             .leftJoinAndSelect('uj.opd', 'opd')
             .leftJoinAndSelect('uj.usulanJalanStatus', 'usulanJalanStatus')
             .leftJoinAndSelect('uj.asbJenis', 'asbJenis')
@@ -205,12 +215,13 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
             .leftJoinAndSelect('uj.rejectVerifikator', 'rejectVerifikator')
             .where('uj.id = :id', { id })
             .getOne();
-        
+
         return plainToInstance(UsulanJalanWithRelationsDto, updatedEntity);
     }
 
     async getRejectInfo(id: number, idOpd?: number): Promise<RejectInfoDto | null> {
-        const qb = this.repo.createQueryBuilder('uj')
+        const qb = this.repo
+            .createQueryBuilder('uj')
             .select('uj.idRejectVerif', 'rejectVerifId')
             .addSelect('uj.rejectReason', 'rejectReason')
             .addSelect('uj.rejectVerifikatorReviewAt', 'rejectedAt')
@@ -241,9 +252,9 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
             rejectedAt: result.rejectedAt,
             rejectVerifikator: result.rejectVerifikatorId
                 ? {
-                    id: result.rejectVerifikatorId,
-                    username: result.rejectVerifikatorUsername || '',
-                }
+                      id: result.rejectVerifikatorId,
+                      username: result.rejectVerifikatorUsername || '',
+                  }
                 : null,
             verifikator: null,
         };
@@ -253,44 +264,51 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         await this.repo.softDelete(id);
     }
 
-    async getAnalytics(idOpd?: number, filter?: GetUsulanJalanAnalyticsFilterDto): Promise<UsulanJalanAnalyticsDto> {
+    async getAnalytics(
+        idOpd?: number,
+        filter?: GetUsulanJalanAnalyticsFilterDto,
+    ): Promise<UsulanJalanAnalyticsDto> {
         const qb = this.repo
             .createQueryBuilder('e')
-            .select("e.id_usulan_jalan_status", "idUsulanJalanStatus")
-            .addSelect("COUNT(e.id)", "count");
+            .select('e.id_usulan_jalan_status', 'idUsulanJalanStatus')
+            .addSelect('COUNT(e.id)', 'count');
 
         if (idOpd) {
-            qb.where("e.id_opd = :idOpd", { idOpd });
+            qb.where('e.id_opd = :idOpd', { idOpd });
         }
 
         if (filter?.bulan !== undefined && filter?.tahun !== undefined) {
             const startDate = new Date(filter.tahun, filter.bulan - 1, 1);
             const endDate = new Date(filter.tahun, filter.bulan, 0, 23, 59, 59, 999);
-            
+
             if (idOpd) {
-                qb.andWhere("e.created_at >= :startDate", { startDate })
-                    .andWhere("e.created_at <= :endDate", { endDate });
+                qb.andWhere('e.created_at >= :startDate', { startDate }).andWhere(
+                    'e.created_at <= :endDate',
+                    { endDate },
+                );
             } else {
-                qb.where("e.created_at >= :startDate", { startDate })
-                    .andWhere("e.created_at <= :endDate", { endDate });
+                qb.where('e.created_at >= :startDate', { startDate }).andWhere(
+                    'e.created_at <= :endDate',
+                    { endDate },
+                );
             }
         } else if (filter?.bulan !== undefined) {
             if (idOpd) {
-                qb.andWhere("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan });
+                qb.andWhere('EXTRACT(MONTH FROM e.created_at) = :bulan', { bulan: filter.bulan });
             } else {
-                qb.where("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan });
+                qb.where('EXTRACT(MONTH FROM e.created_at) = :bulan', { bulan: filter.bulan });
             }
         }
 
         if (filter?.tahun !== undefined && filter?.bulan === undefined) {
             if (idOpd) {
-                qb.andWhere("e.tahun_anggaran = :tahun", { tahun: filter.tahun });
+                qb.andWhere('e.tahun_anggaran = :tahun', { tahun: filter.tahun });
             } else {
-                qb.where("e.tahun_anggaran = :tahun", { tahun: filter.tahun });
+                qb.where('e.tahun_anggaran = :tahun', { tahun: filter.tahun });
             }
         }
 
-        qb.groupBy("e.id_usulan_jalan_status");
+        qb.groupBy('e.id_usulan_jalan_status');
 
         const rows = await qb.getRawMany<{ idUsulanJalanStatus: number; count: string }>();
 
@@ -298,7 +316,7 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         let totalTolak = 0;
         let totalProses = 0;
 
-        rows.forEach(r => {
+        rows.forEach((r) => {
             const count = Number(r.count);
             const statusId = Number(r.idUsulanJalanStatus);
 
@@ -329,38 +347,45 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         if (filter?.bulan !== undefined && filter?.tahun !== undefined) {
             const startDate = new Date(filter.tahun, filter.bulan - 1, 1);
             const endDate = new Date(filter.tahun, filter.bulan, 0, 23, 59, 59, 999);
-            
+
             if (idOpd) {
-                jenisQb.andWhere("e.created_at >= :startDate", { startDate })
-                    .andWhere("e.created_at <= :endDate", { endDate });
+                jenisQb
+                    .andWhere('e.created_at >= :startDate', { startDate })
+                    .andWhere('e.created_at <= :endDate', { endDate });
             } else {
-                jenisQb.where("e.created_at >= :startDate", { startDate })
-                    .andWhere("e.created_at <= :endDate", { endDate });
+                jenisQb
+                    .where('e.created_at >= :startDate', { startDate })
+                    .andWhere('e.created_at <= :endDate', { endDate });
             }
         } else if (filter?.bulan !== undefined) {
             if (idOpd) {
-                jenisQb.andWhere("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan });
+                jenisQb.andWhere('EXTRACT(MONTH FROM e.created_at) = :bulan', {
+                    bulan: filter.bulan,
+                });
             } else {
-                jenisQb.where("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan });
+                jenisQb.where('EXTRACT(MONTH FROM e.created_at) = :bulan', { bulan: filter.bulan });
             }
         }
 
         if (filter?.tahun !== undefined && filter?.bulan === undefined) {
             if (idOpd) {
-                jenisQb.andWhere("e.tahun_anggaran = :tahun", { tahun: filter.tahun });
+                jenisQb.andWhere('e.tahun_anggaran = :tahun', { tahun: filter.tahun });
             } else {
-                jenisQb.where("e.tahun_anggaran = :tahun", { tahun: filter.tahun });
+                jenisQb.where('e.tahun_anggaran = :tahun', { tahun: filter.tahun });
             }
         }
 
         jenisQb.groupBy('e.id_jalan_jenis_perkerasan');
 
-        const jenisRows = await jenisQb.getRawMany<{ idJalanJenisPerkerasan: number; count: string }>();
+        const jenisRows = await jenisQb.getRawMany<{
+            idJalanJenisPerkerasan: number;
+            count: string;
+        }>();
 
         let totalLentur = 0;
         let totalKaku = 0;
 
-        jenisRows.forEach(row => {
+        jenisRows.forEach((row) => {
             const count = Number(row.count);
             const typeId = Number(row.idJalanJenisPerkerasan);
             if (typeId === 1) {
@@ -377,26 +402,27 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         if (filter?.bulan !== undefined && filter?.tahun !== undefined) {
             const startDate = new Date(filter.tahun, filter.bulan - 1, 1);
             const endDate = new Date(filter.tahun, filter.bulan, 0, 23, 59, 59, 999);
-            
+
             const dailyQb = this.repo
                 .createQueryBuilder('e')
-                .select("DATE(e.created_at)", "date")
-                .addSelect("COUNT(e.id)", "count");
+                .select('DATE(e.created_at)', 'date')
+                .addSelect('COUNT(e.id)', 'count');
 
             if (idOpd) {
-                dailyQb.where("e.id_opd = :idOpd", { idOpd })
-                    .andWhere("e.created_at >= :startDate", { startDate })
-                    .andWhere("e.created_at <= :endDate", { endDate });
+                dailyQb
+                    .where('e.id_opd = :idOpd', { idOpd })
+                    .andWhere('e.created_at >= :startDate', { startDate })
+                    .andWhere('e.created_at <= :endDate', { endDate });
             } else {
-                dailyQb.where("e.created_at >= :startDate", { startDate })
-                    .andWhere("e.created_at <= :endDate", { endDate });
+                dailyQb
+                    .where('e.created_at >= :startDate', { startDate })
+                    .andWhere('e.created_at <= :endDate', { endDate });
             }
 
-            dailyQb.groupBy("DATE(e.created_at)")
-                .orderBy("DATE(e.created_at)", "ASC");
+            dailyQb.groupBy('DATE(e.created_at)').orderBy('DATE(e.created_at)', 'ASC');
 
             const dailyRows = await dailyQb.getRawMany<{ date: string; count: string }>();
-            dailyData = dailyRows.map(r => ({
+            dailyData = dailyRows.map((r) => ({
                 date: r.date,
                 count: Number(r.count),
             }));
@@ -418,5 +444,3 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         };
     }
 }
-
-

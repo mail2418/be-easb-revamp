@@ -13,8 +13,8 @@ export class CalculateBobotBPNSUseCase {
     constructor(
         private readonly asbKomponenBangunanProsNonstdRepository: AsbKomponenBangunanProsNonstdRepository,
         private readonly asbDetailService: AsbDetailService,
-        private readonly asbBipekNonStdService: AsbBipekNonStdService
-    ) { }
+        private readonly asbBipekNonStdService: AsbBipekNonStdService,
+    ) {}
 
     async execute(
         idAsb: number,
@@ -25,10 +25,12 @@ export class CalculateBobotBPNSUseCase {
         koefisienLantaiTotal: number,
         koefisienFungsiRuangTotal: number,
         luasTotalBangunan: number,
-        bobotTotalBps: number
+        bobotTotalBps: number,
     ): Promise<number[]> {
         let jumlahBobot = 0;
-        let kompBangProsList: Array<AsbKomponenBangunanProsNonstd | ReturnType<typeof resolveKomponenPros>> = [];
+        const kompBangProsList: Array<
+            AsbKomponenBangunanProsNonstd | ReturnType<typeof resolveKomponenPros>
+        > = [];
         let calculationMethod: CalculationMethod;
 
         // Set calculation method
@@ -41,7 +43,6 @@ export class CalculateBobotBPNSUseCase {
         } else {
             calculationMethod = CalculationMethod.MAX;
         }
-
 
         // Loop 1: Calculate jumlah_bobot
         for (let i = 0; i < komponenIds.length; i++) {
@@ -60,7 +61,12 @@ export class CalculateBobotBPNSUseCase {
         jumlahBobot = jumlahBobot > 1.5 * bobotTotalBps ? 1.5 * bobotTotalBps : jumlahBobot;
 
         // Calculate BPNS
-        const BPNS = jumlahBobot * shst * koefisienLantaiTotal * koefisienFungsiRuangTotal * luasTotalBangunan;
+        const BPNS =
+            jumlahBobot *
+            shst *
+            koefisienLantaiTotal *
+            koefisienFungsiRuangTotal *
+            luasTotalBangunan;
 
         // Loop 2: Create and save AsbBipekNonStd records
         for (let i = 0; i < komponenIds.length; i++) {
@@ -77,7 +83,7 @@ export class CalculateBobotBPNSUseCase {
                     bobotInputProsentase: bobotInputs[i],
                     jumlahBobot: bobot,
                     rincianHarga: (bobot / jumlahBobot) * BPNS,
-                    files: Files.ORIGIN
+                    files: Files.ORIGIN,
                 };
 
                 await this.asbBipekNonStdService.create(asbBipekNonStd);

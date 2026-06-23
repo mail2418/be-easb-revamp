@@ -23,5 +23,11 @@ export abstract class AsbBpsGalleryNonstdService {
         filters?: GetAsbBpsGalleryNonstdListFilterDto,
     ): Promise<{ data: AsbBpsGalleryNonstd[]; total: number }>;
     abstract findByKomponenBangunanNonstdId(id: number): Promise<AsbBpsGalleryNonstd[]>;
-    abstract getByAsb(dto: GetAsbBpsGalleryNonstdByAsbDto): Promise<{ data: AsbBpsGalleryNonstd[], total: number, page: number, amount: number, totalPages: number }>;
+    abstract getByAsb(dto: GetAsbBpsGalleryNonstdByAsbDto): Promise<{
+        data: AsbBpsGalleryNonstd[];
+        total: number;
+        page: number;
+        amount: number;
+        totalPages: number;
+    }>;
 }

@@ -12,9 +12,13 @@ export class AsbFungsiRuangServiceImpl implements AsbFungsiRuangService {
 
     async create(asbFungsiRuang: CreateAsbFungsiRuangDto): Promise<AsbFungsiRuang> {
         // Check if asb_fungsi_ruang with the same name already exists
-        const existingAsbFungsiRuang = await this.asbFungsiRuangRepository.findByNama(asbFungsiRuang.nama_fungsi_ruang);
+        const existingAsbFungsiRuang = await this.asbFungsiRuangRepository.findByNama(
+            asbFungsiRuang.nama_fungsi_ruang,
+        );
         if (existingAsbFungsiRuang) {
-            throw new ConflictException(`AsbFungsiRuang with name ${asbFungsiRuang.nama_fungsi_ruang} already exists`);
+            throw new ConflictException(
+                `AsbFungsiRuang with name ${asbFungsiRuang.nama_fungsi_ruang} already exists`,
+            );
         }
 
         const newAsbFungsiRuang = await this.asbFungsiRuangRepository.create(asbFungsiRuang);
@@ -23,20 +27,32 @@ export class AsbFungsiRuangServiceImpl implements AsbFungsiRuangService {
 
     async update(asbFungsiRuang: UpdateAsbFungsiRuangDto): Promise<AsbFungsiRuang> {
         // Check if asb_fungsi_ruang exists
-        const existingAsbFungsiRuang = await this.asbFungsiRuangRepository.findById(asbFungsiRuang.id);
+        const existingAsbFungsiRuang = await this.asbFungsiRuangRepository.findById(
+            asbFungsiRuang.id,
+        );
         if (!existingAsbFungsiRuang) {
             throw new NotFoundException(`AsbFungsiRuang with id ${asbFungsiRuang.id} not found`);
         }
 
         // If nama_fungsi_ruang is being updated, check for duplicates
-        if (asbFungsiRuang.nama_fungsi_ruang && asbFungsiRuang.nama_fungsi_ruang !== existingAsbFungsiRuang.nama_fungsi_ruang) {
-            const duplicateAsbFungsiRuang = await this.asbFungsiRuangRepository.findByNama(asbFungsiRuang.nama_fungsi_ruang);
+        if (
+            asbFungsiRuang.nama_fungsi_ruang &&
+            asbFungsiRuang.nama_fungsi_ruang !== existingAsbFungsiRuang.nama_fungsi_ruang
+        ) {
+            const duplicateAsbFungsiRuang = await this.asbFungsiRuangRepository.findByNama(
+                asbFungsiRuang.nama_fungsi_ruang,
+            );
             if (duplicateAsbFungsiRuang) {
-                throw new ConflictException(`AsbFungsiRuang with name ${asbFungsiRuang.nama_fungsi_ruang} already exists`);
+                throw new ConflictException(
+                    `AsbFungsiRuang with name ${asbFungsiRuang.nama_fungsi_ruang} already exists`,
+                );
             }
         }
 
-        const updatedAsbFungsiRuang = await this.asbFungsiRuangRepository.update(asbFungsiRuang.id, asbFungsiRuang);
+        const updatedAsbFungsiRuang = await this.asbFungsiRuangRepository.update(
+            asbFungsiRuang.id,
+            asbFungsiRuang,
+        );
         return updatedAsbFungsiRuang;
     }
 
@@ -58,7 +74,9 @@ export class AsbFungsiRuangServiceImpl implements AsbFungsiRuangService {
         return await this.asbFungsiRuangRepository.findByNama(nama);
     }
 
-    async findAll(pagination: GetAsbFungsiRuangsDto): Promise<{ data: AsbFungsiRuang[]; total: number }> {
+    async findAll(
+        pagination: GetAsbFungsiRuangsDto,
+    ): Promise<{ data: AsbFungsiRuang[]; total: number }> {
         return await this.asbFungsiRuangRepository.findAll(pagination);
     }
 }

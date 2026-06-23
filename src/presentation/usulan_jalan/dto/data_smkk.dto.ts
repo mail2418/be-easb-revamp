@@ -12,4 +12,3 @@ export class DataSmkkDto {
     @Transform(({ value }) => parseFloat(value))
     jumlah!: number;
 }
-

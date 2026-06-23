@@ -12,4 +12,3 @@ export class AsbAnalyticsDto {
     persentasePemeliharaan: number;
     dailyData: Array<{ date: string; count: number }>;
 }
-

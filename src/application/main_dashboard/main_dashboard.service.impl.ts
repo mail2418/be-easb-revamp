@@ -9,9 +9,7 @@ import { Role } from '../../domain/user/user_role.enum';
 
 @Injectable()
 export class MainDashboardServiceImpl implements MainDashboardService {
-    constructor(
-        private readonly repository: MainDashboardRepository,
-    ) { }
+    constructor(private readonly repository: MainDashboardRepository) {}
 
     async findAll(
         dto: GetMainDashboardDto,
@@ -62,4 +60,3 @@ export class MainDashboardServiceImpl implements MainDashboardService {
         };
     }
 }
-

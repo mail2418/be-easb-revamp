@@ -1,11 +1,11 @@
-import { Module } from "@nestjs/common";
-import { JalanJenisPerkerasanController } from "./jalan_jenis_perkerasan.controller";
-import { JalanJenisPerkerasanService } from "../../domain/jalan_jenis_perkerasan/jalan_jenis_perkerasan.service";
-import { JalanJenisPerkerasanRepository } from "../../domain/jalan_jenis_perkerasan/jalan_jenis_perkerasan.repository";
-import { JalanJenisPerkerasanRepositoryImpl } from "../../infrastructure/jalan_jenis_perkerasan/repositories/jalan_jenis_perkerasan.repository.impl";
-import { JalanJenisPerkerasanServiceImpl } from "../../application/jalan_jenis_perkerasan/jalan_jenis_perkerasan.service.impl";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { JalanJenisPerkerasanOrmEntity } from "../../infrastructure/jalan_jenis_perkerasan/orm/jalan_jenis_perkerasan.orm_entity";
+import { Module } from '@nestjs/common';
+import { JalanJenisPerkerasanController } from './jalan_jenis_perkerasan.controller';
+import { JalanJenisPerkerasanService } from '../../domain/jalan_jenis_perkerasan/jalan_jenis_perkerasan.service';
+import { JalanJenisPerkerasanRepository } from '../../domain/jalan_jenis_perkerasan/jalan_jenis_perkerasan.repository';
+import { JalanJenisPerkerasanRepositoryImpl } from '../../infrastructure/jalan_jenis_perkerasan/repositories/jalan_jenis_perkerasan.repository.impl';
+import { JalanJenisPerkerasanServiceImpl } from '../../application/jalan_jenis_perkerasan/jalan_jenis_perkerasan.service.impl';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JalanJenisPerkerasanOrmEntity } from '../../infrastructure/jalan_jenis_perkerasan/orm/jalan_jenis_perkerasan.orm_entity';
 
 @Module({
     imports: [TypeOrmModule.forFeature([JalanJenisPerkerasanOrmEntity])],
@@ -23,4 +23,3 @@ import { JalanJenisPerkerasanOrmEntity } from "../../infrastructure/jalan_jenis_
     exports: [JalanJenisPerkerasanService],
 })
 export class JalanJenisPerkerasanModule {}
-

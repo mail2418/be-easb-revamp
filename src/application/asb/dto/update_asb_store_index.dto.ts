@@ -31,7 +31,7 @@ export class UpdateAsbStoreIndexDto {
     @IsOptional()
     @IsInt()
     @Min(1)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     luasTanah?: number;
 
     @IsInt()
@@ -46,12 +46,12 @@ export class UpdateAsbStoreIndexDto {
 
     @IsOptional()
     @IsInt()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     idKecamatan?: number;
 
     @IsOptional()
     @IsInt()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     idKelurahan?: number;
 
     @IsInt()
@@ -66,12 +66,12 @@ export class UpdateAsbStoreIndexDto {
 
     @IsInt()
     @IsOptional()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     idOpd?: number;
 
     // Internal use
     @IsInt()
     @IsOptional()
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     idAsbStatus?: number;
 }

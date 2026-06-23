@@ -34,4 +34,4 @@ import { AsbDetailReviewController } from './asb_detail_review.controller';
     ],
     exports: [AsbDetailReviewService],
 })
-export class AsbDetailReviewModule { }
+export class AsbDetailReviewModule {}

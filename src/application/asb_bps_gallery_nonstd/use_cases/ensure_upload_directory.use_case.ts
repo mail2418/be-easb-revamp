@@ -4,7 +4,10 @@ import * as path from 'path';
 
 @Injectable()
 export class EnsureUploadDirectoryUseCase {
-    private readonly UPLOAD_DIR = path.join(process.env.UPLOAD_DIR || 'public', 'bps-gallery-nonstd');
+    private readonly UPLOAD_DIR = path.join(
+        process.env.UPLOAD_DIR || 'public',
+        'bps-gallery-nonstd',
+    );
 
     execute(): void {
         if (!fs.existsSync(this.UPLOAD_DIR)) {

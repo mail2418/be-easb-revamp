@@ -1,8 +1,8 @@
-import { CreatePpnGlobalDto } from "../../presentation/ppn_global/dto/create_ppn_global.dto";
-import { UpdatePpnGlobalDto } from "../../presentation/ppn_global/dto/update_ppn_global.dto";
-import { GetPpnGlobalDto } from "../../presentation/ppn_global/dto/get_ppn_global.dto";
-import { PpnGlobalPaginationResultDto } from "../../presentation/ppn_global/dto/ppn_global_pagination_result.dto";
-import { PpnGlobal } from "./ppn_global.entity";
+import { CreatePpnGlobalDto } from '../../presentation/ppn_global/dto/create_ppn_global.dto';
+import { UpdatePpnGlobalDto } from '../../presentation/ppn_global/dto/update_ppn_global.dto';
+import { GetPpnGlobalDto } from '../../presentation/ppn_global/dto/get_ppn_global.dto';
+import { PpnGlobalPaginationResultDto } from '../../presentation/ppn_global/dto/ppn_global_pagination_result.dto';
+import { PpnGlobal } from './ppn_global.entity';
 
 export abstract class PpnGlobalService {
     abstract create(dto: CreatePpnGlobalDto): Promise<PpnGlobal>;

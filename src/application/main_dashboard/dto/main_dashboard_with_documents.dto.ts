@@ -8,4 +8,3 @@ export class MainDashboardDto {
     tahunAnggaran: number | null;
     createdAt: Date;
 }
-

@@ -1,5 +1,5 @@
-import { IsString, IsNotEmpty, IsNumber } from "class-validator";
-import { Transform } from "class-transformer";
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateAsbTipeBangunanDto {
     @IsNumber()

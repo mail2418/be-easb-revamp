@@ -11,7 +11,9 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class RekeningRepositoryImpl implements RekeningRepository {
-    constructor(@InjectRepository(RekeningOrmEntity) private readonly repo: Repository<RekeningOrmEntity>) {}
+    constructor(
+        @InjectRepository(RekeningOrmEntity) private readonly repo: Repository<RekeningOrmEntity>,
+    ) {}
 
     async create(rekening: CreateRekeningDto): Promise<Rekening> {
         const ormEntity = plainToInstance(RekeningOrmEntity, {
@@ -44,9 +46,12 @@ export class RekeningRepositoryImpl implements RekeningRepository {
             .getOne();
         return updatedEntity!;
     }
-    
+
     async delete(id: number): Promise<boolean> {
-        return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        return await this.repo
+            .softDelete(id)
+            .then(() => true)
+            .catch(() => false);
     }
 
     async findById(id: number): Promise<Rekening | null> {
@@ -62,7 +67,9 @@ export class RekeningRepositoryImpl implements RekeningRepository {
         const entity = await this.repo
             .createQueryBuilder('rekening')
             .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan')
-            .where('rekening.rekening_kode LIKE :rekeningKode', { rekeningKode: `%${rekeningKode}%` })
+            .where('rekening.rekening_kode LIKE :rekeningKode', {
+                rekeningKode: `%${rekeningKode}%`,
+            })
             .getOne();
         return entity || null;
     }
@@ -74,8 +81,8 @@ export class RekeningRepositoryImpl implements RekeningRepository {
 
         // Filter by id_jenis_usulan if provided
         if (pagination.id_jenis_usulan !== undefined) {
-            queryBuilder.andWhere('rekening.id_jenis_usulan = :id_jenis_usulan', { 
-                id_jenis_usulan: pagination.id_jenis_usulan 
+            queryBuilder.andWhere('rekening.id_jenis_usulan = :id_jenis_usulan', {
+                id_jenis_usulan: pagination.id_jenis_usulan,
             });
         }
 

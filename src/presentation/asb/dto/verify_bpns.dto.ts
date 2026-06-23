@@ -10,19 +10,21 @@ export class VerifyBpnsDto {
     @IsArray()
     @IsNotEmpty()
     @IsNumber({}, { each: true })
-    @Transform(({ value }) => Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    @Transform(({ value }) => (Array.isArray(value) ? value.map((v) => parseFloat(v)) : value))
     verif_komponen_nonstd!: number[];
 
     @IsArray()
     @IsNotEmpty()
     @IsNumber({}, { each: true })
-    @Transform(({ value }) => Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    @Transform(({ value }) => (Array.isArray(value) ? value.map((v) => parseFloat(v)) : value))
     verif_bobot_acuan_nonstd!: number[];
 
     // internal use
     @IsArray()
     @IsNumber({}, { each: true })
     @IsOptional()
-    @Transform(({ value }) => value && Array.isArray(value) ? value.map(v => parseFloat(v)) : value)
+    @Transform(({ value }) =>
+        value && Array.isArray(value) ? value.map((v) => parseFloat(v)) : value,
+    )
     id_asb_bipek_nonstd?: number[];
 }

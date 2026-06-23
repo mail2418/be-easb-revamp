@@ -10,12 +10,12 @@ export class GetAsbBipekNonStdReviewByAsbDto {
     @IsOptional()
     @IsInt()
     @Min(1)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     page?: number;
 
     @IsOptional()
     @IsInt()
     @Min(1)
-    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
     amount?: number;
 }

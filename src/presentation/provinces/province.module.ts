@@ -8,20 +8,20 @@ import { ProvinceRepository } from '../../domain/provinces/province.repository';
 import { ProvinceController } from './province.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProvinceOrmEntity])],
-  controllers: [ProvinceController],
-  providers: [
-    ProvinceServiceImpl,
-    {
-      provide: ProvinceService,
-      useExisting: ProvinceServiceImpl,
-    },
-    ProvinceRepositoryImpl,
-    {
-      provide: ProvinceRepository,
-      useExisting: ProvinceRepositoryImpl,
-    },
-  ],
-  exports: [ProvinceService],
+    imports: [TypeOrmModule.forFeature([ProvinceOrmEntity])],
+    controllers: [ProvinceController],
+    providers: [
+        ProvinceServiceImpl,
+        {
+            provide: ProvinceService,
+            useExisting: ProvinceServiceImpl,
+        },
+        ProvinceRepositoryImpl,
+        {
+            provide: ProvinceRepository,
+            useExisting: ProvinceRepositoryImpl,
+        },
+    ],
+    exports: [ProvinceService],
 })
 export class ProvinceModule {}

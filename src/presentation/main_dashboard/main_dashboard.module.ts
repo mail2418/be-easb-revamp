@@ -8,9 +8,7 @@ import { MainDashboardRepositoryImpl } from '../../infrastructure/main_dashboard
 import { MainDashboardOrmEntity } from '../../infrastructure/main_dashboard/orm/main_dashboard.orm_entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([MainDashboardOrmEntity]),
-    ],
+    imports: [TypeOrmModule.forFeature([MainDashboardOrmEntity])],
     controllers: [MainDashboardController],
     providers: [
         {
@@ -24,5 +22,4 @@ import { MainDashboardOrmEntity } from '../../infrastructure/main_dashboard/orm/
     ],
     exports: [MainDashboardService, MainDashboardRepository],
 })
-export class MainDashboardModule { }
-
+export class MainDashboardModule {}

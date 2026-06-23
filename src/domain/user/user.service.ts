@@ -1,28 +1,35 @@
-import { LoginDto } from "src/presentation/auth/dto/login.dto";
-import { User } from "./user.entity";
-import { CreateUserDto } from "src/presentation/users/dto/create_user.dto";
-import { UpdateUserDto } from "src/presentation/users/dto/update_user.dto";
-import { UpdateUserByAdminDto } from "src/presentation/users/dto/update_user_by_admin.dto";
-import { DeleteUserDto } from "src/presentation/users/dto/delete_user.dto";
-import { DeleteUserByAdminDto } from "src/presentation/users/dto/delete_user_by_admin.dto";
-import { GetUsersDto } from "src/presentation/users/dto/get_users.dto";
-import { GetUserDetailDto } from "src/presentation/users/dto/get_user_detail.dto";
-import { UsersPaginationResult } from "src/presentation/users/dto/users_pagination.dto";
-import { ChangeUserPasswordDto } from "src/presentation/users/dto/change_user_password.dto";
+import { LoginDto } from 'src/presentation/auth/dto/login.dto';
+import { User } from './user.entity';
+import { CreateUserDto } from 'src/presentation/users/dto/create_user.dto';
+import { UpdateUserDto } from 'src/presentation/users/dto/update_user.dto';
+import { UpdateUserByAdminDto } from 'src/presentation/users/dto/update_user_by_admin.dto';
+import { DeleteUserDto } from 'src/presentation/users/dto/delete_user.dto';
+import { DeleteUserByAdminDto } from 'src/presentation/users/dto/delete_user_by_admin.dto';
+import { GetUsersDto } from 'src/presentation/users/dto/get_users.dto';
+import { GetUserDetailDto } from 'src/presentation/users/dto/get_user_detail.dto';
+import { UsersPaginationResult } from 'src/presentation/users/dto/users_pagination.dto';
+import { ChangeUserPasswordDto } from 'src/presentation/users/dto/change_user_password.dto';
 
 export abstract class UserService {
-    abstract create(user: CreateUserDto): Promise<User>
-    abstract createUserByAdmin(user: CreateUserDto): Promise<User>
-    abstract validateUser(loginDto: LoginDto): Promise<User | null>
-    abstract findByUsername(username: string): Promise<User | null>
-    abstract findById(id: number): Promise<User | null>
-    abstract updateUser(user: UpdateUserDto): Promise<User>
-    abstract updateUserByAdmin(user: UpdateUserByAdminDto): Promise<User>
-    abstract deleteUser(user: DeleteUserDto): Promise<boolean>
-    abstract deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean>
-    abstract getUsers(pagination: GetUsersDto): Promise<UsersPaginationResult>
-    abstract getUserDetail(user: GetUserDetailDto): Promise<User>
-    abstract changeUserPassword(authenticatedUserId: number, dto: ChangeUserPasswordDto): Promise<User>
-    abstract recordFailedLogin(userId: number, maxAttempts: number, lockoutMinutes: number): Promise<void>
-    abstract resetFailedLogin(userId: number): Promise<void>
+    abstract create(user: CreateUserDto): Promise<User>;
+    abstract createUserByAdmin(user: CreateUserDto): Promise<User>;
+    abstract validateUser(loginDto: LoginDto): Promise<User | null>;
+    abstract findByUsername(username: string): Promise<User | null>;
+    abstract findById(id: number): Promise<User | null>;
+    abstract updateUser(user: UpdateUserDto): Promise<User>;
+    abstract updateUserByAdmin(user: UpdateUserByAdminDto): Promise<User>;
+    abstract deleteUser(user: DeleteUserDto): Promise<boolean>;
+    abstract deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean>;
+    abstract getUsers(pagination: GetUsersDto): Promise<UsersPaginationResult>;
+    abstract getUserDetail(user: GetUserDetailDto): Promise<User>;
+    abstract changeUserPassword(
+        authenticatedUserId: number,
+        dto: ChangeUserPasswordDto,
+    ): Promise<User>;
+    abstract recordFailedLogin(
+        userId: number,
+        maxAttempts: number,
+        lockoutMinutes: number,
+    ): Promise<void>;
+    abstract resetFailedLogin(userId: number): Promise<void>;
 }

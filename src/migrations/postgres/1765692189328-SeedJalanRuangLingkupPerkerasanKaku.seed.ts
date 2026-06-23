@@ -44,4 +44,3 @@ export class SeedJalanRuangLingkupPerkerasanKaku1765692189328 implements Migrati
         );
     }
 }
-
