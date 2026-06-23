@@ -64,12 +64,54 @@ jobs:
     environment: SSH deploy
 
     steps:
-      - name: Validate deploy secrets
+      - name: Validate and normalize deploy target
+        id: vps
+        env:
+          VPS_HOST_RAW: ${{ secrets.VPS_HOST }}
+          VPS_USER_RAW: ${{ secrets.VPS_USER }}
+          VPS_PROJECT_PATH_RAW: ${{ secrets.VPS_PROJECT_PATH }}
         run: |
-          if [ -z "${{ secrets.VPS_HOST }}" ]; then
-            echo "::error::VPS_HOST is empty. Add it to the 'SSH deploy' environment or repository secrets."
+          set -euo pipefail
+
+          if [ -z "${VPS_HOST_RAW:-}" ]; then
+            echo "::error::VPS_HOST is empty. Add it to the 'SSH deploy' environment secrets."
             exit 1
           fi
+
+          # Strip whitespace/newlines and common copy-paste mistakes (URL, user@, path, SSH port).
+          HOST="$(printf '%s' "$VPS_HOST_RAW" | tr -d '[:space:]' | sed -E \
+            's|^https?://||; s|^ssh://||; s|^[^@]+@||; s|/.*$||; s|:([0-9]{1,5})$||')"
+
+          if printf '%s' "$HOST" | grep -Eq '^([0-9]{1,3}\.){3}[0-9]{1,3}$'; then
+            echo "VPS_HOST is a valid IPv4 address."
+          elif printf '%s' "$HOST" | grep -Eq '^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$'; then
+            if ! getent hosts "$HOST" >/dev/null 2>&1; then
+              echo "::error::VPS_HOST hostname '$HOST' does not resolve from GitHub Actions."
+              echo "::error::Use the Oracle Cloud public IP (e.g. 168.110.202.68) instead of an internal hostname."
+              exit 1
+            fi
+            echo "VPS_HOST hostname resolves."
+          else
+            echo "::error::VPS_HOST is not a valid IP or hostname after normalization."
+            echo "::error::Set VPS_HOST to the bare public IP, e.g. 168.110.202.68 (no https://, no user@, no path)."
+            exit 1
+          fi
+
+          if [ -z "${VPS_USER_RAW:-}" ]; then
+            echo "::error::VPS_USER is empty. Set it to 'ubuntu' in the 'SSH deploy' environment."
+            exit 1
+          fi
+          USER="$(printf '%s' "$VPS_USER_RAW" | tr -d '[:space:]')"
+
+          if [ -z "${VPS_PROJECT_PATH_RAW:-}" ]; then
+            echo "::error::VPS_PROJECT_PATH is empty. Set it to the backend checkout path on the VPS."
+            exit 1
+          fi
+          PROJECT_PATH="$(printf '%s' "$VPS_PROJECT_PATH_RAW" | tr -d '[:space:]')"
+
+          echo "host=$HOST" >> "$GITHUB_OUTPUT"
+          echo "user=$USER" >> "$GITHUB_OUTPUT"
+          echo "project_path=$PROJECT_PATH" >> "$GITHUB_OUTPUT"
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
@@ -78,15 +120,16 @@ jobs:
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           VPS_HEALTH_URL: ${{ secrets.VPS_HEALTH_URL }}
+          VPS_PROJECT_PATH: ${{ steps.vps.outputs.project_path }}
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
+          host: ${{ steps.vps.outputs.host }}
+          username: ${{ steps.vps.outputs.user }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
-          envs: BACKEND_IMAGE,GHCR_TOKEN,GHCR_USERNAME,VPS_HEALTH_URL
+          envs: BACKEND_IMAGE,GHCR_TOKEN,GHCR_USERNAME,VPS_HEALTH_URL,VPS_PROJECT_PATH
           script: |
-            set -e
-            cd ${{ secrets.VPS_PROJECT_PATH }}
+            set -euo pipefail
+            cd "$VPS_PROJECT_PATH"
 
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
             docker pull "$BACKEND_IMAGE"
@@ -94,11 +137,28 @@ jobs:
             export BACKEND_IMAGE
             COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production"
 
-            # VPS already runs postgres + nginx on 80/443 — do not force-recreate infra (avoids port bind conflicts).
-            $COMPOSE --profile postgres --profile nginx --profile observability up -d
+            # Ensure shared network exists without touching running infra containers.
+            docker network inspect easb-net >/dev/null 2>&1 || docker network create easb-net
+
+            # VPS already runs postgres (5433) and nginx (80/443) — start only if missing, never recreate.
+            for svc in postgres nginx; do
+              container="easb-${svc}"
+              if docker ps -a --format '{{.Names}}' | grep -qx "$container"; then
+                echo "Infra present: $container (leaving ports/config unchanged)"
+                docker start "$container" 2>/dev/null || true
+              else
+                echo "Starting missing infra: $svc"
+                $COMPOSE --profile "$svc" up -d --no-recreate
+              fi
+            done
 
             # Roll only the backend container with the new GHCR image.
-            $COMPOSE --profile backend up -d --no-deps --force-recreate backend
+            $COMPOSE --profile backend up -d --no-deps --pull never --force-recreate backend
+
+            echo "Waiting for postgres..."
+            until docker exec easb-postgres pg_isready -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-easb}" >/dev/null 2>&1; do
+              sleep 2
+            done
 
             echo "Waiting for backend to start..."
             sleep 10
