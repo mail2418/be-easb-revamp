@@ -56,3 +56,7 @@ services:
 
   cadvisor:
     restart: unless-stopped
+
+networks:
+  easb-net:
+    external: true

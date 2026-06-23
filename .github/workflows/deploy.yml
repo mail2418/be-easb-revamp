@@ -149,20 +149,8 @@ jobs:
             export ENV_FILE=.env.production
             COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production"
 
-            # Ensure shared network exists without touching running infra containers.
+            # Ensure shared network exists (prod uses external easb-net — do not let compose remove it).
             docker network inspect easb-net >/dev/null 2>&1 || docker network create easb-net
-
-            # VPS already runs postgres (5433) and nginx (80/443) — start only if missing, never recreate.
-            for svc in postgres nginx; do
-              container="easb-${svc}"
-              if docker ps -a --format '{{.Names}}' | grep -qx "$container"; then
-                echo "Infra present: $container (leaving ports/config unchanged)"
-                docker start "$container" 2>/dev/null || true
-              else
-                echo "Starting missing infra: $svc"
-                $COMPOSE --profile "$svc" up -d --no-recreate
-              fi
-            done
 
             # Roll only the backend container with the new GHCR image.
             $COMPOSE --profile backend up -d --no-deps --pull never --force-recreate backend

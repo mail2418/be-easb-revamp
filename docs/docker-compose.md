@@ -95,4 +95,4 @@ npm run docker:down              # stop dev stack
 | `docker compose -f docker-compose.nginx.easb.yml up -d` | add `--profile nginx` to prod command |
 | `docker compose -f docker-compose.observability.easb.yml up -d` | add `--profile observability` to prod command |
 
-The base compose defines `easb-net` as a managed bridge network. Existing VPS setups that already use an external `easb-net` can keep it — Compose reuses a network with the same name when `external: true` is not set and the name matches.
+The base compose defines `easb-net` as a managed bridge network for local dev. The **prod overlay** marks `easb-net` as `external: true` so deploys reuse the existing VPS network without trying to remove it while containers are attached.
