@@ -91,15 +91,14 @@ jobs:
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
             docker pull "$BACKEND_IMAGE"
 
-            BACKEND_IMAGE="$BACKEND_IMAGE" docker compose \
-              -f docker-compose.yml \
-              -f docker-compose.prod.yml \
-              --env-file .env.production \
-              --profile mysql \
-              --profile backend \
-              --profile nginx \
-              --profile observability \
-              up -d --force-recreate
+            export BACKEND_IMAGE
+            COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production"
+
+            # VPS already runs postgres + nginx on 80/443 — do not force-recreate infra (avoids port bind conflicts).
+            $COMPOSE --profile postgres --profile nginx --profile observability up -d
+
+            # Roll only the backend container with the new GHCR image.
+            $COMPOSE --profile backend up -d --no-deps --force-recreate backend
 
             echo "Waiting for backend to start..."
             sleep 10
@@ -110,7 +109,9 @@ jobs:
             if [ -n "$VPS_HEALTH_URL" ]; then
               curl -fsS "$VPS_HEALTH_URL/health" > /dev/null
               curl -fsS "$VPS_HEALTH_URL/health/ready" > /dev/null
-              echo "Health checks passed."
+            else
+              docker exec easb-backend node -e "fetch('http://127.0.0.1:3000/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+              docker exec easb-backend node -e "fetch('http://127.0.0.1:3000/health/ready').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
             fi
 
             echo "Backend deployment complete."

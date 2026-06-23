@@ -41,7 +41,7 @@
     "docker:dev:postgres": "docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile postgres up -d",
     "docker:dev:mysql": "docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile mysql up -d",
     "docker:dev:up": "docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile postgres --profile backend up -d --build",
-    "docker:prod:up": "docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production --profile mysql --profile backend --profile nginx --profile observability up -d",
+    "docker:prod:up": "docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production --profile postgres --profile backend --profile nginx --profile observability up -d",
     "docker:test:up": "docker compose -f docker-compose.yml -f docker-compose.test.yml --env-file .env.docker.test --profile postgres up -d --build",
     "docker:test:down": "docker compose -f docker-compose.yml -f docker-compose.test.yml --profile postgres down -v",
     "docker:down": "docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile postgres --profile backend down"
