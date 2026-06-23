@@ -131,10 +131,16 @@ jobs:
             set -euo pipefail
             cd "$VPS_PROJECT_PATH"
 
+            if [ ! -f .env.production ]; then
+              echo "::error::.env.production not found in $VPS_PROJECT_PATH"
+              exit 1
+            fi
+
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
             docker pull "$BACKEND_IMAGE"
 
             export BACKEND_IMAGE
+            export ENV_FILE=.env.production
             COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production"
 
             # Ensure shared network exists without touching running infra containers.

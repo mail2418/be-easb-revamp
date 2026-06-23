@@ -13,6 +13,8 @@
 services:
   backend:
     image: ${BACKEND_IMAGE:?Set BACKEND_IMAGE in .env.production}
+    env_file:
+      - .env.production
     restart: unless-stopped
     depends_on:
       postgres:
