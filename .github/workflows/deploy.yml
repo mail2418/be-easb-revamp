@@ -197,12 +197,17 @@ jobs:
             export ENV_FILE=.env.production
             COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production"
 
+            BACKEND_CONTAINER="$(grep -E '^BACKEND_CONTAINER_NAME=' .env.production 2>/dev/null | tail -1 | cut -d= -f2- | tr -d '[:space:]' || true)"
+            BACKEND_CONTAINER="${BACKEND_CONTAINER:-be-easb-tulungagung}"
+            echo "Backend container: $BACKEND_CONTAINER"
+
             # Shared network must exist and stay external so compose never tries to remove it
             # while nginx/postgres/backend containers are still attached.
             docker network inspect easb-net >/dev/null 2>&1 || docker network create easb-net
 
-            # Backend-only roll: do not recreate postgres/nginx or prune the shared network.
-            $COMPOSE --profile backend up -d --no-deps --pull never --force-recreate backend
+            # Backend-only roll: recreate only this project's container (never easb-backend).
+            docker rm -f "$BACKEND_CONTAINER" 2>/dev/null || true
+            $COMPOSE --profile backend up -d --no-deps --pull never backend
 
             echo "Waiting for postgres..."
             until docker exec easb-postgres pg_isready -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-easb}" >/dev/null 2>&1; do
@@ -212,15 +217,15 @@ jobs:
             echo "Waiting for backend to start..."
             sleep 10
 
-            docker exec -i easb-backend \
+            docker exec -i "$BACKEND_CONTAINER" \
               node ./node_modules/typeorm/cli.js -d dist/data_source.js migration:run
 
             if [ -n "$VPS_HEALTH_URL" ]; then
               curl -fsS "$VPS_HEALTH_URL/health" > /dev/null
               curl -fsS "$VPS_HEALTH_URL/health/ready" > /dev/null
             else
-              docker exec easb-backend node -e "fetch('http://127.0.0.1:3000/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-              docker exec easb-backend node -e "fetch('http://127.0.0.1:3000/health/ready').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+              docker exec "$BACKEND_CONTAINER" node -e "fetch('http://127.0.0.1:3000/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+              docker exec "$BACKEND_CONTAINER" node -e "fetch('http://127.0.0.1:3000/health/ready').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
             fi
 
             echo "Backend deployment complete."
