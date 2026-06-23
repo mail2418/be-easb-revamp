@@ -104,10 +104,13 @@ jobs:
           USER="$(printf '%s' "$VPS_USER_RAW" | tr -d '[:space:]')"
 
           if [ -z "${VPS_PROJECT_PATH_RAW:-}" ]; then
-            echo "::error::VPS_PROJECT_PATH is empty. Set it to the backend checkout path on the VPS."
-            exit 1
+            echo "::warning::VPS_PROJECT_PATH is empty; using default /home/ubuntu/Samarta-ASB-Tulungagung/be-easb-revamp"
+            PROJECT_PATH="/home/ubuntu/Samarta-ASB-Tulungagung/be-easb-revamp"
+          else
+            PROJECT_PATH="$(printf '%s' "$VPS_PROJECT_PATH_RAW" | tr -d '[:space:]')"
           fi
-          PROJECT_PATH="$(printf '%s' "$VPS_PROJECT_PATH_RAW" | tr -d '[:space:]')"
+
+          echo "Deploy project path: $PROJECT_PATH"
 
           echo "host=$HOST" >> "$GITHUB_OUTPUT"
           echo "user=$USER" >> "$GITHUB_OUTPUT"
@@ -133,8 +136,11 @@ jobs:
 
             if [ ! -f .env.production ]; then
               echo "::error::.env.production not found in $VPS_PROJECT_PATH"
+              echo "::error::Expected path: /home/ubuntu/Samarta-ASB-Tulungagung/be-easb-revamp — update VPS_PROJECT_PATH in GitHub 'SSH deploy' secrets."
               exit 1
             fi
+
+            echo "Deploying from: $(pwd)"
 
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
             docker pull "$BACKEND_IMAGE"
