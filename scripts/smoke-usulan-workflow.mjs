@@ -15,16 +15,25 @@ const USERS = {
 };
 
 async function login({ username, password }) {
-  const res = await fetch(`${API}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
-  });
-  const json = await res.json();
-  if (!res.ok || json.status !== 'success') {
-    throw new Error(`Login failed for ${username}: ${json.message ?? res.status}`);
+  let lastError = 'unknown error';
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    const json = await res.json();
+    if (res.ok && json.status === 'success') {
+      return json.data.accessToken;
+    }
+    lastError = json.message ?? String(res.status);
+    if (res.status === 429 && attempt < 4) {
+      await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
+      continue;
+    }
+    break;
   }
-  return json.data.accessToken;
+  throw new Error(`Login failed for ${username}: ${lastError}`);
 }
 
 async function api(token, path, init = {}) {
@@ -81,9 +90,26 @@ async function discoverRuangLingkupHspk(adminToken) {
   return { ruangId, hspkId: item.id };
 }
 
-async function smokeJalan() {
-  const opd = await login(USERS.opd);
-  const admin = await login(USERS.superadmin);
+/** OPD store-informasi uses spasi/tinggi; verifikator verify-informasi uses spasi_review/tinggi_review */
+function hspkOpd(id_hspk, spasi, tinggi) {
+  return { id_hspk, spasi, tinggi };
+}
+
+function hspkReview(id_hspk, spasi_review, tinggi_review) {
+  return { id_hspk, spasi_review, tinggi_review };
+}
+
+function ruangLingkupOpd(ruangId, hspkId, spasi, tinggi) {
+  return { id: ruangId, data_hspk: [hspkOpd(hspkId, spasi, tinggi)] };
+}
+
+function ruangLingkupReview(ruangId, hspkId, spasi_review, tinggi_review) {
+  return { id: ruangId, data_hspk: [hspkReview(hspkId, spasi_review, tinggi_review)] };
+}
+
+async function smokeJalan(tokens) {
+  const opd = tokens.opd;
+  const admin = tokens.superadmin;
   const loc = await discoverLocation(opd);
   const perkerasan = await discoverJalanPerkerasan(admin);
   const rekening = await discoverRekening(opd);
@@ -112,13 +138,13 @@ async function smokeJalan() {
       idUsulanJalan: jalanId,
       idRekening: rekening,
       lebar: 6,
-      data_ruang_lingkup: [{ id: ruangId, data_hspk: [{ id_hspk: hspkId, spasi: 1, tinggi: 100 }] }],
+      data_ruang_lingkup: [ruangLingkupOpd(ruangId, hspkId, 1, 100)],
       data_smkk: [],
     }),
   });
   if (!info.ok) throw new Error(`jalan store-informasi: ${info.json.message ?? info.status}`);
 
-  const adbang = await login(USERS.adbang);
+  const adbang = tokens.adbang;
   for (const [path, body] of [
     ['/usulan-jalan/verify-index', {
       idUsulanJalan: jalanId,
@@ -132,7 +158,7 @@ async function smokeJalan() {
     ['/usulan-jalan/verify-informasi', {
       idUsulanJalan: jalanId,
       lebar: 6,
-      data_ruang_lingkup: [{ id: ruangId, data_hspk: [{ id_hspk: hspkId, spasi: 1, tinggi: 100 }] }],
+      data_ruang_lingkup: [ruangLingkupReview(ruangId, hspkId, 1, 100)],
       data_smkk: [],
     }],
     ['/usulan-jalan/verify-adbang', { idUsulanJalan: jalanId }],
@@ -141,14 +167,14 @@ async function smokeJalan() {
     if (!r.ok) throw new Error(`${path}: ${r.json.message ?? r.status}`);
   }
 
-  const bpkad = await login(USERS.bpkad);
+  const bpkad = tokens.bpkad;
   const bpkadRes = await api(bpkad, '/usulan-jalan/verify-bpkad', {
     method: 'PUT',
-    body: JSON.stringify({ idUsulanJalan: jalanId }),
+    body: JSON.stringify({ idUsulanJalan: jalanId, idRekeningReview: rekening }),
   });
   if (!bpkadRes.ok) throw new Error(`jalan verify-bpkad: ${bpkadRes.json.message ?? bpkadRes.status}`);
 
-  const bappeda = await login(USERS.bappeda);
+  const bappeda = tokens.bappeda;
   const bappedaRes = await api(bappeda, '/usulan-jalan/verify-bappeda', {
     method: 'PUT',
     body: JSON.stringify({ idUsulanJalan: jalanId }),
@@ -158,9 +184,9 @@ async function smokeJalan() {
   return jalanId;
 }
 
-async function smokeSaluran() {
-  const opd = await login(USERS.opd);
-  const admin = await login(USERS.superadmin);
+async function smokeSaluran(tokens) {
+  const opd = tokens.opd;
+  const admin = tokens.superadmin;
   const loc = await discoverLocation(opd);
   const rekening = await discoverRekening(opd);
   const rh = await discoverRuangLingkupHspk(admin);
@@ -174,7 +200,7 @@ async function smokeSaluran() {
       idTipeSaluran: 1,
       ...loc,
       tahunAnggaran: YEAR,
-      namaUsulanSaluran: `Saluran ${MARKER}`,
+      namaUsulan: `Saluran ${MARKER}`,
       alamat: 'Jl. Smoke Saluran',
     }),
   });
@@ -188,13 +214,13 @@ async function smokeSaluran() {
       idUsulanSaluran: saluranId,
       idRekening: rekening,
       lebar: 1,
-      data_ruang_lingkup: [{ id: ruangId, data_hspk: [{ id_hspk: hspkId, spasi: 5, tinggi: 1 }] }],
+      data_ruang_lingkup: [ruangLingkupOpd(ruangId, hspkId, 5, 1)],
       data_smkk: [],
     }),
   });
   if (!info.ok) throw new Error(`saluran store-informasi: ${info.json.message ?? info.status}`);
 
-  const adbang = await login(USERS.adbang);
+  const adbang = tokens.adbang;
   for (const [path, body] of [
     ['/usulan-saluran/verify-index', {
       idUsulanSaluran: saluranId,
@@ -202,13 +228,13 @@ async function smokeSaluran() {
       idTipeSaluran: 1,
       ...loc,
       tahunAnggaran: YEAR,
-      namaUsulanSaluran: `Saluran ${MARKER}`,
+      namaUsulan: `Saluran ${MARKER}`,
       alamat: 'Jl. Smoke Saluran',
     }],
     ['/usulan-saluran/verify-informasi', {
       idUsulanSaluran: saluranId,
       lebar: 1,
-      data_ruang_lingkup: [{ id: ruangId, data_hspk: [{ id_hspk: hspkId, spasi: 5, tinggi: 1 }] }],
+      data_ruang_lingkup: [ruangLingkupReview(ruangId, hspkId, 5, 1)],
       data_smkk: [],
     }],
     ['/usulan-saluran/verify-adbang', { idUsulanSaluran: saluranId }],
@@ -217,14 +243,14 @@ async function smokeSaluran() {
     if (!r.ok) throw new Error(`${path}: ${r.json.message ?? r.status}`);
   }
 
-  const bpkad = await login(USERS.bpkad);
+  const bpkad = tokens.bpkad;
   const bpkadRes = await api(bpkad, '/usulan-saluran/verify-bpkad', {
     method: 'PUT',
-    body: JSON.stringify({ idUsulanSaluran: saluranId }),
+    body: JSON.stringify({ idUsulanSaluran: saluranId, idRekeningReview: rekening }),
   });
   if (!bpkadRes.ok) throw new Error(`saluran verify-bpkad: ${bpkadRes.json.message ?? bpkadRes.status}`);
 
-  const bappeda = await login(USERS.bappeda);
+  const bappeda = tokens.bappeda;
   const bappedaRes = await api(bappeda, '/usulan-saluran/verify-bappeda', {
     method: 'PUT',
     body: JSON.stringify({ idUsulanSaluran: saluranId }),
@@ -234,17 +260,27 @@ async function smokeSaluran() {
   return saluranId;
 }
 
+async function loginAll() {
+  const tokens = {};
+  for (const [role, creds] of Object.entries(USERS)) {
+    tokens[role] = await login(creds);
+    await new Promise((r) => setTimeout(r, 300));
+  }
+  return tokens;
+}
+
 async function main() {
+  const tokens = await loginAll();
   const results = [];
   try {
-    const jalanId = await smokeJalan();
+    const jalanId = await smokeJalan(tokens);
     results.push(`PASS jalan workflow (id=${jalanId})`);
   } catch (e) {
     results.push(`FAIL jalan: ${e.message}`);
   }
 
   try {
-    const saluranId = await smokeSaluran();
+    const saluranId = await smokeSaluran(tokens);
     results.push(`PASS saluran workflow (id=${saluranId})`);
   } catch (e) {
     results.push(`FAIL saluran: ${e.message}`);

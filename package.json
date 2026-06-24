@@ -37,6 +37,7 @@
     "migration:mysql:show": "npm run typeorm:mysql -- migration:show",
     "migration:mysql:create": "npm run typeorm:mysql -- migration:create",
     "migration:mysql:generate": "npm run typeorm:mysql -- migration:generate src/migrations/mysql/Auto -p",
+    "seed:e2e-users": "node scripts/seed-e2e-users.mjs",
     "db:test": "ts-node -r tsconfig-paths/register src/scripts/test-db-connection.ts",
     "docker:dev:postgres": "docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile postgres up -d",
     "docker:dev:mysql": "docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile mysql up -d",
