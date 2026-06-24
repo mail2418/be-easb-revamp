@@ -220,12 +220,42 @@ jobs:
             docker exec -i "$BACKEND_CONTAINER" \
               node ./node_modules/typeorm/cli.js -d dist/data_source.js migration:run
 
-            if [ -n "$VPS_HEALTH_URL" ]; then
-              curl -fsS "$VPS_HEALTH_URL/health" > /dev/null
-              curl -fsS "$VPS_HEALTH_URL/health/ready" > /dev/null
+            wait_for_backend_health() {
+              local container="$1"
+              local attempt=1
+              while [ "$attempt" -le 30 ]; do
+                if docker exec "$container" node -e "fetch('http://127.0.0.1:3000/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" >/dev/null 2>&1 \
+                  && docker exec "$container" node -e "fetch('http://127.0.0.1:3000/health/ready').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" >/dev/null 2>&1; then
+                  echo "Health checks passed (attempt ${attempt})."
+                  return 0
+                fi
+                echo "Waiting for backend health... (${attempt}/30)"
+                sleep 3
+                attempt=$((attempt + 1))
+              done
+              echo "::error::Backend health check failed after 90s"
+              docker logs "$container" --tail 80 || true
+              return 1
+            }
+
+            if [ -n "$VPS_HEALTH_URL" ] && [[ "$VPS_HEALTH_URL" != *"127.0.0.1"* ]] && [[ "$VPS_HEALTH_URL" != *"localhost"* ]]; then
+              attempt=1
+              while [ "$attempt" -le 20 ]; do
+                if curl -fsS "$VPS_HEALTH_URL/health" >/dev/null 2>&1 && curl -fsS "$VPS_HEALTH_URL/health/ready" >/dev/null 2>&1; then
+                  echo "External health checks passed (attempt ${attempt})."
+                  break
+                fi
+                if [ "$attempt" -eq 20 ]; then
+                  echo "External health URL unreachable; falling back to container health check."
+                  wait_for_backend_health "$BACKEND_CONTAINER"
+                  break
+                fi
+                echo "Waiting for external health... (${attempt}/20)"
+                sleep 3
+                attempt=$((attempt + 1))
+              done
             else
-              docker exec "$BACKEND_CONTAINER" node -e "fetch('http://127.0.0.1:3000/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-              docker exec "$BACKEND_CONTAINER" node -e "fetch('http://127.0.0.1:3000/health/ready').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+              wait_for_backend_health "$BACKEND_CONTAINER"
             fi
 
             echo "Backend deployment complete."
