@@ -51,19 +51,19 @@ export class MainDashboardRepositoryImpl implements MainDashboardRepository {
             whereConditions.push(`(
                 (main_dashboard.idJenisUsulan = 1 AND EXISTS (
                     SELECT 1 FROM asb a
-                    WHERE a.id = main_dashboard.idUsulan
+                    WHERE a.id = main_dashboard.id_usulan
                       AND a.id_opd = :idOpd
                       AND a.deleted_at IS NULL
                 ))
                 OR (main_dashboard.idJenisUsulan = 2 AND EXISTS (
                     SELECT 1 FROM usulan_jalan uj
-                    WHERE uj.id = main_dashboard.idUsulan
+                    WHERE uj.id = main_dashboard.id_usulan
                       AND uj.id_opd = :idOpd
                       AND uj.deleted_at IS NULL
                 ))
                 OR (main_dashboard.idJenisUsulan = 3 AND EXISTS (
                     SELECT 1 FROM usulan_saluran us
-                    WHERE us.id = main_dashboard.idUsulan
+                    WHERE us.id = main_dashboard.id_usulan
                       AND us.id_opd = :idOpd
                       AND us.deleted_at IS NULL
                 ))
