@@ -9,7 +9,7 @@ export abstract class UserProfileRepository {
     }): Promise<UserProfile>;
     abstract update(
         idUser: number,
-        data: { nama?: string; nip?: string | null; photoPath?: string | null },
+        data: { nama?: string; nip?: string | null },
     ): Promise<UserProfile>;
     abstract ensureForUser(idUser: number, defaultNama: string): Promise<UserProfile>;
 }

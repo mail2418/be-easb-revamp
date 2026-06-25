@@ -32,8 +32,11 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - easb_mysql_data:/var/lib/mysql
+    # Loopback-only host binding. The prod overlay's `ports: []` does NOT remove
+    # this (Compose appends port lists), so we bind to 127.0.0.1 here to keep the
+    # DB off the public network (Kominfo/BSSN: DB must not be publicly reachable).
     ports:
-      - "${MYSQL_PORT:-3306}:3306"
+      - "${DB_BIND:-127.0.0.1}:${MYSQL_PORT:-3306}:3306"
     networks:
       - easb-net
     healthcheck:
@@ -55,8 +58,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-easb}
     volumes:
       - easb_postgres_data:/var/lib/postgresql/data
+    # Loopback-only host binding (see mysql note above).
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${DB_BIND:-127.0.0.1}:${POSTGRES_PORT:-5432}:5432"
     networks:
       - easb-net
     healthcheck:
@@ -109,8 +113,11 @@ services:
       - grafana-data:/var/lib/grafana
       - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    # Bind to loopback only — Grafana must NOT be publicly reachable (Kominfo/BSSN:
+    # only 80/443 open to the network). Reach it via SSH tunnel in prod, or
+    # localhost in dev. Override GRAFANA_BIND only behind a trusted network.
     ports:
-      - '${GRAFANA_PORT:-3006}:3000'
+      - '${GRAFANA_BIND:-127.0.0.1}:${GRAFANA_PORT:-3006}:3000'
     networks:
       - easb-net
     depends_on:

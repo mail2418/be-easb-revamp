@@ -16,15 +16,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 : HttpStatus.INTERNAL_SERVER_ERROR;
 
         let message: string;
+        let data: unknown = null;
         if (exception instanceof HttpException) {
             const response = exception.getResponse();
             if (typeof response === 'string') {
                 message = response;
             } else {
-                const resObj = response as any;
+                const resObj = response as Record<string, unknown>;
                 message = Array.isArray(resObj.message)
                     ? resObj.message.join(', ')
-                    : (resObj.message ?? exception.message ?? 'An error occurred');
+                    : String(resObj.message ?? exception.message ?? 'An error occurred');
+                if (resObj.lockType) {
+                    data = {
+                        lockType: resObj.lockType,
+                        lockedUntil: resObj.lockedUntil,
+                    };
+                }
             }
         } else if (exception instanceof Error) {
             // Log full error for debugging, but don't expose to client
@@ -43,7 +50,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             status: status >= 400 ? 'error' : 'success',
             responseCode: status,
             message,
-            data: null,
+            data,
         };
         (res.locals as any).responseDto = responseBody;
         res.status(status).json(responseBody);

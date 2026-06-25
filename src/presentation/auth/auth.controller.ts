@@ -1,6 +1,7 @@
 import { Controller, Post, Body, UseGuards, Res, Req } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from '../../application/auth/auth.service';
+import { AuditEventService } from '../../domain/audit_event/audit_event.service';
 import { ResponseDto } from 'src/common/dto/response.dto';
 import { LoginDto } from './dto/login.dto';
 import { Public } from 'src/common/decorators/public.decorator';
@@ -17,9 +18,18 @@ const REFRESH_COOKIE_OPTIONS = {
     path: '/',
 };
 
+function requestIp(req: Request): string | null {
+    const fwd = req.headers['x-forwarded-for'];
+    if (typeof fwd === 'string' && fwd.length > 0) return fwd.split(',')[0].trim();
+    return req.ip ?? req.socket?.remoteAddress ?? null;
+}
+
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(
+        private authService: AuthService,
+        private readonly auditService: AuditEventService,
+    ) {}
 
     @Public()
     @Throttle({
@@ -32,9 +42,41 @@ export class AuthController {
     async login(
         @Body() dto: LoginDto,
         @Res({ passthrough: true }) res: Response,
+        @Req() req: Request,
     ): Promise<ResponseDto> {
-        const user = await this.authService.validateUser(dto);
+        const ipAddress = requestIp(req);
+        const userAgent = (req.headers['user-agent'] as string)?.slice(0, 512) ?? null;
+
+        let user;
+        try {
+            user = await this.authService.validateUser(dto);
+        } catch (error) {
+            await this.auditService.record({
+                username: dto.username,
+                action: 'login_failed',
+                resource: 'auth',
+                method: 'POST',
+                path: '/auth/login',
+                statusCode: 401,
+                ipAddress,
+                userAgent,
+            });
+            throw error;
+        }
+
         const token = await this.authService.login(user);
+
+        await this.auditService.record({
+            idUser: Number(user.id),
+            username: user.username,
+            action: 'login_success',
+            resource: 'auth',
+            method: 'POST',
+            path: '/auth/login',
+            statusCode: 200,
+            ipAddress,
+            userAgent,
+        });
 
         res.cookie('refreshToken', token.refreshToken, {
             ...REFRESH_COOKIE_OPTIONS,
@@ -85,7 +127,22 @@ export class AuthController {
     }
 
     @Post('logout')
-    async logout(@Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async logout(
+        @Res({ passthrough: true }) res: Response,
+        @Req() req: Request,
+    ): Promise<ResponseDto> {
+        const user = req.user as { sub?: string | number; username?: string } | undefined;
+        await this.auditService.record({
+            idUser: user?.sub != null ? Number(user.sub) : null,
+            username: user?.username ?? null,
+            action: 'logout',
+            resource: 'auth',
+            method: 'POST',
+            path: '/auth/logout',
+            statusCode: 200,
+            ipAddress: requestIp(req),
+            userAgent: (req.headers['user-agent'] as string)?.slice(0, 512) ?? null,
+        });
         res.clearCookie('refreshToken', REFRESH_COOKIE_OPTIONS);
         return { status: 'success', responseCode: 200, message: 'Logged out', data: null };
     }

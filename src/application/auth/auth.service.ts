@@ -1,4 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { AccountLockedException } from 'src/common/exceptions/account_locked.exception';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/domain/user/user.service';
@@ -54,7 +55,7 @@ export class AuthService {
         }
 
         if (existing.lockedUntil && existing.lockedUntil.getTime() > Date.now()) {
-            throw new UnauthorizedException('Invalid credentials');
+            throw new AccountLockedException(existing.lockedUntil);
         }
 
         const user = await this.userService.validateUser(dto);

@@ -11,6 +11,30 @@ import { MetricsMiddleware } from './observability/metrics.middleware';
 import { HttpExceptionFilter } from './common/filters/http_exception.filter';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import { timingSafeEqual } from 'crypto';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import type { Request, Response, NextFunction } from 'express';
+
+/**
+ * Guards the Swagger UI/JSON behind HTTP Basic Auth. Government handover: API
+ * docs must not be world-readable. Enabled only when SWAGGER_ENABLED=true and
+ * SWAGGER_USER/SWAGGER_PASSWORD are set.
+ */
+function swaggerBasicAuth(user: string, pass: string) {
+    const expected = 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64');
+    return (req: Request, res: Response, next: NextFunction) => {
+        const provided = req.headers.authorization ?? '';
+        const a = Buffer.from(provided);
+        const b = Buffer.from(expected);
+        const ok = a.length === b.length && timingSafeEqual(a, b);
+        if (!ok) {
+            res.setHeader('WWW-Authenticate', 'Basic realm="API Docs"');
+            res.status(401).send('Authentication required');
+            return;
+        }
+        next();
+    };
+}
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
@@ -123,6 +147,39 @@ async function bootstrap() {
             { path: 'metrics', method: RequestMethod.GET },
         ],
     });
+
+    // ── OpenAPI / Swagger (env-gated, Basic-Auth protected) ──────────────────
+    if (process.env.SWAGGER_ENABLED === 'true') {
+        const swaggerUser = process.env.SWAGGER_USER;
+        const swaggerPass = process.env.SWAGGER_PASSWORD;
+        if (swaggerUser && swaggerPass) {
+            app.use('/api/docs', swaggerBasicAuth(swaggerUser, swaggerPass));
+            app.use('/api/docs-json', swaggerBasicAuth(swaggerUser, swaggerPass));
+        } else {
+            Logger.warn(
+                'SWAGGER_ENABLED=true but SWAGGER_USER/SWAGGER_PASSWORD unset — docs exposed WITHOUT auth.',
+            );
+        }
+
+        const swaggerConfig = new DocumentBuilder()
+            .setTitle('Samarta ASB Tulungagung API')
+            .setDescription(
+                'Analisis Standar Belanja (ASB) — backend API. Endpoints are served under the global prefix shown in the server dropdown.',
+            )
+            .setVersion('1.0')
+            .addBearerAuth(
+                { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+                'access-token',
+            )
+            .addServer(`/${apiPrefix}`)
+            .build();
+
+        const document = SwaggerModule.createDocument(app, swaggerConfig);
+        SwaggerModule.setup('api/docs', app, document, {
+            swaggerOptions: { persistAuthorization: true },
+        });
+        Logger.log('Swagger docs enabled at /api/docs');
+    }
 
     const port = config.get('port', 3000);
     await app.listen(port, '0.0.0.0');

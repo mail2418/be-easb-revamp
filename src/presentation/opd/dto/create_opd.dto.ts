@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, Min } from 'class-validator';
 
 export class CreateOpdDto {
     @IsString()
@@ -11,5 +11,6 @@ export class CreateOpdDto {
 
     @IsNumber()
     @IsNotEmpty()
+    @Min(1)
     id_user!: number;
 }

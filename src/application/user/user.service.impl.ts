@@ -26,6 +26,12 @@ import { UsersPaginationResult } from 'src/presentation/users/dto/users_paginati
 import { ChangeUserPasswordDto } from 'src/presentation/users/dto/change_user_password.dto';
 import bcrypt from 'bcryptjs';
 import { Role } from 'src/domain/user/user_role.enum';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { UserOrmEntity } from '../../infrastructure/user/orm/user.orm_entity';
+import { VerifikatorOrmEntity } from '../../infrastructure/verifikator/orm/verifikator.orm_entity';
+import { OpdOrmEntity } from '../../infrastructure/opd/orm/opd.orm_entity';
+import { UserProfileOrmEntity } from '../../infrastructure/user_profile/orm/user_profile.orm_entity';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
@@ -36,8 +42,19 @@ export class UserServiceImpl implements UserService {
         private readonly userRepo: UserRepository,
         @Inject(forwardRef(() => UserProfileService))
         private readonly profileService: UserProfileService,
+        @InjectDataSource()
+        private readonly dataSource: DataSource,
     ) {
         this.validateUserUseCase = new ValidateUserUseCase(userRepo);
+    }
+
+    private async deleteUserWithCascade(userId: number): Promise<void> {
+        await this.dataSource.transaction(async (manager) => {
+            await manager.softDelete(VerifikatorOrmEntity, { idUser: userId });
+            await manager.softDelete(OpdOrmEntity, { id_user: userId });
+            await manager.delete(UserProfileOrmEntity, { idUser: userId });
+            await manager.softDelete(UserOrmEntity, { id: userId });
+        });
     }
 
     async create(userDto: CreateUserDto): Promise<User> {
@@ -215,16 +232,23 @@ export class UserServiceImpl implements UserService {
         }
     }
 
-    async deleteUser(userDto: DeleteUserDto): Promise<boolean> {
+    async deleteUser(userDto: DeleteUserDto, callerUserId: number): Promise<boolean> {
         try {
-            // cek user yang akan dihapus ada atau tidak
+            if (userDto.id === callerUserId) {
+                throw new ForbiddenException('Cannot delete your own account');
+            }
+
             const existingUser = await this.userRepo.findById(userDto.id);
             if (!existingUser) {
                 throw new NotFoundException('User not found');
             }
 
-            // delete user via repository
-            return await this.userRepo.deleteUser(userDto);
+            if (existingUser.roles.includes(Role.SUPERADMIN)) {
+                throw new ForbiddenException('Cannot delete superadmin users');
+            }
+
+            await this.deleteUserWithCascade(userDto.id);
+            return true;
         } catch (error) {
             if (error instanceof HttpException) {
                 throw error;
@@ -233,15 +257,17 @@ export class UserServiceImpl implements UserService {
         }
     }
 
-    async deleteUserByAdmin(userDto: DeleteUserByAdminDto): Promise<boolean> {
+    async deleteUserByAdmin(userDto: DeleteUserByAdminDto, callerUserId: number): Promise<boolean> {
         try {
-            // cek user yang akan dihapus ada atau tidak
+            if (userDto.id === callerUserId) {
+                throw new ForbiddenException('Cannot delete your own account');
+            }
+
             const existingUser = await this.userRepo.findById(userDto.id);
             if (!existingUser) {
                 throw new NotFoundException('User not found');
             }
 
-            // Admin hanya bisa delete user dengan role VERIFIKATOR, OPD, GUEST
             const unAllowedRoles = [Role.SUPERADMIN, Role.ADMIN];
             const userRoles = existingUser.roles;
             const hasAllowedRole = userRoles.some((role) => unAllowedRoles.includes(role));
@@ -252,8 +278,8 @@ export class UserServiceImpl implements UserService {
                 );
             }
 
-            // delete user via repository
-            return await this.userRepo.deleteUserByAdmin(userDto);
+            await this.deleteUserWithCascade(userDto.id);
+            return true;
         } catch (error) {
             if (error instanceof HttpException) {
                 throw error;

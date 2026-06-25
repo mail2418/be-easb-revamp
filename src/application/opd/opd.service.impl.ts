@@ -14,10 +14,13 @@ export class OpdServiceImpl implements OpdService {
     constructor(private readonly opdRepository: OpdRepository) {}
 
     async createOpd(dto: CreateOpdDto): Promise<Opd> {
-        // Check if opd with the same name already exists
-        const existingOpd = await this.opdRepository.findById(dto.id_user);
+        const existingByName = await this.opdRepository.findByOpdName(dto.opd);
+        if (existingByName) {
+            throw new ConflictException(`OPD with name ${dto.opd} already exists`);
+        }
 
-        if (existingOpd) {
+        const existingByUser = await this.opdRepository.getOpdByUser(dto.id_user);
+        if (existingByUser) {
             throw new ConflictException(`OPD with id_user ${dto.id_user} already exists`);
         }
 
@@ -26,14 +29,23 @@ export class OpdServiceImpl implements OpdService {
     }
 
     async updateOpd(dto: UpdateOpdDto): Promise<Opd> {
-        // Check if opd exists
         const existingOpd = await this.opdRepository.findById(dto.id);
         if (!existingOpd) {
             throw new NotFoundException(`OPD with id ${dto.id} not found`);
         }
 
-        if (existingOpd) {
-            throw new ConflictException(`OPD with id_user ${dto.id_user} already exists`);
+        if (dto.opd && dto.opd !== existingOpd.opd) {
+            const nameConflict = await this.opdRepository.findByOpdName(dto.opd);
+            if (nameConflict && nameConflict.id !== dto.id) {
+                throw new ConflictException(`OPD with name ${dto.opd} already exists`);
+            }
+        }
+
+        if (dto.id_user !== undefined && dto.id_user !== existingOpd.id_user) {
+            const userConflict = await this.opdRepository.getOpdByUser(dto.id_user);
+            if (userConflict && userConflict.id !== dto.id) {
+                throw new ConflictException(`OPD with id_user ${dto.id_user} already exists`);
+            }
         }
 
         const updatedOpd = await this.opdRepository.update(dto);
@@ -41,7 +53,6 @@ export class OpdServiceImpl implements OpdService {
     }
 
     async deleteOpd(dto: DeleteOpdDto): Promise<boolean> {
-        // Check if opd exists
         const existingOpd = await this.opdRepository.findById(dto.id);
         if (!existingOpd) {
             throw new NotFoundException(`OPD with id ${dto.id} not found`);

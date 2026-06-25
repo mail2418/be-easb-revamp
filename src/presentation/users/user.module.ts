@@ -7,9 +7,20 @@ import { UserRepositoryImpl } from '../../infrastructure/user/repositories/user.
 import { UserRepository } from '../../domain/user/user.repository';
 import { UserController } from './user.controller';
 import { UserProfileModule } from '../user_profile/user_profile.module';
+import { VerifikatorOrmEntity } from '../../infrastructure/verifikator/orm/verifikator.orm_entity';
+import { OpdOrmEntity } from '../../infrastructure/opd/orm/opd.orm_entity';
+import { UserProfileOrmEntity } from '../../infrastructure/user_profile/orm/user_profile.orm_entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserOrmEntity]), forwardRef(() => UserProfileModule)],
+    imports: [
+        TypeOrmModule.forFeature([
+            UserOrmEntity,
+            VerifikatorOrmEntity,
+            OpdOrmEntity,
+            UserProfileOrmEntity,
+        ]),
+        forwardRef(() => UserProfileModule),
+    ],
     controllers: [UserController],
     providers: [
         UserServiceImpl,

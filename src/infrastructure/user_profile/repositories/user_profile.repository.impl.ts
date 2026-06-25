@@ -30,7 +30,7 @@ export class UserProfileRepositoryImpl implements UserProfileRepository {
 
     async update(
         idUser: number,
-        data: { nama?: string; nip?: string | null; photoPath?: string | null },
+        data: { nama?: string; nip?: string | null },
     ): Promise<UserProfile> {
         await this.repo.update({ idUser }, data);
         const updated = await this.repo.findOneOrFail({ where: { idUser } });

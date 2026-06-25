@@ -23,9 +23,6 @@ export class UserProfileOrmEntity {
     @Column({ type: 'varchar', length: 50, nullable: true })
     nip?: string | null;
 
-    @Column({ name: 'photo_path', type: 'varchar', length: 500, nullable: true })
-    photoPath?: string | null;
-
     @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt!: Date;
 

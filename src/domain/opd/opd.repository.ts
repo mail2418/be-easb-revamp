@@ -8,6 +8,7 @@ export abstract class OpdRepository {
     abstract update(dto: UpdateOpdDto): Promise<Opd>;
     abstract delete(dto: DeleteOpdDto): Promise<boolean>;
     abstract findById(id: number): Promise<Opd | null>;
+    abstract findByOpdName(opd: string): Promise<Opd | null>;
     abstract findAll(pagination: GetOpdsDto): Promise<{ data: Opd[]; total: number }>;
     abstract getOpdByUser(id_user: number): Promise<Opd | null>;
 }

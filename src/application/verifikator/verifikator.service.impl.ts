@@ -19,11 +19,17 @@ export class VerifikatorServiceImpl implements VerifikatorService {
     constructor(private readonly verifikatorRepository: VerifikatorRepository) {}
 
     async create(dto: CreateVerifikatorDto): Promise<Verifikator> {
-        // Check if verifikator with the same user already exists
         const existing = await this.verifikatorRepository.findByUserId(dto.idUser);
 
         if (existing) {
-            throw new ConflictException(`Verifikator with user ID ${dto.idUser} already exists`);
+            if (existing.jenisVerifikator === dto.jenisVerifikator) {
+                throw new ConflictException(
+                    `Verifikator with user ID ${dto.idUser} already exists for jenis ${dto.jenisVerifikator}`,
+                );
+            }
+            throw new ConflictException(
+                `User ID ${dto.idUser} is already assigned as ${existing.jenisVerifikator} verifikator`,
+            );
         }
 
         const verifikator: Verifikator = {

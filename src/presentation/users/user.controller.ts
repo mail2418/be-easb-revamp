@@ -290,10 +290,12 @@ export class UserController {
     @Delete('delete')
     async deleteUser(
         @Body() dto: DeleteUserDto,
+        @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Promise<ResponseDto> {
         try {
-            await this.userService.deleteUser(dto);
+            const user = req.user as UserContext;
+            await this.userService.deleteUser(dto, Number(user.userId));
 
             return {
                 status: 'success',
@@ -340,10 +342,12 @@ export class UserController {
     @Delete('admin/delete')
     async deleteUserByAdmin(
         @Body() dto: DeleteUserByAdminDto,
+        @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Promise<ResponseDto> {
         try {
-            await this.userService.deleteUserByAdmin(dto);
+            const user = req.user as UserContext;
+            await this.userService.deleteUserByAdmin(dto, Number(user.userId));
 
             return {
                 status: 'success',

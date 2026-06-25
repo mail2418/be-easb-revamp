@@ -38,6 +38,11 @@ export class OpdRepositoryImpl implements OpdRepository {
         return entity || null;
     }
 
+    async findByOpdName(opd: string): Promise<Opd | null> {
+        const entity = await this.repo.findOne({ where: { opd } });
+        return entity || null;
+    }
+
     async findAll(pagination: GetOpdsDto): Promise<{ data: Opd[]; total: number }> {
         const findOptions: any = {
             order: { id: 'DESC' },

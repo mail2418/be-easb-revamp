@@ -1,5 +1,6 @@
-import { IsNumber, IsString, MinLength } from 'class-validator';
+import { IsNumber, IsString, MinLength, Matches } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { STRONG_PASSWORD_MESSAGE, STRONG_PASSWORD_REGEX } from 'src/common/validators/strong-password';
 
 export class ChangePasswordDto {
     @IsNumber()
@@ -12,5 +13,6 @@ export class ChangePasswordDto {
 
     @IsString()
     @MinLength(8)
+    @Matches(STRONG_PASSWORD_REGEX, { message: STRONG_PASSWORD_MESSAGE })
     newPassword!: string;
 }

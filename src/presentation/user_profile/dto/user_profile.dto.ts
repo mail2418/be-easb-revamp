@@ -1,5 +1,10 @@
 import { Role } from '../../../domain/user/user_role.enum';
 
+export class UserProfileOpdDto {
+    opd!: string;
+    alias!: string;
+}
+
 export class UserProfileDto {
     id!: number;
     idUser!: number;
@@ -7,5 +12,5 @@ export class UserProfileDto {
     nip?: string | null;
     username!: string;
     roles!: Role[];
-    photoUrl?: string | null;
+    opd?: UserProfileOpdDto | null;
 }

@@ -11,6 +11,7 @@ import { UserProfileModule } from './presentation/user_profile/user_profile.modu
 import { ProvinceModule } from './presentation/provinces/province.module';
 import { KabKotaModule } from './presentation/kabkota/kabkota.module';
 import { SatuanModule } from './presentation/satuan/satuan.module';
+import { RencanaTahunAnggaranModule } from './presentation/rencana_tahun_anggaran/rencana_tahun_anggaran.module';
 import { AsbFungsiRuangModule } from './presentation/asb_fungsi_ruang/asb_fungsi_ruang.module';
 import { AsbJenisModule } from './presentation/asb_jenis/asb_jenis.module';
 import { AsbLantaiModule } from './presentation/asb_lantai/asb_lantai.module';
@@ -59,6 +60,8 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
+import { AuditInterceptor } from './common/interceptors/audit.interceptor';
+import { AuditEventModule } from './presentation/audit_event/audit_event.module';
 import { DataSourceOptions } from 'typeorm';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
@@ -123,6 +126,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
         ProvinceModule,
         KabKotaModule,
         SatuanModule,
+        RencanaTahunAnggaranModule,
         AsbFungsiRuangModule,
         AsbJenisModule,
         AsbLantaiModule,
@@ -168,6 +172,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
         HspkModule,
         MainDashboardModule,
         HealthModule,
+        AuditEventModule,
         PrometheusModule.register({
             path: '/metrics',
             defaultMetrics: {
@@ -189,6 +194,10 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
         {
             provide: APP_INTERCEPTOR,
             useClass: ResponseCaptureInterceptor,
+        },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: AuditInterceptor,
         },
         {
             provide: APP_GUARD,

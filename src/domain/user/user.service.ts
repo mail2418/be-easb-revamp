@@ -18,8 +18,8 @@ export abstract class UserService {
     abstract findById(id: number): Promise<User | null>;
     abstract updateUser(user: UpdateUserDto): Promise<User>;
     abstract updateUserByAdmin(user: UpdateUserByAdminDto): Promise<User>;
-    abstract deleteUser(user: DeleteUserDto): Promise<boolean>;
-    abstract deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean>;
+    abstract deleteUser(user: DeleteUserDto, callerUserId: number): Promise<boolean>;
+    abstract deleteUserByAdmin(user: DeleteUserByAdminDto, callerUserId: number): Promise<boolean>;
     abstract getUsers(pagination: GetUsersDto): Promise<UsersPaginationResult>;
     abstract getUserDetail(user: GetUserDetailDto): Promise<User>;
     abstract changeUserPassword(

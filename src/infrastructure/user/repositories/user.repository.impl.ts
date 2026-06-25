@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 import { UserRepository } from '../../../domain/user/user.repository';
 import { User } from '../../../domain/user/user.entity';
 import { UserOrmEntity } from '../orm/user.orm_entity';
+import { UserProfileOrmEntity } from '../../user_profile/orm/user_profile.orm_entity';
 import { CreateUserDto } from 'src/presentation/users/dto/create_user.dto';
 import { UpdateUserDto } from 'src/presentation/users/dto/update_user.dto';
 import { UpdateUserByAdminDto } from 'src/presentation/users/dto/update_user_by_admin.dto';
@@ -100,7 +101,22 @@ export class UserRepositoryImpl implements UserRepository {
 
         const [users, total] = await qb.getManyAndCount();
 
-        return { data: users, total };
+        const userIds = users.map((u) => u.id);
+        let profileMap = new Map<number, string>();
+        if (userIds.length > 0) {
+            const profiles = await this.repo.manager.getRepository(UserProfileOrmEntity).find({
+                where: { idUser: In(userIds) },
+                select: ['idUser', 'nama'],
+            });
+            profileMap = new Map(profiles.map((p) => [p.idUser, p.nama]));
+        }
+
+        const data = users.map((u) => ({
+            ...u,
+            nama: profileMap.get(u.id) ?? u.username,
+        }));
+
+        return { data, total };
     }
 
     async getUserDetail(user: GetUserDetailDto): Promise<User | null> {

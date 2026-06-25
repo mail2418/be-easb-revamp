@@ -8,9 +8,10 @@ export class SeedE2eTestUsers1770600000000 implements MigrationInterface {
         const seedPassword = process.env.SEED_DEFAULT_PASSWORD;
 
         if (!seedPassword) {
-            throw new Error(
-                'SEED_DEFAULT_PASSWORD environment variable is required for seeding E2E users',
+            console.warn(
+                '[SeedE2eTestUsers] Skipping — SEED_DEFAULT_PASSWORD not set. Run: npm run seed:e2e-users',
             );
+            return;
         }
 
         const hashedPassword = await bcrypt.hash(seedPassword, 12);

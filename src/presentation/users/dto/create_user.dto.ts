@@ -1,6 +1,7 @@
 import { Transform } from 'class-transformer';
-import { IsString, IsNotEmpty, MinLength, IsArray, ArrayNotEmpty, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, IsArray, ArrayNotEmpty, IsEnum, Matches, MinLength } from 'class-validator';
 import { Role } from 'src/domain/user/user_role.enum';
+import { STRONG_PASSWORD_MESSAGE, STRONG_PASSWORD_REGEX } from 'src/common/validators/strong-password';
 
 export class CreateUserDto {
     @IsString()
@@ -9,6 +10,7 @@ export class CreateUserDto {
 
     @IsString()
     @MinLength(8)
+    @Matches(STRONG_PASSWORD_REGEX, { message: STRONG_PASSWORD_MESSAGE })
     password!: string;
 
     @IsArray()
